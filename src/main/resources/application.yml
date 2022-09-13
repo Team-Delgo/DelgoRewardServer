@@ -1,0 +1,29 @@
+# spring MariaDB Connect
+spring:
+  datasource:
+#    url: jdbc:mariadb://101.101.208.202:3306/delgo_reward // DB 추가되면 변경
+    url: jdbc:mariadb://101.101.208.202:3306/delgo
+    username: delgo
+    password: Zlzl2022!
+    driverClassName: org.mariadb.jdbc.Driver
+    hikari:
+      connectionTimeout: 10000 #30000ms
+      #maxLifetime: 1800000 #1800000ms(30?). maria db ??? 28800? (8??) -> ?? 1???? ??
+      maximumPoolSize: 20 #?? 10
+      validationTimeout: 1000 #5000ms, connectionTimeout ?? ??? ?
+  # data - jpa ??
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+  servlet:
+    multipart:
+      maxFileSize: 50MB
+      maxRequestSize: 50MB
+
+server:
+  port: 8081
+
+config:
+#  driverLocation: C:\\chrome\\chromedriver.exe #Local
+  driverLocation: /var/www/chrome/chromedriver #Dev
