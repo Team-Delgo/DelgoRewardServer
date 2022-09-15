@@ -13,6 +13,11 @@ repositories {
     mavenCentral()
 }
 
+bootJar {
+    mainClass = 'com.delgo.reward'
+}
+
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-security'
