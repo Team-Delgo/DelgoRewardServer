@@ -1,4 +1,4 @@
-package com.delgo.reward.code;
+package com.delgo.reward.comm.code;
 
 public enum CategoryCode {
     TOTAL("CA0000","전체"),
