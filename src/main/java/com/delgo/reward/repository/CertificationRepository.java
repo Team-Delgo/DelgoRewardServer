@@ -11,5 +11,7 @@ import java.util.Optional;
 public interface CertificationRepository extends JpaRepository<Certification, Integer>, JpaSpecificationExecutor<Certification> {
     List<Certification> findByUserId(int userId);
 
+    List<Certification> findByUserIdAndCategoryCode(int userId, String categoryCode);
+
     Optional<Certification> findByCertificationId(int certificationId);
 }
