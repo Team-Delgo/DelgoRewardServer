@@ -1,6 +1,7 @@
 package com.delgo.reward.dto;
 
 
+import com.delgo.reward.domain.Code;
 import com.delgo.reward.domain.Mungple;
 import com.delgo.reward.domain.common.Location;
 import lombok.AllArgsConstructor;
@@ -16,15 +17,12 @@ public class MungpleDTO {
     private String placeName;
     private String address; // 입력 주소
 
-    private String geoCode; // 지역 코드
-    private String p_geoCode; // 부모 지역 코드
-
-    public Mungple makeMungple(Location location) {
+    public Mungple makeMungple(Location location, Code code) {
         return Mungple.builder()
                 .categoryCode(this.categoryCode)
                 .placeName(this.placeName)
-                .geoCode(this.geoCode)
-                .p_geoCode(this.p_geoCode)
+                .geoCode(code.getCode())
+                .p_geoCode(code.getPCode())
                 .roadAddress(location.getRoadAddress())
                 .jibunAddress(location.getJibunAddress())
                 .latitude(location.getLatitude())

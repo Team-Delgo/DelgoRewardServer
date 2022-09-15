@@ -1,12 +1,14 @@
 package com.delgo.reward.controller;
 
-import com.delgo.reward.code.CategoryCode;
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
 import com.delgo.reward.comm.ncp.GeoService;
+import com.delgo.reward.domain.Code;
 import com.delgo.reward.domain.Mungple;
 import com.delgo.reward.dto.MungpleDTO;
 import com.delgo.reward.domain.common.Location;
+import com.delgo.reward.service.CodeService;
 import com.delgo.reward.service.MungpleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,7 @@ public class MungpleController extends CommController {
 
     private final MungpleService mungpleService;
     private final GeoService geoService;
+    private final CodeService codeService;
 
     /*
      * 멍플 조회
@@ -34,11 +37,11 @@ public class MungpleController extends CommController {
      */
     @PostMapping("/register")
     public ResponseEntity register(@Validated @RequestBody MungpleDTO mungpleDTO) {
-        // 위도, 경도
-        Location location = geoService.getGeoData(mungpleDTO.getAddress());
+        Location location = geoService.getGeoData(mungpleDTO.getAddress()); // 위도, 경도
+        Code code = codeService.getGeoCodeBySIGUGUN(location.getSIGUGUN()); // GeoCode
 
         return (!mungpleService.isMungpleExisting(location))
-                ? SuccessReturn(mungpleService.registerMungple(mungpleDTO.makeMungple(location)))
+                ? SuccessReturn(mungpleService.registerMungple(mungpleDTO.makeMungple(location, code)))
                 : ErrorReturn(ApiCode.MUNGPLE_DUPLICATE_ERROR);
     }
 
