@@ -16,6 +16,11 @@ public class Location {
     private String jibunAddress; // 지번 주소
     private String SIGUGUN; // 시구군 ( geoCode 조회하는데 사용 )
 
+    public Location(String latitude, String longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
     public String getCoordinate() {
         return latitude + "," + longitude;
     }
