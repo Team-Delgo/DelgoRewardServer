@@ -2,7 +2,7 @@
 spring:
   datasource:
 #    url: jdbc:mariadb://101.101.208.202:3306/delgo_reward // DB 추가되면 변경
-    url: jdbc:mariadb://101.101.208.202:3306/delgo
+    url: jdbc:mariadb://101.101.208.202:3306/delgo_reward
     username: delgo
     password: Zlzl2022!
     driverClassName: org.mariadb.jdbc.Driver

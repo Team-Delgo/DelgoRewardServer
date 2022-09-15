@@ -22,10 +22,11 @@ public class Mungple {
     private String categoryCode; // 카테고리 코드 ( ex. 카페, 음식점 .. )
 
     private String placeName;
-    private String address; // 주소
+    private String roadAddress; // 도로명 주소
+    private String jibunAddress; // 지번 주소
 
+    private String geoCode; // 지역 코드
     private String p_geoCode; // 부모 지역 코드
-    private String c_geoCode; // 자식 지역 코드
     private String latitude; // 위도
     private String longitude; // 경도
 
