@@ -31,6 +31,9 @@ public class API {
         // MUNGPLE ERROR
         public static final int MUNGPLE_DUPLICATE_ERROR = 311;
 
+        // Certification ERROR
+        public static final int TOO_FAR_DISTANCE = 311;
+
 
         public static final int UNKNOWN_ERROR = 1000;
         public static final int SERVER_TIMEOUT_ERROR = 1001;
