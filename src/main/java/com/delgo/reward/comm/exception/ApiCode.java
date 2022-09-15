@@ -31,6 +31,9 @@ public enum ApiCode {
     // MUNGPLE ERROR
     MUNGPLE_DUPLICATE_ERROR(API.CODE.MUNGPLE_DUPLICATE_ERROR, "이미 등록된 멍플입니다."),
 
+    // Certification ERROR
+    TOO_FAR_DISTANCE(API.CODE.TOO_FAR_DISTANCE, "인증 가능한 장소에 있지 않습니다."),
+
     UNKNOWN_ERROR(API.CODE.UNKNOWN_ERROR, "알수 없는 오류");
 
 

@@ -24,8 +24,6 @@ public class CertificationTest {
     @Test
     public void registerCertificationTest() {
         //given
-        String photoUrl = "";
-
         Code code = new Code();
         code.setCode("101000"); // GeoCode
         code.setPCode("101000"); // p_GeoCode
@@ -42,8 +40,7 @@ public class CertificationTest {
 
 
         //when
-        Certification certification =
-                certificationService.registerCertification(certificationDTO.makeCertification(code, photoUrl));
+        Certification certification = certificationService.registerCertification(certificationDTO.makeCertification(code));
 
         //then
         assertNotNull(certification);

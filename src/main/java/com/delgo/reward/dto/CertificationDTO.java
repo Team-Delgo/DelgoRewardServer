@@ -6,7 +6,6 @@ import com.delgo.reward.domain.Code;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 
 @Data
@@ -23,9 +22,7 @@ public class CertificationDTO {
     private String latitude; // 위도
     private String longitude; // 경도
 
-//    private MultipartFile photo; // 사진 파일
-
-    public Certification makeCertification(Code code, String photoUrl) {
+    public Certification makeCertification(Code code) {
         // TODO : REVERSE;
         return Certification.builder()
                 .userId(this.userId)
@@ -37,7 +34,6 @@ public class CertificationDTO {
                 .p_geoCode(code.getPCode()) // 사용자 기준 geoCode
                 .latitude(this.latitude) // 사용자한테 입력받은 위도
                 .longitude(this.longitude) // 사용자한테 입력받은 경도
-                .photoUrl(photoUrl)
                 .isPhotoChecked(0)
                 .build();
     }
