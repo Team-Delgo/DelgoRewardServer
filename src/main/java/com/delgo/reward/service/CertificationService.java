@@ -28,6 +28,12 @@ public class CertificationService {
         return certificationRepository.findByUserId(userId);
     }
 
+    // CertificationId로 Certification 조회
+    public Certification getCertificationByCertificationId(int certificationId) {
+        return certificationRepository.findByCertificationId(certificationId)
+                .orElseThrow(() -> new NullPointerException("NOT FOUND Certification"));
+    }
+
     // Certification 등록
     public Certification registerCertification(Certification certification) {
         return certificationRepository.save(certification);
