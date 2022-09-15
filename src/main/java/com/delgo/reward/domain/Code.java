@@ -1,0 +1,28 @@
+package com.delgo.reward.domain;
+
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import java.time.LocalDate;
+
+@Data
+@Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Code {
+    @Id
+    private String code; // 코드
+    private String pCode; // 부모코드
+    private String codeName; // 코드명
+    private String codeDesc; // 코드 설명
+
+    @CreationTimestamp
+    private LocalDate registDt;
+}
