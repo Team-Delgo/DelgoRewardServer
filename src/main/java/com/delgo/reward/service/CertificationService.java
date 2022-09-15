@@ -23,6 +23,11 @@ public class CertificationService {
         return certificationRepository.findAll();
     }
 
+    // categoryCode & userId로 Certification 리스트 조회
+    public List<Certification> getCertificationByUserIdAndCategoryCode(int userId, String categoryCode) {
+        return certificationRepository.findByUserIdAndCategoryCode(userId, categoryCode);
+    }
+
     // userId로 Certification 조회
     public List<Certification> getCertificationByUserId(int userId) {
         return certificationRepository.findByUserId(userId);
