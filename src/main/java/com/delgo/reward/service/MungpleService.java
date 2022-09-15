@@ -30,6 +30,12 @@ public class MungpleService {
         return mungpleRepository.findAll();
     }
 
+    // mungpleId로 Mungple 조회
+    public Mungple getMungpleByMungpleId(int mungpleId) {
+        return mungpleRepository.findByMungpleId(mungpleId)
+                .orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE"));
+    }
+
     // categoryCode로 Mungple 조회
     public List<Mungple> getMungpleByCategoryCode(String categoryCode) {
         return mungpleRepository.findByCategoryCode(categoryCode);
@@ -38,7 +44,6 @@ public class MungpleService {
     // 중복 체크
     public boolean isMungpleExisting(Location location) {
         Optional<Mungple> mungple = mungpleRepository.findByLatitudeAndLongitude(location.getLatitude(), location.getLongitude());
-
         return mungple.isPresent();
     }
 }
