@@ -23,42 +23,13 @@ public class API {
         public static final int PHOTO_UPLOAD_ERROR = 308;
         public static final int SMS_ERROR = 309;
 
+        // PHOTO ERROR
+        public static final int PHOTO_EXTENSION_ERROR = 310;
+
         // ------------------------FUNCTION----------------------------
-        // COUPON ERROR
-        public static final int COUPON_SELECT_ERROR = 311;
-        public static final int COUPON_DUPLICATE_ERROR = 312;
 
-        //REVIEW ERROR
-        public static final int REVIEW_DUPLICATE_ERROR = 330;
-        public static final int REVIEW_NOT_EXIST = 331;
-        public static final int REVIEW_PHOTO_COUNT_ERROR = 332;
-        public static final int PHOTO_EXTENSION_ERROR = 333;
-
-        //BOOKING ERROR
-        public static final int BOOKING_NOT_EXIST = 316;
-        public static final int ALREADY_BOOKING_PLACE = 317;
-
-        //CANCEL ERROR
-        public static final int REFUND_ZERO = 318;
-
-        //EMAIL ERROR
-        public static final int EMAIL_NOT_EXIST = 315;
-        public static final int EMAIL_DUPLICATE_ERROR = 316;
-
-        //SMS AUTH ERROR
-        public static final int AUTH_DO_NOT_MATCHING = 317;
-
-        //NAME ERROR
-        public static final int NAME_DUPLICATE_ERROR = 320;
-
-        //PHONE NO ERROR
-        public static final int PHONE_NO_NOT_EXIST = 370;
-        public static final int PHONE_NO_DUPLICATE_ERROR = 371;
-
-        //OAuth ERROR
-        public static final int KAKAO_PHONE_NO_NOT_EXIST = 380;
-        public static final int KAKAO_NOT_CONNECT = 381;
-        public static final int ANOTHER_OAUTH_CONNECT = 382;
+        // MUNGPLE ERROR
+        public static final int MUNGPLE_DUPLICATE_ERROR = 311;
 
 
         public static final int UNKNOWN_ERROR = 1000;
