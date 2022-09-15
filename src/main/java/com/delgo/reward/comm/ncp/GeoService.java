@@ -71,7 +71,7 @@ public class GeoService {
         return location;
     }
 
-    public Location getDistance(@RequestParam String address, String x, String y) {
+    public double getDistance(@RequestParam String address, String latitude, String longitude) {
         HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
 
         RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
@@ -79,33 +79,25 @@ public class GeoService {
         headers.set("X-NCP-APIGW-API-KEY-ID", CLIENT_ID);
         headers.set("X-NCP-APIGW-API-KEY", CLIENT_SECRET);
 
-        String requestURL = API_URL + "?query=" + address + "&coordinate=" + x +"," + y;
+        String requestURL = API_URL + "?query=" + address + "&coordinate=" + latitude +"," + longitude;
 
         HttpEntity entity = new HttpEntity<>(headers);
         ResponseEntity<String> responseEntity = restTemplate.exchange(requestURL, HttpMethod.GET, entity, String.class);
 
 
         ObjectMapper objectMapper = new ObjectMapper();
-        Location location = new Location();
+        double test = 0;
         try {
             JsonNode jsonNode = objectMapper.readTree(responseEntity.getBody());
-            JsonNode latitude = jsonNode.get("addresses").get(0).get("x");
-            JsonNode longitude = jsonNode.get("addresses").get(0).get("y");
             JsonNode distance = jsonNode.get("addresses").get(0).get("distance");
-            JsonNode test = jsonNode.get("addresses").get(0);
 
-            location.setLatitude(latitude.toString());
-            location.setLongitude(longitude.toString());
-            System.out.println("latitude: " + latitude);
-            System.out.println("longitude: " + longitude);
+            test=  distance.asDouble();
             System.out.println("distance: " + distance);
-            System.out.println("test: " + test);
-
 
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
-        return location;
+        return test;
     }
 }
