@@ -24,7 +24,7 @@ public class GeoService {
     private static final String CLIENT_SECRET = "P1WuQqH2d7rAnbWraxGwgDjPVvayuFwhV0RQAXtR";
 
 
-    public Location getGeoData(@RequestParam String address) {
+    public Location getGeoData(String address) {
         HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
 
         RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
@@ -54,12 +54,14 @@ public class GeoService {
             location.setJibunAddress(jibunAddress.toString().replace("\"",""));
             location.setSIGUGUN(SIGUGUN.toString().replace("\"",""));
 
+            System.out.println("************************************************");
             System.out.println("latitude: " + latitude);
             System.out.println("longitude: " + longitude);
             System.out.println("roadAddress: " + roadAddress);
             System.out.println("jibunAddress: " + jibunAddress);
             System.out.println("distance: " + distance);
             System.out.println("SIGUGUN: " + SIGUGUN);
+            System.out.println("************************************************");
 
 
         } catch (JsonProcessingException e) {
