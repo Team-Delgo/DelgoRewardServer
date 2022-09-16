@@ -43,7 +43,7 @@ public class LoginController extends CommController {
      * Body [ User , Pet ]
      * 담아서 반환한다.
      */
-    @PostMapping("/loginSuccess")
+    @PostMapping("/login/success")
     public ResponseEntity<?> loginSuccess(HttpServletRequest request, HttpServletResponse response) {
         String email = request.getAttribute(EMAIL).toString();
 
@@ -70,7 +70,7 @@ public class LoginController extends CommController {
      * ErrorCode 반환.
      */
 
-    @PostMapping("/loginFail")
+    @PostMapping("/login/fail")
     public ResponseEntity<?> loginFail() {
         return ErrorReturn(ApiCode.LOGIN_ERROR);
     }
@@ -80,7 +80,7 @@ public class LoginController extends CommController {
      * Refresh_Token 인증 진행
      * 성공 : 재발급, 실패 : 오류 코드 반환
      */
-    @GetMapping("/tokenReissue")
+    @GetMapping("/token/reissue")
     public ResponseEntity<?> tokenReissue(HttpServletRequest request, HttpServletResponse response) {
         try {
             String token = request.getHeader(Refresh_JwtProperties.HEADER_STRING)
@@ -104,7 +104,7 @@ public class LoginController extends CommController {
      * TOKEN 인증 프로세스중 에러 발생
      * ErrorCode 반환.
      */
-    @RequestMapping("/tokenError")
+    @RequestMapping("/token/error")
     public ResponseEntity<?> tokenError() {
         return ErrorReturn(ApiCode.TOKEN_ERROR);
     }
