@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -38,7 +38,7 @@ public class User {
 
     @CreationTimestamp
     @Column(name = "regist_dt")
-    private LocalDate registDt;
+    private LocalDateTime registDt;
 
     private String profile;
 
