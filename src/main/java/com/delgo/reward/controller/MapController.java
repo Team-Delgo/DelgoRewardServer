@@ -25,7 +25,7 @@ public class MapController extends CommController {
      * - 멍플, 일반 인증 장소, 멍플 인증 장소 구분 필요
      * Response Data : 멍플 List, 일반 인증 List, 멍플 인증 List
      */
-    @GetMapping("/getData")
+    @GetMapping("/data")
     public ResponseEntity getData(@RequestParam Integer userId) {
         return SuccessReturn(mapService.getMapData(userId));
     }
