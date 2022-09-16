@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -24,5 +25,5 @@ public class Code {
     private String codeDesc; // 코드 설명
 
     @CreationTimestamp
-    private LocalDate registDt;
+    private LocalDateTime registDt;
 }
