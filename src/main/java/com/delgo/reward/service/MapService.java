@@ -41,7 +41,7 @@ public class MapService {
         HashMap<String, Object> resultMap = new HashMap<>();
         resultMap.put("mungpleList", mungpleList); // mungpleList :  멍플 리스트 ( 인증된 멍플은 제거된 리스트 )
         resultMap.put("certNormalList", certNormalList);  // certNormalList : 일반 인증 리스트 ( 하얀 테두리 )
-        resultMap.put("certMunpleList", certMunpleList); // certMunpleList : 멍플 인증 리스트 ( 주황 테두리 )
+        resultMap.put("certMungpleList", certMunpleList); // certMunpleList : 멍플 인증 리스트 ( 주황 테두리 )
 
         return resultMap;
     }
