@@ -14,4 +14,6 @@ public interface CertificationRepository extends JpaRepository<Certification, In
     List<Certification> findByUserIdAndCategoryCode(int userId, String categoryCode);
 
     Optional<Certification> findByCertificationId(int certificationId);
+
+
 }
