@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -38,5 +39,5 @@ public class Certification {
     private Integer isPhotoChecked; // 운영진 체크 여부
 
     @CreationTimestamp
-    private LocalDate registDt; // 등록 날짜
+    private LocalDateTime registDt; // 등록 날짜
 }

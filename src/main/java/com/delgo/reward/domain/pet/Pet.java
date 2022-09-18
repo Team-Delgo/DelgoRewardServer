@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -35,6 +36,6 @@ public class Pet {
 
     @CreationTimestamp
     @Column(name="regist_dt")
-    private LocalDate registDt;
+    private LocalDateTime registDt;
 
 }
