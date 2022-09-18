@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -31,5 +31,5 @@ public class Mungple {
     private String longitude; // 경도
 
     @CreationTimestamp
-    private LocalDate registDt;
+    private LocalDateTime registDt;
 }
