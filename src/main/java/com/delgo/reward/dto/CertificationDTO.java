@@ -7,20 +7,22 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class CertificationDTO {
-    private Integer userId;
-    private String categoryCode;
+    @NotNull private Integer userId;
+    @NotNull private String categoryCode;
 
-    private Integer mungpleId; // mungpleId == 0이면 mungple 장소 아님.
-    private String placeName; // 장소 명
-    private String description; // 내용
+    @NotNull private Integer mungpleId; // mungpleId == 0이면 mungple 장소 아님.
+    @NotNull private String placeName; // 장소 명
+    @NotNull private String description; // 내용
 
-    private String latitude; // 위도
-    private String longitude; // 경도
+    @NotNull private String latitude; // 위도
+    @NotNull private String longitude; // 경도
 
     public Certification makeCertification(Code code) {
         // TODO : REVERSE;
@@ -37,5 +39,4 @@ public class CertificationDTO {
                 .isPhotoChecked(0)
                 .build();
     }
-
 }
