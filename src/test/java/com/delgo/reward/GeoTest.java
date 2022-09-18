@@ -35,11 +35,11 @@ public class GeoTest {
     public void getDistanceTest() {
         //given
         String address = "태평동 6428";
-        String x = "127.1061672"; // 위도
-        String y = "37.5068523"; // 경도
+        String latitude = "37.4413976"; // 위도
+        String longitude = "127.1321170"; // 경도
 
         //when
-        Double distance = geoService.getDistance(address, x, y);
+        Double distance = geoService.getDistance(address, longitude, latitude);
 
         //then
         assertTrue(distance > 0);

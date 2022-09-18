@@ -41,8 +41,8 @@ public class GeoService {
         Location location = new Location();
         try {
             JsonNode jsonNode = objectMapper.readTree(responseEntity.getBody());
-            JsonNode latitude = jsonNode.get("addresses").get(0).get("x");
-            JsonNode longitude = jsonNode.get("addresses").get(0).get("y");
+            JsonNode latitude = jsonNode.get("addresses").get(0).get("y");
+            JsonNode longitude = jsonNode.get("addresses").get(0).get("x");
             JsonNode roadAddress = jsonNode.get("addresses").get(0).get("roadAddress");
             JsonNode jibunAddress = jsonNode.get("addresses").get(0).get("jibunAddress");
             JsonNode distance = jsonNode.get("addresses").get(0).get("distance");
@@ -71,7 +71,7 @@ public class GeoService {
         return location;
     }
 
-    public double getDistance(@RequestParam String address, String latitude, String longitude) {
+    public double getDistance(@RequestParam String address, String longitude, String latitude) {
         HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
 
         RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
@@ -79,7 +79,7 @@ public class GeoService {
         headers.set("X-NCP-APIGW-API-KEY-ID", CLIENT_ID);
         headers.set("X-NCP-APIGW-API-KEY", CLIENT_SECRET);
 
-        String requestURL = API_URL + "?query=" + address + "&coordinate=" + latitude +"," + longitude;
+        String requestURL = API_URL + "?query=" + address + "&coordinate=" + longitude +"," + latitude;
 
         HttpEntity entity = new HttpEntity<>(headers);
         ResponseEntity<String> responseEntity = restTemplate.exchange(requestURL, HttpMethod.GET, entity, String.class);
