@@ -1,7 +1,6 @@
 package com.delgo.reward.service;
 
 import com.delgo.reward.domain.Ranking;
-import com.delgo.reward.dto.RankingByPointDTO;
 import com.delgo.reward.repository.CertificationRepository;
 import com.delgo.reward.repository.JDBCTemplateRankingRepository;
 import com.delgo.reward.repository.RankingRepository;
@@ -22,10 +21,10 @@ public class RankingService {
     private final RankingRepository rankingRepository;
 
     public void getByPoint(){
-        List<RankingByPointDTO> rankingByPointDTOS = jdbcTemplateRankingRepository.findRankingByPoint();
-        for(RankingByPointDTO rankingByPointDTO: rankingByPointDTOS){
-            Ranking ranking = Ranking.builder().userId(rankingByPointDTO.getUserId()).ranking(rankingByPointDTO.getRanking()).geoCode("101000").categoryCode("CA000").build();
-            rankingRepository.save(ranking);
+        List<Ranking> rankingList = jdbcTemplateRankingRepository.findRankingByPoint();
+        for(Ranking ranking: rankingList){
+            Ranking newRanking = Ranking.builder().userId(ranking.getUserId()).ranking(ranking.getRanking()).geoCode(ranking.getGeoCode()).categoryCode(ranking.getCategoryCode()).build();
+            rankingRepository.save(newRanking);
         }
     }
 
