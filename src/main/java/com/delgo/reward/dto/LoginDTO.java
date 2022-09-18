@@ -2,9 +2,10 @@ package com.delgo.reward.dto;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 public class LoginDTO {
-
-    private String email;
-    private String password;
+    @NotNull private String email;
+    @NotNull private String password;
 }
