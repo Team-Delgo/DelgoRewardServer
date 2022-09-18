@@ -32,6 +32,12 @@ public class User {
     @Column(nullable = false, name = "phone_no")
     private String phoneNo;
 
+    @Column(nullable = false, name = "point")
+    private int point;
+
+    @Column(nullable = false, name = "address")
+    private String address;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = true, name = "social")
     private UserSocial userSocial;
