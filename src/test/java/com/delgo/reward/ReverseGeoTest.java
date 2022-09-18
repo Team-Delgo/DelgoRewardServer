@@ -22,8 +22,8 @@ public class ReverseGeoTest {
     public void getReverseGeoDataTest() {
         //given
         Location location = new Location();
-        location.setLatitude("127.1311662");
-        location.setLongitude("37.4410656");
+        location.setLatitude("37.4410656");
+        location.setLongitude("127.1311662");
         location.setSIGUGUN("");
 
         //when
