@@ -5,6 +5,7 @@ import com.delgo.reward.domain.Certification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,5 +16,8 @@ public interface CertificationRepository extends JpaRepository<Certification, In
 
     Optional<Certification> findByCertificationId(int certificationId);
 
+    List<Certification> findByUserIdAndMungpleIdAndRegistDtBetween(int userId, int mungpleId, LocalDateTime start, LocalDateTime end);
 
+    List<Certification> findByUserIdAndCategoryCodeAndRegistDtBetween(int userId, String categoryCode, LocalDateTime start, LocalDateTime end);
 }
+
