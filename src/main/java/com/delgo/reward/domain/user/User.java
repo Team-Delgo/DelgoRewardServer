@@ -32,8 +32,11 @@ public class User {
     @Column(nullable = false, name = "phone_no")
     private String phoneNo;
 
-    @Column(nullable = false, name = "point")
-    private int point;
+    @Column(nullable = false, name = "accumulated_point")
+    private int accumulatedPoint;
+
+    @Column(nullable = false, name = "weekly_point")
+    private int weeklyPoint;
 
     @Column(nullable = false, name = "address")
     private String address;

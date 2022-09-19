@@ -1,6 +1,6 @@
 package com.delgo.reward.repository;
 
-import com.delgo.reward.dto.RankingByPointDTO;
+import com.delgo.reward.domain.Ranking;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -14,14 +14,14 @@ public class JDBCTemplateRankingRepository{
 
     private final JdbcTemplate jdbcTemplate;
 
-    public List<RankingByPointDTO> findRankingByPoint() {
-        return jdbcTemplate.query("select user_id, point, RANK() over (order by point desc) ranking from user", rankingRowMapper());
+    public List<Ranking> findRankingByPoint() {
+        return jdbcTemplate.query("select user_id, address, weekly_point, RANK() over (order by weekly_point desc) ranking from user group by address", rankingRowMapper());
     }
 
-    private RowMapper<RankingByPointDTO> rankingRowMapper() {
+    private RowMapper<Ranking> rankingRowMapper() {
         return (rs, rowNum) -> {
-            RankingByPointDTO rankingByPointDTO = RankingByPointDTO.builder().userId(rs.getInt("user_id")).ranking(rs.getInt("ranking")).build();
-            return rankingByPointDTO;
+            Ranking ranking = Ranking.builder().userId(rs.getInt("user_id")).ranking(rs.getInt("ranking")).geoCode(rs.getString("address")).categoryCode("CA0000").build();
+            return ranking;
         };
     }
 }
