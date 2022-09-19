@@ -22,6 +22,6 @@ public class Location {
     }
 
     public String getCoordinate() {
-        return latitude + "," + longitude;
+        return longitude + "," + latitude;
     }
 }
