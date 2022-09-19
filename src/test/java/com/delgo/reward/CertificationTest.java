@@ -12,7 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -38,11 +43,54 @@ public class CertificationTest {
         certificationDTO.setLatitude("127.1061672");
         certificationDTO.setLongitude("37.5068523");
 
-
         //when
         Certification certification = certificationService.registerCertification(certificationDTO.makeCertification(code));
 
         //then
         assertNotNull(certification);
+    }
+
+    @Test
+    public void checkMungpleCertRegisterTest() {
+        //given
+        int userId = 0;
+        int mungpleId = 8;
+
+        //when
+        Boolean result = certificationService.checkMungpleCertRegister(userId, mungpleId);
+        System.out.println("result : " + result);
+
+        //then
+        assertTrue(result);
+    }
+
+    @Test
+    public void checkCertRegisterTest() {
+        //given
+        int userId = 0;
+        String categoryCode = "CA0002";
+
+        //when
+        Boolean result = certificationService.checkCertRegister(userId, categoryCode);
+        System.out.println("result : " + result);
+
+        //then
+        assertTrue(result);
+    }
+
+    @Test
+    public void timeDifferenceCalculationTest() {
+        //given
+        LocalDate today = LocalDate.now();
+        LocalDateTime testDateTime = today.atTime(4, 0, 5);
+        System.out.println("testDateTime: " + testDateTime);
+        System.out.println("now: " + LocalDateTime.now());
+
+        //when
+        long diffrence = ChronoUnit.SECONDS.between(testDateTime, LocalDateTime.now());
+        System.out.println("diffrence: " + diffrence);
+
+        //then
+        assertTrue(diffrence < 21600);
     }
 }
