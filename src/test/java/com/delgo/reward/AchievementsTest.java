@@ -37,20 +37,20 @@ public class AchievementsTest {
         assertNotNull(registeredAc);
     }
 
-//    @Test
-//    public void checkEarnAchievementsTest() {
-//        //given
-//        int userId = 0;
-//        int isMungple = 0;
-//
-//        //when
-//        List<Achievements> list = achievementsService.checkEarnAchievements(userId, isMungple);
-//
-//        for(Achievements achievements : list){
-//            System.out.println("achievements : " + achievements);
-//        }
-//
-//        //then
-//        assertNotNull(list);
-//    }
+    @Test
+    public void checkEarnAchievementsTest() {
+        //given
+        int userId = 0;
+        int isMungple = 0;
+
+        //when
+        List<Achievements> list = achievementsService.checkEarnAchievements(userId, isMungple);
+
+        for(Achievements achievements : list){
+            System.out.println("achievements : " + achievements);
+        }
+
+        //then
+        assertNotNull(list);
+    }
 }

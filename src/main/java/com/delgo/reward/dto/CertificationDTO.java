@@ -25,7 +25,6 @@ public class CertificationDTO {
     @NotNull private String longitude; // 경도
 
     public Certification makeCertification(Code code) {
-        // TODO : REVERSE;
         return Certification.builder()
                 .userId(this.userId)
                 .categoryCode(this.categoryCode)
@@ -37,6 +36,7 @@ public class CertificationDTO {
                 .latitude(this.latitude) // 사용자한테 입력받은 위도
                 .longitude(this.longitude) // 사용자한테 입력받은 경도
                 .isPhotoChecked(0)
+                .isAchievements(0)
                 .build();
     }
 }

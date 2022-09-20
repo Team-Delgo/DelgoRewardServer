@@ -37,6 +37,7 @@ public class Certification {
 
     private String photoUrl; // 사진 URL
     private Integer isPhotoChecked; // 운영진 체크 여부
+    private Integer isAchievements; // 업적 영향 여부 ( 해당 인증이 등록되었을 때 가지게 된 업적이 있는가?)
 
     @CreationTimestamp
     private LocalDateTime registDt; // 등록 날짜

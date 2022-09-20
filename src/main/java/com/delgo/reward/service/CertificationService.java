@@ -52,10 +52,23 @@ public class CertificationService {
         return certificationRepository.save(certification);
     }
 
+    // userId & categoryCode 만족하는 인증 개수
+    public int countCertByUserIdAndCategoryCode(int userId, String categoryCode) {
+        return certificationRepository.countByUserIdAndCategoryCode(userId, categoryCode);
+    }
+
+    // userId & categoryCode & mungple Id 만족하는 인증 개수
+    public int countCertByUserIdAndCategoryCodeAndMungpleId(int userId, String categoryCode, int mungpleId) {
+        return certificationRepository.countByUserIdAndCategoryCodeAndMungpleId(userId, categoryCode, mungpleId);
+    }
+
     // 6시간 이내 같은 장소 인증 불가능 ( 멍플만 )
     public boolean checkMungpleCertRegister(int userId, int mungpleId) {
         List<Certification> list = certificationRepository.findByUserIdAndMungpleIdAndRegistDtBetween(userId, mungpleId, start, end);
         List<Certification> sortedList = list.stream().sorted(Comparator.comparing(Certification::getRegistDt).reversed()).collect(Collectors.toList());
+
+        if(list.size() == 0)
+            return false;
 
         // 최근 등록시간이랑 now 비교
         LocalDateTime recentRegistDt = sortedList.get(0).getRegistDt();
