@@ -38,8 +38,13 @@ public class CalendarService {
             LocalDateTime end = date.atTime(0, 0, 0).plusDays(1);
 
             List<Certification> dateList = sortedList.stream().filter(c -> c.getRegistDt().isAfter(start) && c.getRegistDt().isBefore(end)).collect(Collectors.toList());
+            // 업적 성취 여부 확인
+            List<Certification> isAchievementsList = dateList.stream().filter(c -> c.getIsAchievements() == 1).collect(Collectors.toList());
+            int isAchievements = (isAchievementsList.size() > 0) ? 1 : 0;
+
             calendarList.add(CalendarDTO.builder()
                     .date(date)
+                    .isAchievements(isAchievements)
                     .dateList(dateList)
                     .build()
             );
