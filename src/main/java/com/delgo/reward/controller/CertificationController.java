@@ -5,14 +5,10 @@ import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.exception.ApiCode;
 import com.delgo.reward.comm.ncp.GeoService;
 import com.delgo.reward.comm.ncp.ReverseGeoService;
-import com.delgo.reward.domain.Certification;
-import com.delgo.reward.domain.Code;
-import com.delgo.reward.domain.Mungple;
+import com.delgo.reward.domain.*;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.dto.CertificationDTO;
-import com.delgo.reward.service.CertificationService;
-import com.delgo.reward.service.CodeService;
-import com.delgo.reward.service.MungpleService;
+import com.delgo.reward.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +24,8 @@ import java.util.List;
 public class CertificationController extends CommController {
 
     private final CertificationService certificationService;
+    private final AchievementsService achievementsService;
+    private final ArchiveService archiveService;
     private final MungpleService mungpleService;
     private final ReverseGeoService reverseGeoService;
     private final CodeService codeService;
@@ -40,6 +38,8 @@ public class CertificationController extends CommController {
      */
     @PostMapping("/register")
     public ResponseEntity register(@Validated @RequestBody CertificationDTO certificationDTO) {
+        // TODO: URL 인코딩 사진 파일 저장 추가
+
         // 하루에 같은 카테고리 5번 이상 인증 불가능
         if (!certificationService.checkCertRegister(certificationDTO.getUserId(), certificationDTO.getCategoryCode()))
             return ErrorReturn(ApiCode.PARAM_ERROR); // TODO: 에러 코드 생성 필요
@@ -67,7 +67,27 @@ public class CertificationController extends CommController {
         Code code = codeService.getGeoCodeBySIGUGUN(userLocation.getSIGUGUN()); // GeoCode
 
         Certification certification = certificationService.registerCertification(certificationDTO.makeCertification(code));
-        return SuccessReturn(certification);
+
+        // 인증시 획득 가능한 업적 있는지 확인 ( 멍플, 일반 구분 )
+        int isMungple = (certificationDTO.getMungpleId() != 0) ? 1 : 0;
+        List<Achievements> earnAchievementsList = achievementsService.checkEarnAchievements(certificationDTO.getUserId(), isMungple);
+
+        if(earnAchievementsList.size() > 0)
+        {
+            for (Achievements achievements : earnAchievementsList) {
+                Archive archive = Archive.builder()
+                        .achievementsId(achievements.getAchievementsId())
+                        .userId(certificationDTO.getUserId())
+                        .build();
+                archiveService.registerArchive(archive);
+            }
+
+            // 해당 인증이 업적에 영향을 주었는지 체크
+            certification.setIsAchievements(1);
+            certificationService.registerCertification(certification);
+        }
+
+       return SuccessReturn(certification);
     }
 
     /*

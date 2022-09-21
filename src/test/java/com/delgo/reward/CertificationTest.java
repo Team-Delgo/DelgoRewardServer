@@ -5,6 +5,7 @@ import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.Certification;
 import com.delgo.reward.domain.Code;
 import com.delgo.reward.dto.CertificationDTO;
+import com.delgo.reward.repository.CertificationRepository;
 import com.delgo.reward.service.CertificationService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +26,8 @@ public class CertificationTest {
 
     @Autowired
     private CertificationService certificationService;
+    @Autowired
+    private CertificationRepository certificationRepository;
 
     @Test
     public void registerCertificationTest() {
@@ -92,5 +95,21 @@ public class CertificationTest {
 
         //then
         assertTrue(diffrence < 21600);
+    }
+
+    @Test
+    public void repositoryCountTest() {
+        //given
+        int userId = 0;
+        String categoryCode = "CA0002";
+
+        //when
+        int count1 = certificationRepository.countByUserIdAndCategoryCode(userId,categoryCode);
+        int count2 = certificationRepository.countByUserIdAndCategoryCodeAndMungpleId(userId, categoryCode,8);
+        System.out.println("count1: " + count1);
+        System.out.println("count2: " + count2);
+
+        //then
+        assertTrue(count1 < 21600);
     }
 }
