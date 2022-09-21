@@ -34,7 +34,7 @@ public class PhotoController extends CommController {
         if (photo.isEmpty()) // Validate - Empty Check;
             return ErrorReturn(ApiCode.PARAM_ERROR);
 
-        String profileUrl = photoService.uploadCertificationPhoto(certificationId, photo);
+        String profileUrl = photoService.uploadCertMultipart(certificationId, photo);
 
         //NCP ERROR
         if (profileUrl.split(":")[0].equals("error")) {
