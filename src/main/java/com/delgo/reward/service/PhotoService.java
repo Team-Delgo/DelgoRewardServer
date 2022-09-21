@@ -9,16 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.URLDecoder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -53,22 +48,21 @@ public class PhotoService extends CommService {
                 objectStorageService.uploadObjects("delgo-reward-certification", fileName, dir + fileName);
 
                 // 서버에 저장된 사진 삭제
-//                f.delete();
+                f.delete();
             }
 
             // Cache 무효화
             link += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1);
             return link;
         } catch (Exception e) {
-            log.info("**ERROR** : {}", e.getMessage());
             return "error:" + e.getMessage();
         }
     }
 
     // NCP에 인증 사진 Upload 후 접근 URL 반환
-    public String  uploadCertIncodingFile(int certificationId, String photoUrl) throws IOException {
+    public String  uploadCertIncodingFile(int certificationId, String photoUrl) {
 
-        String fileName = certificationId + "_pet_profile.jpg";
+        String fileName = certificationId + "_pet_profile.jpeg";
         // NCP Link
         String link = "https://kr.object.ncloudstorage.com/delgo-reward-certification/" + fileName;
 
