@@ -7,7 +7,8 @@ public enum CategoryCode {
     CA0003("CA0003","식당"), // 식당
     CA0004("CA0004","목욕"), // 목욕
     CA0005("CA0005","미용"), // 미용
-    CA0006("CA0006","병원"); // 병원
+    CA0006("CA0006","병원"), // 병원
+    CA9999("CA9999","기타"); // 기타
 
     private final String code;
     private final String value;
