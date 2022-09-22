@@ -91,8 +91,8 @@ public class CertificationController extends CommController {
         String photoUrl = photoService.uploadCertIncodingFile(certification.getCertificationId(), certificationDTO.getPhoto());
         certification.setPhotoUrl(photoUrl);
 
-        certificationService.registerCertification(certification);
-       return SuccessReturn(certification);
+        Certification returnCertification = certificationService.registerCertification(certification);
+       return SuccessReturn(returnCertification);
     }
 
     /*
