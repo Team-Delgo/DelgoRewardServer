@@ -29,6 +29,7 @@ public class CertificationController extends CommController {
     private final MungpleService mungpleService;
     private final ReverseGeoService reverseGeoService;
     private final CodeService codeService;
+    private final PhotoService photoService;
     private final GeoService geoService;
 
     /*
@@ -38,7 +39,7 @@ public class CertificationController extends CommController {
      */
     @PostMapping("/register")
     public ResponseEntity register(@Validated @RequestBody CertificationDTO certificationDTO) {
-        // TODO: URL 인코딩 사진 파일 저장 추가
+
 
         // 하루에 같은 카테고리 5번 이상 인증 불가능
         if (!certificationService.checkCertRegister(certificationDTO.getUserId(), certificationDTO.getCategoryCode()))
@@ -84,9 +85,13 @@ public class CertificationController extends CommController {
 
             // 해당 인증이 업적에 영향을 주었는지 체크
             certification.setIsAchievements(1);
-            certificationService.registerCertification(certification);
         }
 
+        // 사진 파일 저장 추가
+        String photoUrl = photoService.uploadCertIncodingFile(certification.getCertificationId(), certificationDTO.getPhoto());
+        certification.setPhotoUrl(photoUrl);
+
+        certificationService.registerCertification(certification);
        return SuccessReturn(certification);
     }
 
