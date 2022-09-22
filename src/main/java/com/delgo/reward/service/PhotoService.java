@@ -22,8 +22,8 @@ import java.util.Objects;
 public class PhotoService extends CommService {
 
     private final ObjectStorageService objectStorageService;
-//    private final String dir = "/var/www/delgo-reward-api/"; // dev
-    private final String dir = "C:\\workspace\\delgo\\DelogServer\\testimg\\"; // local
+    private final String dir = "/var/www/delgo-reward-api/"; // dev
+//    private final String dir = "C:\\workspace\\delgo\\DelogServer\\testimg\\"; // local
 
 
     // NCP에 인증 사진 Upload 후 접근 URL 반환
@@ -34,7 +34,7 @@ public class PhotoService extends CommService {
         if (!extension.equals("png") && !extension.equals("jpg") && !extension.equals("jpeg"))
             throw new NullPointerException("PHOTO EXTENSION IS WRONG");
 
-        String fileName = certificationId + "_pet_profile." + extension;
+        String fileName = certificationId + "_cert." + extension;
         // NCP Link
         String link = "https://kr.object.ncloudstorage.com/delgo-reward-certification/" + fileName;
 
@@ -62,7 +62,7 @@ public class PhotoService extends CommService {
     // NCP에 인증 사진 Upload 후 접근 URL 반환
     public String  uploadCertIncodingFile(int certificationId, String photoUrl) {
 
-        String fileName = certificationId + "_pet_profile.jpeg";
+        String fileName = certificationId + "_cert.jpeg";
         // NCP Link
         String link = "https://kr.object.ncloudstorage.com/delgo-reward-certification/" + fileName;
 

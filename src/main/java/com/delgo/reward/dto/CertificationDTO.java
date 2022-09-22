@@ -20,6 +20,7 @@ public class CertificationDTO {
     @NotNull private Integer mungpleId; // mungpleId == 0이면 mungple 장소 아님.
     @NotNull private String placeName; // 장소 명
     @NotNull private String description; // 내용
+    @NotNull private String photo; // 인코딩 된 사진 파일
 
     @NotNull private String latitude; // 위도
     @NotNull private String longitude; // 경도
