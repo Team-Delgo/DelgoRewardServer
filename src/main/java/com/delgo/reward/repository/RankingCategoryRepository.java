@@ -1,9 +1,8 @@
 package com.delgo.reward.repository;
 
-import com.delgo.reward.domain.Ranking;
-import com.delgo.reward.domain.user.User;
+import com.delgo.reward.domain.ranking.RankingCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface RankingRepository extends JpaRepository<Ranking, Integer> {
+public interface RankingCategoryRepository extends JpaRepository<RankingCategory, Integer> {
     int findByUserIdAndCategoryCode(int userId, String categoryCode);
 }

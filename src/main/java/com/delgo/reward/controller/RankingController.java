@@ -1,7 +1,6 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.domain.Ranking;
 import com.delgo.reward.dto.RankingByPointDTO;
 import com.delgo.reward.service.RankingService;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +22,8 @@ public class RankingController extends CommController {
 
     @GetMapping("/user")
     public ResponseEntity<?> userByPointRanking(@RequestParam @NotNull int userId){
-        RankingByPointDTO rankingByPointDTO = rankingService.getByPointRanking(userId);
-        return SuccessReturn(rankingByPointDTO);
+        int userRanking = rankingService.getByPointRanking(userId);
+        return SuccessReturn(userRanking);
     }
 
     @GetMapping("/point")
