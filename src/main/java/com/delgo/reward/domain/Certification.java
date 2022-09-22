@@ -1,6 +1,7 @@
 package com.delgo.reward.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +12,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -39,6 +39,7 @@ public class Certification {
     private Integer isPhotoChecked; // 운영진 체크 여부
     private Integer isAchievements; // 업적 영향 여부 ( 해당 인증이 등록되었을 때 가지게 된 업적이 있는가?)
 
+    @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
     @CreationTimestamp
     private LocalDateTime registDt; // 등록 날짜
 }
