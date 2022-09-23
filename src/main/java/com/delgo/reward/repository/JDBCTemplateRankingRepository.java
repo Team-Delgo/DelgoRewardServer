@@ -38,4 +38,9 @@ public class JDBCTemplateRankingRepository{
             return rankingCategory;
         };
     }
+
+    // Certification Like + 1
+    public void plusLikeCount(int certificationId) {
+        jdbcTemplate.update("update certification set like_count = like_count + 1 where certification_id = ?", certificationId);
+    }
 }
