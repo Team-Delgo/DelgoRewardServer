@@ -1,4 +1,4 @@
-package com.delgo.reward.domain;
+package com.delgo.reward.domain.ranking;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,10 +13,9 @@ import javax.persistence.Id;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Ranking {
+public class RankingCategory {
     @Id
     private int userId;
-
     private String geoCode;
     private String categoryCode;
     private int ranking;
