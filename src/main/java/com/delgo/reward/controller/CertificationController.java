@@ -40,16 +40,15 @@ public class CertificationController extends CommController {
     @PostMapping("/register")
     public ResponseEntity register(@Validated @RequestBody CertificationDTO certificationDTO) {
 
-
         // 하루에 같은 카테고리 5번 이상 인증 불가능
         if (!certificationService.checkCertRegister(certificationDTO.getUserId(), certificationDTO.getCategoryCode()))
-            return ErrorReturn(ApiCode.PARAM_ERROR); // TODO: 에러 코드 생성 필요
+            return ErrorReturn(ApiCode.CERTIFICATION_CATEGPRY_COUNT_ERROR);
 
         // userId != 0이면 멍플 인증이라 판단
         if (certificationDTO.getMungpleId() != 0) {
             // 6시간 이내 같은 장소 인증 불가능 (멍플만)
             if (!certificationService.checkMungpleCertRegister(certificationDTO.getUserId(), certificationDTO.getMungpleId()))
-                return ErrorReturn(ApiCode.PARAM_ERROR); // TODO: 에러 코드 생성 필요
+                return ErrorReturn(ApiCode.CERTIFICATION_TIME_ERROR);
 
             Mungple mungple = mungpleService.getMungpleByMungpleId(certificationDTO.getMungpleId());
 
@@ -101,7 +100,7 @@ public class CertificationController extends CommController {
      * - CA0000 = 전체 조회
      * Response Data : 카테고리별 인증 리스트 반환
      */
-    @GetMapping("/getData")
+    @GetMapping("/data")
     public ResponseEntity getData(@RequestParam Integer userId, @RequestParam String categoryCode) {
         // Validate - Blank Check; [ String 만 해주면 됨 ]
         if (categoryCode.isBlank())
@@ -112,5 +111,18 @@ public class CertificationController extends CommController {
                 : certificationService.getCertificationByUserId(userId);
 
         return SuccessReturn(certificationList);
+    }
+
+    /*
+     * 인증 게시글의 좋아요 + 1
+     * Request Data : certificationId
+     * - plusLikeCount: JPA 안 쓰고 JDBC_TEMPLATE 사용한 이유
+     * : 업데이트 속도 때문에, JPA로 업데이트 할 경우 너무 느려서 놓치는 요청이 발생.
+     * Response Data : X
+     */
+    @PostMapping("/like")
+    public ResponseEntity setLike(@RequestParam Integer certificationId) {
+        certificationService.plusLikeCount(certificationId);
+        return SuccessReturn();
     }
 }

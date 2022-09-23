@@ -32,7 +32,9 @@ public class API {
         public static final int MUNGPLE_DUPLICATE_ERROR = 311;
 
         // Certification ERROR
-        public static final int TOO_FAR_DISTANCE = 311;
+        public static final int TOO_FAR_DISTANCE = 312;
+        public static final int CERTIFICATION_TIME_ERROR = 313;
+        public static final int CERTIFICATION_CATEGPRY_COUNT_ERROR = 314;
 
 
         public static final int UNKNOWN_ERROR = 1000;
