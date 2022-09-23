@@ -3,6 +3,7 @@ package com.delgo.reward.service;
 
 import com.delgo.reward.domain.Certification;
 import com.delgo.reward.repository.CertificationRepository;
+import com.delgo.reward.repository.JDBCTemplateRankingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 public class CertificationService {
 
     private final CertificationRepository certificationRepository;
+    private final JDBCTemplateRankingRepository jdbcTemplateRankingRepository;
 
     private final LocalDateTime start = LocalDate.now().atTime(0, 0, 0);
     private final LocalDateTime end = LocalDate.now().atTime(0, 0, 0).plusDays(1);
@@ -50,6 +52,11 @@ public class CertificationService {
     // Certification 등록
     public Certification registerCertification(Certification certification) {
         return certificationRepository.save(certification);
+    }
+
+    // Like Count + 1
+    public void plusLikeCount(int certificationId) {
+        jdbcTemplateRankingRepository.plusLikeCount(certificationId);
     }
 
     // userId & categoryCode 만족하는 인증 개수
