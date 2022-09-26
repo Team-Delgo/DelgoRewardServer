@@ -4,6 +4,7 @@ package com.delgo.reward.repository;
 import com.delgo.reward.domain.Certification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,5 +24,10 @@ public interface CertificationRepository extends JpaRepository<Certification, In
     int countByUserIdAndCategoryCode(int userId, String categoryCode);
 
     int countByUserIdAndCategoryCodeAndMungpleId(int userId, String categoryCode, int mungpleId);
+
+    @Query("select certification_id from certification where user_id not in (select ban_user_id from ban_list where user_id = userId)")
+    List<Integer> findByUserIdWithoutBanList(int userId);
+
+
 }
 
