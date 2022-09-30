@@ -32,7 +32,13 @@ public class AchievementsService {
         return achievementsRepository.findAll();
     }
 
-    // 전체 Achievements 리스트 조회
+    // Achievements ID 로 조회
+    public Achievements getAchievementsById(int achievementsId) {
+        return achievementsRepository.findByAchievementsId(achievementsId)
+                .orElseThrow(() -> new NullPointerException("NOT FOUND Achievements"));
+    }
+
+    // Achievements 등록
     public Achievements registerAchievements(Achievements achievements) {
         return achievementsRepository.save(achievements);
     }

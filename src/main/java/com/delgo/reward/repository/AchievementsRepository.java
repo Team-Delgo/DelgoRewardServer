@@ -12,6 +12,6 @@ public interface AchievementsRepository extends JpaRepository<Achievements, Inte
 
     List<Achievements> findByIsMungple(int isMungple);
 
-    Optional<Achievements> findByAchievementsId(int certificationId);
+    Optional<Achievements> findByAchievementsId(int achievementsId);
 }
 
