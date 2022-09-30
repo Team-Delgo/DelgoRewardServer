@@ -15,7 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -72,8 +74,7 @@ public class CertificationController extends CommController {
         int isMungple = (certificationDTO.getMungpleId() != 0) ? 1 : 0;
         List<Achievements> earnAchievementsList = achievementsService.checkEarnAchievements(certificationDTO.getUserId(), isMungple);
 
-        if(earnAchievementsList.size() > 0)
-        {
+        if (earnAchievementsList.size() > 0) {
             for (Achievements achievements : earnAchievementsList) {
                 Archive archive = Archive.builder()
                         .achievementsId(achievements.getAchievementsId())
@@ -91,7 +92,7 @@ public class CertificationController extends CommController {
         certification.setPhotoUrl(photoUrl);
 
         Certification returnCertification = certificationService.registerCertification(certification);
-       return SuccessReturn(returnCertification);
+        return SuccessReturn(returnCertification);
     }
 
     /*
@@ -124,5 +125,22 @@ public class CertificationController extends CommController {
     public ResponseEntity setLike(@RequestParam Integer certificationId) {
         certificationService.plusLikeCount(certificationId);
         return SuccessReturn();
+    }
+
+    /*
+     * 카테고리 별 인증 개수 반환 ( 유저 )
+     * Request Data : userId
+     * Response Data : 카테고리별 인증 개수 반환
+     */
+    @GetMapping("/data-count")
+    public ResponseEntity getCountData(@RequestParam Integer userId) {
+        List<Certification> certificationList = certificationService.getCertificationByUserId(userId);
+        Map<String, Integer> returnMap = new HashMap<>();
+        for (CategoryCode categoryCode : CategoryCode.values()) {
+            int count = (int) certificationList.stream().filter(c -> c.getCategoryCode().equals(categoryCode.getCode())).count();
+            returnMap.put(categoryCode.getValue(), count);
+        }
+
+        return SuccessReturn(returnMap);
     }
 }
