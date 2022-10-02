@@ -1,5 +1,7 @@
 package com.delgo.reward.comm.code;
 
+import java.util.List;
+
 public enum CategoryCode {
     TOTAL("CA0000","전체"),
     CA0001("CA0001","산책"), // 산책
