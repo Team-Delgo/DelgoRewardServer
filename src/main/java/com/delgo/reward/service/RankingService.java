@@ -2,10 +2,7 @@ package com.delgo.reward.service;
 
 import com.delgo.reward.domain.ranking.RankingCategory;
 import com.delgo.reward.domain.ranking.RankingPoint;
-import com.delgo.reward.repository.CertificationRepository;
-import com.delgo.reward.repository.JDBCTemplateRankingRepository;
-import com.delgo.reward.repository.RankingCategoryRepository;
-import com.delgo.reward.repository.RankingPointRepository;
+import com.delgo.reward.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +20,13 @@ public class RankingService {
     private final CertificationRepository certificationRepository;
     private final RankingCategoryRepository rankingCategoryRepository;
     private final RankingPointRepository rankingPointRepository;
+    private final UserRepository userRepository;
+
+    public void initWeeklyPoint(){
+        rankingCategoryRepository.deleteAll();
+        rankingPointRepository.deleteAll();
+        userRepository.initAllWeeklyPoint();
+    }
 
     public int getByPointRanking(int userId){
         int userRanking = rankingPointRepository.findByUserId(userId);
