@@ -7,6 +7,7 @@ import com.delgo.reward.comm.ncp.GeoService;
 import com.delgo.reward.comm.ncp.ReverseGeoService;
 import com.delgo.reward.domain.*;
 import com.delgo.reward.domain.common.Location;
+import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.CertificationDTO;
 import com.delgo.reward.service.*;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class CertificationController extends CommController {
     private final CodeService codeService;
     private final PhotoService photoService;
     private final GeoService geoService;
+    private final UserService userService;
 
     /*
      * 인증 등록
@@ -92,6 +94,15 @@ public class CertificationController extends CommController {
         certification.setPhotoUrl(photoUrl);
 
         Certification returnCertification = certificationService.registerCertification(certification);
+
+        // Point 부여
+        User user = userService.getUserByUserId(certificationDTO.getUserId());
+        CategoryCode category = CategoryCode.valueOf(certificationDTO.getCategoryCode());
+        user.setAccumulatedPoint(user.getAccumulatedPoint() + category.getPoint());
+        user.setWeeklyPoint(user.getWeeklyPoint() + category.getPoint());
+
+        userService.updateUserData(user);
+
         return SuccessReturn(returnCertification);
     }
 
