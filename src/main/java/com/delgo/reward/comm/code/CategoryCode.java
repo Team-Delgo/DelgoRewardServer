@@ -1,23 +1,23 @@
 package com.delgo.reward.comm.code;
 
-import java.util.List;
-
 public enum CategoryCode {
-    TOTAL("CA0000","전체"),
-    CA0001("CA0001","산책"), // 산책
-    CA0002("CA0002","카페"), // 카페
-    CA0003("CA0003","식당"), // 식당
-    CA0004("CA0004","목욕"), // 목욕
-    CA0005("CA0005","미용"), // 미용
-    CA0006("CA0006","병원"), // 병원
-    CA9999("CA9999","기타"); // 기타
+    TOTAL("CA0000","전체",0),
+    CA0001("CA0001","산책",10), // 산책
+    CA0002("CA0002","카페",20), // 카페
+    CA0003("CA0003","식당",20), // 식당
+    CA0004("CA0004","목욕",20), // 목욕
+    CA0005("CA0005","미용",20), // 미용
+    CA0006("CA0006","병원",30), // 병원
+    CA9999("CA9999","기타",5); // 기타
 
     private final String code;
     private final String value;
+    private final Integer point;
 
-    CategoryCode(String code, String value) {
+    CategoryCode(String code, String value, Integer point) {
         this.code = code;
         this.value = value;
+        this.point = point;
     }
 
     public String getCode(){
@@ -26,5 +26,9 @@ public enum CategoryCode {
 
     public String getValue(){
         return this.value;
+    }
+
+    public Integer getPoint(){
+        return this.point;
     }
 }

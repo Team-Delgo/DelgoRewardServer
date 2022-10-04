@@ -75,7 +75,7 @@ public class CertificationService {
         List<Certification> sortedList = list.stream().sorted(Comparator.comparing(Certification::getRegistDt).reversed()).collect(Collectors.toList());
 
         if(list.size() == 0)
-            return false;
+            return true;
 
         // 최근 등록시간이랑 now 비교
         LocalDateTime recentRegistDt = sortedList.get(0).getRegistDt();
