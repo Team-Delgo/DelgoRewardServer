@@ -22,7 +22,9 @@ public class SignUpDTO {
     @NotBlank
     private String phoneNo;
     @NotBlank
-    private String address;
+    private String geoCode;
+    @NotBlank
+    private String p_geoCode;
     @NotBlank
     private String petName;
     @NotNull
