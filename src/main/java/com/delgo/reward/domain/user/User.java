@@ -38,8 +38,11 @@ public class User {
     @Column(nullable = false, name = "weekly_point")
     private int weeklyPoint;
 
-    @Column(nullable = false, name = "address")
-    private String address;
+    @Column(nullable = false, name = "geo_code")
+    private String geoCode;
+
+    @Column(nullable = false, name = "p_geo_code")
+    private String p_geoCode;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = true, name = "social")
