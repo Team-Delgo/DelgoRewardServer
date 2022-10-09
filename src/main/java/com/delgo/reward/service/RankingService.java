@@ -30,7 +30,6 @@ public class RankingService {
 
     public int getByPointRanking(int userId){
         int userRanking = rankingPointRepository.findByUserId(userId);
-
         return userRanking;
     }
 
@@ -39,10 +38,20 @@ public class RankingService {
         return userRanking;
     }
 
+    public List<RankingPoint> getTopPointRankingByGeoCode(String geoCode){
+        List<RankingPoint> topPointRankingList =jdbcTemplateRankingRepository.findTopPointRankingByGeoCode(geoCode);
+        return topPointRankingList;
+    }
+
+    public List<RankingPoint> getPointRankingByGeocode(String geoCode){
+        List<RankingPoint> pointRankingList = jdbcTemplateRankingRepository.findPointRankingByGeoCode(geoCode);
+        return pointRankingList;
+    }
+
     public void rankingByPoint(){
         List<RankingPoint> rankingPointList = jdbcTemplateRankingRepository.findRankingByPoint();
         for(RankingPoint rankingPoint : rankingPointList){
-            RankingPoint newRankingPoint = RankingPoint.builder().userId(rankingPoint.getUserId()).ranking(rankingPoint.getRanking()).geoCode(rankingPoint.getGeoCode()).build();
+            RankingPoint newRankingPoint = RankingPoint.builder().userId(rankingPoint.getUserId()).ranking(rankingPoint.getRanking()).weeklyPoint(rankingPoint.getWeeklyPoint()).geoCode(rankingPoint.getGeoCode()).build();
             rankingPointRepository.save(newRankingPoint);
         }
     }
