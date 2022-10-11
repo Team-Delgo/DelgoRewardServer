@@ -16,7 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -60,6 +62,9 @@ public class MungpleController extends CommController {
         List<Mungple> mungpleList = (!categoryCode.equals(CategoryCode.TOTAL.getCode()))
                 ? mungpleService.getMungpleByCategoryCode(categoryCode)
                 : mungpleService.getMungpleAll();
+
+        // 가나다 순 정렬
+        mungpleList = mungpleList.stream().sorted(Comparator.comparing(Mungple::getPlaceName)).collect(Collectors.toList());
 
         return SuccessReturn(mungpleList);
     }
