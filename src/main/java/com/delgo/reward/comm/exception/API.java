@@ -36,6 +36,12 @@ public class API {
         public static final int CERTIFICATION_TIME_ERROR = 313;
         public static final int CERTIFICATION_CATEGPRY_COUNT_ERROR = 314;
 
+        //PHONE NO ERROR
+        public static final int PHONE_NO_NOT_EXIST = 370;
+        public static final int PHONE_NO_DUPLICATE_ERROR = 371;
+
+        //SMS AUTH ERROR
+        public static final int AUTH_DO_NOT_MATCHING = 317;
 
         public static final int UNKNOWN_ERROR = 1000;
         public static final int SERVER_TIMEOUT_ERROR = 1001;
