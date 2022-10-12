@@ -27,7 +27,7 @@ public class JDBCTemplateRankingRepository{
     }
 
     public List<RankingPoint> findRankingByPoint() {
-        return jdbcTemplate.query("select user_id, geo_code, weekly_point, RANK() over (partition by geo_code order by weekly_point desc) ranking from user;", rankingByPointRowMapper());
+        return jdbcTemplate.query("select user_id, geo_code, weekly_point, RANK() over (partition by geo_code order by weekly_point desc) ranking from point;", rankingByPointRowMapper());
     }
 
     public List<RankingCategory> findRankingByCategory(String categoryCode) {
