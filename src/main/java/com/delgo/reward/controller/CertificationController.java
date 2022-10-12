@@ -35,6 +35,7 @@ public class CertificationController extends CommController {
     private final PhotoService photoService;
     private final GeoService geoService;
     private final UserService userService;
+    private final PointService pointService;
 
     /*
      * 인증 등록
@@ -98,8 +99,8 @@ public class CertificationController extends CommController {
         // Point 부여
         User user = userService.getUserByUserId(certificationDTO.getUserId());
         CategoryCode category = CategoryCode.valueOf(certificationDTO.getCategoryCode());
-        user.setAccumulatedPoint(user.getAccumulatedPoint() + category.getPoint());
-        user.setWeeklyPoint(user.getWeeklyPoint() + category.getPoint());
+        pointService.updateAccumulatedPoint(user.getUserId(), category.getPoint());
+        pointService.updateWeeklyPoint(user.getUserId(), category.getPoint());
 
         userService.updateUserData(user);
 
