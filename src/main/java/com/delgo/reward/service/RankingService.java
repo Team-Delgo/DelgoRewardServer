@@ -28,9 +28,9 @@ public class RankingService {
         userRepository.initAllWeeklyPoint();
     }
 
-    public int getByPointRanking(int userId){
-        int userRanking = rankingPointRepository.findByUserId(userId);
-        return userRanking;
+    public RankingPoint getByPointRanking(int userId){
+        return rankingPointRepository.findByUserId(userId)
+                .orElseThrow(() -> new NullPointerException("NOT FOUND ranking"));
     }
 
     public int getByCategoryRanking(int userId, String categoryCode){
