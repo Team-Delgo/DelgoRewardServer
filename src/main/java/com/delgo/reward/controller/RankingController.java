@@ -24,20 +24,8 @@ public class RankingController extends CommController {
 
     @GetMapping("/user")
     public ResponseEntity<?> userByPointRanking(@RequestParam @NotNull int userId){
-        int userRanking = rankingService.getByPointRanking(userId);
+        RankingPoint userRanking = rankingService.getByPointRanking(userId);
         return SuccessReturn(userRanking);
-    }
-
-    @GetMapping("/point")
-    public ResponseEntity<?> rankingByPoint(){
-        rankingService.rankingByPoint();
-        return SuccessReturn();
-    }
-
-    @GetMapping("/category")
-    public ResponseEntity<?> rankingByCategory(@RequestParam @NotNull String categoryCode){
-        rankingService.rankingByCategoryCode(categoryCode);
-        return SuccessReturn();
     }
 
     @GetMapping("/point/top")
