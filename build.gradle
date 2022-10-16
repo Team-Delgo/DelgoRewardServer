@@ -40,6 +40,10 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-quartz'
 
+    implementation group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: '3.10'
+    implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+    implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.50'
+
     // jwt
     implementation group: 'com.auth0', name: 'java-jwt', version: '3.19.0'
     // NCP Object Storage Control SDK
