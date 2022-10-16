@@ -8,6 +8,7 @@ import com.delgo.reward.comm.security.jwt.Refresh_JwtProperties;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.domain.user.UserSocial;
+import com.delgo.reward.dto.OAuthSignUpDTO;
 import com.delgo.reward.dto.SignUpDTO;
 import com.delgo.reward.dto.UserPetDTO;
 import com.delgo.reward.service.PetService;
@@ -25,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
 public class UserController extends CommController {
     private final PasswordEncoder passwordEncoder;
 
@@ -119,33 +119,41 @@ public class UserController extends CommController {
             return ErrorReturn(ApiCode.UNKNOWN_ERROR);
     }
 
-//    // 소셜 회원가입
-//    @PostMapping("/oAuthSignup")
-//    public ResponseEntity<?> registerUserByOAuth(@Validated @RequestBody OAuthSignUpDTO signUpDTO, HttpServletResponse response) {
-//        User user = User.builder()
-//                .name(signUpDTO.getUserName())
-//                .phoneNo(signUpDTO.getPhoneNo().replaceAll("[^0-9]", ""))
-//                .email("")
-//                .password("")
-//                .userSocial(signUpDTO.getUserSocial())
-//                .build();
-//        Pet pet = Pet.builder()
-//                .name(signUpDTO.getPetName())
-//                .size(signUpDTO.getPetSize())
-//                .birthday(signUpDTO.getBirthday())
-//                .build();
-//
-//        User userByDB = userService.signup(user, pet);
-//        Pet petByDB = petService.getPetByUserId(user.getUserId());
-//
-//        String Access_jwtToken = tokenService.createToken("Access", user.getEmail()); // Access Token 생성
-//        String Refresh_jwtToken = tokenService.createToken("Refresh", user.getEmail()); // Refresh Token 생성
-//
-//        response.addHeader(Access_JwtProperties.HEADER_STRING, Access_JwtProperties.TOKEN_PREFIX + Access_jwtToken);
-//        response.addHeader(Refresh_JwtProperties.HEADER_STRING, Refresh_JwtProperties.TOKEN_PREFIX + Refresh_jwtToken);
-//
-//        return SuccessReturn(new UserPetDTO(userByDB, petByDB));
-//    }
+    // 소셜 회원가입
+    @PostMapping("/oauth-signup")
+    public ResponseEntity<?> registerUserByOAuth(@Validated @RequestBody OAuthSignUpDTO signUpDTO, HttpServletResponse response) {
+        User user = User.builder()
+                .name(signUpDTO.getUserName())
+                .phoneNo(signUpDTO.getPhoneNo().replaceAll("[^0-9]", ""))
+                .email(signUpDTO.getEmail())
+                .password("")
+                .userSocial(signUpDTO.getUserSocial())
+                .build();
+        Pet pet = Pet.builder()
+                .name(signUpDTO.getPetName())
+                .size(signUpDTO.getPetSize())
+                .birthday(signUpDTO.getBirthday())
+                .build();
+
+        // Apple 회원가입 시 appleUniqueNo 넣어주어야 함.
+        if (signUpDTO.getUserSocial() == UserSocial.A) {
+            if (signUpDTO.getAppleUniqueNo() == null || signUpDTO.getAppleUniqueNo().isBlank())
+                return ErrorReturn(ApiCode.PARAM_ERROR);
+            else
+                user.setAppleUniqueNo(signUpDTO.getAppleUniqueNo());
+        }
+
+        User userByDB = userService.signup(user, pet);
+        Pet petByDB = petService.getPetByUserId(user.getUserId());
+
+        String Access_jwtToken = tokenService.createToken("Access", user.getEmail()); // Access Token 생성
+        String Refresh_jwtToken = tokenService.createToken("Refresh", user.getEmail()); // Refresh Token 생성
+
+        response.addHeader(Access_JwtProperties.HEADER_STRING, Access_JwtProperties.TOKEN_PREFIX + Access_jwtToken);
+        response.addHeader(Refresh_JwtProperties.HEADER_STRING, Refresh_JwtProperties.TOKEN_PREFIX + Refresh_jwtToken);
+
+        return SuccessReturn(new UserPetDTO(userByDB, petByDB));
+    }
 
     // 회원가입
     @PostMapping("/signup")
