@@ -42,6 +42,8 @@ public class User {
     @Column(nullable = true, name = "social")
     private UserSocial userSocial;
 
+    private String appleUniqueNo; // Apple 연동시에만 필요.
+
     @CreationTimestamp
     @Column(name = "regist_dt")
     private LocalDateTime registDt;

@@ -74,6 +74,12 @@ public class UserService {
         return findUser.isPresent();
     }
 
+    // 애플 연동 유무 확인
+    public boolean isAppleUniqueNoExisting(String appleUniqueNo) {
+        Optional<User> findUser = userRepository.findByAppleUniqueNo(appleUniqueNo);
+        return findUser.isPresent();
+    }
+
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
@@ -86,6 +92,11 @@ public class UserService {
 
     public User getUserByPhoneNo(String phoneNo) {
         return userRepository.findByPhoneNo(phoneNo)
+                .orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
+    }
+
+    public User getUserByAppleUniqueNo(String appleUniqueNo) {
+        return userRepository.findByAppleUniqueNo(appleUniqueNo)
                 .orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
     }
 

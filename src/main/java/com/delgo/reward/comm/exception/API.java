@@ -43,6 +43,11 @@ public class API {
         //SMS AUTH ERROR
         public static final int AUTH_DO_NOT_MATCHING = 317;
 
+        //OAuth ERROR
+        public static final int OAUTH_PHONE_NO_NOT_EXIST = 380;
+        public static final int ANOTHER_OAUTH_CONNECT = 381;
+        public static final int APPLE_UNIQUE_NO_NOT_FOUND = 383;
+
         public static final int UNKNOWN_ERROR = 1000;
         public static final int SERVER_TIMEOUT_ERROR = 1001;
         public static final int SERVER_ERROR = 1003;
