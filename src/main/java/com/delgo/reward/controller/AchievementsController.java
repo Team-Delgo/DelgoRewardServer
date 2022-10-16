@@ -38,6 +38,26 @@ public class AchievementsController extends CommController {
         List<Achievements> achievementsList = new ArrayList<>();
         for(Archive archive : archiveList){
             Achievements achievements = achievementsService.getAchievementsById(archive.getAchievementsId());
+            achievements.setIsMain(archive.getIsMain()); // 대표 업적 설정
+            achievementsList.add(achievements);
+        }
+
+        return SuccessReturn(achievementsList);
+    }
+
+    /*
+     * TODO: 대표 업적 설정
+     * Request Data : userId, archive
+     * Response Data : 유저획득 업적 리스트
+     */
+    @GetMapping("/set-main")
+    public ResponseEntity setMainArchive(@RequestParam Integer userId) {
+        List<Archive> archiveList = archiveService.getArchiveByUserId(userId);
+
+        List<Achievements> achievementsList = new ArrayList<>();
+        for(Archive archive : archiveList){
+            Achievements achievements = achievementsService.getAchievementsById(archive.getAchievementsId());
+            achievements.setIsMain(archive.getIsMain()); // 대표 업적 설정
             achievementsList.add(achievements);
         }
 
