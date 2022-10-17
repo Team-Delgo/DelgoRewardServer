@@ -1,19 +1,15 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.domain.Achievements;
 import com.delgo.reward.domain.Archive;
+import com.delgo.reward.dto.MainAchievementsDTO;
 import com.delgo.reward.service.AchievementsService;
 import com.delgo.reward.service.ArchiveService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -33,14 +29,28 @@ public class AchievementsController extends CommController {
      */
     @GetMapping("/user-data")
     public ResponseEntity getUserData(@RequestParam Integer userId) {
-        List<Archive> archiveList = archiveService.getArchiveByUserId(userId);
+        List<Archive> archives = archiveService.getArchiveByUserId(userId);
+        for(Archive archive : archives)
+            archive.setAchievements(achievementsService.getAchievementsById(archive.getAchievementsId()));
 
-        List<Achievements> achievementsList = new ArrayList<>();
-        for(Archive archive : archiveList){
-            Achievements achievements = achievementsService.getAchievementsById(archive.getAchievementsId());
-            achievementsList.add(achievements);
-        }
+        return SuccessReturn(archives);
+    }
 
-        return SuccessReturn(achievementsList);
+    /*
+     * 대표 업적 설정
+     * Request Data : userId, archive
+     * Response Data : 유저획득 업적 리스트
+     */
+    @PostMapping("/set-main")
+    public ResponseEntity setMainAchievements(@RequestBody MainAchievementsDTO mainAchievementsDTO) {
+        // 대표 업적 초기화
+        archiveService.resetMainAchievements(mainAchievementsDTO.getUserId());
+
+        // 사용자 지정 업적으로 대표업적 설정
+        List<Archive> newMainAchievements = archiveService.setMainArchive(mainAchievementsDTO);
+        for(Archive archive : newMainAchievements)
+            archive.setAchievements(achievementsService.getAchievementsById(archive.getAchievementsId()));
+
+        return SuccessReturn(newMainAchievements);
     }
 }

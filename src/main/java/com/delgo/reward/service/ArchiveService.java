@@ -1,12 +1,14 @@
 package com.delgo.reward.service;
 
 import com.delgo.reward.domain.Archive;
+import com.delgo.reward.dto.MainAchievementsDTO;
 import com.delgo.reward.repository.ArchiveRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -22,8 +24,29 @@ public class ArchiveService {
         return archiveRepository.save(archive);
     }
 
+    // Archive 수정
+    public List<Archive> setMainArchive(MainAchievementsDTO dto) {
+        List<Archive> archives = new ArrayList<>();
+        archives.add(archiveRepository.findByUserIdAndAchievementsId(dto.getUserId(), dto.getFirst()).orElseThrow(() -> new NullPointerException("NOT FOUND ARCHIVE")));
+        archives.add(archiveRepository.findByUserIdAndAchievementsId(dto.getUserId(), dto.getSecond()).orElseThrow(() -> new NullPointerException("NOT FOUND ARCHIVE")));
+        archives.add(archiveRepository.findByUserIdAndAchievementsId(dto.getUserId(), dto.getThird()).orElseThrow(() -> new NullPointerException("NOT FOUND ARCHIVE")));
+        for (int i = 0; i < 3; i++)
+            archives.get(i).setIsMain(i + 1);
+        return archiveRepository.saveAll(archives);
+    }
+
     // userId로 Archive 조회
     public List<Archive> getArchiveByUserId(int userId) {
         return archiveRepository.findByUserId(userId);
+    }
+
+    // 해당 User의 대표 Achievements 초기화
+    public void resetMainAchievements(int userId) {
+        List<Archive> mainList = archiveRepository.findByUserIdAndIsMainNot(userId, 0);
+
+        for (Archive archive : mainList) {
+            archive.setIsMain(0);
+            archiveRepository.save(archive);
+        }
     }
 }
