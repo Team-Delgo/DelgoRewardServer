@@ -23,21 +23,18 @@ public class LogInterceptor implements HandlerInterceptor {
         ResponseDTO responseDTO = getResponseBody(response);
         if (responseDTO.getCode() == 200)
             if (request.getMethod().equals(POST)) {
-                log.info("{} || Result : code = {} msg = {} \n Parameter : {} ", request.getRequestURI(),
-                        responseDTO.getCode(), responseDTO.getCodeMsg(), request.getAttribute("requestBody"));
+                log.info("{} || Result : code = {} msg = {} \n Parameter : {} ", request.getRequestURI(), responseDTO.getCode(), responseDTO.getCodeMsg(), request.getAttribute("requestBody"));
             } else
                 APILog.info(request, responseDTO.getCode(), responseDTO.getCodeMsg());
     }
 
     // Error Return은 afterCompletion Log 처리
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
-                                Exception ex) throws Exception {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         ResponseDTO responseDTO = getResponseBody(response);
         // Exception이 발생하면 postHandle을 타지 않는다.
         if (responseDTO.getCode() != 200)
             if (request.getMethod().equals(POST)) {
-                log.info("{} || Result : code = {} msg = {} \n Parameter : {} ", request.getRequestURI(),
-                        responseDTO.getCode(), responseDTO.getCodeMsg(), request.getAttribute("requestBody"));
+                log.info("{} || Result : code = {} msg = {} \n Parameter : {} ", request.getRequestURI(), responseDTO.getCode(), responseDTO.getCodeMsg(), request.getAttribute("requestBody"));
             } else
                 ERRLog.info(request, responseDTO.getCode(), responseDTO.getCodeMsg());
     }
