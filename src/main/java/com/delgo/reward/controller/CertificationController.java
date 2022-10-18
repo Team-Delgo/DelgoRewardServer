@@ -113,8 +113,8 @@ public class CertificationController extends CommController {
      * - CA0000 = 전체 조회
      * Response Data : 카테고리별 인증 리스트 반환
      */
-    @GetMapping("/data")
-    public ResponseEntity getData(@RequestParam Integer userId, @RequestParam String categoryCode) {
+    @GetMapping("/category-data")
+    public ResponseEntity getCategoryData(@RequestParam Integer userId, @RequestParam String categoryCode) {
         // Validate - Blank Check; [ String 만 해주면 됨 ]
         if (categoryCode.isBlank())
             return ErrorReturn(ApiCode.PARAM_ERROR);
@@ -144,7 +144,7 @@ public class CertificationController extends CommController {
      * Request Data : userId
      * Response Data : 카테고리별 인증 개수 반환
      */
-    @GetMapping("/data-count")
+    @GetMapping("/category-data-count")
     public ResponseEntity getCountData(@RequestParam Integer userId) {
         List<Certification> certificationList = certificationService.getCertificationByUserId(userId);
         Map<String, Integer> returnMap = new HashMap<>();
@@ -154,5 +154,15 @@ public class CertificationController extends CommController {
         }
 
         return SuccessReturn(returnMap);
+    }
+
+    /*
+     * 가장 최근 등록한 인증 반환 [ Main ]
+     * Request Data :
+     * Response Data : 최근 등록 인증 2개 반환
+     */
+    @GetMapping("/data/main")
+    public ResponseEntity getMainData() {
+        return SuccessReturn(certificationService.getRecentCertificationList());
     }
 }
