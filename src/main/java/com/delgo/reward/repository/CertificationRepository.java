@@ -28,6 +28,8 @@ public interface CertificationRepository extends JpaRepository<Certification, In
     @Query(value = "select certification_id from certification where user_id not in (select ban_user_id from ban_list where user_id = userId)", nativeQuery = true)
     List<Integer> findByUserIdWithoutBanList(int userId);
 
+    // 가장 최근 등록한 2개의 Certification 조회
+    List<Certification> findTop2ByOrderByRegistDtDesc();
 
 }
 
