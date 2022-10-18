@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -111,5 +112,20 @@ public class CertificationTest {
 
         //then
         assertTrue(count1 < 21600);
+    }
+
+    @Test
+    public void getRecentCertificationListTest() {
+        //given
+
+        //when
+        List<Certification> cList = certificationService.getRecentCertificationList();
+
+        for(Certification c : cList){
+            System.out.println(" c : " + c);
+
+        }
+        //then
+        assertTrue(true);
     }
 }
