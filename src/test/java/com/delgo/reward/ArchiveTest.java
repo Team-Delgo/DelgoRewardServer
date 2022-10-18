@@ -2,6 +2,7 @@ package com.delgo.reward;
 
 
 import com.delgo.reward.domain.Archive;
+import com.delgo.reward.dto.MainAchievementsDTO;
 import com.delgo.reward.service.ArchiveService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,5 +50,37 @@ public class ArchiveTest {
 
         //then
         assertNotNull(list);
+    }
+
+    @Test
+    public void resetMainAchievementsTest() {
+        //given
+        int userId = 1;
+
+        //when
+        archiveService.resetMainAchievements(userId);
+
+        //then
+        assertNotNull(1);
+    }
+
+    @Test
+    public void setMainAchievementsTest() {
+        //given
+        MainAchievementsDTO dto = new MainAchievementsDTO();
+        dto.setUserId(1);
+        dto.setFirst(2);
+        dto.setSecond(1);
+        dto.setThird(9);
+
+        //when
+        List<Archive> newMainAchievements = archiveService.setMainArchive(dto);
+
+        for(Archive a : newMainAchievements){
+            System.out.println("a : " + a);
+        }
+
+        //then
+        assertNotNull(1);
     }
 }
