@@ -26,7 +26,7 @@ public class Mungple {
     private String jibunAddress; // 지번 주소
 
     private String geoCode; // 지역 코드
-    private String p_geoCode; // 부모 지역 코드
+    private String pGeoCode; // 부모 지역 코드
     private String latitude; // 위도
     private String longitude; // 경도
 

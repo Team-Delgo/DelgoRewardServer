@@ -34,7 +34,7 @@ public class CertificationDTO {
                 .placeName(this.placeName)
                 .description(this.description)
                 .geoCode(code.getCode()) // 사용자 기준 geoCode
-                .p_geoCode(code.getPCode()) // 사용자 기준 geoCode
+                .pGeoCode(code.getPCode()) // 사용자 기준 geoCode
                 .latitude(this.latitude) // 사용자한테 입력받은 위도
                 .longitude(this.longitude) // 사용자한테 입력받은 경도
                 .isPhotoChecked(0)
