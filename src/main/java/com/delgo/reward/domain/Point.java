@@ -27,5 +27,5 @@ public class Point {
     private String geoCode;
 
     @Column(nullable = false, name = "p_geo_code")
-    private String p_geoCode;
+    private String pGeoCode;
 }
