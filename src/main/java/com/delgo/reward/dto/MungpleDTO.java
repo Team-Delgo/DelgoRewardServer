@@ -24,7 +24,7 @@ public class MungpleDTO {
                 .categoryCode(this.categoryCode)
                 .placeName(this.placeName)
                 .geoCode(code.getCode())
-                .p_geoCode(code.getPCode())
+                .pGeoCode(code.getPCode())
                 .roadAddress(location.getRoadAddress())
                 .jibunAddress(location.getJibunAddress())
                 .latitude(location.getLatitude())

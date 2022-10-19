@@ -36,7 +36,7 @@ public class User {
     private String geoCode;
 
     @Column(nullable = false, name = "p_geo_code")
-    private String p_geoCode;
+    private String pGeoCode;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = true, name = "social")
