@@ -69,9 +69,9 @@ public class ArchiveTest {
         //given
         MainAchievementsDTO dto = new MainAchievementsDTO();
         dto.setUserId(1);
-        dto.setFirst(2);
-        dto.setSecond(1);
-        dto.setThird(9);
+        dto.setFirst(5);
+        dto.setSecond(0);
+        dto.setThird(0);
 
         //when
         List<Archive> newMainAchievements = archiveService.setMainArchive(dto);
