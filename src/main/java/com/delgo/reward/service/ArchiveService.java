@@ -27,11 +27,13 @@ public class ArchiveService {
     // Archive 수정
     public List<Archive> setMainArchive(MainAchievementsDTO dto) {
         List<Archive> archives = new ArrayList<>();
-        archives.add(archiveRepository.findByUserIdAndAchievementsId(dto.getUserId(), dto.getFirst()).orElseThrow(() -> new NullPointerException("NOT FOUND ARCHIVE")));
-        archives.add(archiveRepository.findByUserIdAndAchievementsId(dto.getUserId(), dto.getSecond()).orElseThrow(() -> new NullPointerException("NOT FOUND ARCHIVE")));
-        archives.add(archiveRepository.findByUserIdAndAchievementsId(dto.getUserId(), dto.getThird()).orElseThrow(() -> new NullPointerException("NOT FOUND ARCHIVE")));
-        for (int i = 0; i < 3; i++)
+        if (dto.getFirst() != 0) archives.add(archiveRepository.findByUserIdAndAchievementsId(dto.getUserId(), dto.getFirst()).orElseThrow(() -> new NullPointerException("NOT FOUND ARCHIVE")));
+        if (dto.getSecond() != 0) archives.add(archiveRepository.findByUserIdAndAchievementsId(dto.getUserId(), dto.getSecond()).orElseThrow(() -> new NullPointerException("NOT FOUND ARCHIVE")));
+        if (dto.getThird() != 0) archives.add(archiveRepository.findByUserIdAndAchievementsId(dto.getUserId(), dto.getThird()).orElseThrow(() -> new NullPointerException("NOT FOUND ARCHIVE")));
+
+        for (int i = 0; i < archives.size(); i++)
             archives.get(i).setIsMain(i + 1);
+
         return archiveRepository.saveAll(archives);
     }
 
@@ -45,6 +47,7 @@ public class ArchiveService {
         List<Archive> mainList = archiveRepository.findByUserIdAndIsMainNot(userId, 0);
 
         for (Archive archive : mainList) {
+            log.info("archive : {}", archive);
             archive.setIsMain(0);
             archiveRepository.save(archive);
         }
