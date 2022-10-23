@@ -34,6 +34,10 @@ public class RankingService {
         userRepository.initWeeklyPoint();
     }
 
+    public void setLastRanking(){
+        jdbcTemplateRankingRepository.setLastRanking();
+    }
+
     public RankingPoint getByPointRanking(int userId){
         return rankingPointRepository.findByUserId(userId)
                 .orElseThrow(() -> new NullPointerException("NOT FOUND ranking"));
