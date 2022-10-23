@@ -21,6 +21,7 @@ public class InitWeeklyPoint extends QuartzJobBean {
 
         rankingService.initLastWeeklyPoint();
         rankingService.setLastWeeklyPoint();
+        rankingService.setLastRanking();
         rankingService.initWeeklyPoint();
 
         log.info(LocalTime.now() + ": InitialLastWeeklyPoint Exit");
