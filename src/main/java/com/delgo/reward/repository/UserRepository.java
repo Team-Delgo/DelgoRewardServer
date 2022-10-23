@@ -14,6 +14,12 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByName(String name);
     Optional<User> findByAppleUniqueNo(String appleUniqueNo);
 
-    @Query(value = "update user set weekly_point = 0", nativeQuery = true)
-    void initAllWeeklyPoint();
+    @Query(value = "update point set last_weekly_point = 0", nativeQuery = true)
+    void initLastWeeklyPoint();
+
+    @Query(value = "update point set last_weekly_point = weekly_point", nativeQuery = true)
+    void setLastWeeklyPoint();
+
+    @Query(value = "update point set weekly_point = 0", nativeQuery = true)
+    void initWeeklyPoint();
 }
