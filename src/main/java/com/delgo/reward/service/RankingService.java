@@ -16,7 +16,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RankingService {
     private final JDBCTemplateRankingRepository jdbcTemplateRankingRepository;
-    private final CertificationRepository certificationRepository;
     private final RankingCategoryRepository rankingCategoryRepository;
     private final RankingPointRepository rankingPointRepository;
     private final UserRepository userRepository;
