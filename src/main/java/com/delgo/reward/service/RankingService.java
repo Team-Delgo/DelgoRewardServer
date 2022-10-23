@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -17,15 +16,22 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RankingService {
     private final JDBCTemplateRankingRepository jdbcTemplateRankingRepository;
-    private final CertificationRepository certificationRepository;
     private final RankingCategoryRepository rankingCategoryRepository;
     private final RankingPointRepository rankingPointRepository;
     private final UserRepository userRepository;
 
-    public void initWeeklyPoint(){
+    public void initLastWeeklyPoint(){
         rankingCategoryRepository.deleteAll();
         rankingPointRepository.deleteAll();
-        userRepository.initAllWeeklyPoint();
+        userRepository.initLastWeeklyPoint();
+    }
+
+    public void setLastWeeklyPoint(){
+        userRepository.setLastWeeklyPoint();
+    }
+
+    public void initWeeklyPoint(){
+        userRepository.initWeeklyPoint();
     }
 
     public RankingPoint getByPointRanking(int userId){
