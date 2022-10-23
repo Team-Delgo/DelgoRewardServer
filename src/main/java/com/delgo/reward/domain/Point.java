@@ -28,4 +28,6 @@ public class Point {
 
     @Column(nullable = false, name = "p_geo_code")
     private String pGeoCode;
+
+    private int lastWeeklyPoint;
 }
