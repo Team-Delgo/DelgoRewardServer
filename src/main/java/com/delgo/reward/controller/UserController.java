@@ -10,7 +10,9 @@ import com.delgo.reward.domain.user.User;
 import com.delgo.reward.domain.user.UserSocial;
 import com.delgo.reward.dto.OAuthSignUpDTO;
 import com.delgo.reward.dto.SignUpDTO;
+import com.delgo.reward.dto.UserInfoDTO;
 import com.delgo.reward.dto.UserPetDTO;
+import com.delgo.reward.repository.UserRepository;
 import com.delgo.reward.service.PetService;
 import com.delgo.reward.service.TokenService;
 import com.delgo.reward.service.UserService;
@@ -195,5 +197,11 @@ public class UserController extends CommController {
 
         userService.deleteUser(userId);
         return SuccessReturn();
+    }
+
+    @GetMapping("/user/info")
+    public ResponseEntity<?> getInfo(@RequestParam Integer userId){
+        UserInfoDTO userInfoDTO = userService.getUserInfo(userId);
+        return SuccessReturn(userInfoDTO);
     }
 }
