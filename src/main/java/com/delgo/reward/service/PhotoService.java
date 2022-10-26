@@ -102,7 +102,7 @@ public class PhotoService extends CommService {
             throw new NullPointerException("PHOTO EXTENSION IS WRONG");
 
         String fileName = userId + "_pet_profile." + extension;
-        String dir = "/var/www/delgo-api/";
+        String dir = "/var/www/delgo-reward-api/";
         // NCP Link
         String link = "https://kr.object.ncloudstorage.com/delgo-pet-profile/" + fileName;
 

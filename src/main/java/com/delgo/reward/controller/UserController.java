@@ -170,7 +170,7 @@ public class UserController extends CommController {
                 .phoneNo(signUpDTO.getPhoneNo().replaceAll("[^0-9]", ""))
                 .userSocial(UserSocial.D)
                 .geoCode(signUpDTO.getGeoCode())
-                .pGeoCode(signUpDTO.getP_geoCode())
+                .pGeoCode(signUpDTO.getPGeoCode())
                 .build();
         Pet pet = Pet.builder()
                 .name(signUpDTO.getPetName())
