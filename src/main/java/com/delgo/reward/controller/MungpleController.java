@@ -40,7 +40,7 @@ public class MungpleController extends CommController {
     @PostMapping("/register")
     public ResponseEntity register(@Validated @RequestBody MungpleDTO mungpleDTO) {
         Location location = geoService.getGeoData(mungpleDTO.getAddress()); // 위도, 경도
-        Code code = codeService.getGeoCodeBySIGUGUN(location.getSIGUGUN()); // GeoCode
+        Code code = codeService.getGeoCodeBySIGUGUN(location); // GeoCode
 
         return (!mungpleService.isMungpleExisting(location))
                 ? SuccessReturn(mungpleService.registerMungple(mungpleDTO.makeMungple(location, code)))

@@ -69,7 +69,7 @@ public class CertificationController extends CommController {
 
         // GeoCode 조회
         Location userLocation = reverseGeoService.getReverseGeoData(new Location(certificationDTO.getLatitude(), certificationDTO.getLongitude()));
-        Code code = codeService.getGeoCodeBySIGUGUN(userLocation.getSIGUGUN()); // GeoCode
+        Code code = codeService.getGeoCodeBySIGUGUN(userLocation); // GeoCode
 
         Certification certification = certificationService.registerCertification(certificationDTO.makeCertification(code));
 
