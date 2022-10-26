@@ -3,6 +3,7 @@ package com.delgo.reward;
 
 import com.delgo.reward.comm.ncp.ReverseGeoService;
 import com.delgo.reward.domain.common.Location;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +23,14 @@ public class ReverseGeoTest {
     public void getReverseGeoDataTest() {
         //given
         Location location = new Location();
-        location.setLatitude("37.4410656");
-        location.setLongitude("127.1311662");
+        location.setLatitude("37.56225923222384");
+//        location.setLatitude("37.4410656");
+//        location.setLongitude("127.1311662");
+        location.setLongitude("126.99961739917393");
         location.setSIGUGUN("");
 
         //when
-        reverseGeoService.getReverseGeoData(location);
+        Location result = reverseGeoService.getReverseGeoData(location);
 
         //then
         assertFalse(location.getSIGUGUN().equals(""));
