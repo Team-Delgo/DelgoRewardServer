@@ -3,6 +3,7 @@ package com.delgo.reward.service;
 
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
+import com.delgo.reward.dto.UserInfoDTO;
 import com.delgo.reward.repository.PetRepository;
 import com.delgo.reward.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -102,5 +103,14 @@ public class UserService {
 
     public User updateUserData(User user) {
         return userRepository.save(user);
+    }
+
+    public UserInfoDTO getUserInfo(int userId){
+        User user = getUserByUserId(userId);
+        UserInfoDTO userInfoDTO = UserInfoDTO.builder()
+                .userName(user.getName())
+                .profile(user.getProfile())
+                .build();
+        return userInfoDTO;
     }
 }

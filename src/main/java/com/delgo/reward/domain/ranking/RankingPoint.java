@@ -19,4 +19,6 @@ public class RankingPoint {
     private String geoCode;
     private int ranking;
     private int weeklyPoint;
+    private int lastWeeklyPoint;
+    private int lastRanking;
 }

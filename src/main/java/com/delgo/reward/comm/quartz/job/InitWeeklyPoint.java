@@ -1,6 +1,5 @@
 package com.delgo.reward.comm.quartz.job;
 
-import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.service.RankingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,10 +17,13 @@ public class InitWeeklyPoint extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        log.info(LocalTime.now() + ": InitialWeeklyPoint Execute");
+        log.info(LocalTime.now() + ": InitialLastWeeklyPoint Execute");
 
+        rankingService.initLastWeeklyPoint();
+        rankingService.setLastWeeklyPoint();
+        rankingService.setLastRanking();
         rankingService.initWeeklyPoint();
 
-        log.info(LocalTime.now() + ": InitialWeeklyPoint Exit");
+        log.info(LocalTime.now() + ": InitialLastWeeklyPoint Exit");
     }
 }
