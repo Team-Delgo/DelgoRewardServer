@@ -2,6 +2,8 @@ package com.delgo.reward.repository;
 
 
 import com.delgo.reward.domain.Certification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +16,7 @@ public interface CertificationRepository extends JpaRepository<Certification, In
     List<Certification> findByUserId(int userId);
 
     List<Certification> findByUserIdAndCategoryCode(int userId, String categoryCode);
+    Page<List<Certification>> findByUserIdAndCategoryCode(int userId, String categoryCode, Pageable pageable);
 
     Optional<Certification> findByCertificationId(int certificationId);
 
