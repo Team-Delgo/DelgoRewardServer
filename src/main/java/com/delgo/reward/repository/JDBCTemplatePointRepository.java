@@ -16,4 +16,5 @@ public class JDBCTemplatePointRepository {
     public void updateWeeklyPoint(int userId, int categoryPoint){
         jdbcTemplate.update("update point set weekly_point = weekly_point + ? where user_id = ?", categoryPoint, userId);
     }
+
 }

@@ -15,6 +15,10 @@ public class JDBCTemplateRankingRepository{
 
     private final JdbcTemplate jdbcTemplate;
 
+    public void setLastRanking(){
+        jdbcTemplate.update("update ranking_point set last_ranking = ranking");
+    }
+
     public List<RankingPoint> findTopPointRankingByGeoCode(String geoCode){
         return jdbcTemplate.query("select user_id, ranking, weekly_point from ranking_point where geo_code = " + geoCode + " limit 3;", pointRankingByGeoCodeRowMapper(geoCode));
     }
