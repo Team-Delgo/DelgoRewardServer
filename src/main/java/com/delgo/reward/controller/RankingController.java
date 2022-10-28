@@ -30,13 +30,13 @@ public class RankingController extends CommController {
 
     @GetMapping("/point/top")
     public ResponseEntity<?> topPointRanking(@RequestParam @NotNull String geoCode){
-        List<RankingPoint> topPointRankingList = rankingService.getTopPointRankingByGeoCode(geoCode);
+        List<RankingByPointDTO> topPointRankingList = rankingService.getTopPointRankingByGeoCode(geoCode);
         return SuccessReturn(topPointRankingList);
     }
 
     @GetMapping("/point/all")
     public ResponseEntity<?> pointRanking(@RequestParam @NotNull String geoCode){
-        List<RankingPoint> pointRankingList = rankingService.getPointRankingByGeocode(geoCode);
+        List<RankingByPointDTO> pointRankingList = rankingService.getPointRankingByGeocode(geoCode);
         return SuccessReturn(pointRankingList);
     }
 
