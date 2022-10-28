@@ -10,4 +10,7 @@ import lombok.Data;
 public class RankingByPointDTO {
     int userId;
     int ranking;
+    int weeklyPoint;
+    String profile;
+    String name;
 }
