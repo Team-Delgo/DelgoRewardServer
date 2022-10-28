@@ -2,6 +2,7 @@ package com.delgo.reward.service;
 
 import com.delgo.reward.domain.ranking.RankingCategory;
 import com.delgo.reward.domain.ranking.RankingPoint;
+import com.delgo.reward.dto.RankingByPointDTO;
 import com.delgo.reward.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,13 +49,13 @@ public class RankingService {
         return userRanking;
     }
 
-    public List<RankingPoint> getTopPointRankingByGeoCode(String geoCode){
-        List<RankingPoint> topPointRankingList =jdbcTemplateRankingRepository.findTopPointRankingByGeoCode(geoCode);
+    public List<RankingByPointDTO> getTopPointRankingByGeoCode(String geoCode){
+        List<RankingByPointDTO> topPointRankingList =jdbcTemplateRankingRepository.findTopPointRankingByGeoCode(geoCode);
         return topPointRankingList;
     }
 
-    public List<RankingPoint> getPointRankingByGeocode(String geoCode){
-        List<RankingPoint> pointRankingList = jdbcTemplateRankingRepository.findPointRankingByGeoCode(geoCode);
+    public List<RankingByPointDTO> getPointRankingByGeocode(String geoCode){
+        List<RankingByPointDTO> pointRankingList = jdbcTemplateRankingRepository.findPointRankingByGeoCode(geoCode);
         return pointRankingList;
     }
 
