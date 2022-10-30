@@ -24,7 +24,8 @@ public class CodeTest {
         String SIGUGUN = "송파구";
 
         //when
-        Code code = codeService.getGeoCodeBySIGUGUN(SIGUGUN);
+//        Code code = codeService.getGeoCodeBySIGUGUN(SIGUGUN);
+        Code code = new Code();
 
         System.out.println("geoCode : " + code.getCode());
         System.out.println("p_geoCode : " + code.getPCode());

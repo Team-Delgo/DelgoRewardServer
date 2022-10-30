@@ -15,6 +15,7 @@ public class Location {
     private String roadAddress; // 도로명 주소
     private String jibunAddress; // 지번 주소
     private String SIGUGUN; // 시구군 ( geoCode 조회하는데 사용 )
+    private String SIDO; // 특별시,도 ( geoCode 조회하는데 사용 )
 
     public Location(String latitude, String longitude) {
         this.latitude = latitude;

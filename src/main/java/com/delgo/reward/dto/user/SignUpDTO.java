@@ -24,7 +24,7 @@ public class SignUpDTO {
     @NotBlank
     private String geoCode;
     @NotBlank
-    private String p_geoCode;
+    private String pGeoCode;
     @NotBlank
     private String petName;
     @NotNull
