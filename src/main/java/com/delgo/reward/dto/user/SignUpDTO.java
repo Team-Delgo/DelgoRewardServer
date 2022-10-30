@@ -1,4 +1,4 @@
-package com.delgo.reward.dto;
+package com.delgo.reward.dto.user;
 
 import com.delgo.reward.domain.pet.PetSize;
 import lombok.AllArgsConstructor;

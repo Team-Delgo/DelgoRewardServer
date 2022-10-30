@@ -11,7 +11,7 @@ import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.domain.user.UserSocial;
 import com.delgo.reward.dto.OAuthDTO;
-import com.delgo.reward.dto.UserPetDTO;
+import com.delgo.reward.dto.user.UserPetDTO;
 import com.delgo.reward.service.PetService;
 import com.delgo.reward.service.TokenService;
 import com.delgo.reward.service.UserService;
