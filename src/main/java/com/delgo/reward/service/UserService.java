@@ -3,7 +3,7 @@ package com.delgo.reward.service;
 
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.dto.UserInfoDTO;
+import com.delgo.reward.dto.user.UserInfoDTO;
 import com.delgo.reward.repository.PetRepository;
 import com.delgo.reward.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

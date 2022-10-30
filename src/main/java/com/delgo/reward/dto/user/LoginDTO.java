@@ -1,4 +1,4 @@
-package com.delgo.reward.dto;
+package com.delgo.reward.dto.user;
 
 import lombok.Data;
 
