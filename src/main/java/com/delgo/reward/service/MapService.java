@@ -34,13 +34,8 @@ public class MapService {
         List<Certification> certNormalList = certificationList.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList());
         List<Certification> certMunpleList = certificationList.stream().filter(c -> c.getMungpleId() != 0).collect(Collectors.toList());
 
-        // 멍플 인증 된 장소 멍플에서 제거
-        for (Certification certification : certMunpleList) {
-            mungpleList.removeIf(m -> m.getMungpleId() == certification.getMungpleId());
-        }
-
         HashMap<String, Object> resultMap = new HashMap<>();
-        resultMap.put("mungpleList", mungpleList); // mungpleList :  멍플 리스트 ( 인증된 멍플은 제거된 리스트 )
+        resultMap.put("mungpleList", mungpleList); // mungpleList :  멍플 리스트
         resultMap.put("wardOfficeList", wardOfficeService.getWardOfficeAll()); // wardOfficeList : 구군청 위치
         resultMap.put("certNormalList", certNormalList);  // certNormalList : 일반 인증 리스트 ( 하얀 테두리 )
         resultMap.put("certMungpleList", certMunpleList); // certMunpleList : 멍플 인증 리스트 ( 주황 테두리 )
