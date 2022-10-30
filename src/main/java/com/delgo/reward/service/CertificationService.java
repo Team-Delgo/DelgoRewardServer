@@ -71,6 +71,11 @@ public class CertificationService {
         return certificationRepository.save(certification);
     }
 
+    // Certification 수정
+    public Certification modifyCertification(Certification certification) {
+        return certificationRepository.save(certification);
+    }
+
     // Like Count + 1
     public void plusLikeCount(int certificationId) {
         jdbcTemplateRankingRepository.plusLikeCount(certificationId);

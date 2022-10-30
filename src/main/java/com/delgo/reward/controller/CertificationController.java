@@ -9,6 +9,7 @@ import com.delgo.reward.domain.*;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.CertificationDTO;
+import com.delgo.reward.dto.user.CertificationModifyDTO;
 import com.delgo.reward.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -105,6 +106,19 @@ public class CertificationController extends CommController {
         userService.updateUserData(user);
 
         return SuccessReturn(returnCertification);
+    }
+
+    /*
+     * 인증 수정
+     * Request Data : CertificationModifyDTO
+     * Response Data : 등록한 인증 데이터 반환
+     */
+    @PostMapping("/modify")
+    public ResponseEntity modify(@Validated @RequestBody CertificationModifyDTO dto) {
+        Certification certification = certificationService.getCertificationByCertificationId(dto.getCertificationId());
+        certification.setDescription(dto.getDescription());
+
+        return SuccessReturn(certificationService.modifyCertification(certification));
     }
 
     /*
