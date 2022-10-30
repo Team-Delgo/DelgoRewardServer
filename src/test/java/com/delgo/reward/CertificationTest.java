@@ -128,4 +128,19 @@ public class CertificationTest {
         //then
         assertTrue(true);
     }
+
+    @Test
+    public void getPagingTest() {
+        //given
+
+        //when
+        List<Certification> cList = certificationService.getRecentCertificationList();
+
+        for(Certification c : cList){
+            System.out.println(" c : " + c);
+
+        }
+        //then
+        assertTrue(true);
+    }
 }

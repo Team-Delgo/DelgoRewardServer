@@ -4,6 +4,7 @@ package com.delgo.reward.repository;
 import com.delgo.reward.domain.Certification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -16,7 +17,6 @@ public interface CertificationRepository extends JpaRepository<Certification, In
     List<Certification> findByUserId(int userId);
 
     List<Certification> findByUserIdAndCategoryCode(int userId, String categoryCode);
-    Page<List<Certification>> findByUserIdAndCategoryCode(int userId, String categoryCode, Pageable pageable);
 
     Optional<Certification> findByCertificationId(int certificationId);
 
@@ -31,8 +31,13 @@ public interface CertificationRepository extends JpaRepository<Certification, In
     @Query(value = "select certification_id from certification where user_id not in (select ban_user_id from ban_list where user_id = userId)", nativeQuery = true)
     List<Integer> findByUserIdWithoutBanList(int userId);
 
-    // 가장 최근 등록한 2개의 Certification 조회
+    Slice<Certification> findAllByOrderByRegistDtDesc(Pageable pageable);
+
     List<Certification> findTop2ByOrderByRegistDtDesc();
+
+    Page<Certification> findByUserIdAndCategoryCodeOrderByRegistDtDesc(int userId, String categoryCode, Pageable pageable);
+
+    Page<Certification> findByUserIdOrderByRegistDtDesc(int userId, Pageable pageable);
 
 }
 
