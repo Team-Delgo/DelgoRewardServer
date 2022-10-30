@@ -6,8 +6,8 @@ import com.delgo.reward.repository.CertificationRepository;
 import com.delgo.reward.repository.JDBCTemplateRankingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,21 +31,28 @@ public class CertificationService {
     private final LocalDateTime end = LocalDate.now().atTime(0, 0, 0).plusDays(1);
 
     // 전체 Certification 리스트 조회
-    public List<Certification> getCertificationAll() {
-        return certificationRepository.findAll();
+    public Slice<Certification> getCertificationAll(int currentPage, int pageSize) {
+        PageRequest pageRequest = PageRequest.of(currentPage, pageSize);
+
+        return certificationRepository.findAllByOrderByRegistDtDesc(pageRequest);
     }
 
     // categoryCode & userId로 Certification 리스트 조회
-    public List<Certification> getCertificationByUserIdAndCategoryCode(int userId, String categoryCode) {
-        PageRequest pageRequest = PageRequest.of(0, 5);
-        log.info("paging test: {}",certificationRepository.findByUserIdAndCategoryCode(userId, categoryCode,pageRequest).getContent());
-        return certificationRepository.findByUserIdAndCategoryCode(userId, categoryCode);
+    public List<Certification> getCertificationByUserIdAndCategoryCode(int userId, String categoryCode, int currentPage, int pageSize) {
+        PageRequest pageRequest = PageRequest.of(currentPage, pageSize);
 
+        return certificationRepository.findByUserIdAndCategoryCodeOrderByRegistDtDesc(userId, categoryCode, pageRequest).getContent();
     }
 
     // userId로 Certification 조회
     public List<Certification> getCertificationByUserId(int userId) {
         return certificationRepository.findByUserId(userId);
+    }
+
+    public List<Certification> getCertificationByUserIdPaging(int userId, int currentPage, int pageSize) {
+        PageRequest pageRequest = PageRequest.of(currentPage, pageSize);
+
+        return certificationRepository.findByUserIdOrderByRegistDtDesc(userId, pageRequest).getContent();
     }
 
     // CertificationId로 Certification 조회
@@ -54,7 +61,7 @@ public class CertificationService {
                 .orElseThrow(() -> new NullPointerException("NOT FOUND Certification"));
     }
 
-    // CertificationId로 Certification 조회
+    // 최근 2개 조회
     public List<Certification> getRecentCertificationList() {
         return certificationRepository.findTop2ByOrderByRegistDtDesc();
     }
@@ -84,7 +91,7 @@ public class CertificationService {
         List<Certification> list = certificationRepository.findByUserIdAndMungpleIdAndRegistDtBetween(userId, mungpleId, start, end);
         List<Certification> sortedList = list.stream().sorted(Comparator.comparing(Certification::getRegistDt).reversed()).collect(Collectors.toList());
 
-        if(list.size() == 0)
+        if (list.size() == 0)
             return true;
 
         // 최근 등록시간이랑 now 비교
