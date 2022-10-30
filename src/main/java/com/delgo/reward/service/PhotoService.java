@@ -92,4 +92,38 @@ public class PhotoService extends CommService {
             return "error:" + e.getMessage();
         }
     }
+
+    // NCP에 profile Upload 후 접근 URL 반환
+    public String uploadProfile(int userId, MultipartFile photo) {
+        // ex) png, jpg, jpeg
+        String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\.");
+        String extension = type[type.length - 1];
+        if (!extension.equals("png") && !extension.equals("jpg") && !extension.equals("jpeg"))
+            throw new NullPointerException("PHOTO EXTENSION IS WRONG");
+
+        String fileName = userId + "_pet_profile." + extension;
+        String dir = "/var/www/delgo-reward-api/";
+        // NCP Link
+        String link = "https://kr.object.ncloudstorage.com/delgo-pet-profile/" + fileName;
+
+        try {
+            // 서버에 저장
+            File f = new File(dir + fileName);
+            photo.transferTo(f);
+
+            if (f.exists()) {
+                // Upload NCP
+                objectStorageService.uploadObjects("delgo-pet-profile", fileName, dir + fileName);
+
+                // 서버에 저장된 사진 삭제
+                f.delete();
+            }
+
+            // Cache 무효화
+            link += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1);
+            return link;
+        } catch (Exception e) {
+            return "error:" + e.getMessage();
+        }
+    }
 }

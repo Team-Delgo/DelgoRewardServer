@@ -69,7 +69,7 @@ public class CertificationController extends CommController {
 
         // GeoCode 조회
         Location userLocation = reverseGeoService.getReverseGeoData(new Location(certificationDTO.getLatitude(), certificationDTO.getLongitude()));
-        Code code = codeService.getGeoCodeBySIGUGUN(userLocation.getSIGUGUN()); // GeoCode
+        Code code = codeService.getGeoCodeBySIGUGUN(userLocation); // GeoCode
 
         Certification certification = certificationService.registerCertification(certificationDTO.makeCertification(code));
 
@@ -114,14 +114,18 @@ public class CertificationController extends CommController {
      * Response Data : 카테고리별 인증 리스트 반환
      */
     @GetMapping("/category-data")
-    public ResponseEntity getCategoryData(@RequestParam Integer userId, @RequestParam String categoryCode) {
+    public ResponseEntity getCategoryData(
+            @RequestParam Integer userId,
+            @RequestParam String categoryCode,
+            @RequestParam Integer currentPage,
+            @RequestParam Integer pageSize) {
         // Validate - Blank Check; [ String 만 해주면 됨 ]
         if (categoryCode.isBlank())
             return ErrorReturn(ApiCode.PARAM_ERROR);
 
         List<Certification> certificationList = (!categoryCode.equals(CategoryCode.TOTAL.getCode()))
-                ? certificationService.getCertificationByUserIdAndCategoryCode(userId, categoryCode)
-                : certificationService.getCertificationByUserId(userId);
+                ? certificationService.getCertificationByUserIdAndCategoryCode(userId, categoryCode, currentPage, pageSize)
+                : certificationService.getCertificationByUserIdPaging(userId, currentPage, pageSize);
 
         return SuccessReturn(certificationList);
     }
@@ -164,5 +168,15 @@ public class CertificationController extends CommController {
     @GetMapping("/data/main")
     public ResponseEntity getMainData() {
         return SuccessReturn(certificationService.getRecentCertificationList());
+    }
+
+    /*
+     * 모든 인증 리스트 페이징으로 반환 [ Main ]
+     * Request Data : currentPage ( 현재 페이지 번호 ), pageSize ( 페이지 크기 )
+     * Response Data : 인증 모두 조회 ( 페이징 처리 되어 있음 )
+     */
+    @GetMapping("/data/all")
+    public ResponseEntity getPagingData(@RequestParam Integer currentPage, @RequestParam Integer pageSize) {
+        return SuccessReturn(certificationService.getCertificationAll(currentPage, pageSize));
     }
 }
