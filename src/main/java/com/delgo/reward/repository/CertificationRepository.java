@@ -2,7 +2,6 @@ package com.delgo.reward.repository;
 
 
 import com.delgo.reward.domain.Certification;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,13 +30,13 @@ public interface CertificationRepository extends JpaRepository<Certification, In
     @Query(value = "select certification_id from certification where user_id not in (select ban_user_id from ban_list where user_id = userId)", nativeQuery = true)
     List<Integer> findByUserIdWithoutBanList(int userId);
 
+    @Query("SELECT u as user, c as cert FROM Certification c LEFT JOIN User u ON u.userId = c.userId order by c.registDt desc")
     Slice<Certification> findAllByOrderByRegistDtDesc(Pageable pageable);
 
     List<Certification> findTop2ByOrderByRegistDtDesc();
 
-    Page<Certification> findByUserIdAndCategoryCodeOrderByRegistDtDesc(int userId, String categoryCode, Pageable pageable);
+    Slice<Certification> findByUserIdAndCategoryCodeOrderByRegistDtDesc(int userId, String categoryCode, Pageable pageable);
 
-    Page<Certification> findByUserIdOrderByRegistDtDesc(int userId, Pageable pageable);
-
+    Slice<Certification> findByUserIdOrderByRegistDtDesc(int userId, Pageable pageable);
 }
 
