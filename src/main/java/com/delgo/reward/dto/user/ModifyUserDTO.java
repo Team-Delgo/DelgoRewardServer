@@ -4,15 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
-@Builder
 @AllArgsConstructor
-public class UserInfoDTO {
-    @NotBlank
-    private String userName;
-    private String profile;
+@Builder
+public class ModifyUserDTO {
+    private String profileUrl;
+    private String name;
+    @NotNull
+    private String email;
     private String geoCode;
     private String pGeoCode;
 }

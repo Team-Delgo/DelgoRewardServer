@@ -103,7 +103,7 @@ public class CertificationController extends CommController {
         pointService.updateAccumulatedPoint(user.getUserId(), category.getPoint());
         pointService.updateWeeklyPoint(user.getUserId(), category.getPoint());
 
-        userService.updateUserData(user);
+        userService.changeUserInfo(user);
 
         return SuccessReturn(returnCertification);
     }
