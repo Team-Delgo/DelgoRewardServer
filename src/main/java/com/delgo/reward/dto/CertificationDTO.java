@@ -26,19 +26,21 @@ public class CertificationDTO {
     @NotBlank private String latitude; // 위도
     @NotBlank private String longitude; // 경도
 
-    public Certification makeCertification(Code code) {
+    public Certification makeCertification(Code code,String address, boolean isLive) {
         return Certification.builder()
                 .userId(this.userId)
                 .categoryCode(this.categoryCode)
                 .mungpleId(this.mungpleId)
                 .placeName(this.placeName)
                 .description(this.description)
+                .address(address)
                 .geoCode(code.getCode()) // 사용자 기준 geoCode
                 .pGeoCode(code.getPCode()) // 사용자 기준 geoCode
                 .latitude(this.latitude) // 사용자한테 입력받은 위도
                 .longitude(this.longitude) // 사용자한테 입력받은 경도
                 .isPhotoChecked(0)
                 .isAchievements(0)
+                .isLive((isLive) ? 1 : 0)
                 .build();
     }
 }

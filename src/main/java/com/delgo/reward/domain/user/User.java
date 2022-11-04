@@ -32,6 +32,9 @@ public class User {
     @Column(nullable = false, name = "phone_no")
     private String phoneNo;
 
+    @Column(nullable = false, name = "address")
+    private String address;
+
     @Column(nullable = false, name = "geo_code")
     private String geoCode;
 

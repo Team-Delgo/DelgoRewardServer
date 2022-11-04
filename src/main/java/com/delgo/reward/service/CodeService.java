@@ -34,6 +34,12 @@ public class CodeService {
                 .orElseThrow(() -> new NullPointerException("NOT FOUND GEOCODE"));
     }
 
+    // categoryCode로 Mungple 조회
+    public Code getGeoCodeByCode(String code) {
+        return codeRepository.findByCode(code)
+                .orElseThrow(() -> new NullPointerException("NOT FOUND GEOCODE"));
+    }
+
     public void registerCodeList(List<Code> codeList) {
         codeRepository.saveAll(codeList);
     }
