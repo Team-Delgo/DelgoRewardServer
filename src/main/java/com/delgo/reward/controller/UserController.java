@@ -5,16 +5,14 @@ import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
 import com.delgo.reward.comm.security.jwt.Access_JwtProperties;
 import com.delgo.reward.comm.security.jwt.Refresh_JwtProperties;
+import com.delgo.reward.domain.Code;
 import com.delgo.reward.domain.SmsAuth;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.domain.user.UserSocial;
 import com.delgo.reward.dto.OAuthSignUpDTO;
 import com.delgo.reward.dto.user.*;
-import com.delgo.reward.service.PetService;
-import com.delgo.reward.service.SmsAuthService;
-import com.delgo.reward.service.TokenService;
-import com.delgo.reward.service.UserService;
+import com.delgo.reward.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +32,7 @@ public class UserController extends CommController {
     private final PetService petService;
     private final TokenService tokenService;
     private final SmsAuthService smsAuthService;
+    private final CodeService codeService;
 
     @RequestMapping(value ="/")
     public ResponseEntity<?> defaultResponse() {
@@ -128,10 +127,19 @@ public class UserController extends CommController {
     // 소셜 회원가입
     @PostMapping("/oauth-signup")
     public ResponseEntity<?> registerUserByOAuth(@Validated @RequestBody OAuthSignUpDTO signUpDTO, HttpServletResponse response) {
+
+        // 주소 설정
+        Code geoCode = codeService.getGeoCodeByCode(signUpDTO.getGeoCode());
+        Code pGeoCode = codeService.getGeoCodeByCode(signUpDTO.getPGeoCode());
+        String address = pGeoCode.getCodeDesc() + " " + geoCode.getCodeName();
+
         User user = User.builder()
                 .name(signUpDTO.getUserName())
                 .phoneNo(signUpDTO.getPhoneNo().replaceAll("[^0-9]", ""))
                 .email(signUpDTO.getEmail())
+                .address(address)
+                .geoCode(signUpDTO.getGeoCode())
+                .pGeoCode(signUpDTO.getPGeoCode())
                 .password("")
                 .userSocial(signUpDTO.getUserSocial())
                 .build();
@@ -167,12 +175,18 @@ public class UserController extends CommController {
         if (userService.isEmailExisting(signUpDTO.getEmail())) // Email 중복확인
             return ErrorReturn(ApiCode.UNKNOWN_ERROR);
 
+        // 주소 설정
+        Code geoCode = codeService.getGeoCodeByCode(signUpDTO.getGeoCode());
+        Code pGeoCode = codeService.getGeoCodeByCode(signUpDTO.getPGeoCode());
+        String address = pGeoCode.getCodeDesc() + " " + geoCode.getCodeName();
+
         User user = User.builder()
                 .name(signUpDTO.getUserName())
                 .email(signUpDTO.getEmail())
                 .password(passwordEncoder.encode(signUpDTO.getPassword()))
                 .phoneNo(signUpDTO.getPhoneNo().replaceAll("[^0-9]", ""))
                 .userSocial(UserSocial.D)
+                .address(address)
                 .geoCode(signUpDTO.getGeoCode())
                 .pGeoCode(signUpDTO.getPGeoCode())
                 .build();
