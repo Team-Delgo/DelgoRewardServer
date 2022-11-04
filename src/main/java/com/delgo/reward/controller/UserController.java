@@ -35,6 +35,11 @@ public class UserController extends CommController {
     private final TokenService tokenService;
     private final SmsAuthService smsAuthService;
 
+    @RequestMapping(value ="/")
+    public ResponseEntity<?> defaultResponse() {
+        return SuccessReturn();
+    }
+
     @GetMapping("/myAccount")
     public ResponseEntity<?> myAccount(@RequestParam Integer userId) {
         UserInfoDTO userInfoDTO = userService.getUserInfo(userId);
