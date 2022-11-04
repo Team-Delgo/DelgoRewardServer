@@ -43,8 +43,11 @@ public class CertificationController extends CommController {
      * Request Data : CertificationDTO
      * Response Data : 등록한 인증 데이터 반환
      */
-    @PostMapping("/register")
-    public ResponseEntity register(@Validated @RequestBody CertificationDTO certificationDTO) {
+
+    @PostMapping(value = {"/register/{type}", "/register/"})
+    public ResponseEntity registerLive(@Validated @RequestBody CertificationDTO certificationDTO, @PathVariable String type) {
+        if (!type.equals("live") && !type.equals("past"))
+            return ErrorReturn(ApiCode.PARAM_ERROR);
 
         // 하루에 같은 카테고리 5번 이상 인증 불가능
         if (!certificationService.checkCertRegister(certificationDTO.getUserId(), certificationDTO.getCategoryCode()))
@@ -62,17 +65,21 @@ public class CertificationController extends CommController {
             certificationDTO.setCategoryCode(mungple.getCategoryCode());
             certificationDTO.setPlaceName(mungple.getPlaceName());
 
-            // 멍플 <-> 유저와의 거리
-            double distance = geoService.getDistance(mungple.getRoadAddress(), certificationDTO.getLongitude(), certificationDTO.getLatitude());
-            if (distance > 30) // 30m 이상 떨어진 곳에서 인증시 인증 불가
-                return ErrorReturn(ApiCode.TOO_FAR_DISTANCE);
+            if(type.equals("live")) { // past는 거리 검사하지 않음.
+                // 멍플 <-> 유저와의 거리
+                double distance = geoService.getDistance(mungple.getRoadAddress(), certificationDTO.getLongitude(), certificationDTO.getLatitude());
+                if (distance > 100) // 100m 이상 떨어진 곳에서 인증시 인증 불가
+                    return ErrorReturn(ApiCode.TOO_FAR_DISTANCE);
+            }
         }
 
         // GeoCode 조회
         Location userLocation = reverseGeoService.getReverseGeoData(new Location(certificationDTO.getLatitude(), certificationDTO.getLongitude()));
         Code code = codeService.getGeoCodeBySIGUGUN(userLocation); // GeoCode
+        Code pCode = codeService.getGeoCodeByCode(code.getPCode()); // pCode
+        String address = pCode.getCodeDesc() + " " + code.getCodeName(); // address
 
-        Certification certification = certificationService.registerCertification(certificationDTO.makeCertification(code));
+        Certification certification = certificationService.registerCertification(certificationDTO.makeCertification(code, address, type.equals("live")));
 
         // 인증시 획득 가능한 업적 있는지 확인 ( 멍플, 일반 구분 )
         int isMungple = (certificationDTO.getMungpleId() != 0) ? 1 : 0;
@@ -91,19 +98,23 @@ public class CertificationController extends CommController {
             certification.setIsAchievements(1);
         }
 
-        // 사진 파일 저장 추가
-        String photoUrl = photoService.uploadCertIncodingFile(certification.getCertificationId(), certificationDTO.getPhoto());
-        certification.setPhotoUrl(photoUrl);
+        if(type.equals("live")) { // past는 파일형식이라 사진 저장 API 따로 호출
+            // 사진 파일 저장 추가
+            String photoUrl = photoService.uploadCertIncodingFile(certification.getCertificationId(), certificationDTO.getPhoto());
+            certification.setPhotoUrl(photoUrl);
+        }
 
         Certification returnCertification = certificationService.registerCertification(certification);
 
-        // Point 부여
-        User user = userService.getUserByUserId(certificationDTO.getUserId());
-        CategoryCode category = CategoryCode.valueOf(certificationDTO.getCategoryCode());
-        pointService.updateAccumulatedPoint(user.getUserId(), category.getPoint());
-        pointService.updateWeeklyPoint(user.getUserId(), category.getPoint());
+        if(type.equals("live")) { // past는 포인트 부여하지 않음.
+            // Point 부여
+            User user = userService.getUserByUserId(certificationDTO.getUserId());
+            CategoryCode category = CategoryCode.valueOf(certificationDTO.getCategoryCode());
+            pointService.updateAccumulatedPoint(user.getUserId(), category.getPoint());
+            pointService.updateWeeklyPoint(user.getUserId(), category.getPoint());
 
-        userService.changeUserInfo(user);
+            userService.updateUserData(user);
+        }
 
         return SuccessReturn(returnCertification);
     }
