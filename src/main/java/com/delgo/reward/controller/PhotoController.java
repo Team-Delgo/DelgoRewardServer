@@ -45,7 +45,7 @@ public class PhotoController extends CommController {
         User user = userService.getUserByUserId(userId);
         user.setProfile(profileUrl);
 
-        userService.updateUserData(user);
+        userService.changeUserInfo(user);
 
         return SuccessReturn(profileUrl);
     }

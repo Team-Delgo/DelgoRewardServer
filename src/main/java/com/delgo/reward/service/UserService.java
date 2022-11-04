@@ -101,7 +101,7 @@ public class UserService {
                 .orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
     }
 
-    public User updateUserData(User user) {
+    public User changeUserInfo(User user) {
         return userRepository.save(user);
     }
 

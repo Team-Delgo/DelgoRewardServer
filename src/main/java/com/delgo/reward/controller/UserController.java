@@ -46,6 +46,32 @@ public class UserController extends CommController {
         return SuccessReturn(userInfoDTO);
     }
 
+    // 유저 정보 수정
+    @PostMapping("/changeUserInfo")
+    public ResponseEntity<?> changePetInfo(@Validated @RequestBody ModifyUserDTO modifyUserDTO) {
+        String checkedEmail = modifyUserDTO.getEmail();
+
+        User user = userService.getUserByEmail(checkedEmail);
+        int userId = user.getUserId();
+        User originUser = userService.getUserByUserId(userId);
+
+        if (modifyUserDTO.getName() != null)
+            originUser.setName(modifyUserDTO.getName());
+
+        if (modifyUserDTO.getProfileUrl() != null)
+            originUser.setProfile(modifyUserDTO.getProfileUrl());
+
+        if (modifyUserDTO.getGeoCode() != null)
+            originUser.setGeoCode(modifyUserDTO.getGeoCode());
+
+        if (modifyUserDTO.getPGeoCode() != null)
+            originUser.setPGeoCode(modifyUserDTO.getPGeoCode());
+
+        userService.changeUserInfo(originUser);
+
+        return SuccessReturn();
+    }
+
     // 펫 정보 수정
     @PostMapping("/changePetInfo")
     public ResponseEntity<?> changePetInfo(@Validated @RequestBody ModifyPetDTO modifyPetDTO) {
