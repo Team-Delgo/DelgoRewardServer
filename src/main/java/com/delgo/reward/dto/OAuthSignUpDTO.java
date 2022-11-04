@@ -22,6 +22,10 @@ public class OAuthSignUpDTO {
     @NotBlank
     private String phoneNo;
     @NotBlank
+    private String geoCode;
+    @NotBlank
+    private String pGeoCode;
+    @NotBlank
     private String petName;
     @NotNull
     private PetSize petSize;
