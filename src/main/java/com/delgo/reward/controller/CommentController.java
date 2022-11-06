@@ -9,12 +9,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -32,5 +30,17 @@ public class CommentController extends CommController {
     public ResponseEntity createReply(@Validated @RequestBody ReplyDTO replyDTO){
         Comment comment = commentService.createReply(replyDTO);
         return SuccessReturn(comment);
+    }
+
+    @GetMapping("/comment")
+    public ResponseEntity getComment(@RequestParam int certificationId){
+        List<Comment> commentList = commentService.getCommentByCertificationId(certificationId);
+        return SuccessReturn(commentList);
+    }
+
+    @GetMapping("/reply")
+    public ResponseEntity getReply(@RequestParam int parentCommentId){
+        List<Comment> replyList = commentService.getReplyByParentCommentId(parentCommentId);
+        return SuccessReturn(replyList);
     }
 }
