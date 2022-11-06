@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @Transactional
@@ -24,5 +26,15 @@ public class CommentService {
     public Comment createReply(ReplyDTO replyDTO){
         Comment comment = Comment.builder().isReply(true).certificationId(replyDTO.getCertificationId()).userId(replyDTO.getUserId()).content(replyDTO.getContent()).parentCommentId(replyDTO.getParentCommentId()).build();
         return commentRepository.save(comment);
+    }
+
+    public List<Comment> getCommentByCertificationId(int certificationId){
+        List<Comment> commentList = commentRepository.findByCertificationId(certificationId);
+        return commentList;
+    }
+
+    public List<Comment> getReplyByParentCommentId(int parentCommentId){
+        List<Comment> replyList = commentRepository.findByParentCommentId(parentCommentId);
+        return replyList;
     }
 }
