@@ -4,6 +4,7 @@ package com.delgo.reward.service;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.user.UserInfoDTO;
+import com.delgo.reward.repository.JDBCTemplatePointRepository;
 import com.delgo.reward.repository.PetRepository;
 import com.delgo.reward.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PetRepository petRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JDBCTemplatePointRepository jdbcTemplatePointRepository;
 
     // 회원가입
     public User signup(User user, Pet pet) {
@@ -32,6 +34,7 @@ public class UserService {
 //        user.setPassword(encodedPassword);
         // User Data save
         User owner = userRepository.save(user);
+        jdbcTemplatePointRepository.createUserPoint(user);
         // Pet Data save
         pet.setUserId(owner.getUserId());
         petRepository.save(pet);
