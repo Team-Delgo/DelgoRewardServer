@@ -13,6 +13,7 @@ import com.delgo.reward.dto.user.CertificationModifyDTO;
 import com.delgo.reward.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -148,11 +149,11 @@ public class CertificationController extends CommController {
         if (categoryCode.isBlank())
             return ErrorReturn(ApiCode.PARAM_ERROR);
 
-        List<Certification> certificationList = (!categoryCode.equals(CategoryCode.TOTAL.getCode()))
+        Slice<Certification> returnObject = (!categoryCode.equals(CategoryCode.TOTAL.getCode()))
                 ? certificationService.getCertificationByUserIdAndCategoryCode(userId, categoryCode, currentPage, pageSize)
                 : certificationService.getCertificationByUserIdPaging(userId, currentPage, pageSize);
 
-        return SuccessReturn(certificationList);
+        return SuccessReturn(returnObject);
     }
 
     /*
