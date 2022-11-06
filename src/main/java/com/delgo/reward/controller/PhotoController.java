@@ -57,25 +57,25 @@ public class PhotoController extends CommController {
      * - photo : 확장자는 .jpg를 기본으로 한다. [.jpeg도 가능] [ 따로 확장자를 체크하진 않는다.]
      * Response Data : 사진 저장된 URL
      */
-//    @PostMapping(value={"/upload/certification/{certificationId}","/upload/certification"})
-//    public ResponseEntity<?> uploadCertificationPhoto(@PathVariable Integer certificationId, @RequestPart(required = false) MultipartFile photo) {
-//        if (photo.isEmpty()) // Validate - Empty Check;
-//            return ErrorReturn(ApiCode.PARAM_ERROR);
-//
-//        String profileUrl = photoService.uploadCertMultipart(certificationId, photo);
-//
-//        //NCP ERROR
-//        if (profileUrl.split(":")[0].equals("erㄴror")) {
-//            log.info("NCP ERROR : {}", profileUrl.split(":")[1]);
-//            return ErrorReturn(ApiCode.PHOTO_UPLOAD_ERROR);
-//        }
-//
-//        Certification certification = certificationService.getCertificationByCertificationId(certificationId);
-//        certification.setPhotoUrl(profileUrl);
-//
-//        // PhotoUrl 등록
-//        certificationService.registerCertification(certification);
-//
-//        return SuccessReturn(profileUrl);
-//    }
+    @PostMapping(value={"/upload/certification/{certificationId}","/upload/certification"})
+    public ResponseEntity<?> uploadCertificationPhoto(@PathVariable Integer certificationId, @RequestPart(required = false) MultipartFile photo) {
+        if (photo.isEmpty()) // Validate - Empty Check;
+            return ErrorReturn(ApiCode.PARAM_ERROR);
+
+        String profileUrl = photoService.uploadCertMultipart(certificationId, photo);
+
+        //NCP ERROR
+        if (profileUrl.split(":")[0].equals("error")) {
+            log.info("NCP ERROR : {}", profileUrl.split(":")[1]);
+            return ErrorReturn(ApiCode.PHOTO_UPLOAD_ERROR);
+        }
+
+        Certification certification = certificationService.getCertificationByCertificationId(certificationId);
+        certification.setPhotoUrl(profileUrl);
+
+        // PhotoUrl 등록
+        certificationService.registerCertification(certification);
+
+        return SuccessReturn(profileUrl);
+    }
 }

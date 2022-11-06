@@ -36,7 +36,7 @@ public class PhotoService extends CommService {
 
         String fileName = certificationId + "_cert." + extension;
         // NCP Link
-        String link = "https://kr.object.ncloudstorage.com/delgo-reward-certification/" + fileName;
+        String link = "https://kr.object.ncloudstorage.com/reward-certification/" + fileName;
 
         try {
             // 서버에 저장
@@ -45,7 +45,7 @@ public class PhotoService extends CommService {
 
             if (f.exists()) {
                 // Upload NCP
-                objectStorageService.uploadObjects("delgo-reward-certification", fileName, dir + fileName);
+                objectStorageService.uploadObjects("reward-certification", fileName, dir + fileName);
 
                 // 서버에 저장된 사진 삭제
                 f.delete();
@@ -64,7 +64,7 @@ public class PhotoService extends CommService {
 
         String fileName = certificationId + "_cert.jpeg";
         // NCP Link
-        String link = "https://kr.object.ncloudstorage.com/delgo-reward-certification/" + fileName;
+        String link = "https://kr.object.ncloudstorage.com/reward-certification/" + fileName;
 
         String test = photoUrl.replace("data:image/jpeg;base64,","");
         try {
@@ -78,7 +78,7 @@ public class PhotoService extends CommService {
 
             if (convertFile.exists()) {
                 // Upload NCP
-                objectStorageService.uploadObjects("delgo-reward-certification", fileName, dir + fileName);
+                objectStorageService.uploadObjects("reward-certification", fileName, dir + fileName);
 
                 // 서버에 저장된 사진 삭제
                 convertFile.delete();

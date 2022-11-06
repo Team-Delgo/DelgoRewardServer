@@ -38,10 +38,10 @@ public class CertificationService {
     }
 
     // categoryCode & userId로 Certification 리스트 조회
-    public List<Certification> getCertificationByUserIdAndCategoryCode(int userId, String categoryCode, int currentPage, int pageSize) {
+    public Slice<Certification> getCertificationByUserIdAndCategoryCode(int userId, String categoryCode, int currentPage, int pageSize) {
         PageRequest pageRequest = PageRequest.of(currentPage, pageSize);
 
-        return certificationRepository.findByUserIdAndCategoryCodeOrderByRegistDtDesc(userId, categoryCode, pageRequest).getContent();
+        return certificationRepository.findByUserIdAndCategoryCodeOrderByRegistDtDesc(userId, categoryCode, pageRequest);
     }
 
     // userId로 Certification 조회
@@ -49,10 +49,10 @@ public class CertificationService {
         return certificationRepository.findByUserId(userId);
     }
 
-    public List<Certification> getCertificationByUserIdPaging(int userId, int currentPage, int pageSize) {
+    public Slice<Certification> getCertificationByUserIdPaging(int userId, int currentPage, int pageSize) {
         PageRequest pageRequest = PageRequest.of(currentPage, pageSize);
 
-        return certificationRepository.findByUserIdOrderByRegistDtDesc(userId, pageRequest).getContent();
+        return certificationRepository.findByUserIdOrderByRegistDtDesc(userId, pageRequest);
     }
 
     // CertificationId로 Certification 조회
