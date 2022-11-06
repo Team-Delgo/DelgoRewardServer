@@ -248,4 +248,5 @@ public class UserController extends CommController {
         UserInfoDTO userInfoDTO = userService.getUserInfo(userId);
         return SuccessReturn(userInfoDTO);
     }
+
 }
