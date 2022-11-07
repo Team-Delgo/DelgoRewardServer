@@ -49,6 +49,11 @@ public class CertificationService {
         return certificationRepository.findByUserId(userId);
     }
 
+    // live Certification 조회
+    public List<Certification> getLiveCertificationByUserId(int userId, int isLive) {
+        return certificationRepository.findByUserIdAndIsLive(userId, isLive);
+    }
+
     public Slice<Certification> getCertificationByUserIdPaging(int userId, int currentPage, int pageSize) {
         PageRequest pageRequest = PageRequest.of(currentPage, pageSize);
 
