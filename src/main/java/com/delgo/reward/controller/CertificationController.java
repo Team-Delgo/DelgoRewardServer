@@ -144,14 +144,15 @@ public class CertificationController extends CommController {
             @RequestParam Integer userId,
             @RequestParam String categoryCode,
             @RequestParam Integer currentPage,
-            @RequestParam Integer pageSize) {
+            @RequestParam Integer pageSize,
+            @RequestParam Integer isDesc) {
         // Validate - Blank Check; [ String 만 해주면 됨 ]
         if (categoryCode.isBlank())
             return ErrorReturn(ApiCode.PARAM_ERROR);
 
         Slice<Certification> returnObject = (!categoryCode.equals(CategoryCode.TOTAL.getCode()))
-                ? certificationService.getCertificationByUserIdAndCategoryCode(userId, categoryCode, currentPage, pageSize)
-                : certificationService.getCertificationByUserIdPaging(userId, currentPage, pageSize);
+                ? certificationService.getCertificationByUserIdAndCategoryCode(userId, categoryCode, currentPage, pageSize, isDesc)
+                : certificationService.getCertificationByUserIdPaging(userId, currentPage, pageSize, isDesc);
 
         return SuccessReturn(returnObject);
     }
