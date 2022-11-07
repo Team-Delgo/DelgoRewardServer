@@ -28,4 +28,10 @@ public class WardOfficeService {
         return wardOfficeRepository.findAll();
     }
 
+    // GeoCode로 WardOffice 조회
+    public WardOffice getWardOfficeByGeoCode(String geoCode) {
+        return wardOfficeRepository.findByGeoCode(geoCode)
+                .orElseThrow(() -> new NullPointerException("NOT FOUND WardOffice"));
+    }
+
 }

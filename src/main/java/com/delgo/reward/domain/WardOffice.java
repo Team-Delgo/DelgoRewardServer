@@ -22,6 +22,7 @@ public class WardOffice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int wardOfficeId;
+    private String geoCode; // 지역코드
     private String name; // 구청명
     private String latitude; // 위도
     private String longitude; // 경도
