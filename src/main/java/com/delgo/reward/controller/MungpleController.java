@@ -53,7 +53,7 @@ public class MungpleController extends CommController {
      * - CA0000 = 전체 조회
      * Response Data : 카테고리별 멍플 리스트 반환
      */
-    @GetMapping("/data-category")
+    @GetMapping("/category-data")
     public ResponseEntity getData(@RequestParam String categoryCode) {
         // Validate - Blank Check; [ String 만 해주면 됨 ]
         if (categoryCode.isBlank())

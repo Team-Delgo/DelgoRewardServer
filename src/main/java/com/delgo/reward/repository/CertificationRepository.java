@@ -15,9 +15,11 @@ import java.util.Optional;
 public interface CertificationRepository extends JpaRepository<Certification, Integer>, JpaSpecificationExecutor<Certification> {
     List<Certification> findByUserId(int userId);
 
-    List<Certification> findByUserIdAndIsLive(int userId, int isLive);
+    // 페이징
+    Slice<Certification> findByUserId(int userId, Pageable pageable);
 
-    List<Certification> findByUserIdAndCategoryCode(int userId, String categoryCode);
+    // Live 인증만 조회
+    List<Certification> findByUserIdAndIsLive(int userId, int isLive);
 
     Optional<Certification> findByCertificationId(int certificationId);
 
@@ -32,13 +34,11 @@ public interface CertificationRepository extends JpaRepository<Certification, In
     @Query(value = "select certification_id from certification where user_id not in (select ban_user_id from ban_list where user_id = userId)", nativeQuery = true)
     List<Integer> findByUserIdWithoutBanList(int userId);
 
-    @Query("SELECT u as user, c as cert FROM Certification c LEFT JOIN User u ON u.userId = c.userId order by c.registDt desc")
+    @Query("SELECT u as user, c as cert FROM Certification c LEFT JOIN User u ON u.userId = c.userId")
     Slice<Certification> findAllByOrderByRegistDtDesc(Pageable pageable);
 
     List<Certification> findTop2ByOrderByRegistDtDesc();
 
-    Slice<Certification> findByUserIdAndCategoryCodeOrderByRegistDtDesc(int userId, String categoryCode, Pageable pageable);
-
-    Slice<Certification> findByUserIdOrderByRegistDtDesc(int userId, Pageable pageable);
+    Slice<Certification> findByUserIdAndCategoryCode(int userId, String categoryCode, Pageable pageable);
 }
 
