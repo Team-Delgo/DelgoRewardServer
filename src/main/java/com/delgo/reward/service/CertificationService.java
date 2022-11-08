@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,10 +39,12 @@ public class CertificationService {
     }
 
     // categoryCode & userId로 Certification 리스트 조회
-    public Slice<Certification> getCertificationByUserIdAndCategoryCode(int userId, String categoryCode, int currentPage, int pageSize) {
-        PageRequest pageRequest = PageRequest.of(currentPage, pageSize);
+    public Slice<Certification> getCertificationByUserIdAndCategoryCode(int userId, String categoryCode, int currentPage, int pageSize, int isDesc ) {
+        PageRequest pageRequest = (isDesc == 1)
+                ? PageRequest.of(currentPage, pageSize,  Sort.by("registDt").descending()) // 내림차순 정렬
+                : PageRequest.of(currentPage, pageSize,  Sort.by("registDt")); // 오름차순 정렬
 
-        return certificationRepository.findByUserIdAndCategoryCodeOrderByRegistDtDesc(userId, categoryCode, pageRequest);
+        return certificationRepository.findByUserIdAndCategoryCode(userId, categoryCode, pageRequest);
     }
 
     // userId로 Certification 조회
@@ -54,10 +57,12 @@ public class CertificationService {
         return certificationRepository.findByUserIdAndIsLive(userId, isLive);
     }
 
-    public Slice<Certification> getCertificationByUserIdPaging(int userId, int currentPage, int pageSize) {
-        PageRequest pageRequest = PageRequest.of(currentPage, pageSize);
+    public Slice<Certification> getCertificationByUserIdPaging(int userId, int currentPage, int pageSize, int isDesc) {
+        PageRequest pageRequest = (isDesc == 1)
+                ? PageRequest.of(currentPage, pageSize,  Sort.by("registDt").descending()) // 내림차순 정렬
+                : PageRequest.of(currentPage, pageSize,  Sort.by("registDt")); // 오름차순 정렬
 
-        return certificationRepository.findByUserIdOrderByRegistDtDesc(userId, pageRequest);
+        return certificationRepository.findByUserId(userId, pageRequest);
     }
 
     // CertificationId로 Certification 조회
