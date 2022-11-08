@@ -37,4 +37,8 @@ public class CommentService {
         List<Comment> replyList = commentRepository.findByParentCommentId(parentCommentId);
         return replyList;
     }
+
+    public void deleteReplyByCommentId(int commentId){
+        commentRepository.deleteById(commentId);
+    }
 }
