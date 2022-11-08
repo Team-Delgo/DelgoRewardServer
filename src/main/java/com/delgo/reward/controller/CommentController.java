@@ -43,4 +43,10 @@ public class CommentController extends CommController {
         List<Comment> replyList = commentService.getReplyByParentCommentId(parentCommentId);
         return SuccessReturn(replyList);
     }
+
+    @GetMapping("/comment/delete")
+    public ResponseEntity deleteReply(@RequestParam int commentId){
+        commentService.deleteReplyByCommentId(commentId);
+        return SuccessReturn();
+    }
 }
