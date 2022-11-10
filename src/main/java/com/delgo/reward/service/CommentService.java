@@ -38,6 +38,17 @@ public class CommentService {
         return replyList;
     }
 
+    public boolean isReplyOwner(int commentId, int userId){
+        Comment comment = getCommentByCommentId(commentId);
+        if(comment.getUserId() == userId)
+            return true;
+        return false;
+    }
+
+    public Comment getCommentByCommentId(int commentId){
+        return commentRepository.findById(commentId).orElseThrow();
+    }
+
     public void deleteReplyByCommentId(int commentId){
         commentRepository.deleteById(commentId);
     }

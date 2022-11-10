@@ -1,6 +1,7 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
+import com.delgo.reward.comm.exception.ApiCode;
 import com.delgo.reward.domain.Comment;
 import com.delgo.reward.dto.CommentDTO;
 import com.delgo.reward.dto.ReplyDTO;
@@ -44,9 +45,12 @@ public class CommentController extends CommController {
         return SuccessReturn(replyList);
     }
 
-    @GetMapping("/comment/delete")
-    public ResponseEntity deleteReply(@RequestParam int commentId){
-        commentService.deleteReplyByCommentId(commentId);
+    @PostMapping("/comment/delete/{commentId}/{userId}")
+    public ResponseEntity deleteReply(@PathVariable Integer commentId, @PathVariable Integer userId){
+        if(commentService.isReplyOwner(commentId, userId))
+            commentService.deleteReplyByCommentId(commentId);
+        else
+            return ErrorReturn(ApiCode.PARAM_ERROR);
         return SuccessReturn();
     }
 }
