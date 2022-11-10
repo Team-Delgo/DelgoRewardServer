@@ -50,7 +50,7 @@ public class CommentController extends CommController {
         if(commentService.isReplyOwner(commentId, userId))
             commentService.deleteReplyByCommentId(commentId);
         else
-            return ErrorReturn(ApiCode.PARAM_ERROR);
+            return ErrorReturn(ApiCode.INVALID_USER_ERROR);
         return SuccessReturn();
     }
 }

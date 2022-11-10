@@ -26,6 +26,9 @@ public class API {
         // PHOTO ERROR
         public static final int PHOTO_EXTENSION_ERROR = 310;
 
+        // INVALID_USER_ERROR
+        public static final int INVALID_USER_ERROR = 315;
+
         // ------------------------FUNCTION----------------------------
 
         // MUNGPLE ERROR
