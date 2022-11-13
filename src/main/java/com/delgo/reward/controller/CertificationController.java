@@ -91,6 +91,7 @@ public class CertificationController extends CommController {
                 Archive archive = Archive.builder()
                         .achievementsId(achievements.getAchievementsId())
                         .userId(certificationDTO.getUserId())
+                        .isMain(0)
                         .build();
                 archiveService.registerArchive(archive);
             }
