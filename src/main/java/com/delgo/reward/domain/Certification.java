@@ -41,6 +41,7 @@ public class Certification {
     private Integer isAchievements; // 업적 영향 여부 ( 해당 인증이 등록되었을 때 가지게 된 업적이 있는가?)
     
     private int likeCount; // 좋아요 개수
+    private int commentCount; // 댓글 개수
     private int isLive; // live 인증 , 갤러리 인증인지 구분
 
     @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")

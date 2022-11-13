@@ -5,6 +5,7 @@ import com.delgo.reward.comm.exception.ApiCode;
 import com.delgo.reward.domain.Comment;
 import com.delgo.reward.dto.CommentDTO;
 import com.delgo.reward.dto.ReplyDTO;
+import com.delgo.reward.service.CertificationService;
 import com.delgo.reward.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Slf4j
@@ -20,10 +20,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentController extends CommController {
     private final CommentService commentService;
+    private final CertificationService certificationService;
 
     @PostMapping("/comment")
     public ResponseEntity createComment(@Validated @RequestBody CommentDTO commentDTO){
         Comment comment = commentService.createComment(commentDTO);
+        certificationService.plusCommentCount(commentDTO.getCertificationId());
+
         return SuccessReturn(comment);
     }
 

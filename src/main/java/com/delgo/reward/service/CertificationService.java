@@ -93,6 +93,11 @@ public class CertificationService {
         jdbcTemplateRankingRepository.plusLikeCount(certificationId);
     }
 
+    // Comment Count + 1
+    public void plusCommentCount(int certificationId) {
+        jdbcTemplateRankingRepository.plusCommentCount(certificationId);
+    }
+
     // userId & categoryCode 만족하는 인증 개수
     public int countCertByUserIdAndCategoryCode(int userId, String categoryCode) {
         return certificationRepository.countByUserIdAndCategoryCode(userId, categoryCode);
