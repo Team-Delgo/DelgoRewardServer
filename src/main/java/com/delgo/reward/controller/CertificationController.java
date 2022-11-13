@@ -204,6 +204,6 @@ public class CertificationController extends CommController {
      */
     @GetMapping("/data/all")
     public ResponseEntity getPagingData(@RequestParam Integer currentPage, @RequestParam Integer pageSize) {
-        return SuccessReturn(certificationService.getCertificationAll(currentPage, pageSize));
+        return SuccessReturn(certificationService.getCertificationAll(currentPage, pageSize, 1));
     }
 }

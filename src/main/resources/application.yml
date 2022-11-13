@@ -18,8 +18,8 @@ spring:
       ddl-auto: none
   servlet:
     multipart:
-      maxFileSize: 50MB
-      maxRequestSize: 50MB
+      maxFileSize: 10MB
+      maxRequestSize: 12MB
 
 server:
   port: 8081

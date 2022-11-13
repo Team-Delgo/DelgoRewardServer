@@ -32,10 +32,12 @@ public class CertificationService {
     private final LocalDateTime end = LocalDate.now().atTime(0, 0, 0).plusDays(1);
 
     // 전체 Certification 리스트 조회
-    public Slice<Certification> getCertificationAll(int currentPage, int pageSize) {
-        PageRequest pageRequest = PageRequest.of(currentPage, pageSize);
+    public Slice<Certification> getCertificationAll(int currentPage, int pageSize, int isDesc) {
+        PageRequest pageRequest = (isDesc == 1)
+                ? PageRequest.of(currentPage, pageSize,  Sort.by("registDt").descending()) // 내림차순 정렬
+                : PageRequest.of(currentPage, pageSize,  Sort.by("registDt")); // 오름차순 정렬
 
-        return certificationRepository.findAllByOrderByRegistDtDesc(pageRequest);
+        return certificationRepository.findAllByPaging(pageRequest);
     }
 
     // categoryCode & userId로 Certification 리스트 조회

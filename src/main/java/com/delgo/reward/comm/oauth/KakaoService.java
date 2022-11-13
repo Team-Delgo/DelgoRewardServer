@@ -35,7 +35,7 @@ public class KakaoService {
 
             sb.append("grant_type=authorization_code");
             sb.append("&client_id=b40f84b68ce44634317bb5530b0166c1");
-            sb.append("&redirect_uri=https://www.delgo.pet/oauth/callback/kakao");
+            sb.append("&redirect_uri=https://www.reward.delgo.pet/oauth/callback/kakao");
             sb.append("&code=" + code);
             bw.write(sb.toString());
             bw.flush();
