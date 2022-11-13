@@ -6,6 +6,7 @@ import com.delgo.reward.comm.exception.ApiCode;
 import com.delgo.reward.comm.security.jwt.Access_JwtProperties;
 import com.delgo.reward.comm.security.jwt.Refresh_JwtProperties;
 import com.delgo.reward.domain.Code;
+import com.delgo.reward.domain.Point;
 import com.delgo.reward.domain.SmsAuth;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
@@ -33,6 +34,7 @@ public class UserController extends CommController {
     private final TokenService tokenService;
     private final SmsAuthService smsAuthService;
     private final CodeService codeService;
+    private final PointService pointService;
 
     @RequestMapping(value ="/")
     public ResponseEntity<?> defaultResponse() {
@@ -247,6 +249,12 @@ public class UserController extends CommController {
     public ResponseEntity<?> getInfo(@RequestParam Integer userId){
         UserInfoDTO userInfoDTO = userService.getUserInfo(userId);
         return SuccessReturn(userInfoDTO);
+    }
+
+    @GetMapping("/user/point")
+    public ResponseEntity<?> getPoint(@RequestParam Integer userId){
+        Point point = pointService.getPointByUserId(userId);
+        return SuccessReturn(point);
     }
 
 }
