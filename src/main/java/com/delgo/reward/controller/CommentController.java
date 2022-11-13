@@ -4,6 +4,7 @@ import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
 import com.delgo.reward.domain.Comment;
 import com.delgo.reward.dto.CommentDTO;
+import com.delgo.reward.dto.GetCommentDTO;
 import com.delgo.reward.dto.ReplyDTO;
 import com.delgo.reward.service.CertificationService;
 import com.delgo.reward.service.CommentService;
@@ -38,7 +39,7 @@ public class CommentController extends CommController {
 
     @GetMapping("/comment")
     public ResponseEntity getComment(@RequestParam int certificationId){
-        List<Comment> commentList = commentService.getCommentByCertificationId(certificationId);
+        List<GetCommentDTO> commentList = commentService.getCommentByCertificationId(certificationId);
         return SuccessReturn(commentList);
     }
 
