@@ -30,29 +30,29 @@ public class CertificationTest {
     @Autowired
     private CertificationRepository certificationRepository;
 
-    @Test
-    public void registerCertificationTest() {
-        //given
-        Code code = new Code();
-        code.setCode("101000"); // GeoCode
-        code.setPCode("101000"); // p_GeoCode
-
-
-        CertificationDTO certificationDTO = new CertificationDTO();
-        certificationDTO.setUserId(0);
-        certificationDTO.setCategoryCode(CategoryCode.CA0002.getCode());
-        certificationDTO.setMungpleId(0);
-        certificationDTO.setPlaceName("TEST PLACE");
-        certificationDTO.setDescription("TEST 중입니다");
-        certificationDTO.setLatitude("127.1061672");
-        certificationDTO.setLongitude("37.5068523");
-
-        //when
-        Certification certification = certificationService.registerCertification(certificationDTO.makeCertification(code));
-
-        //then
-        assertNotNull(certification);
-    }
+//    @Test
+//    public void registerCertificationTest() {
+//        //given
+//        Code code = new Code();
+//        code.setCode("101000"); // GeoCode
+//        code.setPCode("101000"); // p_GeoCode
+//
+//
+//        CertificationDTO certificationDTO = new CertificationDTO();
+//        certificationDTO.setUserId(0);
+//        certificationDTO.setCategoryCode(CategoryCode.CA0002.getCode());
+//        certificationDTO.setMungpleId(0);
+//        certificationDTO.setPlaceName("TEST PLACE");
+//        certificationDTO.setDescription("TEST 중입니다");
+//        certificationDTO.setLatitude("127.1061672");
+//        certificationDTO.setLongitude("37.5068523");
+//
+//        //when
+//        Certification certification = certificationService.registerCertification(certificationDTO.makeCertification(code));
+//
+//        //then
+//        assertNotNull(certification);
+//    }
 
     @Test
     public void checkMungpleCertRegisterTest() {
@@ -114,33 +114,33 @@ public class CertificationTest {
         assertTrue(count1 < 21600);
     }
 
-    @Test
-    public void getRecentCertificationListTest() {
-        //given
+//    @Test
+//    public void getRecentCertificationListTest() {
+//        //given
+//
+//        //when
+//        List<Certification> cList = certificationService.getRecentCertificationList();
+//
+//        for(Certification c : cList){
+//            System.out.println(" c : " + c);
+//
+//        }
+//        //then
+//        assertTrue(true);
+//    }
 
-        //when
-        List<Certification> cList = certificationService.getRecentCertificationList();
-
-        for(Certification c : cList){
-            System.out.println(" c : " + c);
-
-        }
-        //then
-        assertTrue(true);
-    }
-
-    @Test
-    public void getPagingTest() {
-        //given
-
-        //when
-        List<Certification> cList = certificationService.getRecentCertificationList();
-
-        for(Certification c : cList){
-            System.out.println(" c : " + c);
-
-        }
-        //then
-        assertTrue(true);
-    }
+//    @Test
+//    public void getPagingTest() {
+//        //given
+//
+//        //when
+//        List<Certification> cList = certificationService.getRecentCertificationList();
+//
+//        for(Certification c : cList){
+//            System.out.println(" c : " + c);
+//
+//        }
+//        //then
+//        assertTrue(true);
+//    }
 }

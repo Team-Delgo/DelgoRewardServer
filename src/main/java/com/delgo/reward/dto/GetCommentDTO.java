@@ -1,4 +1,4 @@
-package com.delgo.reward.domain;
+package com.delgo.reward.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -7,26 +7,27 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Entity
-public class Comment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int commentId;
-    private int userId;
-    private int certificationId;
-    private boolean isReply;
-    private int parentCommentId;
+public class GetCommentDTO {
+    @NotNull
+    private Integer userId;
+    @NotNull
+    private Integer certificationId;
+    @NotNull
+    private Boolean isReply;
+    @NotNull
     private String content;
+    @NotNull
+    private String userName;
+    @NotNull
+    private String profile;
+    @NotNull
     @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
     @CreationTimestamp
     private LocalDateTime createDt;
