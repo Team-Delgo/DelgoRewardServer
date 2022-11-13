@@ -32,7 +32,7 @@ public class CertificationService {
     private final LocalDateTime end = LocalDate.now().atTime(0, 0, 0).plusDays(1);
 
     // 전체 Certification 리스트 조회
-    public Slice<Certification> getCertificationAll(int currentPage, int pageSize, int isDesc) {
+    public Slice<Certification> getCertificationAll(int userId, int currentPage, int pageSize, int isDesc) {
         PageRequest pageRequest = (isDesc == 1)
                 ? PageRequest.of(currentPage, pageSize,  Sort.by("registDt").descending()) // 내림차순 정렬
                 : PageRequest.of(currentPage, pageSize,  Sort.by("registDt")); // 오름차순 정렬
@@ -74,8 +74,8 @@ public class CertificationService {
     }
 
     // 최근 2개 조회
-    public List<Certification> getRecentCertificationList() {
-        return certificationRepository.findTop2ByOrderByRegistDtDesc();
+    public List<Certification> getRecentCertificationList(int userId) {
+        return certificationRepository.findTop2ByOrderByRegistDtDesc(userId);
     }
 
     // Certification 등록

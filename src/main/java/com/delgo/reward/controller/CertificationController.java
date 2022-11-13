@@ -194,8 +194,8 @@ public class CertificationController extends CommController {
      * Response Data : 최근 등록 인증 2개 반환
      */
     @GetMapping("/main")
-    public ResponseEntity getMainData() {
-        return SuccessReturn(certificationService.getRecentCertificationList());
+    public ResponseEntity getMainData(@RequestParam Integer userId) {
+        return SuccessReturn(certificationService.getRecentCertificationList(userId));
     }
 
     /*
@@ -204,7 +204,7 @@ public class CertificationController extends CommController {
      * Response Data : 인증 모두 조회 ( 페이징 처리 되어 있음 )
      */
     @GetMapping("/all")
-    public ResponseEntity getPagingData(@RequestParam Integer currentPage, @RequestParam Integer pageSize) {
-        return SuccessReturn(certificationService.getCertificationAll(currentPage, pageSize, 1));
+    public ResponseEntity getPagingData(@RequestParam Integer userId, @RequestParam Integer currentPage, @RequestParam Integer pageSize) {
+        return SuccessReturn(certificationService.getCertificationAll(userId, currentPage, pageSize, 1));
     }
 }
