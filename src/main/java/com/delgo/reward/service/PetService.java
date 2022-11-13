@@ -23,7 +23,7 @@ public class PetService {
 
     public Pet getPetByUserId(int userId) {
         return petRepository.findByUserId(userId)
-                .orElseThrow(()->new IllegalStateException());
+                .orElseThrow(() -> new NullPointerException("NOT FOUND PET"));
     }
 
 }
