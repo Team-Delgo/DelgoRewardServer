@@ -27,7 +27,7 @@ public class AchievementsController extends CommController {
      * Request Data : userId
      * Response Data : 유저획득 업적 리스트
      */
-    @GetMapping("/user-data")
+    @GetMapping("/user")
     public ResponseEntity getUserData(@RequestParam Integer userId) {
         List<Archive> archives = archiveService.getArchiveByUserId(userId);
         for(Archive archive : archives)
