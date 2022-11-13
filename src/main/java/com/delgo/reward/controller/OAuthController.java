@@ -69,7 +69,7 @@ public class OAuthController extends CommController {
 
         // 카카오 에러 : 1000
         if(kakaoPhoneNo.equals(""))
-            return ErrorReturn(ApiCode.UNKNOWN_ERROR);
+            return ErrorReturn(ApiCode.OAUTH_PHONE_NO_NOT_EXIST);
 
         // 카카오 전화번호 X
         if(kakaoPhoneNo.equals("PhoneNoNotExist"))
