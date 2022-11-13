@@ -139,7 +139,7 @@ public class CertificationController extends CommController {
      * - CA0000 = 전체 조회
      * Response Data : 카테고리별 인증 리스트 반환
      */
-    @GetMapping("/category-data")
+    @GetMapping("/category")
     public ResponseEntity getCategoryData(
             @RequestParam Integer userId,
             @RequestParam String categoryCode,
@@ -158,6 +158,23 @@ public class CertificationController extends CommController {
     }
 
     /*
+     * 카테고리 별 인증 개수 반환 ( 유저 )
+     * Request Data : userId
+     * Response Data : 카테고리별 인증 개수 반환
+     */
+    @GetMapping("/category/count")
+    public ResponseEntity getCountData(@RequestParam Integer userId) {
+        List<Certification> certificationList = certificationService.getCertificationByUserId(userId);
+        Map<String, Integer> returnMap = new HashMap<>();
+        for (CategoryCode categoryCode : CategoryCode.values()) {
+            int count = (int) certificationList.stream().filter(c -> c.getCategoryCode().equals(categoryCode.getCode())).count();
+            returnMap.put(categoryCode.getValue(), count);
+        }
+
+        return SuccessReturn(returnMap);
+    }
+
+    /*
      * 인증 게시글의 좋아요 + 1
      * Request Data : certificationId
      * - plusLikeCount: JPA 안 쓰고 JDBC_TEMPLATE 사용한 이유
@@ -171,28 +188,11 @@ public class CertificationController extends CommController {
     }
 
     /*
-     * 카테고리 별 인증 개수 반환 ( 유저 )
-     * Request Data : userId
-     * Response Data : 카테고리별 인증 개수 반환
-     */
-    @GetMapping("/category-data-count")
-    public ResponseEntity getCountData(@RequestParam Integer userId) {
-        List<Certification> certificationList = certificationService.getCertificationByUserId(userId);
-        Map<String, Integer> returnMap = new HashMap<>();
-        for (CategoryCode categoryCode : CategoryCode.values()) {
-            int count = (int) certificationList.stream().filter(c -> c.getCategoryCode().equals(categoryCode.getCode())).count();
-            returnMap.put(categoryCode.getValue(), count);
-        }
-
-        return SuccessReturn(returnMap);
-    }
-
-    /*
      * 가장 최근 등록한 인증 반환 [ Main ]
      * Request Data :
      * Response Data : 최근 등록 인증 2개 반환
      */
-    @GetMapping("/data/main")
+    @GetMapping("/main")
     public ResponseEntity getMainData() {
         return SuccessReturn(certificationService.getRecentCertificationList());
     }
@@ -202,7 +202,7 @@ public class CertificationController extends CommController {
      * Request Data : currentPage ( 현재 페이지 번호 ), pageSize ( 페이지 크기 )
      * Response Data : 인증 모두 조회 ( 페이징 처리 되어 있음 )
      */
-    @GetMapping("/data/all")
+    @GetMapping("/all")
     public ResponseEntity getPagingData(@RequestParam Integer currentPage, @RequestParam Integer pageSize) {
         return SuccessReturn(certificationService.getCertificationAll(currentPage, pageSize, 1));
     }
