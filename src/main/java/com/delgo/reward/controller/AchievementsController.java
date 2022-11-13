@@ -41,7 +41,7 @@ public class AchievementsController extends CommController {
      * Request Data : userId, archive
      * Response Data : 유저획득 업적 리스트
      */
-    @PostMapping("/set-main")
+    @PostMapping("/main/set")
     public ResponseEntity setMainAchievements(@RequestBody MainAchievementsDTO mainAchievementsDTO) {
         // 대표 업적 초기화
         archiveService.resetMainAchievements(mainAchievementsDTO.getUserId());
