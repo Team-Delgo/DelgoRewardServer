@@ -18,8 +18,8 @@ public interface CertificationRepository extends JpaRepository<Certification, In
     // 페이징
     Slice<Certification> findByUserId(int userId, Pageable pageable);
 
-    @Query("SELECT u as user, c as cert FROM Certification c LEFT JOIN User u ON u.userId = c.userId")
-    Slice<Certification> findAllByPaging(Pageable pageable);
+    @Query(value = "select * from certification where user_id  not in (select ban_user_id from ban_list where user_id = ?)", nativeQuery = true)
+    Slice<Certification> findAllByPaging(int userId, Pageable pageable);
 
     // Live 인증만 조회
     List<Certification> findByUserIdAndIsLive(int userId, int isLive);
@@ -40,7 +40,5 @@ public interface CertificationRepository extends JpaRepository<Certification, In
     @Query(value = "select * from certification where user_id  not in (select ban_user_id from ban_list where user_id = ?) limit 2", nativeQuery = true)
     List<Certification> findTop2ByOrderByRegistDtDesc(int userId);
 
-    @Query(value = "select * from certification where user_id  not in (select ban_user_id from ban_list where user_id = ?)", nativeQuery = true)
     Slice<Certification> findByUserIdAndCategoryCode(int userId, String categoryCode, Pageable pageable);
 }
-

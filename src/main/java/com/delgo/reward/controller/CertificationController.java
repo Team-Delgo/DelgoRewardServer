@@ -38,6 +38,7 @@ public class CertificationController extends CommController {
     private final GeoService geoService;
     private final UserService userService;
     private final PointService pointService;
+    private final LikeListService likeListService;
 
     /*
      * 인증 등록
@@ -177,14 +178,28 @@ public class CertificationController extends CommController {
 
     /*
      * 인증 게시글의 좋아요 + 1
-     * Request Data : certificationId
+     * Request Data : userId, certificationId
      * - plusLikeCount: JPA 안 쓰고 JDBC_TEMPLATE 사용한 이유
      * : 업데이트 속도 때문에, JPA로 업데이트 할 경우 너무 느려서 놓치는 요청이 발생.
      * Response Data : X
      */
-    @PostMapping("/like")
-    public ResponseEntity setLike(@RequestParam Integer certificationId) {
-        certificationService.plusLikeCount(certificationId);
+    @PostMapping(value = {"/like/{userId}/{certificationId}","/like/"})
+    public ResponseEntity setLike(@PathVariable Integer userId, @PathVariable Integer certificationId) {
+
+        // USER , Certification 존재 여부 체크
+        userService.getUserByUserId(userId);
+        Certification certification = certificationService.getCertificationByCertificationId(certificationId);
+
+        // 사용자가 해당 Certification 좋아요 눌렀는지 체크.
+        if (likeListService.hasLiked(userId, certificationId)) { // 좋아요 존재
+            likeListService.delete(userId, certificationId);
+            if (certification.getLikeCount() > 0) // 혹시 like_count가 0이거나 혹은 음수이면 miuns 시키지 않는다.
+                certificationService.minusLikeCount(certificationId);
+        } else {
+            likeListService.register(userId, certificationId);
+            certificationService.plusLikeCount(certificationId);
+        }
+
         return SuccessReturn();
     }
 

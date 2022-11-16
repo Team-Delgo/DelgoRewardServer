@@ -23,10 +23,10 @@ public class ReverseGeoTest {
     public void getReverseGeoDataTest() {
         //given
         Location location = new Location();
-        location.setLatitude("37.56225923222384");
-//        location.setLatitude("37.4410656");
-//        location.setLongitude("127.1311662");
-        location.setLongitude("126.99961739917393");
+//        location.setLatitude("37.56225923222384");
+        location.setLatitude("37.4410656");
+        location.setLongitude("127.1311662");
+//        location.setLongitude("126.99961739917393");
         location.setSIGUGUN("");
 
         //when
