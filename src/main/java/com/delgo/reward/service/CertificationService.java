@@ -34,10 +34,10 @@ public class CertificationService {
     // 전체 Certification 리스트 조회
     public Slice<Certification> getCertificationAll(int userId, int currentPage, int pageSize, int isDesc) {
         PageRequest pageRequest = (isDesc == 1)
-                ? PageRequest.of(currentPage, pageSize,  Sort.by("registDt").descending()) // 내림차순 정렬
-                : PageRequest.of(currentPage, pageSize,  Sort.by("registDt")); // 오름차순 정렬
+                ? PageRequest.of(currentPage, pageSize,  Sort.by("regist_dt").descending()) // 내림차순 정렬
+                : PageRequest.of(currentPage, pageSize,  Sort.by("regist_dt")); // 오름차순 정렬
 
-        return certificationRepository.findAllByPaging(pageRequest);
+        return certificationRepository.findAllByPaging(userId, pageRequest);
     }
 
     // categoryCode & userId로 Certification 리스트 조회
@@ -88,9 +88,14 @@ public class CertificationService {
         return certificationRepository.save(certification);
     }
 
-    // Like Count + 1
+    // Like Plus Count + 1
     public void plusLikeCount(int certificationId) {
         jdbcTemplateRankingRepository.plusLikeCount(certificationId);
+    }
+
+    // Like Minus Count + 1
+    public void minusLikeCount(int certificationId) {
+        jdbcTemplateRankingRepository.minusLikeCount(certificationId);
     }
 
     // Comment Count + 1
