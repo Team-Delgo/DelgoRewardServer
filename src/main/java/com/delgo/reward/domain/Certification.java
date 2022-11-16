@@ -43,6 +43,11 @@ public class Certification {
     private int commentCount; // 댓글 개수
     private int isLive; // live 인증 , 갤러리 인증인지 구분
 
+    @Transient
+    private User user;
+    @Transient
+    private int isLike; // 내가 좋아요를 눌렀는가?
+
     @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
     @CreationTimestamp
     private LocalDateTime registDt; // 등록 날짜
