@@ -2,6 +2,7 @@ package com.delgo.reward.dto;
 
 import com.delgo.reward.domain.pet.PetSize;
 import com.delgo.reward.domain.user.UserSocial;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +25,7 @@ public class OAuthSignUpDTO {
     @NotBlank
     private String geoCode;
     @NotBlank
+    @JsonProperty("pGeoCode")
     private String pGeoCode;
     @NotBlank
     private String petName;
