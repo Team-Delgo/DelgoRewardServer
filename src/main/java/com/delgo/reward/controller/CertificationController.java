@@ -48,6 +48,11 @@ public class CertificationController extends CommController {
 
     @PostMapping(value = {"/register/{type}", "/register/"})
     public ResponseEntity registerLive(@Validated @RequestBody CertificationDTO certificationDTO, @PathVariable String type) {
+        String tempPhoto = certificationDTO.getPhoto();
+        certificationDTO.setPhoto(""); // log 출력 전 photo 삭제
+        log.info("requestBody : {}", certificationDTO);
+        certificationDTO.setPhoto(tempPhoto); //  log 출력 후 photo 재 삽입
+
         if (!type.equals("live") && !type.equals("past"))
             return ErrorReturn(ApiCode.PARAM_ERROR);
 
