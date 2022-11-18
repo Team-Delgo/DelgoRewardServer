@@ -25,6 +25,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CertificationService {
 
+    private final UserService userService;
+    private final LikeListService likeListService;
+
     private final CertificationRepository certificationRepository;
     private final JDBCTemplateRankingRepository jdbcTemplateRankingRepository;
 
@@ -34,10 +37,17 @@ public class CertificationService {
     // 전체 Certification 리스트 조회
     public Slice<Certification> getCertificationAll(int userId, int currentPage, int pageSize, int isDesc) {
         PageRequest pageRequest = (isDesc == 1)
-                ? PageRequest.of(currentPage, pageSize,  Sort.by("registDt").descending()) // 내림차순 정렬
-                : PageRequest.of(currentPage, pageSize,  Sort.by("registDt")); // 오름차순 정렬
+                ? PageRequest.of(currentPage, pageSize,  Sort.by("regist_dt").descending()) // 내림차순 정렬
+                : PageRequest.of(currentPage, pageSize,  Sort.by("regist_dt")); // 오름차순 정렬
 
-        return certificationRepository.findAllByPaging(pageRequest);
+        Slice<Certification> pagingData = certificationRepository.findAllByPaging(userId, pageRequest);
+
+        for(Certification certification : pagingData.getContent()) {
+            certification.setUser(userService.getUserByUserId(certification.getUserId()));
+            certification.setIsLike((likeListService.hasLiked(userId, certification.getCertificationId()))? 1 : 0);
+        }
+
+        return pagingData;
     }
 
     // categoryCode & userId로 Certification 리스트 조회
@@ -46,7 +56,14 @@ public class CertificationService {
                 ? PageRequest.of(currentPage, pageSize,  Sort.by("registDt").descending()) // 내림차순 정렬
                 : PageRequest.of(currentPage, pageSize,  Sort.by("registDt")); // 오름차순 정렬
 
-        return certificationRepository.findByUserIdAndCategoryCode(userId, categoryCode, pageRequest);
+        Slice<Certification> pagingData = certificationRepository.findByUserIdAndCategoryCode(userId, categoryCode, pageRequest);
+
+        for(Certification certification : pagingData.getContent()) {
+            certification.setUser(userService.getUserByUserId(certification.getUserId()));
+            certification.setIsLike((likeListService.hasLiked(userId, certification.getCertificationId()))? 1 : 0);
+        }
+
+        return pagingData;
     }
 
     // userId로 Certification 조회
@@ -64,7 +81,14 @@ public class CertificationService {
                 ? PageRequest.of(currentPage, pageSize,  Sort.by("registDt").descending()) // 내림차순 정렬
                 : PageRequest.of(currentPage, pageSize,  Sort.by("registDt")); // 오름차순 정렬
 
-        return certificationRepository.findByUserId(userId, pageRequest);
+        Slice<Certification> pagingData = certificationRepository.findByUserId(userId, pageRequest);
+
+        for(Certification certification : pagingData.getContent()) {
+            certification.setUser(userService.getUserByUserId(certification.getUserId()));
+            certification.setIsLike((likeListService.hasLiked(userId, certification.getCertificationId()))? 1 : 0);
+        }
+
+        return pagingData;
     }
 
     // CertificationId로 Certification 조회
@@ -75,7 +99,14 @@ public class CertificationService {
 
     // 최근 2개 조회
     public List<Certification> getRecentCertificationList(int userId) {
-        return certificationRepository.findTop2ByOrderByRegistDtDesc(userId);
+        List<Certification> list = certificationRepository.findTop2ByOrderByRegistDtDesc(userId);
+
+        for(Certification certification : list) {
+            certification.setUser(userService.getUserByUserId(certification.getUserId()));
+            certification.setIsLike((likeListService.hasLiked(userId, certification.getCertificationId()))? 1 : 0);
+        }
+
+        return list;
     }
 
     // Certification 등록
@@ -88,9 +119,14 @@ public class CertificationService {
         return certificationRepository.save(certification);
     }
 
-    // Like Count + 1
+    // Like Plus Count + 1
     public void plusLikeCount(int certificationId) {
         jdbcTemplateRankingRepository.plusLikeCount(certificationId);
+    }
+
+    // Like Minus Count + 1
+    public void minusLikeCount(int certificationId) {
+        jdbcTemplateRankingRepository.minusLikeCount(certificationId);
     }
 
     // Comment Count + 1

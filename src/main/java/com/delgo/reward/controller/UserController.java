@@ -153,9 +153,10 @@ public class UserController extends CommController {
     }
 
     // 소셜 회원가입
-    @PostMapping("/oauth-signup")
+    @PostMapping("/signup/oauth")
     public ResponseEntity<?> registerUserByOAuth(@Validated @RequestBody OAuthSignUpDTO signUpDTO, HttpServletResponse response) {
 
+        log.info("signUpDTO : {}",signUpDTO);
         // 주소 설정
         Code geoCode = codeService.getGeoCodeByCode(signUpDTO.getGeoCode());
         Code pGeoCode = codeService.getGeoCodeByCode(signUpDTO.getPGeoCode());

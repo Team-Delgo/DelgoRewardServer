@@ -21,7 +21,7 @@ public class CalendarController extends CommController {
      * Request Data : userId
      * Response Data : 캘린더 인증 리스트 반환
      */
-    @GetMapping("/data")
+    @GetMapping("/user")
     public ResponseEntity getData(@RequestParam Integer userId) {
         return SuccessReturn(calendarService.makeCalendarData(userId));
     }
