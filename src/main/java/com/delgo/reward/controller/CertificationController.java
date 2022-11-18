@@ -222,4 +222,21 @@ public class CertificationController extends CommController {
     public ResponseEntity getPagingData(@RequestParam Integer userId, @RequestParam Integer currentPage, @RequestParam Integer pageSize) {
         return SuccessReturn(certificationService.getCertificationAll(userId, currentPage, pageSize, 1));
     }
+
+    /*
+     * 인증 삭제
+     * Request Data : userId ( 삭제 요청 userId ), certificationId ( 삭제할 인증 )
+     * 요청 userId랑 등록 userId랑 비교 해야 함.
+     * Response Data : null
+     */
+    @PostMapping(value={"/delete/{userId}/{certificationId}"})
+    public ResponseEntity delete(@PathVariable Integer userId, @PathVariable Integer certificationId) {
+        Certification certification = certificationService.getCertificationByCertificationId(certificationId);
+
+        if(userId != certification.getUserId())
+            return ErrorReturn(ApiCode.INVALID_USER_ERROR);
+
+        certificationService.delete(certification);
+        return SuccessReturn();
+    }
 }
