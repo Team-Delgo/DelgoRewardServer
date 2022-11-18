@@ -22,11 +22,18 @@ import java.util.stream.Collectors;
 public class CalendarService {
 
     private final CertificationService certificationService;
+    private final LikeListService likeListService;
 
     // 전체 Certification 리스트 조회
     public List<CalendarDTO> makeCalendarData(int userId) {
+
         // User의 모든 인증 데이터 조회
         List<Certification> certificationList = certificationService.getCertificationByUserId(userId);
+
+        // User가 좋아요 누른 Certification Check
+        for(Certification certification : certificationList)
+            certification.setIsLike((likeListService.hasLiked(userId, certification.getCertificationId()))? 1 : 0);
+
         // 등록 날짜 및 시간 별 오름차순 정렬 ( 메인 사진 : 해당 날짜에 가장 빨리 등록한 사진 )
         List<Certification> sortedList = certificationList.stream().sorted(Comparator.comparing(Certification::getRegistDt)).collect(Collectors.toList());
 

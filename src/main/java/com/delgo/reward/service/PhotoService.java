@@ -28,9 +28,14 @@ public class PhotoService extends CommService {
 
     // NCP에 인증 사진 Upload 후 접근 URL 반환
     public String uploadCertMultipart(int certificationId, MultipartFile photo) {
+        log.info("uploadCertMultipart 들어옴");
+        log.info("uploadCertMultipart photo : {}", photo);
         // ex) png, jpg, jpeg
         String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\.");
         String extension = type[type.length - 1];
+
+        log.info("uploadCertMultipart type : {}", (Object) type);
+        log.info("uploadCertMultipart extension : {}", extension);
         if (!extension.equals("png") && !extension.equals("jpg") && !extension.equals("jpeg"))
             throw new NullPointerException("PHOTO EXTENSION IS WRONG");
 
