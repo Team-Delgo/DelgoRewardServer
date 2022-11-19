@@ -20,7 +20,7 @@ public class JDBCTemplateCommentRepository {
     private RowMapper<GetCommentDTO> CommentByCertificationRowMapper(int certificationId) {
         return (rs, rowNum) -> {
             GetCommentDTO getCommentDTO =
-                    GetCommentDTO.builder().certificationId(rs.getInt("certification_id")).userId(rs.getInt("user_id")).userName("name").content("content").createDt(rs.getTimestamp("create_dt").toLocalDateTime()).profile(rs.getString("profile")).isReply(rs.getBoolean("is_reply")).build();
+                    GetCommentDTO.builder().certificationId(rs.getInt("certification_id")).userId(rs.getInt("user_id")).userName(rs.getString("name")).content(rs.getString("content")).createDt(rs.getTimestamp("create_dt").toLocalDateTime()).profile(rs.getString("profile")).isReply(rs.getBoolean("is_reply")).build();
 
             return getCommentDTO;
         };
