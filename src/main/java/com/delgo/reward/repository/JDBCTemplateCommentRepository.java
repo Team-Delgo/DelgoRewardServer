@@ -21,7 +21,6 @@ public class JDBCTemplateCommentRepository {
         return (rs, rowNum) -> {
             GetCommentDTO getCommentDTO =
                     GetCommentDTO.builder().certificationId(rs.getInt("certification_id")).userId(rs.getInt("user_id")).userName(rs.getString("name")).content(rs.getString("content")).createDt(rs.getTimestamp("create_dt").toLocalDateTime()).profile(rs.getString("profile")).isReply(rs.getBoolean("is_reply")).build();
-
             return getCommentDTO;
         };
     }
