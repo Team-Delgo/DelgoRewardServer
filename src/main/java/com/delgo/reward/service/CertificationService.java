@@ -134,6 +134,11 @@ public class CertificationService {
         jdbcTemplateRankingRepository.plusCommentCount(certificationId);
     }
 
+    // Comment Count - 1
+    public void minusCommentCount(int certificationId) {
+        jdbcTemplateRankingRepository.minusCommentCount(certificationId);
+    }
+
     // userId & categoryCode 만족하는 인증 개수
     public int countCertByUserIdAndCategoryCode(int userId, String categoryCode) {
         return certificationRepository.countByUserIdAndCategoryCode(userId, categoryCode);
