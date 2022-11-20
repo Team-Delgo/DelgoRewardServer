@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CertificationModifyDTO {
+    @NotNull private Integer userId;
     @NotNull private Integer certificationId;
     @NotBlank private String description;
 }

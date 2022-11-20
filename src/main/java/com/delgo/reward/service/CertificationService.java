@@ -165,4 +165,8 @@ public class CertificationService {
         List<Certification> list = certificationRepository.findByUserIdAndCategoryCodeAndRegistDtBetween(userId, categoryCode, start, end);
         return list.size() < 5;
     }
+
+    public void delete(Certification certification){
+        certificationRepository.delete(certification);
+    }
 }
