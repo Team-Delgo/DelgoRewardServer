@@ -73,4 +73,9 @@ public class JDBCTemplateRankingRepository{
     public void plusCommentCount(int certificationId) {
         jdbcTemplate.update("update certification set comment_count = comment_count + 1 where certification_id = ?", certificationId);
     }
+
+    // Certification Comment - 1
+    public void minusCommentCount(int certificationId) {
+        jdbcTemplate.update("update certification set comment_count = comment_count - 1 where certification_id = ?", certificationId);
+    }
 }
