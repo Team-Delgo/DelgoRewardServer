@@ -21,20 +21,24 @@ public class RankingService {
     private final RankingPointRepository rankingPointRepository;
     private final UserRepository userRepository;
 
+    // 주 1회 이전 주간 포인트 초기화
     public void initLastWeeklyPoint(){
         rankingCategoryRepository.deleteAll();
         rankingPointRepository.deleteAll();
         userRepository.initLastWeeklyPoint();
     }
 
+    // 이전 주간 포인트 0으로 세팅
     public void setLastWeeklyPoint(){
         userRepository.setLastWeeklyPoint();
     }
 
+    // 주간 포인트 0으로 초기화
     public void initWeeklyPoint(){
         userRepository.initWeeklyPoint();
     }
 
+    // 이전 주간 랭킹 세팅
     public void setLastRanking(){
         jdbcTemplateRankingRepository.setLastRanking();
     }
@@ -59,6 +63,7 @@ public class RankingService {
         return pointRankingList;
     }
 
+    // 포인트 별 랭킹 매기기
     public void rankingByPoint(){
         List<RankingPoint> rankingPointList = jdbcTemplateRankingRepository.findRankingByPoint();
         for(RankingPoint rankingPoint : rankingPointList){
@@ -67,6 +72,7 @@ public class RankingService {
         }
     }
 
+    // 카테고리 별 랭킹 매기기
     public void rankingByCategoryCode(String categoryCode){
         List<RankingCategory> rankingCategoryList = jdbcTemplateRankingRepository.findRankingByCategory(categoryCode);
         for(RankingCategory rankingCategory : rankingCategoryList){
