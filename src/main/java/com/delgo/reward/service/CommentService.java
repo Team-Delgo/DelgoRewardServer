@@ -4,6 +4,7 @@ import com.delgo.reward.domain.Comment;
 import com.delgo.reward.dto.CommentDTO;
 import com.delgo.reward.dto.GetCommentDTO;
 import com.delgo.reward.dto.ReplyDTO;
+import com.delgo.reward.dto.UpdateCommentDTO;
 import com.delgo.reward.repository.CommentRepository;
 import com.delgo.reward.repository.JDBCTemplateCommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -44,15 +45,27 @@ public class CommentService {
         return replyList;
     }
 
-    public boolean isReplyOwner(int commentId, int userId){
+    public boolean isCommentOwner(int commentId, int userId){
         Comment comment = getCommentByCommentId(commentId);
         if(comment.getUserId() == userId)
             return true;
         return false;
     }
 
+    public boolean isCertificationOwner(int commentId, int userId){
+        Comment comment = getCommentByCommentId(commentId);
+        if(comment.getCertificationId() == userId)
+            return true;
+        return false;
+    }
+
+
     public Comment getCommentByCommentId(int commentId){
         return commentRepository.findById(commentId).orElseThrow();
+    }
+
+    public void updateReplyByCommentId(int commentId, String updateContent){
+        commentRepository.updateByCommentId(commentId, updateContent);
     }
 
     public void deleteReplyByCommentId(int commentId){
