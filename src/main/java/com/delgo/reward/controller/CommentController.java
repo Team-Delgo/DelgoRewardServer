@@ -3,9 +3,11 @@ package com.delgo.reward.controller;
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
 import com.delgo.reward.domain.Comment;
+import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.CommentDTO;
 import com.delgo.reward.dto.GetCommentDTO;
 import com.delgo.reward.dto.ReplyDTO;
+import com.delgo.reward.dto.UpdateCommentDTO;
 import com.delgo.reward.service.CertificationService;
 import com.delgo.reward.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -49,9 +51,20 @@ public class CommentController extends CommController {
         return SuccessReturn(replyList);
     }
 
+    @PostMapping("/comment/update/{commentId}")
+    public ResponseEntity updateComment(@PathVariable Integer commentId, @RequestBody UpdateCommentDTO updateCommentDTO){
+        if(commentService.isCommentOwner(commentId, updateCommentDTO.getUserId())){
+            String updateContent = updateCommentDTO.getContent();
+            commentService.updateReplyByCommentId(commentId, updateContent);
+        }
+        else
+            return ErrorReturn(ApiCode.INVALID_USER_ERROR);
+        return SuccessReturn();
+    }
+
     @PostMapping("/comment/delete/{commentId}/{userId}")
-    public ResponseEntity deleteReply(@PathVariable Integer commentId, @PathVariable Integer userId){
-        if(commentService.isReplyOwner(commentId, userId))
+    public ResponseEntity deleteComment(@PathVariable Integer commentId, @PathVariable Integer userId){
+        if(commentService.isCommentOwner(commentId, userId) || commentService.isCertificationOwner(commentId, userId))
             commentService.deleteReplyByCommentId(commentId);
         else
             return ErrorReturn(ApiCode.INVALID_USER_ERROR);

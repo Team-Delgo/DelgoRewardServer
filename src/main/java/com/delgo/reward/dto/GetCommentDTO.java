@@ -18,6 +18,8 @@ public class GetCommentDTO {
     @NotNull
     private Integer userId;
     @NotNull
+    private Integer commentId;
+    @NotNull
     private Integer certificationId;
     @NotNull
     private Boolean isReply;
