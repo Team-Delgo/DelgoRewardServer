@@ -38,6 +38,7 @@ public class CertificationController extends CommController {
     private final GeoService geoService;
     private final UserService userService;
     private final PointService pointService;
+    private final RankingService rankingService;
     private final LikeListService likeListService;
 
     /*
@@ -121,7 +122,8 @@ public class CertificationController extends CommController {
             pointService.updateAccumulatedPoint(user.getUserId(), category.getPoint());
             pointService.updateWeeklyPoint(user.getUserId(), category.getPoint());
 
-            userService.changeUserInfo(user);
+            // 랭킹 실시간으로 집계
+            rankingService.rankingByPoint();
         }
 
         return SuccessReturn(returnCertification);
