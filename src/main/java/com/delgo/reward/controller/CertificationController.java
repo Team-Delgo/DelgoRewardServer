@@ -130,8 +130,11 @@ public class CertificationController extends CommController {
     @PostMapping("/modify")
     public ResponseEntity modify(@Validated @RequestBody CertificationModifyDTO dto) {
         Certification certification = certificationService.getCertificationByCertificationId(dto.getCertificationId());
-        certification.setDescription(dto.getDescription());
 
+        if(certification.getUserId() != dto.getUserId())
+            return ErrorReturn(ApiCode.INVALID_USER_ERROR);
+
+        certification.setDescription(dto.getDescription());
         return SuccessReturn(certificationService.modifyCertification(certification));
     }
 
