@@ -66,10 +66,7 @@ public class RankingService {
     // 포인트 별 랭킹 매기기
     public void rankingByPoint(){
         List<RankingPoint> rankingPointList = jdbcTemplateRankingRepository.findRankingByPoint();
-        for(RankingPoint rankingPoint : rankingPointList){
-            RankingPoint newRankingPoint = RankingPoint.builder().userId(rankingPoint.getUserId()).ranking(rankingPoint.getRanking()).weeklyPoint(rankingPoint.getWeeklyPoint()).geoCode(rankingPoint.getGeoCode()).build();
-            rankingPointRepository.save(newRankingPoint);
-        }
+        rankingPointRepository.saveAll(rankingPointList);
     }
 
     // 카테고리 별 랭킹 매기기
