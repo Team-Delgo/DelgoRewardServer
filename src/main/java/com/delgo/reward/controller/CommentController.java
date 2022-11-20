@@ -49,11 +49,12 @@ public class CommentController extends CommController {
         return SuccessReturn(replyList);
     }
 
-    @PostMapping("/comment/delete/{commentId}/{userId}")
-    public ResponseEntity deleteReply(@PathVariable Integer commentId, @PathVariable Integer userId){
-        if(commentService.isReplyOwner(commentId, userId))
+    @PostMapping("/comment/delete/{commentId}/{userId}/{certificationId}")
+    public ResponseEntity deleteReply(@PathVariable Integer commentId, @PathVariable Integer userId, @PathVariable Integer certificationId){
+        if(commentService.isReplyOwner(commentId, userId)) {
             commentService.deleteReplyByCommentId(commentId);
-        else
+            certificationService.minusCommentCount(certificationId);
+        } else
             return ErrorReturn(ApiCode.INVALID_USER_ERROR);
         return SuccessReturn();
     }
