@@ -1,10 +1,11 @@
 package com.delgo.reward.service;
 
+import com.delgo.reward.domain.Certification;
 import com.delgo.reward.domain.Comment;
 import com.delgo.reward.dto.CommentDTO;
 import com.delgo.reward.dto.GetCommentDTO;
 import com.delgo.reward.dto.ReplyDTO;
-import com.delgo.reward.dto.UpdateCommentDTO;
+import com.delgo.reward.repository.CertificationRepository;
 import com.delgo.reward.repository.CommentRepository;
 import com.delgo.reward.repository.JDBCTemplateCommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -21,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
+    private final CertificationRepository certificationRepository;
     private final JDBCTemplateCommentRepository jdbcTemplateCommentRepository;
 
     public Comment createComment(CommentDTO commentDTO){
@@ -54,7 +55,9 @@ public class CommentService {
 
     public boolean isCertificationOwner(int commentId, int userId){
         Comment comment = getCommentByCommentId(commentId);
-        if(comment.getCertificationId() == userId)
+        Certification certification = certificationRepository.findByCertificationId(comment.getCertificationId()).orElseThrow();
+
+        if(certification.getUserId() == userId)
             return true;
         return false;
     }
