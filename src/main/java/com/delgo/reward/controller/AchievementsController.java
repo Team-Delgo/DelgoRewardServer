@@ -1,6 +1,7 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
+import com.delgo.reward.domain.Achievements;
 import com.delgo.reward.domain.Archive;
 import com.delgo.reward.dto.MainAchievementsDTO;
 import com.delgo.reward.service.AchievementsService;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -31,15 +33,21 @@ public class AchievementsController extends CommController {
      */
     @GetMapping("/user")
     public ResponseEntity getUserData(@RequestParam Integer userId) {
+        List<Achievements> achievements = achievementsService.getAchievementsAll();
         List<Archive> archives = archiveService.getArchiveByUserId(userId);
-        for(Archive archive : archives)
-            archive.setAchievements(achievementsService.getAchievementsById(archive.getAchievementsId()));
 
-        List<Archive> sortedMainArchives = archives.stream().filter(a->a.getIsMain()!=0).sorted(Comparator.comparing(Archive::getIsMain)).collect(Collectors.toList());
-        List<Archive> notMainArchives = archives.stream().filter(a->a.getIsMain()==0).collect(Collectors.toList());
-        sortedMainArchives.addAll(notMainArchives);
+        for (Achievements achievement : achievements)
+            for(Archive archive : archives)
+                if(Objects.equals(archive.getAchievementsId(), achievement.getAchievementsId())) {
+                    achievement.setIsActive(true);
+                    achievement.setIsMain(archive.getIsMain());
+                }
 
-        return SuccessReturn(sortedMainArchives);
+        List<Achievements> sortedMainAchievements = achievements.stream().filter(a->a.getIsMain()!=0).sorted(Comparator.comparing(Achievements::getIsMain)).collect(Collectors.toList());
+        List<Achievements> notMainAchievements = achievements.stream().filter(a->a.getIsMain()==0).collect(Collectors.toList());
+        sortedMainAchievements.addAll(notMainAchievements);
+
+        return SuccessReturn(sortedMainAchievements);
     }
 
     /*
