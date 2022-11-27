@@ -46,6 +46,7 @@ public class GeoService {
             JsonNode roadAddress = jsonNode.get("addresses").get(0).get("roadAddress");
             JsonNode jibunAddress = jsonNode.get("addresses").get(0).get("jibunAddress");
             JsonNode distance = jsonNode.get("addresses").get(0).get("distance");
+            JsonNode SIDO = jsonNode.get("addresses").get(0).get("addressElements").get(0).get("longName");
             JsonNode SIGUGUN = jsonNode.get("addresses").get(0).get("addressElements").get(1).get("longName");
 
             location.setLatitude(latitude.toString().replace("\"",""));
@@ -53,14 +54,17 @@ public class GeoService {
             location.setRoadAddress(roadAddress.toString().replace("\"",""));
             location.setJibunAddress(jibunAddress.toString().replace("\"",""));
             location.setSIGUGUN(SIGUGUN.toString().replace("\"",""));
+            location.setSIDO(SIDO.toString().replace("\"",""));
 
             System.out.println("************************************************");
+            System.out.println("jsonNode: " + jsonNode);
             System.out.println("latitude: " + latitude);
             System.out.println("longitude: " + longitude);
             System.out.println("roadAddress: " + roadAddress);
             System.out.println("jibunAddress: " + jibunAddress);
             System.out.println("distance: " + distance);
             System.out.println("SIGUGUN: " + SIGUGUN);
+            System.out.println("SIDO: " + SIDO);
             System.out.println("************************************************");
 
 
