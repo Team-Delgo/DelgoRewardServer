@@ -63,11 +63,16 @@ public class UserController extends CommController {
         if (modifyUserDTO.getProfileUrl() != null)
             originUser.setProfile(modifyUserDTO.getProfileUrl());
 
-        if (modifyUserDTO.getGeoCode() != null)
+        if (modifyUserDTO.getGeoCode() != null && modifyUserDTO.getPGeoCode() != null) {
             originUser.setGeoCode(modifyUserDTO.getGeoCode());
-
-        if (modifyUserDTO.getPGeoCode() != null)
             originUser.setPGeoCode(modifyUserDTO.getPGeoCode());
+
+            // 주소 설정
+            Code geoCode = codeService.getGeoCodeByCode(modifyUserDTO.getGeoCode());
+            Code pGeoCode = codeService.getGeoCodeByCode(modifyUserDTO.getPGeoCode());
+            String address = pGeoCode.getCodeDesc() + " " + geoCode.getCodeName();
+            originUser.setAddress(address);
+        }
 
         userService.changeUserInfo(originUser);
 
