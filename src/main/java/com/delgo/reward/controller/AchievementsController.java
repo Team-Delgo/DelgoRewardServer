@@ -10,7 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -33,7 +35,11 @@ public class AchievementsController extends CommController {
         for(Archive archive : archives)
             archive.setAchievements(achievementsService.getAchievementsById(archive.getAchievementsId()));
 
-        return SuccessReturn(archives);
+        List<Archive> sortedMainArchives = archives.stream().filter(a->a.getIsMain()!=0).sorted(Comparator.comparing(Archive::getIsMain)).collect(Collectors.toList());
+        List<Archive> notMainArchives = archives.stream().filter(a->a.getIsMain()==0).collect(Collectors.toList());
+        sortedMainArchives.addAll(notMainArchives);
+
+        return SuccessReturn(sortedMainArchives);
     }
 
     /*
