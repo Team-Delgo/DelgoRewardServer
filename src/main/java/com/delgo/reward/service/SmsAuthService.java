@@ -50,11 +50,9 @@ public class SmsAuthService extends CommService {
         try {
             smsService.sendSMS(phoneNo, message);
             SmsAuth smsAuth = smsAuthRepository.findByPhoneNo(phoneNo).get();
-            smsAuth.setAuthTime(LocalDateTime.now());
-            smsAuth.setRandNum(randNum);
-            smsAuthRepository.save(smsAuth);
-
             int smsId = smsAuth.getSmsId();
+            smsAuthRepository.updateBySmsId(smsId, randNum, LocalDateTime.now());
+
             return smsId;
         } catch (Exception e) {
             throw new IllegalStateException();
