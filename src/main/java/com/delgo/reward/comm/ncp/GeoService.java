@@ -54,7 +54,7 @@ public class GeoService {
             location.setRoadAddress(roadAddress.toString().replace("\"",""));
             location.setJibunAddress(jibunAddress.toString().replace("\"",""));
             location.setSIGUGUN(SIGUGUN.toString().replace("\"",""));
-            location.setSIDO(SIDO.toString().replace("\"",""));
+            location.setSIDO(SIDO.toString().replace("\"","").substring(0,2));
 
             System.out.println("************************************************");
             System.out.println("jsonNode: " + jsonNode);
