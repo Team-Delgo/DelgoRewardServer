@@ -1,4 +1,4 @@
-package com.delgo.reward.dto;
+package com.delgo.reward.dto.certification;
 
 
 import com.delgo.reward.domain.Certification;
@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CertificationDTO {
+public class LiveCertDTO {
     @NotNull private Integer userId;
     @NotBlank private String categoryCode;
 
@@ -26,7 +26,7 @@ public class CertificationDTO {
     @NotBlank private String latitude; // 위도
     @NotBlank private String longitude; // 경도
 
-    public Certification makeCertification(Code code,String address, boolean isLive) {
+    public Certification toEntity(Code code, String address) {
         return Certification.builder()
                 .userId(this.userId)
                 .categoryCode(this.categoryCode)
@@ -38,9 +38,9 @@ public class CertificationDTO {
                 .pGeoCode(code.getPCode()) // 사용자 기준 geoCode
                 .latitude(this.latitude) // 사용자한테 입력받은 위도
                 .longitude(this.longitude) // 사용자한테 입력받은 경도
-                .isPhotoChecked(0)
-                .isAchievements(0)
-                .isLive((isLive) ? 1 : 0)
+                .isPhotoChecked(false)
+                .isAchievements(false)
+                .isLive(true)
                 .build();
     }
 }

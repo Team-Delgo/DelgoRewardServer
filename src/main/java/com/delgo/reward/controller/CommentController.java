@@ -3,12 +3,11 @@ package com.delgo.reward.controller;
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
 import com.delgo.reward.domain.Comment;
-import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.CommentDTO;
 import com.delgo.reward.dto.GetCommentDTO;
 import com.delgo.reward.dto.ReplyDTO;
 import com.delgo.reward.dto.UpdateCommentDTO;
-import com.delgo.reward.service.CertificationService;
+import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentController extends CommController {
     private final CommentService commentService;
-    private final CertificationService certificationService;
+    private final CertService certificationService;
 
     @PostMapping("/comment")
     public ResponseEntity createComment(@Validated @RequestBody CommentDTO commentDTO){

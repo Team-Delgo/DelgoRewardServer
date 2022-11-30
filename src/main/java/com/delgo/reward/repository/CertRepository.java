@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface CertificationRepository extends JpaRepository<Certification, Integer>, JpaSpecificationExecutor<Certification> {
+public interface CertRepository extends JpaRepository<Certification, Integer>, JpaSpecificationExecutor<Certification> {
     List<Certification> findByUserId(int userId);
 
     // 페이징
@@ -22,13 +22,13 @@ public interface CertificationRepository extends JpaRepository<Certification, In
     Slice<Certification> findAllByPaging(int userId, Pageable pageable);
 
     // Live 인증만 조회
-    List<Certification> findByUserIdAndIsLive(int userId, int isLive);
+    List<Certification> findByUserIdAndIsLive(int userId, boolean isLive);
 
     Optional<Certification> findByCertificationId(int certificationId);
 
-    List<Certification> findByUserIdAndMungpleIdAndRegistDtBetween(int userId, int mungpleId, LocalDateTime start, LocalDateTime end);
-
-    List<Certification> findByUserIdAndCategoryCodeAndRegistDtBetween(int userId, String categoryCode, LocalDateTime start, LocalDateTime end);
+    // ----- Cert 가능 여부 Check -----
+    List<Certification> findByUserIdAndMungpleIdAndIsLiveAndRegistDtBetween(int userId, int mungpleId, Boolean isLive, LocalDateTime start, LocalDateTime end);
+    List<Certification> findByUserIdAndCategoryCodeAndIsLiveAndRegistDtBetween(int userId, String categoryCode, boolean isLive, LocalDateTime start, LocalDateTime end);
 
     int countByUserIdAndCategoryCode(int userId, String categoryCode);
 

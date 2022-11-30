@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MapService {
 
-    private final CertificationService certificationService;
+    private final CertService certificationService;
     private final WardOfficeService wardOfficeService;
     private final LikeListService likeListService;
     private final MungpleService mungpleService;
@@ -34,11 +34,11 @@ public class MapService {
         List<Mungple> mungpleList = mungpleService.getMungpleAll();
 
         // 인증 리스트 조회
-        List<Certification> certificationList = certificationService.getLiveCertificationByUserId(userId, 1);
+        List<Certification> certificationList = certificationService.getLiveCertificationByUserId(userId, true);
 
         // User가 좋아요 누른 Certification Check
         for(Certification certification : certificationList)
-            certification.setIsLike((likeListService.hasLiked(userId, certification.getCertificationId()))? 1 : 0);
+            certification.setIsLike((likeListService.hasLiked(userId, certification.getCertificationId())));
 
         // 일반 인증, 멍플 인증 구분
         List<Certification> certNormalList = certificationList.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList());
