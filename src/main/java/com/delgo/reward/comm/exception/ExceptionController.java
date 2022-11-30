@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
+import java.util.Objects;
+
 @Slf4j
 @RestControllerAdvice
 public class ExceptionController extends CommController {
@@ -39,12 +41,16 @@ public class ExceptionController extends CommController {
     // @RequestBody DTO Param Error Check
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity methodArgumentNotValidException(MethodArgumentNotValidException e) {
-        return ErrorReturn(ApiCode.PARAM_ERROR);
+        log.info("e.getMessage : {}", Objects.requireNonNull(e.getFieldError()).getDefaultMessage());
+        String field = Objects.requireNonNull(e.getFieldError()).getField();
+        log.info("error field : {}",field);
+
+        return ErrorReturn(ApiCode.PARAM_ERROR.getCode(),ApiCode.PARAM_ERROR + " : " + field);
     }
 
     // Optional Select Error Check
     @ExceptionHandler({NullPointerException.class})
-    public ResponseEntity methodArgumentNotValidException(NullPointerException e) {
+    public ResponseEntity NullPointerException(NullPointerException e) {
         if(e.getMessage().equals("PHOTO EXTENSION IS WRONG"))
             return ResponseEntity.ok().body(
                     ResponseDTO.builder().code(ApiCode.PHOTO_EXTENSION_ERROR.getCode()).codeMsg(ApiCode.PHOTO_EXTENSION_ERROR.getMsg()).build());
