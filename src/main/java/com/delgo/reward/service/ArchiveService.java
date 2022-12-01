@@ -24,6 +24,17 @@ public class ArchiveService {
         return archiveRepository.save(archive);
     }
 
+    // Archive 등록
+    public void registerWelcome(int userId) {
+        Archive archive = Archive.builder()
+                .achievementsId(10) // WELCOME 업적 ID (변경되면 같이 변경해주어야 함.)
+                .userId(userId)
+                .isMain(0)
+                .build();
+
+        archiveRepository.save(archive);
+    }
+
     // Archive 수정
     public List<Archive> setMainArchive(MainAchievementsDTO dto) {
         List<Archive> archives = new ArrayList<>();

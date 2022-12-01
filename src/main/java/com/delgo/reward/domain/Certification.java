@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -42,6 +43,8 @@ public class Certification {
 
     @Transient
     private User user;
+    @Transient
+    private List<Achievements> achievements;
     @Transient
     private Boolean isLike; // 내가 좋아요를 눌렀는가?
 

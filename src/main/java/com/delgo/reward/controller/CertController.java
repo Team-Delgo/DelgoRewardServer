@@ -29,18 +29,18 @@ import java.util.Map;
 @RequestMapping("/certification")
 public class CertController extends CommController {
 
-    private final CertService certificationService;
-    private final AchievementsService achievementsService;
-    private final ArchiveService archiveService;
-    private final MungpleService mungpleService;
-    private final ReverseGeoService reverseGeoService;
-    private final CodeService codeService;
-    private final PhotoService photoService;
     private final GeoService geoService;
+    private final CodeService codeService;
     private final UserService userService;
     private final PointService pointService;
+    private final PhotoService photoService;
     private final RankingService rankingService;
+    private final ArchiveService archiveService;
+    private final MungpleService mungpleService;
     private final LikeListService likeListService;
+    private final CertService certificationService;
+    private final ReverseGeoService reverseGeoService;
+    private final AchievementsService achievementsService;
 
     /*
      * 인증 등록 [Live]
@@ -79,9 +79,9 @@ public class CertController extends CommController {
         Certification certification = certificationService.registerCertification(dto.toEntity(code, address));
 
         // 획득 가능한 업적 Check
-        List<Achievements> earnAchievementsList = achievementsService.checkEarnAchievements(dto.getUserId(), isMungple);
-        if (earnAchievementsList.size() > 0) {
-            for (Achievements achievements : earnAchievementsList) {
+        List<Achievements> earnAchievements = achievementsService.checkEarnAchievements(dto.getUserId(), isMungple);
+        if (earnAchievements.size() > 0) {
+            for (Achievements achievements : earnAchievements) {
                 Archive archive = Archive.builder()
                         .achievementsId(achievements.getAchievementsId())
                         .userId(dto.getUserId())
@@ -90,11 +90,11 @@ public class CertController extends CommController {
                 archiveService.registerArchive(archive);
             }
 
+
             // 해당 인증이 업적에 영향을 주었는지 체크
             certification.setIsAchievements(true);
+            certification.setAchievements(earnAchievements);
         }
-
-        // TODO: 획득한 업적 리스트 반환해야 함.
 
         // 사진 파일 저장 추가
         String photoUrl = photoService.uploadCertIncodingFile(certification.getCertificationId(), dto.getPhoto());
@@ -135,10 +135,10 @@ public class CertController extends CommController {
         }
 
         // 인증시 획득 가능한 업적 있는지 확인 ( 멍플, 일반 구분 )
-        List<Achievements> earnAchievementsList = achievementsService.checkEarnAchievements(dto.getUserId(), isMungple);
+        List<Achievements> earnAchievements = achievementsService.checkEarnAchievements(dto.getUserId(), isMungple);
 
-        if (earnAchievementsList.size() > 0) {
-            for (Achievements achievements : earnAchievementsList) {
+        if (earnAchievements.size() > 0) {
+            for (Achievements achievements : earnAchievements) {
                 Archive archive = Archive.builder()
                         .achievementsId(achievements.getAchievementsId())
                         .userId(dto.getUserId())
@@ -149,6 +149,7 @@ public class CertController extends CommController {
 
             // 해당 인증이 업적에 영향을 주었는지 체크
             certification.setIsAchievements(true);
+            certification.setAchievements(earnAchievements);
         }
 
         Certification returnCertification = certificationService.registerCertification(certification);
