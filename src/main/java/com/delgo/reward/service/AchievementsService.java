@@ -24,7 +24,7 @@ public class AchievementsService {
     private final AchievementsRepository achievementsRepository;
 
     private final ArchiveService archiveService; // 사용자 획득 업적
-    private final CertificationService certificationService; // 사용자 인증
+    private final CertService certificationService; // 사용자 인증
     private final AchievementsConditionRepository achievementsConditionRepository; // 특정 업적 조건
 
     // 전체 Achievements 리스트 조회
@@ -44,12 +44,12 @@ public class AchievementsService {
     }
 
     // 멍플 조건 체크 후 Achievements List 조회
-    public List<Achievements> getAchievementsByIsMungple(int isMungple) {
+    public List<Achievements> getAchievementsByIsMungple(boolean isMungple) {
         return achievementsRepository.findByIsMungple(isMungple);
     }
 
     // 달성한 업적 있는지 Check
-    public List<Achievements> checkEarnAchievements(int userId, int isMungple) {
+    public List<Achievements> checkEarnAchievements(int userId, boolean isMungple) {
         List<Achievements> earnAchievementsList = new ArrayList<>(); // 획득한 업적 리스트
 
         List<Archive> archiveList = archiveService.getArchiveByUserId(userId); // 사용자 획득 업적 조회

@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CalendarService {
 
-    private final CertificationService certificationService;
+    private final CertService certificationService;
     private final LikeListService likeListService;
 
     // 전체 Certification 리스트 조회
@@ -32,7 +32,7 @@ public class CalendarService {
 
         // User가 좋아요 누른 Certification Check
         for(Certification certification : certificationList)
-            certification.setIsLike((likeListService.hasLiked(userId, certification.getCertificationId()))? 1 : 0);
+            certification.setIsLike((likeListService.hasLiked(userId, certification.getCertificationId())));
 
         // 등록 날짜 및 시간 별 오름차순 정렬 ( 메인 사진 : 해당 날짜에 가장 빨리 등록한 사진 )
         List<Certification> sortedList = certificationList.stream().sorted(Comparator.comparing(Certification::getRegistDt)).collect(Collectors.toList());
@@ -46,8 +46,8 @@ public class CalendarService {
 
             List<Certification> dateList = sortedList.stream().filter(c -> c.getRegistDt().isAfter(start) && c.getRegistDt().isBefore(end)).collect(Collectors.toList());
             // 업적 성취 여부 확인
-            List<Certification> isAchievementsList = dateList.stream().filter(c -> c.getIsAchievements() == 1).collect(Collectors.toList());
-            int isAchievements = (isAchievementsList.size() > 0) ? 1 : 0;
+            List<Certification> isAchievementsList = dateList.stream().filter(Certification::getIsAchievements).collect(Collectors.toList());
+            boolean isAchievements = isAchievementsList.size() > 0;
 
             calendarList.add(CalendarDTO.builder()
                     .date(date)

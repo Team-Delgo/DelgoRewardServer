@@ -4,7 +4,7 @@ import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
 import com.delgo.reward.domain.Certification;
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.service.CertificationService;
+import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.PhotoService;
 import com.delgo.reward.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class PhotoController extends CommController {
 
     private final PhotoService photoService;
     private final UserService userService;
-    private final CertificationService certificationService;
+    private final CertService certificationService;
 
     /*
      * profile 등록 및 수정 [회원가입 or AccountPage]

@@ -8,8 +8,9 @@ import com.delgo.reward.comm.ncp.ReverseGeoService;
 import com.delgo.reward.domain.*;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.dto.CertificationDTO;
-import com.delgo.reward.dto.user.CertificationModifyDTO;
+import com.delgo.reward.dto.certification.LiveCertDTO;
+import com.delgo.reward.dto.certification.PastCertDTO;
+import com.delgo.reward.dto.certification.ModifyCertDTO;
 import com.delgo.reward.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,9 +27,9 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/certification")
-public class CertificationController extends CommController {
+public class CertController extends CommController {
 
-    private final CertificationService certificationService;
+    private final CertService certificationService;
     private final AchievementsService achievementsService;
     private final ArchiveService archiveService;
     private final MungpleService mungpleService;
@@ -42,90 +43,115 @@ public class CertificationController extends CommController {
     private final LikeListService likeListService;
 
     /*
-     * 인증 등록
-     * Request Data : CertificationDTO
+     * 인증 등록 [Live]
+     * Request Data : LiveCertDTO
      * Response Data : 등록한 인증 데이터 반환
      */
-
-    @PostMapping(value = {"/register/{type}", "/register/"})
-    public ResponseEntity registerLive(@Validated @RequestBody CertificationDTO certificationDTO, @PathVariable String type) {
-        String tempPhoto = certificationDTO.getPhoto();
-        certificationDTO.setPhoto(""); // log 출력 전 photo 삭제
-        log.info("requestBody : {}", certificationDTO);
-        certificationDTO.setPhoto(tempPhoto); //  log 출력 후 photo 재 삽입
-
-        if (!type.equals("live") && !type.equals("past"))
-            return ErrorReturn(ApiCode.PARAM_ERROR);
-
+    @PostMapping("/live")
+    public ResponseEntity registerLive(@Validated @RequestBody LiveCertDTO dto) {
         // 하루에 같은 카테고리 5번 이상 인증 불가능
-        if (!certificationService.checkCertRegister(certificationDTO.getUserId(), certificationDTO.getCategoryCode()))
+        if (!certificationService.checkCertRegister(dto.getUserId(), dto.getCategoryCode(), true))
             return ErrorReturn(ApiCode.CERTIFICATION_CATEGPRY_COUNT_ERROR);
 
-        // userId != 0이면 멍플 인증이라 판단
-        if (certificationDTO.getMungpleId() != 0) {
+        boolean isMungple = dto.getMungpleId() != 0;
+        if (isMungple) {
             // 6시간 이내 같은 장소 인증 불가능 (멍플만)
-            if (!certificationService.checkMungpleCertRegister(certificationDTO.getUserId(), certificationDTO.getMungpleId()))
+            if (!certificationService.checkMungpleCertRegister(dto.getUserId(), dto.getMungpleId(), true))
                 return ErrorReturn(ApiCode.CERTIFICATION_TIME_ERROR);
 
-            Mungple mungple = mungpleService.getMungpleByMungpleId(certificationDTO.getMungpleId());
+            Mungple mungple = mungpleService.getMungpleByMungpleId(dto.getMungpleId());
 
             // 사용자 실수 방지
-            certificationDTO.setCategoryCode(mungple.getCategoryCode());
-            certificationDTO.setPlaceName(mungple.getPlaceName());
+            dto.setCategoryCode(mungple.getCategoryCode());
+            dto.setPlaceName(mungple.getPlaceName());
 
-            if(type.equals("live")) { // past는 거리 검사하지 않음.
-                // 멍플 <-> 유저와의 거리
-                double distance = geoService.getDistance(mungple.getRoadAddress(), certificationDTO.getLongitude(), certificationDTO.getLatitude());
-                if (distance > 100) // 100m 이상 떨어진 곳에서 인증시 인증 불가
-                    return ErrorReturn(ApiCode.TOO_FAR_DISTANCE);
-            }
+            // 멍플 <-> 유저와의 거리
+            double distance = geoService.getDistance(mungple.getRoadAddress(), dto.getLongitude(), dto.getLatitude());
+            if (distance > 100) // 100m 이상 떨어진 곳에서 인증시 인증 불가
+                return ErrorReturn(ApiCode.TOO_FAR_DISTANCE);
         }
 
         // GeoCode 조회
-        Location userLocation = reverseGeoService.getReverseGeoData(new Location(certificationDTO.getLatitude(), certificationDTO.getLongitude()));
-        Code code = codeService.getGeoCodeBySIGUGUN(userLocation); // GeoCode
-        Code pCode = codeService.getGeoCodeByCode(code.getPCode()); // pCode
-        String address = pCode.getCodeDesc() + " " + code.getCodeName(); // address
+        Location location = reverseGeoService.getReverseGeoData(new Location(dto.getLatitude(), dto.getLongitude()));
+        Code code = codeService.getGeoCodeBySIGUGUN(location); // GeoCode
+        String address = location.getSIDO() + " " + location.getSIGUGUN(); // address
 
-        Certification certification = certificationService.registerCertification(certificationDTO.makeCertification(code, address, type.equals("live")));
+        Certification certification = certificationService.registerCertification(dto.toEntity(code, address));
 
-        // 인증시 획득 가능한 업적 있는지 확인 ( 멍플, 일반 구분 )
-        int isMungple = (certificationDTO.getMungpleId() != 0) ? 1 : 0;
-        List<Achievements> earnAchievementsList = achievementsService.checkEarnAchievements(certificationDTO.getUserId(), isMungple);
-
+        // 획득 가능한 업적 Check
+        List<Achievements> earnAchievementsList = achievementsService.checkEarnAchievements(dto.getUserId(), isMungple);
         if (earnAchievementsList.size() > 0) {
             for (Achievements achievements : earnAchievementsList) {
                 Archive archive = Archive.builder()
                         .achievementsId(achievements.getAchievementsId())
-                        .userId(certificationDTO.getUserId())
+                        .userId(dto.getUserId())
                         .isMain(0)
                         .build();
                 archiveService.registerArchive(archive);
             }
 
             // 해당 인증이 업적에 영향을 주었는지 체크
-            certification.setIsAchievements(1);
+            certification.setIsAchievements(true);
         }
 
-        if(type.equals("live")) { // past는 파일형식이라 사진 저장 API 따로 호출
-            // 사진 파일 저장 추가
-            String photoUrl = photoService.uploadCertIncodingFile(certification.getCertificationId(), certificationDTO.getPhoto());
-            certification.setPhotoUrl(photoUrl);
-        }
+        // TODO: 획득한 업적 리스트 반환해야 함.
+
+        // 사진 파일 저장 추가
+        String photoUrl = photoService.uploadCertIncodingFile(certification.getCertificationId(), dto.getPhoto());
+        certification.setPhotoUrl(photoUrl);
+        dto.setPhoto(""); // log 출력 전 photo 삭제
 
         Certification returnCertification = certificationService.registerCertification(certification);
 
-        if(type.equals("live")) { // past는 포인트 부여하지 않음.
-            // Point 부여
-            User user = userService.getUserByUserId(certificationDTO.getUserId());
-            CategoryCode category = CategoryCode.valueOf(certificationDTO.getCategoryCode());
-            pointService.updateAccumulatedPoint(user.getUserId(), category.getPoint());
-            pointService.updateWeeklyPoint(user.getUserId(), category.getPoint());
+        // Point 부여
+        User user = userService.getUserByUserId(dto.getUserId());
+        CategoryCode category = CategoryCode.valueOf(dto.getCategoryCode());
+        pointService.updateAccumulatedPoint(user.getUserId(), category.getPoint());
+        pointService.updateWeeklyPoint(user.getUserId(), category.getPoint());
 
-            // 랭킹 실시간으로 집계
-            rankingService.rankingByPoint();
+        // 랭킹 실시간으로 집계
+        rankingService.rankingByPoint();
+
+        log.info("requestBody : {}", dto);
+        return SuccessReturn(returnCertification);
+    }
+
+    /*
+     * 인증 등록 [Past]
+     * Request Data : PastCertificationDTO
+     * Response Data : 등록한 인증 데이터 반환
+     */
+    @PostMapping("/past")
+    public ResponseEntity registerPast(@Validated @RequestBody PastCertDTO dto) {
+        boolean isMungple = (dto.getMungpleId() != 0);
+
+        Certification certification;
+        if (isMungple) {
+            Mungple mungple = mungpleService.getMungpleByMungpleId(dto.getMungpleId());
+            certification = certificationService.registerCertification(dto.toEntity(mungple));
+        }
+        else {
+            certification = certificationService.registerCertification(dto.toEntity());
         }
 
+        // 인증시 획득 가능한 업적 있는지 확인 ( 멍플, 일반 구분 )
+        List<Achievements> earnAchievementsList = achievementsService.checkEarnAchievements(dto.getUserId(), isMungple);
+
+        if (earnAchievementsList.size() > 0) {
+            for (Achievements achievements : earnAchievementsList) {
+                Archive archive = Archive.builder()
+                        .achievementsId(achievements.getAchievementsId())
+                        .userId(dto.getUserId())
+                        .isMain(0)
+                        .build();
+                archiveService.registerArchive(archive);
+            }
+
+            // 해당 인증이 업적에 영향을 주었는지 체크
+            certification.setIsAchievements(true);
+        }
+
+        Certification returnCertification = certificationService.registerCertification(certification);
         return SuccessReturn(returnCertification);
     }
 
@@ -134,9 +160,9 @@ public class CertificationController extends CommController {
      * Request Data : CertificationModifyDTO
      * Response Data : 등록한 인증 데이터 반환
      */
-    @PostMapping("/modify")
-    public ResponseEntity modify(@Validated @RequestBody CertificationModifyDTO dto) {
-        Certification certification = certificationService.getCertificationByCertificationId(dto.getCertificationId());
+    @PutMapping
+    public ResponseEntity modify(@Validated @RequestBody ModifyCertDTO dto) {
+        Certification certification = certificationService.getCertificationByCertificationId(dto.getCertId());
 
         if(certification.getUserId() != dto.getUserId())
             return ErrorReturn(ApiCode.INVALID_USER_ERROR);
@@ -174,8 +200,8 @@ public class CertificationController extends CommController {
      * Request Data : userId
      * Response Data : 카테고리별 인증 개수 반환
      */
-    @GetMapping("/category/count")
-    public ResponseEntity getCountData(@RequestParam Integer userId) {
+    @GetMapping(value = {"/category/count/{userId}","/category/count/"})
+    public ResponseEntity getCountData(@PathVariable Integer userId) {
         List<Certification> certificationList = certificationService.getCertificationByUserId(userId);
         Map<String, Integer> returnMap = new HashMap<>();
         for (CategoryCode categoryCode : CategoryCode.values()) {
@@ -239,7 +265,7 @@ public class CertificationController extends CommController {
      * 요청 userId랑 등록 userId랑 비교 해야 함.
      * Response Data : null
      */
-    @PostMapping(value={"/delete/{userId}/{certificationId}"})
+    @DeleteMapping(value={"/{userId}/{certificationId}"})
     public ResponseEntity delete(@PathVariable Integer userId, @PathVariable Integer certificationId) {
         Certification certification = certificationService.getCertificationByCertificationId(certificationId);
 

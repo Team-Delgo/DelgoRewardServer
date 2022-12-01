@@ -42,14 +42,14 @@ public class ReverseGeoService {
             JsonNode SIDO = jsonNode.get("results").get(0).get("region").get("area1").get("name");
             JsonNode SIGUGUN = jsonNode.get("results").get(0).get("region").get("area2").get("name");
 
-            location.setSIDO(SIDO.toString().replace("\"", "").substring(0,2));
+//            location.setSIDO(SIDO.toString().replace("\"", "").substring(0,2));
+            location.setSIDO(SIDO.toString().replace("\"", ""));
             location.setSIGUGUN(SIGUGUN.toString().replace("\"", ""));
 
             System.out.println("************************************************");
             System.out.println("jsonNode: " + jsonNode);
             System.out.println("SIDO: " + SIDO);
             System.out.println("SIGUGUN: " + SIGUGUN);
-            log.info("Location: {}" ,location);
             System.out.println("************************************************");
         } catch (JsonProcessingException e) {
             e.printStackTrace();
