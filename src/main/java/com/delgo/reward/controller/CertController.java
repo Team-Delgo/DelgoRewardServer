@@ -47,7 +47,7 @@ public class CertController extends CommController {
      * Request Data : LiveCertDTO
      * Response Data : 등록한 인증 데이터 반환
      */
-    @PostMapping("/register/live")
+    @PostMapping("/live")
     public ResponseEntity registerLive(@Validated @RequestBody LiveCertDTO dto) {
         // 하루에 같은 카테고리 5번 이상 인증 불가능
         if (!certificationService.checkCertRegister(dto.getUserId(), dto.getCategoryCode(), true))
@@ -121,7 +121,7 @@ public class CertController extends CommController {
      * Request Data : PastCertificationDTO
      * Response Data : 등록한 인증 데이터 반환
      */
-    @PostMapping("/register/past")
+    @PostMapping("/past")
     public ResponseEntity registerPast(@Validated @RequestBody PastCertDTO dto) {
         boolean isMungple = (dto.getMungpleId() != 0);
 
@@ -160,7 +160,7 @@ public class CertController extends CommController {
      * Request Data : CertificationModifyDTO
      * Response Data : 등록한 인증 데이터 반환
      */
-    @PostMapping("/modify")
+    @PutMapping
     public ResponseEntity modify(@Validated @RequestBody ModifyCertDTO dto) {
         Certification certification = certificationService.getCertificationByCertificationId(dto.getCertId());
 
@@ -200,8 +200,8 @@ public class CertController extends CommController {
      * Request Data : userId
      * Response Data : 카테고리별 인증 개수 반환
      */
-    @GetMapping("/category/count")
-    public ResponseEntity getCountData(@RequestParam Integer userId) {
+    @GetMapping(value = {"/category/count/{userId}","/category/count/"})
+    public ResponseEntity getCountData(@PathVariable Integer userId) {
         List<Certification> certificationList = certificationService.getCertificationByUserId(userId);
         Map<String, Integer> returnMap = new HashMap<>();
         for (CategoryCode categoryCode : CategoryCode.values()) {
@@ -265,7 +265,7 @@ public class CertController extends CommController {
      * 요청 userId랑 등록 userId랑 비교 해야 함.
      * Response Data : null
      */
-    @PostMapping(value={"/delete/{userId}/{certificationId}"})
+    @DeleteMapping(value={"/{userId}/{certificationId}"})
     public ResponseEntity delete(@PathVariable Integer userId, @PathVariable Integer certificationId) {
         Certification certification = certificationService.getCertificationByCertificationId(certificationId);
 
