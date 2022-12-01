@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface AchievementsRepository extends JpaRepository<Achievements, Integer>, JpaSpecificationExecutor<Achievements> {
 
-    List<Achievements> findByIsMungple(int isMungple);
+    List<Achievements> findByIsMungple(boolean isMungple);
 
     Optional<Achievements> findByAchievementsId(int achievementsId);
 }

@@ -1,4 +1,4 @@
-package com.delgo.reward.dto.user;
+package com.delgo.reward.dto.certification;
 
 
 import lombok.AllArgsConstructor;
@@ -12,8 +12,8 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CertificationModifyDTO {
+public class ModifyCertDTO {
     @NotNull private Integer userId;
-    @NotNull private Integer certificationId;
+    @NotNull private Integer certId;
     @NotBlank private String description;
 }

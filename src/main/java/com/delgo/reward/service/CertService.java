@@ -2,7 +2,7 @@ package com.delgo.reward.service;
 
 
 import com.delgo.reward.domain.Certification;
-import com.delgo.reward.repository.CertificationRepository;
+import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.repository.JDBCTemplateRankingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +23,12 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CertificationService {
+public class CertService {
 
     private final UserService userService;
     private final LikeListService likeListService;
 
-    private final CertificationRepository certificationRepository;
+    private final CertRepository certRepository;
     private final JDBCTemplateRankingRepository jdbcTemplateRankingRepository;
 
     private final LocalDateTime start = LocalDate.now().atTime(0, 0, 0);
@@ -40,11 +40,11 @@ public class CertificationService {
                 ? PageRequest.of(currentPage, pageSize,  Sort.by("regist_dt").descending()) // 내림차순 정렬
                 : PageRequest.of(currentPage, pageSize,  Sort.by("regist_dt")); // 오름차순 정렬
 
-        Slice<Certification> pagingData = certificationRepository.findAllByPaging(userId, pageRequest);
+        Slice<Certification> pagingData = certRepository.findAllByPaging(userId, pageRequest);
 
         for(Certification certification : pagingData.getContent()) {
             certification.setUser(userService.getUserByUserId(certification.getUserId()));
-            certification.setIsLike((likeListService.hasLiked(userId, certification.getCertificationId()))? 1 : 0);
+            certification.setIsLike((likeListService.hasLiked(userId, certification.getCertificationId())));
         }
 
         return pagingData;
@@ -56,11 +56,11 @@ public class CertificationService {
                 ? PageRequest.of(currentPage, pageSize,  Sort.by("registDt").descending()) // 내림차순 정렬
                 : PageRequest.of(currentPage, pageSize,  Sort.by("registDt")); // 오름차순 정렬
 
-        Slice<Certification> pagingData = certificationRepository.findByUserIdAndCategoryCode(userId, categoryCode, pageRequest);
+        Slice<Certification> pagingData = certRepository.findByUserIdAndCategoryCode(userId, categoryCode, pageRequest);
 
         for(Certification certification : pagingData.getContent()) {
             certification.setUser(userService.getUserByUserId(certification.getUserId()));
-            certification.setIsLike((likeListService.hasLiked(userId, certification.getCertificationId()))? 1 : 0);
+            certification.setIsLike((likeListService.hasLiked(userId, certification.getCertificationId())));
         }
 
         return pagingData;
@@ -68,12 +68,12 @@ public class CertificationService {
 
     // userId로 Certification 조회
     public List<Certification> getCertificationByUserId(int userId) {
-        return certificationRepository.findByUserId(userId);
+        return certRepository.findByUserId(userId);
     }
 
     // live Certification 조회
-    public List<Certification> getLiveCertificationByUserId(int userId, int isLive) {
-        return certificationRepository.findByUserIdAndIsLive(userId, isLive);
+    public List<Certification> getLiveCertificationByUserId(int userId, boolean isLive) {
+        return certRepository.findByUserIdAndIsLive(userId, isLive);
     }
 
     public Slice<Certification> getCertificationByUserIdPaging(int userId, int currentPage, int pageSize, int isDesc) {
@@ -81,11 +81,11 @@ public class CertificationService {
                 ? PageRequest.of(currentPage, pageSize,  Sort.by("registDt").descending()) // 내림차순 정렬
                 : PageRequest.of(currentPage, pageSize,  Sort.by("registDt")); // 오름차순 정렬
 
-        Slice<Certification> pagingData = certificationRepository.findByUserId(userId, pageRequest);
+        Slice<Certification> pagingData = certRepository.findByUserId(userId, pageRequest);
 
         for(Certification certification : pagingData.getContent()) {
             certification.setUser(userService.getUserByUserId(certification.getUserId()));
-            certification.setIsLike((likeListService.hasLiked(userId, certification.getCertificationId()))? 1 : 0);
+            certification.setIsLike((likeListService.hasLiked(userId, certification.getCertificationId())));
         }
 
         return pagingData;
@@ -93,17 +93,17 @@ public class CertificationService {
 
     // CertificationId로 Certification 조회
     public Certification getCertificationByCertificationId(int certificationId) {
-        return certificationRepository.findByCertificationId(certificationId)
+        return certRepository.findByCertificationId(certificationId)
                 .orElseThrow(() -> new NullPointerException("NOT FOUND Certification"));
     }
 
     // 최근 2개 조회
     public List<Certification> getRecentCertificationList(int userId) {
-        List<Certification> list = certificationRepository.findTop2ByOrderByRegistDtDesc(userId);
+        List<Certification> list = certRepository.findTop2ByOrderByRegistDtDesc(userId);
 
         for(Certification certification : list) {
             certification.setUser(userService.getUserByUserId(certification.getUserId()));
-            certification.setIsLike((likeListService.hasLiked(userId, certification.getCertificationId()))? 1 : 0);
+            certification.setIsLike((likeListService.hasLiked(userId, certification.getCertificationId())));
         }
 
         return list;
@@ -111,12 +111,12 @@ public class CertificationService {
 
     // Certification 등록
     public Certification registerCertification(Certification certification) {
-        return certificationRepository.save(certification);
+        return certRepository.save(certification);
     }
 
     // Certification 수정
     public Certification modifyCertification(Certification certification) {
-        return certificationRepository.save(certification);
+        return certRepository.save(certification);
     }
 
     // Like Plus Count + 1
@@ -141,17 +141,17 @@ public class CertificationService {
 
     // userId & categoryCode 만족하는 인증 개수
     public int countCertByUserIdAndCategoryCode(int userId, String categoryCode) {
-        return certificationRepository.countByUserIdAndCategoryCode(userId, categoryCode);
+        return certRepository.countByUserIdAndCategoryCode(userId, categoryCode);
     }
 
     // userId & categoryCode & mungple Id 만족하는 인증 개수
     public int countCertByUserIdAndCategoryCodeAndMungpleId(int userId, String categoryCode, int mungpleId) {
-        return certificationRepository.countByUserIdAndCategoryCodeAndMungpleId(userId, categoryCode, mungpleId);
+        return certRepository.countByUserIdAndCategoryCodeAndMungpleId(userId, categoryCode, mungpleId);
     }
 
     // 6시간 이내 같은 장소 인증 불가능 ( 멍플만 )
-    public boolean checkMungpleCertRegister(int userId, int mungpleId) {
-        List<Certification> list = certificationRepository.findByUserIdAndMungpleIdAndRegistDtBetween(userId, mungpleId, start, end);
+    public boolean checkMungpleCertRegister(int userId, int mungpleId, boolean isLive) {
+        List<Certification> list = certRepository.findByUserIdAndMungpleIdAndIsLiveAndRegistDtBetween(userId, mungpleId, isLive, start, end);
         List<Certification> sortedList = list.stream().sorted(Comparator.comparing(Certification::getRegistDt).reversed()).collect(Collectors.toList());
 
         if (list.size() == 0)
@@ -166,12 +166,12 @@ public class CertificationService {
     }
 
     // 하루에 같은 카테고리 5번 이상 인증 불가능
-    public boolean checkCertRegister(int userId, String categoryCode) {
-        List<Certification> list = certificationRepository.findByUserIdAndCategoryCodeAndRegistDtBetween(userId, categoryCode, start, end);
+    public boolean checkCertRegister(int userId, String categoryCode, boolean isLive) {
+        List<Certification> list = certRepository.findByUserIdAndCategoryCodeAndIsLiveAndRegistDtBetween(userId, categoryCode, isLive, start, end);
         return list.size() < 5;
     }
 
     public void delete(Certification certification){
-        certificationRepository.delete(certification);
+        certRepository.delete(certification);
     }
 }

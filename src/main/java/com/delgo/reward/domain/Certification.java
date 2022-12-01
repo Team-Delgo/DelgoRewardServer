@@ -3,17 +3,14 @@ package com.delgo.reward.domain;
 
 import com.delgo.reward.domain.user.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Builder
 @NoArgsConstructor
@@ -36,17 +33,17 @@ public class Certification {
     private String longitude; // 경도
 
     private String photoUrl; // 사진 URL
-    private Integer isPhotoChecked; // 운영진 체크 여부
-    private Integer isAchievements; // 업적 영향 여부 ( 해당 인증이 등록되었을 때 가지게 된 업적이 있는가?)
+    private Boolean isPhotoChecked; // 운영진 체크 여부
+    private Boolean isAchievements; // 업적 영향 여부 ( 해당 인증이 등록되었을 때 가지게 된 업적이 있는가?)
     
     private int likeCount; // 좋아요 개수
     private int commentCount; // 댓글 개수
-    private int isLive; // live 인증 , 갤러리 인증인지 구분
+    private Boolean isLive; // live 인증 , 갤러리 인증인지 구분
 
     @Transient
     private User user;
     @Transient
-    private int isLike; // 내가 좋아요를 눌렀는가?
+    private Boolean isLike; // 내가 좋아요를 눌렀는가?
 
     @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
     @CreationTimestamp
