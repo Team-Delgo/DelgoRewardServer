@@ -35,8 +35,8 @@ public class CertService {
     private final LocalDateTime end = LocalDate.now().atTime(0, 0, 0).plusDays(1);
 
     // 전체 Certification 리스트 조회
-    public Slice<Certification> getCertificationAll(int userId, int currentPage, int pageSize, int isDesc) {
-        PageRequest pageRequest = (isDesc == 1)
+    public Slice<Certification> getCertificationAll(int userId, int currentPage, int pageSize, boolean isDesc) {
+        PageRequest pageRequest = (isDesc)
                 ? PageRequest.of(currentPage, pageSize,  Sort.by("regist_dt").descending()) // 내림차순 정렬
                 : PageRequest.of(currentPage, pageSize,  Sort.by("regist_dt")); // 오름차순 정렬
 
@@ -51,8 +51,8 @@ public class CertService {
     }
 
     // categoryCode & userId로 Certification 리스트 조회
-    public Slice<Certification> getCertificationByUserIdAndCategoryCode(int userId, String categoryCode, int currentPage, int pageSize, int isDesc ) {
-        PageRequest pageRequest = (isDesc == 1)
+    public Slice<Certification> getCertificationByUserIdAndCategoryCode(int userId, String categoryCode, int currentPage, int pageSize, boolean isDesc ) {
+        PageRequest pageRequest = (isDesc)
                 ? PageRequest.of(currentPage, pageSize,  Sort.by("registDt").descending()) // 내림차순 정렬
                 : PageRequest.of(currentPage, pageSize,  Sort.by("registDt")); // 오름차순 정렬
 
@@ -76,8 +76,8 @@ public class CertService {
         return certRepository.findByUserIdAndIsLive(userId, isLive);
     }
 
-    public Slice<Certification> getCertificationByUserIdPaging(int userId, int currentPage, int pageSize, int isDesc) {
-        PageRequest pageRequest = (isDesc == 1)
+    public Slice<Certification> getCertificationByUserIdPaging(int userId, int currentPage, int pageSize, boolean isDesc) {
+        PageRequest pageRequest = (isDesc)
                 ? PageRequest.of(currentPage, pageSize,  Sort.by("registDt").descending()) // 내림차순 정렬
                 : PageRequest.of(currentPage, pageSize,  Sort.by("registDt")); // 오름차순 정렬
 
