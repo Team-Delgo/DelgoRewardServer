@@ -29,12 +29,13 @@ import javax.servlet.http.HttpServletResponse;
 public class UserController extends CommController {
     private final PasswordEncoder passwordEncoder;
 
-    private final UserService userService;
     private final PetService petService;
-    private final TokenService tokenService;
-    private final SmsAuthService smsAuthService;
+    private final UserService userService;
     private final CodeService codeService;
+    private final TokenService tokenService;
     private final PointService pointService;
+    private final SmsAuthService smsAuthService;
+    private final ArchiveService archiveService;
 
     @RequestMapping(value ="/")
     public ResponseEntity<?> defaultResponse() {
@@ -161,11 +162,15 @@ public class UserController extends CommController {
     @PostMapping("/signup/oauth")
     public ResponseEntity<?> registerUserByOAuth(@Validated @RequestBody OAuthSignUpDTO signUpDTO, HttpServletResponse response) {
 
-        log.info("signUpDTO : {}",signUpDTO);
         // 주소 설정
-        Code geoCode = codeService.getGeoCodeByCode(signUpDTO.getGeoCode());
+        String address;
         Code pGeoCode = codeService.getGeoCodeByCode(signUpDTO.getPGeoCode());
-        String address = pGeoCode.getCodeDesc() + " " + geoCode.getCodeName();
+        if(!signUpDTO.getGeoCode().equals("0")) {
+            Code geoCode = codeService.getGeoCodeByCode(signUpDTO.getGeoCode());
+            address = pGeoCode.getCodeDesc() + " " + geoCode.getCodeName();
+        } else { // 세종특별시 일 경우 예외처리
+            address = pGeoCode.getCodeName();
+        }
 
         User user = User.builder()
                 .name(signUpDTO.getUserName())
@@ -194,6 +199,9 @@ public class UserController extends CommController {
         User userByDB = userService.signup(user, pet);
         Pet petByDB = petService.getPetByUserId(user.getUserId());
 
+        // WELCOME 업적 부여
+        archiveService.registerWelcome(userByDB.getUserId());
+
         String Access_jwtToken = tokenService.createToken("Access", user.getEmail()); // Access Token 생성
         String Refresh_jwtToken = tokenService.createToken("Refresh", user.getEmail()); // Refresh Token 생성
 
@@ -210,9 +218,14 @@ public class UserController extends CommController {
             return ErrorReturn(ApiCode.UNKNOWN_ERROR);
 
         // 주소 설정
-        Code geoCode = codeService.getGeoCodeByCode(signUpDTO.getGeoCode());
+        String address;
         Code pGeoCode = codeService.getGeoCodeByCode(signUpDTO.getPGeoCode());
-        String address = pGeoCode.getCodeDesc() + " " + geoCode.getCodeName();
+        if(!signUpDTO.getGeoCode().equals("0")) {
+            Code geoCode = codeService.getGeoCodeByCode(signUpDTO.getGeoCode());
+            address = pGeoCode.getCodeDesc() + " " + geoCode.getCodeName();
+        } else { // 세종특별시 일 경우 예외처리
+            address = pGeoCode.getCodeName();
+        }
 
         User user = User.builder()
                 .name(signUpDTO.getUserName())
@@ -231,8 +244,10 @@ public class UserController extends CommController {
                 .build();
 
         User userByDB = userService.signup(user, pet);
-//        user.setPassword(""); // 보안
         Pet petByDB = petService.getPetByUserId(user.getUserId());
+
+        // WELCOME 업적 부여
+        archiveService.registerWelcome(userByDB.getUserId());
 
         String Access_jwtToken = tokenService.createToken("Access", user.getEmail()); // Access Token 생성
         String Refresh_jwtToken = tokenService.createToken("Refresh", user.getEmail()); // Refresh Token 생성

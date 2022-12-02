@@ -24,13 +24,8 @@ public class CodeService {
     public Code getGeoCodeBySIGUGUN(Location location) {
         // SIGUGUNS [codeName]만으로 조회시 중복 발생 ex) 중구
         // 따라서 pCode 조회 후 같이 조회
-        Code code = getPCode(location.getSIDO());
+        Code code = codeRepository.findByCodeName(location.getSIDO()).orElseThrow(() -> new NullPointerException("NOT FOUND GEOCODE"));
         return codeRepository.findBypCodeAndCodeName(code.getPCode(), location.getSIGUGUN())
-                .orElseThrow(() -> new NullPointerException("NOT FOUND GEOCODE"));
-    }
-
-    public Code getPCode(String SIDO) {
-        return codeRepository.findByCodeName(SIDO)
                 .orElseThrow(() -> new NullPointerException("NOT FOUND GEOCODE"));
     }
 
