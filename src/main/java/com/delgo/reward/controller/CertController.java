@@ -59,7 +59,7 @@ public class CertController extends CommController {
             if (!certificationService.checkMungpleCertRegister(dto.getUserId(), dto.getMungpleId(), true))
                 return ErrorReturn(ApiCode.CERTIFICATION_TIME_ERROR);
 
-            Mungple mungple = mungpleService.getMungpleByMungpleId(dto.getMungpleId());
+            Mungple mungple = mungpleService.getMungpleById(dto.getMungpleId());
 
             // 사용자 실수 방지
             dto.setCategoryCode(mungple.getCategoryCode());
@@ -127,7 +127,7 @@ public class CertController extends CommController {
 
         Certification certification;
         if (isMungple) {
-            Mungple mungple = mungpleService.getMungpleByMungpleId(dto.getMungpleId());
+            Mungple mungple = mungpleService.getMungpleById(dto.getMungpleId());
             certification = certificationService.registerCertification(dto.toEntity(mungple));
         }
         else {

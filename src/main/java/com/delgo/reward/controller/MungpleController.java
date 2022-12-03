@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/mungple")
 public class MungpleController extends CommController {
 
-    private final MungpleService mungpleService;
     private final GeoService geoService;
     private final CodeService codeService;
+    private final MungpleService mungpleService;
 
     /*
      * 멍플 조회
@@ -37,13 +37,13 @@ public class MungpleController extends CommController {
      * - 주소로 위도, 경도 구할 수 있어야 함.
      * Response Data : 등록한 멍플 데이터 반환
      */
-    @PostMapping("/register")
-    public ResponseEntity register(@Validated @RequestBody MungpleDTO mungpleDTO) {
-        Location location = geoService.getGeoData(mungpleDTO.getAddress()); // 위도, 경도
+    @PostMapping
+    public ResponseEntity register(@Validated @RequestBody MungpleDTO dto) {
+        Location location = geoService.getGeoData(dto.getAddress()); // 위도, 경도
         Code code = codeService.getGeoCodeBySIGUGUN(location); // GeoCode
 
         return (!mungpleService.isMungpleExisting(location))
-                ? SuccessReturn(mungpleService.registerMungple(mungpleDTO.makeMungple(location, code)))
+                ? SuccessReturn(mungpleService.registerMungple(dto.toEntity(location, code)))
                 : ErrorReturn(ApiCode.MUNGPLE_DUPLICATE_ERROR);
     }
 
@@ -53,8 +53,8 @@ public class MungpleController extends CommController {
      * - CA0000 = 전체 조회
      * Response Data : 카테고리별 멍플 리스트 반환
      */
-    @GetMapping("/category-data")
-    public ResponseEntity getData(@RequestParam String categoryCode) {
+    @GetMapping("/category/{categoryCode}")
+    public ResponseEntity getCategory(@PathVariable String categoryCode) {
         // Validate - Blank Check; [ String 만 해주면 됨 ]
         if (categoryCode.isBlank())
             return ErrorReturn(ApiCode.PARAM_ERROR);
@@ -62,9 +62,6 @@ public class MungpleController extends CommController {
         List<Mungple> mungpleList = (!categoryCode.equals(CategoryCode.TOTAL.getCode()))
                 ? mungpleService.getMungpleByCategoryCode(categoryCode)
                 : mungpleService.getMungpleAll();
-
-        // 가나다 순 정렬
-        mungpleList = mungpleList.stream().sorted(Comparator.comparing(Mungple::getPlaceName)).collect(Collectors.toList());
 
         return SuccessReturn(mungpleList);
     }

@@ -19,7 +19,7 @@ public class MungpleDTO {
     @NotNull private String placeName;
     @NotNull private String address; // 입력 주소
 
-    public Mungple makeMungple(Location location, Code code) {
+    public Mungple toEntity(Location location, Code code) {
         return Mungple.builder()
                 .categoryCode(this.categoryCode)
                 .placeName(this.placeName)
