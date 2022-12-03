@@ -178,13 +178,14 @@ public class CertController extends CommController {
      * - CA0000 = 전체 조회
      * Response Data : 카테고리별 인증 리스트 반환
      */
+
     @GetMapping("/category")
     public ResponseEntity getCategoryData(
             @RequestParam Integer userId,
             @RequestParam String categoryCode,
             @RequestParam Integer currentPage,
             @RequestParam Integer pageSize,
-            @RequestParam Integer isDesc) {
+            @RequestParam Boolean isDesc) {
         // Validate - Blank Check; [ String 만 해주면 됨 ]
         if (categoryCode.isBlank())
             return ErrorReturn(ApiCode.PARAM_ERROR);
@@ -257,7 +258,7 @@ public class CertController extends CommController {
      */
     @GetMapping("/all")
     public ResponseEntity getPagingData(@RequestParam Integer userId, @RequestParam Integer currentPage, @RequestParam Integer pageSize) {
-        return SuccessReturn(certificationService.getCertificationAll(userId, currentPage, pageSize, 1));
+        return SuccessReturn(certificationService.getCertificationAll(userId, currentPage, pageSize, true));
     }
 
     /*

@@ -41,9 +41,9 @@ public class ExceptionController extends CommController {
     // @RequestBody DTO Param Error Check
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity methodArgumentNotValidException(MethodArgumentNotValidException e) {
-        log.info("e.getMessage : {}", Objects.requireNonNull(e.getFieldError()).getDefaultMessage());
         String field = Objects.requireNonNull(e.getFieldError()).getField();
-        log.info("error field : {}",field);
+        if(field.equals("latitude") || field.equals("longitude"))
+            return ErrorReturn(ApiCode.NOT_FONUD_GPS_DATA);
 
         return ErrorReturn(ApiCode.PARAM_ERROR.getCode(),ApiCode.PARAM_ERROR + " : " + field);
     }
