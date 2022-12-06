@@ -67,14 +67,10 @@ public class CertService {
     }
 
     // userId로 Certification 조회
-    public List<Certification> getCertificationByUserId(int userId) {
+    public List<Certification> getCertByUserId(int userId) {
         return certRepository.findByUserId(userId);
     }
 
-    // live Certification 조회
-    public List<Certification> getLiveCertificationByUserId(int userId, boolean isLive) {
-        return certRepository.findByUserIdAndIsLive(userId, isLive);
-    }
 
     public Slice<Certification> getCertificationByUserIdPaging(int userId, int currentPage, int pageSize, boolean isDesc) {
         PageRequest pageRequest = (isDesc)
@@ -89,12 +85,6 @@ public class CertService {
         }
 
         return pagingData;
-    }
-
-    // CertificationId로 Certification 조회
-    public Certification getCertificationByCertificationId(int certificationId) {
-        return certRepository.findByCertificationId(certificationId)
-                .orElseThrow(() -> new NullPointerException("NOT FOUND Certification"));
     }
 
     // 최근 2개 조회
@@ -173,5 +163,21 @@ public class CertService {
 
     public void delete(Certification certification){
         certRepository.delete(certification);
+    }
+
+    // Live Certification 조회
+    public List<Certification> getLive(int userId) {
+        return certRepository.findByUserIdAndIsLive(userId, true);
+    }
+
+    // Past Certification 조회
+    public List<Certification> getPast(int userId) {
+        return certRepository.findByUserIdAndIsLive(userId, false);
+    }
+
+    // Id로 Certification 조회
+    public Certification getCert(int certificationId) {
+        return certRepository.findById(certificationId)
+                .orElseThrow(() -> new NullPointerException("NOT FOUND Certification id : " + certificationId));
     }
 }

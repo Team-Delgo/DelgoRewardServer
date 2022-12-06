@@ -2,8 +2,6 @@ package com.delgo.reward.service;
 
 
 import com.delgo.reward.domain.Certification;
-import com.delgo.reward.domain.Mungple;
-import com.delgo.reward.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,35 +18,21 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MapService {
 
-    private final CertService certificationService;
-    private final WardOfficeService wardOfficeService;
-    private final LikeListService likeListService;
-    private final MungpleService mungpleService;
+    private final CertService certService;
     private final UserService userService;
+    private final MungpleService mungpleService;
+    private final LikeListService likeListService;
+    private final WardOfficeService wardOfficeService;
 
-    public Map getMapData(int userId) {
-        // 유저 조회
-        User user = userService.getUserByUserId(userId);
-
-        // 멍플 조회
-        List<Mungple> mungpleList = mungpleService.getMungpleAll();
-
-        // 인증 리스트 조회
-        List<Certification> certificationList = certificationService.getLiveCertificationByUserId(userId, true);
-
-        // User가 좋아요 누른 Certification Check
-        for(Certification certification : certificationList)
-            certification.setIsLike((likeListService.hasLiked(userId, certification.getCertificationId())));
-
-        // 일반 인증, 멍플 인증 구분
-        List<Certification> certNormalList = certificationList.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList());
-        List<Certification> certMunpleList = certificationList.stream().filter(c -> c.getMungpleId() != 0).collect(Collectors.toList());
+    public Map<String, Object> getMap(int userId) {
+        List<Certification> certifications = certService.getLive(userId);  // 라이브 인증 리스트 조회
+        certifications.forEach(c ->c.liked(likeListService.hasLiked(userId, c.getCertificationId()))); // 유저가 좋아요 누른 인증 체크
 
         HashMap<String, Object> resultMap = new HashMap<>();
-        resultMap.put("mungpleList", mungpleList); // mungpleList :  멍플 리스트
-        resultMap.put("wardOffice", wardOfficeService.getWardOfficeByGeoCode(user.getGeoCode())); // wardOfficeList : 구군청 위치
-        resultMap.put("certNormalList", certNormalList);  // certNormalList : 일반 인증 리스트 ( 하얀 테두리 )
-        resultMap.put("certMungpleList", certMunpleList); // certMunpleList : 멍플 인증 리스트 ( 주황 테두리 )
+        resultMap.put("mungpleList", mungpleService.getMungpleAll()); // mungpleList :  멍플 리스트
+        resultMap.put("wardOffice", wardOfficeService.getWardOfficeByGeoCode(userService.getUserByUserId(userId).getGeoCode())); // wardOfficeList : 구군청 위치
+        resultMap.put("certNormalList", certifications.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList()));  // certNormalList : 일반 인증 리스트 ( 하얀 테두리 )
+        resultMap.put("certMungpleList", certifications.stream().filter(c -> c.getMungpleId() != 0).collect(Collectors.toList())); // certMunpleList : 멍플 인증 리스트 ( 주황 테두리 )
 
         return resultMap;
     }
