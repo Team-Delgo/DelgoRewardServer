@@ -18,16 +18,15 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MapService {
 
+    private final CertService certService;
     private final UserService userService;
     private final MungpleService mungpleService;
     private final LikeListService likeListService;
-    private final CertService certificationService;
     private final WardOfficeService wardOfficeService;
 
-    public Map getMap(int userId) {
-        // 인증 리스트 조회
-        List<Certification> certifications = certificationService.getLive(userId);
-        certifications.forEach(certification ->certification.setIsLike(likeListService.hasLiked(userId, certification.getCertificationId())));
+    public Map<String, Object> getMap(int userId) {
+        List<Certification> certifications = certService.getLive(userId);  // 라이브 인증 리스트 조회
+        certifications.forEach(c ->c.liked(likeListService.hasLiked(userId, c.getCertificationId()))); // 유저가 좋아요 누른 인증 체크
 
         HashMap<String, Object> resultMap = new HashMap<>();
         resultMap.put("mungpleList", mungpleService.getMungpleAll()); // mungpleList :  멍플 리스트

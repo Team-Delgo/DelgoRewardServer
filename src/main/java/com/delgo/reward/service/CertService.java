@@ -67,7 +67,7 @@ public class CertService {
     }
 
     // userId로 Certification 조회
-    public List<Certification> getCertificationByUserId(int userId) {
+    public List<Certification> getCertByUserId(int userId) {
         return certRepository.findByUserId(userId);
     }
 
