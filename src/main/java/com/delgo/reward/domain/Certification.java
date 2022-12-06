@@ -55,4 +55,10 @@ public class Certification {
     public void liked(boolean like) {
         this.isLike = like;
     }
+
+    public Certification setPhotoUrl(String photoUrl){
+        this.photoUrl = photoUrl;
+
+        return this;
+    }
 }

@@ -24,8 +24,6 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     // Live 인증만 조회
     List<Certification> findByUserIdAndIsLive(int userId, boolean isLive);
 
-    Optional<Certification> findByCertificationId(int certificationId);
-
     // ----- Cert 가능 여부 Check -----
     List<Certification> findByUserIdAndMungpleIdAndIsLiveAndRegistDtBetween(int userId, int mungpleId, Boolean isLive, LocalDateTime start, LocalDateTime end);
     List<Certification> findByUserIdAndCategoryCodeAndIsLiveAndRegistDtBetween(int userId, String categoryCode, boolean isLive, LocalDateTime start, LocalDateTime end);

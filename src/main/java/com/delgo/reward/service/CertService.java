@@ -87,12 +87,6 @@ public class CertService {
         return pagingData;
     }
 
-    // CertificationId로 Certification 조회
-    public Certification getCertificationByCertificationId(int certificationId) {
-        return certRepository.findByCertificationId(certificationId)
-                .orElseThrow(() -> new NullPointerException("NOT FOUND Certification"));
-    }
-
     // 최근 2개 조회
     public List<Certification> getRecentCertificationList(int userId) {
         List<Certification> list = certRepository.findTop2ByOrderByRegistDtDesc(userId);
@@ -181,4 +175,9 @@ public class CertService {
         return certRepository.findByUserIdAndIsLive(userId, false);
     }
 
+    // Id로 Certification 조회
+    public Certification getCert(int certificationId) {
+        return certRepository.findById(certificationId)
+                .orElseThrow(() -> new NullPointerException("NOT FOUND Certification id : " + certificationId));
+    }
 }
