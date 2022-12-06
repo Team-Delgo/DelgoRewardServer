@@ -24,6 +24,6 @@ public class MapController extends CommController {
      */
     @GetMapping("/{userId}")
     public ResponseEntity getData(@PathVariable Integer userId) {
-        return SuccessReturn(mapService.getMapData(userId));
+        return SuccessReturn(mapService.getMap(userId));
     }
 }

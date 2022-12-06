@@ -71,10 +71,6 @@ public class CertService {
         return certRepository.findByUserId(userId);
     }
 
-    // live Certification 조회
-    public List<Certification> getLiveCertificationByUserId(int userId, boolean isLive) {
-        return certRepository.findByUserIdAndIsLive(userId, isLive);
-    }
 
     public Slice<Certification> getCertificationByUserIdPaging(int userId, int currentPage, int pageSize, boolean isDesc) {
         PageRequest pageRequest = (isDesc)
@@ -174,4 +170,15 @@ public class CertService {
     public void delete(Certification certification){
         certRepository.delete(certification);
     }
+
+    // Live Certification 조회
+    public List<Certification> getLive(int userId) {
+        return certRepository.findByUserIdAndIsLive(userId, true);
+    }
+
+    // Past Certification 조회
+    public List<Certification> getPast(int userId) {
+        return certRepository.findByUserIdAndIsLive(userId, false);
+    }
+
 }
