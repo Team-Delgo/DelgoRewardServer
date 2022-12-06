@@ -204,7 +204,7 @@ public class CertController extends CommController {
      */
     @GetMapping(value = {"/category/count/{userId}","/category/count/"})
     public ResponseEntity getCountData(@PathVariable Integer userId) {
-        List<Certification> certificationList = certificationService.getCertificationByUserId(userId);
+        List<Certification> certificationList = certificationService.getCertByUserId(userId);
         Map<String, Integer> returnMap = new HashMap<>();
         for (CategoryCode categoryCode : CategoryCode.values()) {
             int count = (int) certificationList.stream().filter(c -> c.getCategoryCode().equals(categoryCode.getCode())).count();
