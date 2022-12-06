@@ -78,6 +78,9 @@ public class CertController extends CommController {
 
         Certification certification = certificationService.registerCertification(dto.toEntity(code, address));
 
+        // 사진 파일 저장
+        photoService.uploadCertEncodingFile(certification.getCertificationId(), dto.getPhoto());
+
         // 획득 가능한 업적 Check
         List<Achievements> earnAchievements = achievementsService.checkEarnAchievements(dto.getUserId(), isMungple);
         if (earnAchievements.size() > 0) {
@@ -90,16 +93,12 @@ public class CertController extends CommController {
                 archiveService.registerArchive(archive);
             }
 
-
             // 해당 인증이 업적에 영향을 주었는지 체크
             certification.setIsAchievements(true);
             certification.setAchievements(earnAchievements);
-        }
 
-        // 사진 파일 저장 추가
-        String photoUrl = photoService.uploadCertIncodingFile(certification.getCertificationId(), dto.getPhoto());
-        certification.setPhotoUrl(photoUrl);
-        dto.setPhoto(""); // log 출력 전 photo 삭제
+            certificationService.registerCertification(certification);
+        }
 
         Certification returnCertification = certificationService.registerCertification(certification);
 
@@ -112,6 +111,7 @@ public class CertController extends CommController {
         // 랭킹 실시간으로 집계
         rankingService.rankingByPoint();
 
+        dto.setPhoto(""); // log 출력 전 photo 삭제
         log.info("requestBody : {}", dto);
         return SuccessReturn(returnCertification);
     }
@@ -163,7 +163,7 @@ public class CertController extends CommController {
      */
     @PutMapping
     public ResponseEntity modify(@Validated @RequestBody ModifyCertDTO dto) {
-        Certification certification = certificationService.getCertificationByCertificationId(dto.getCertId());
+        Certification certification = certificationService.getCert(dto.getCertId());
 
         if(certification.getUserId() != dto.getUserId())
             return ErrorReturn(ApiCode.INVALID_USER_ERROR);
@@ -226,7 +226,7 @@ public class CertController extends CommController {
 
         // USER , Certification 존재 여부 체크
         userService.getUserByUserId(userId);
-        Certification certification = certificationService.getCertificationByCertificationId(certificationId);
+        Certification certification = certificationService.getCert(certificationId);
 
         // 사용자가 해당 Certification 좋아요 눌렀는지 체크.
         if (likeListService.hasLiked(userId, certificationId)) { // 좋아요 존재
@@ -269,7 +269,7 @@ public class CertController extends CommController {
      */
     @DeleteMapping(value={"/{userId}/{certificationId}"})
     public ResponseEntity delete(@PathVariable Integer userId, @PathVariable Integer certificationId) {
-        Certification certification = certificationService.getCertificationByCertificationId(certificationId);
+        Certification certification = certificationService.getCert(certificationId);
 
         if(userId != certification.getUserId())
             return ErrorReturn(ApiCode.INVALID_USER_ERROR);

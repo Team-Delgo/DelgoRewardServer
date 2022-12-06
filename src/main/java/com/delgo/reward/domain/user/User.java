@@ -1,19 +1,18 @@
 package com.delgo.reward.domain.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
+@Entity
+@Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Entity
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,4 +64,10 @@ public class User {
 //        }
 //        return new ArrayList<>();
 //    }
+
+    public User setProfile(String profile) {
+        this.profile = profile;
+        return this;
+    }
+
 }
