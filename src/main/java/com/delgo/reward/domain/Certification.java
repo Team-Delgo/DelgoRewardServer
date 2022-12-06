@@ -51,4 +51,14 @@ public class Certification {
     @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
     @CreationTimestamp
     private LocalDateTime registDt; // 등록 날짜
+
+    public void liked(boolean like) {
+        this.isLike = like;
+    }
+
+    public Certification setPhotoUrl(String photoUrl){
+        this.photoUrl = photoUrl;
+
+        return this;
+    }
 }

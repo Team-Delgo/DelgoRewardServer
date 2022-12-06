@@ -15,66 +15,52 @@ import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.Objects;
 
+
 @Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class PhotoService extends CommService {
+    private final String DIR = "/var/www/delgo-reward-api/"; // dev
 
+    private final UserService userService;
+    private final CertService certService;
     private final ObjectStorageService objectStorageService;
-    private final String dir = "/var/www/delgo-reward-api/"; // dev
-//    private final String dir = "C:\\workspace\\delgo\\DelogServer\\testimg\\"; // local
 
-
-    // NCP에 인증 사진 Upload 후 접근 URL 반환
     public String uploadCertMultipart(int certificationId, MultipartFile photo) {
-        log.info("uploadCertMultipart 들어옴");
-        log.info("uploadCertMultipart photo : {}", photo);
-        // ex) png, jpg, jpeg
-        String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\.");
+        String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\."); // ex) png, jpg, jpeg
         String extension = type[type.length - 1];
 
-        log.info("uploadCertMultipart type : {}", (Object) type);
-        log.info("uploadCertMultipart extension : {}", extension);
         if (!extension.equals("png") && !extension.equals("jpg") && !extension.equals("jpeg"))
             throw new NullPointerException("PHOTO EXTENSION IS WRONG");
 
         String fileName = certificationId + "_cert." + extension;
-        // NCP Link
-        String link = "https://kr.object.ncloudstorage.com/reward-certification/" + fileName;
+        String ncpLink = "https://kr.object.ncloudstorage.com/reward-certification/" + fileName;
 
         try {
-            // 서버에 저장
-            File f = new File(dir + fileName);
+            File f = new File(DIR + fileName); // 서버에 저장
             photo.transferTo(f);
 
-            if (f.exists()) {
-                // Upload NCP
-                objectStorageService.uploadObjects("reward-certification", fileName, dir + fileName);
+            objectStorageService.uploadObjects("reward-certification", fileName, DIR + fileName); // Upload NCP
+            f.delete(); // 서버에 저장된 사진 삭제
 
-                // 서버에 저장된 사진 삭제
-                f.delete();
-            }
-
-            // Cache 무효화
-            link += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1);
-            return link;
+            ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1); // Cache 무효화
+            certService.registerCertification(certService.getCert(certificationId).setPhotoUrl(ncpLink)); // PhotoUrl 등록
+            return ncpLink;
         } catch (Exception e) {
-            return "error:" + e.getMessage();
+            throw new NullPointerException("PHOTO UPLOAD ERROR");
         }
     }
 
-    // NCP에 인증 사진 Upload 후 접근 URL 반환
-    public String  uploadCertIncodingFile(int certificationId, String photoUrl) {
-
+    // Encoding File Upload
+    public String uploadCertEncodingFile(int certificationId, String photoUrl) {
         String fileName = certificationId + "_cert.jpeg";
-        // NCP Link
-        String link = "https://kr.object.ncloudstorage.com/reward-certification/" + fileName;
+        String ncpLink = "https://kr.object.ncloudstorage.com/reward-certification/" + fileName;
 
-        String test = photoUrl.replace("data:image/jpeg;base64,","");
         try {
-            byte[] decodedByte = Base64.getMimeDecoder().decode(test.getBytes());
-            File convertFile = new File(dir + fileName);
+            byte[] decodedByte =
+                    Base64.getMimeDecoder().decode(photoUrl.replace("data:image/jpeg;base64,", "").getBytes());
+            File convertFile = new File(DIR + fileName);
             if (convertFile.createNewFile()) {
                 FileOutputStream fos = new FileOutputStream(convertFile);
                 fos.write(decodedByte);
@@ -82,51 +68,38 @@ public class PhotoService extends CommService {
             }
 
             if (convertFile.exists()) {
-                // Upload NCP
-                objectStorageService.uploadObjects("reward-certification", fileName, dir + fileName);
-
-                // 서버에 저장된 사진 삭제
-                convertFile.delete();
+                objectStorageService.uploadObjects("reward-certification", fileName, DIR + fileName);  // Upload NCP
+                convertFile.delete(); // 서버에 저장된 사진 삭제
             }
 
-            // Cache 무효화
-            link += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1);
-            return link;
-
+            ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1); // Cache 무효화
+            certService.registerCertification(certService.getCert(certificationId).setPhotoUrl(ncpLink)); // PhotoUrl 등록
+            return ncpLink;
         } catch (Exception e) {
-            return "error:" + e.getMessage();
+            throw new NullPointerException("PHOTO UPLOAD ERROR");
         }
     }
 
-    // NCP에 profile Upload 후 접근 URL 반환
     public String uploadProfile(int userId, MultipartFile photo) {
-        // ex) png, jpg, jpeg
-        String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\.");
+        String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\."); // ex) png, jpg, jpeg
         String extension = type[type.length - 1];
         if (!extension.equals("png") && !extension.equals("jpg") && !extension.equals("jpeg"))
             throw new NullPointerException("PHOTO EXTENSION IS WRONG");
 
-        String fileName = userId + "_pet_profile." + extension;
-        String dir = "/var/www/delgo-reward-api/";
-        // NCP Link
-        String link = "https://kr.object.ncloudstorage.com/delgo-pet-profile/" + fileName;
+        String fileName = userId + "_profile." + extension;
+        String ncpLink = "https://kr.object.ncloudstorage.com/reward-profile/" + fileName; // NCP Link
 
         try {
-            // 서버에 저장
-            File f = new File(dir + fileName);
+            File f = new File(DIR + fileName); // 서버에 저장
             photo.transferTo(f);
 
-            if (f.exists()) {
-                // Upload NCP
-                objectStorageService.uploadObjects("delgo-pet-profile", fileName, dir + fileName);
+            objectStorageService.uploadObjects("delgo-pet-profile", fileName, DIR + fileName); // Upload NCP
+            f.delete(); // 서버에 저장된 사진 삭제
 
-                // 서버에 저장된 사진 삭제
-                f.delete();
-            }
+            ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1);   // Cache 무효화
+            userService.changeUserInfo(userService.getUserByUserId(userId).setProfile(ncpLink)); // User Link 저장.
 
-            // Cache 무효화
-            link += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1);
-            return link;
+            return ncpLink;
         } catch (Exception e) {
             return "error:" + e.getMessage();
         }

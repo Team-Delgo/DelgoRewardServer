@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
 
 
 @Slf4j
@@ -22,16 +21,14 @@ public class LikeListService {
 
     // 특정 유저가 해당 게시글에 좋아요 눌렀는지 체크
     public boolean hasLiked(int userId, int certificationId) {
-        Optional<LikeList> optional =  likeListRepository.findByUserIdAndCertificationId(userId, certificationId);
-        return optional.isPresent();
+        return likeListRepository.findByUserIdAndCertificationId(userId, certificationId).isPresent();
     }
 
-    public LikeList register(int userId, int certificationId){
-        LikeList likeList = LikeList.builder()
+    public void register(int userId, int certificationId) {
+        likeListRepository.save(LikeList.builder()
                 .userId(userId)
                 .certificationId(certificationId)
-                .build();
-        return likeListRepository.save(likeList);
+                .build());
     }
 
     public int delete(int userId,int certificationId){
