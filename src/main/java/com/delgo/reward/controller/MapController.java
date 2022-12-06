@@ -23,7 +23,7 @@ public class MapController extends CommController {
      * Response Data : 멍플 List, 일반 인증 List, 멍플 인증 List
      */
     @GetMapping("/{userId}")
-    public ResponseEntity getData(@PathVariable Integer userId) {
+    public ResponseEntity getMap(@PathVariable Integer userId) {
         return SuccessReturn(mapService.getMap(userId));
     }
 }
