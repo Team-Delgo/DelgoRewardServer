@@ -3,15 +3,14 @@ package com.delgo.reward.dto.certification;
 
 import com.delgo.reward.domain.Certification;
 import com.delgo.reward.domain.Mungple;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 
-@Data
+@Getter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class PastCertDTO {

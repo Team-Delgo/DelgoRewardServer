@@ -3,7 +3,6 @@ package com.delgo.reward.controller;
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.dto.achievements.AchievementsDTO;
 import com.delgo.reward.dto.achievements.MainAchievementsDTO;
-import com.delgo.reward.service.AchievementsConditionService;
 import com.delgo.reward.service.AchievementsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 public class AchievementsController extends CommController {
 
     private final AchievementsService achievementsService;
-    private final AchievementsConditionService achievementsConditionService;
 
     /*
      * 업적 등록
@@ -43,10 +41,11 @@ public class AchievementsController extends CommController {
     /*
      * 대표 업적 설정
      * Request Data : userId, archive
-     * Response Data : 유저획득 업적 리스트
+     * Response Data : null
      */
     @PutMapping("/main")
     public ResponseEntity setMainAchievements(@RequestBody MainAchievementsDTO mainAchievementsDTO) {
-        return SuccessReturn(achievementsService.setMainAchievements(mainAchievementsDTO));
+        achievementsService.setMainAchievements(mainAchievementsDTO);
+        return SuccessReturn();
     }
 }
