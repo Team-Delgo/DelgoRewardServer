@@ -1,8 +1,8 @@
 package com.delgo.reward.service;
 
-import com.delgo.reward.domain.Achievements;
-import com.delgo.reward.domain.AchievementsCondition;
-import com.delgo.reward.domain.Archive;
+import com.delgo.reward.domain.achievements.Achievements;
+import com.delgo.reward.domain.achievements.AchievementsCondition;
+import com.delgo.reward.domain.achievements.Archive;
 import com.delgo.reward.repository.AchievementsConditionRepository;
 import com.delgo.reward.repository.AchievementsRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +39,7 @@ public class AchievementsService {
     }
 
     // Achievements 등록
-    public Achievements registerAchievements(Achievements achievements) {
+    public Achievements register(Achievements achievements) {
         return achievementsRepository.save(achievements);
     }
 

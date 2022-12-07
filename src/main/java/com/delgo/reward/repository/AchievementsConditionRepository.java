@@ -1,7 +1,7 @@
 package com.delgo.reward.repository;
 
 
-import com.delgo.reward.domain.AchievementsCondition;
+import com.delgo.reward.domain.achievements.AchievementsCondition;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

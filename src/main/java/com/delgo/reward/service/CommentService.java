@@ -55,7 +55,7 @@ public class CommentService {
 
     public boolean isCertificationOwner(int commentId, int userId){
         Comment comment = getCommentByCommentId(commentId);
-        Certification certification = certRepository.findByCertificationId(comment.getCertificationId()).orElseThrow();
+        Certification certification = certRepository.findById(comment.getCertificationId()).orElseThrow();
 
         if(certification.getUserId() == userId)
             return true;

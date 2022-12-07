@@ -1,7 +1,9 @@
 package com.delgo.reward.service;
 
 
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.Certification;
+import com.delgo.reward.dto.certification.ModifyCertDTO;
 import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.repository.JDBCTemplateRankingRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +18,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -34,6 +38,39 @@ public class CertService {
     private final LocalDateTime start = LocalDate.now().atTime(0, 0, 0);
     private final LocalDateTime end = LocalDate.now().atTime(0, 0, 0).plusDays(1);
 
+    // Certification 등록
+    public Certification register(Certification certification) {
+        return certRepository.save(certification);
+    }
+
+    // Certification 수정
+    public Certification modify(ModifyCertDTO dto){
+        return certRepository.save(getCert(dto.getCertificationId()).modify(dto.getDescription()));
+    }
+
+    public Slice<Certification> getCertByCategory(int userId, String categoryCode, int currentPage, int pageSize, boolean isDesc) {
+        PageRequest pageRequest = PageRequest.of(currentPage, pageSize, (isDesc) ? Sort.by("registDt").descending() :Sort.by("registDt"));
+
+        Slice<Certification> certifications = (!categoryCode.equals(CategoryCode.TOTAL.getCode()))
+                ? certRepository.findByUserIdAndCategoryCode(userId, categoryCode, pageRequest)
+                : certRepository.findByUserId(userId, pageRequest);
+
+        certifications.getContent().forEach(cert -> {
+            cert.setUser(userService.getUserByUserId(cert.getUserId()));
+            cert.setIsLike((likeListService.hasLiked(userId, cert.getCertificationId())));
+        });
+
+        return certifications;
+    }
+
+    public Map<String, Long> getCountByCategory(int userId){
+        Map<String, Long> returnMap = new HashMap<>();
+        for (CategoryCode categoryCode : CategoryCode.values())
+            returnMap.put(categoryCode.getValue(), getCertByUserId(userId).stream().filter(c -> c.getCategoryCode().equals(categoryCode.getCode())).count());
+
+        return returnMap;
+    }
+
     // 전체 Certification 리스트 조회
     public Slice<Certification> getCertificationAll(int userId, int currentPage, int pageSize, boolean isDesc) {
         PageRequest pageRequest = (isDesc)
@@ -50,42 +87,13 @@ public class CertService {
         return pagingData;
     }
 
-    // categoryCode & userId로 Certification 리스트 조회
-    public Slice<Certification> getCertificationByUserIdAndCategoryCode(int userId, String categoryCode, int currentPage, int pageSize, boolean isDesc ) {
-        PageRequest pageRequest = (isDesc)
-                ? PageRequest.of(currentPage, pageSize,  Sort.by("registDt").descending()) // 내림차순 정렬
-                : PageRequest.of(currentPage, pageSize,  Sort.by("registDt")); // 오름차순 정렬
-
-        Slice<Certification> pagingData = certRepository.findByUserIdAndCategoryCode(userId, categoryCode, pageRequest);
-
-        for(Certification certification : pagingData.getContent()) {
-            certification.setUser(userService.getUserByUserId(certification.getUserId()));
-            certification.setIsLike((likeListService.hasLiked(userId, certification.getCertificationId())));
-        }
-
-        return pagingData;
-    }
-
     // userId로 Certification 조회
     public List<Certification> getCertByUserId(int userId) {
         return certRepository.findByUserId(userId);
     }
 
 
-    public Slice<Certification> getCertificationByUserIdPaging(int userId, int currentPage, int pageSize, boolean isDesc) {
-        PageRequest pageRequest = (isDesc)
-                ? PageRequest.of(currentPage, pageSize,  Sort.by("registDt").descending()) // 내림차순 정렬
-                : PageRequest.of(currentPage, pageSize,  Sort.by("registDt")); // 오름차순 정렬
 
-        Slice<Certification> pagingData = certRepository.findByUserId(userId, pageRequest);
-
-        for(Certification certification : pagingData.getContent()) {
-            certification.setUser(userService.getUserByUserId(certification.getUserId()));
-            certification.setIsLike((likeListService.hasLiked(userId, certification.getCertificationId())));
-        }
-
-        return pagingData;
-    }
 
     // 최근 2개 조회
     public List<Certification> getRecentCertificationList(int userId) {
@@ -97,16 +105,6 @@ public class CertService {
         }
 
         return list;
-    }
-
-    // Certification 등록
-    public Certification registerCertification(Certification certification) {
-        return certRepository.save(certification);
-    }
-
-    // Certification 수정
-    public Certification modifyCertification(Certification certification) {
-        return certRepository.save(certification);
     }
 
     // Like Plus Count + 1

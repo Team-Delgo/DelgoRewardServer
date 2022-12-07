@@ -1,12 +1,8 @@
 package com.delgo.reward;
 
 
-import com.delgo.reward.comm.code.CategoryCode;
-import com.delgo.reward.domain.Certification;
-import com.delgo.reward.domain.Code;
-import com.delgo.reward.dto.CertificationDTO;
-import com.delgo.reward.repository.CertificationRepository;
-import com.delgo.reward.service.CertificationService;
+import com.delgo.reward.repository.CertRepository;
+import com.delgo.reward.service.CertService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
@@ -26,9 +20,9 @@ import static org.junit.Assert.assertTrue;
 public class CertificationTest {
 
     @Autowired
-    private CertificationService certificationService;
+    private CertService certificationService;
     @Autowired
-    private CertificationRepository certificationRepository;
+    private CertRepository certRepository;
 
 //    @Test
 //    public void registerCertificationTest() {
@@ -61,7 +55,7 @@ public class CertificationTest {
         int mungpleId = 8;
 
         //when
-        Boolean result = certificationService.checkMungpleCertRegister(userId, mungpleId);
+        Boolean result = certificationService.checkMungpleCertRegister(userId, mungpleId,true);
         System.out.println("result : " + result);
 
         //then
@@ -75,7 +69,7 @@ public class CertificationTest {
         String categoryCode = "CA0002";
 
         //when
-        Boolean result = certificationService.checkCertRegister(userId, categoryCode);
+        Boolean result = certificationService.checkCertRegister(userId, categoryCode,true);
         System.out.println("result : " + result);
 
         //then
@@ -105,8 +99,8 @@ public class CertificationTest {
         String categoryCode = "CA0002";
 
         //when
-        int count1 = certificationRepository.countByUserIdAndCategoryCode(userId,categoryCode);
-        int count2 = certificationRepository.countByUserIdAndCategoryCodeAndMungpleId(userId, categoryCode,8);
+        int count1 = certRepository.countByUserIdAndCategoryCode(userId,categoryCode);
+        int count2 = certRepository.countByUserIdAndCategoryCodeAndMungpleId(userId, categoryCode,8);
         System.out.println("count1: " + count1);
         System.out.println("count2: " + count2);
 
