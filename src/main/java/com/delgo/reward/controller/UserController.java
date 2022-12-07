@@ -215,7 +215,7 @@ public class UserController extends CommController {
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Validated @RequestBody SignUpDTO signUpDTO, HttpServletResponse response) {
         if (userService.isEmailExisting(signUpDTO.getEmail())) // Email 중복확인
-            return ErrorReturn(ApiCode.UNKNOWN_ERROR);
+            return ErrorReturn(ApiCode.EMAIL_DUPLICATE_ERROR);
 
         // 주소 설정
         String address;
@@ -259,8 +259,8 @@ public class UserController extends CommController {
     }
 
     // 회원탈퇴
-    @PostMapping(value = {"/delete/{userId}", "/delete"})
-    public ResponseEntity<?> deleteUser(@PathVariable(value = "userId") Integer userId) {
+    @DeleteMapping("/user/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable Integer userId) {
 
         userService.deleteUser(userId);
         return SuccessReturn();
