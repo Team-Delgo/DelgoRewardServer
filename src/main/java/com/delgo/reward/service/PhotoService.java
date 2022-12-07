@@ -45,7 +45,7 @@ public class PhotoService extends CommService {
             f.delete(); // 서버에 저장된 사진 삭제
 
             ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1); // Cache 무효화
-            certService.registerCertification(certService.getCert(certificationId).setPhotoUrl(ncpLink)); // PhotoUrl 등록
+            certService.register(certService.getCert(certificationId).setPhotoUrl(ncpLink)); // PhotoUrl 등록
             return ncpLink;
         } catch (Exception e) {
             throw new NullPointerException("PHOTO UPLOAD ERROR");
@@ -73,7 +73,7 @@ public class PhotoService extends CommService {
             }
 
             ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1); // Cache 무효화
-            certService.registerCertification(certService.getCert(certificationId).setPhotoUrl(ncpLink)); // PhotoUrl 등록
+            certService.register(certService.getCert(certificationId).setPhotoUrl(ncpLink)); // PhotoUrl 등록
             return ncpLink;
         } catch (Exception e) {
             throw new NullPointerException("PHOTO UPLOAD ERROR");
