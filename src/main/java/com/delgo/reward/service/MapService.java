@@ -30,7 +30,7 @@ public class MapService {
 
         HashMap<String, Object> resultMap = new HashMap<>();
         resultMap.put("mungpleList", mungpleService.getMungpleAll()); // mungpleList :  멍플 리스트
-        resultMap.put("wardOffice", wardOfficeService.getWardOfficeByGeoCode(userService.getUserByUserId(userId).getGeoCode())); // wardOfficeList : 구군청 위치
+        resultMap.put("wardOffice", wardOfficeService.getWardOfficeByGeoCode(userService.getUserById(userId).getGeoCode())); // wardOfficeList : 구군청 위치
         resultMap.put("certNormalList", certifications.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList()));  // certNormalList : 일반 인증 리스트 ( 하얀 테두리 )
         resultMap.put("certMungpleList", certifications.stream().filter(c -> c.getMungpleId() != 0).collect(Collectors.toList())); // certMunpleList : 멍플 인증 리스트 ( 주황 테두리 )
 

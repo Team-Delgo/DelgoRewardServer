@@ -44,7 +44,7 @@ public class UserService {
 
     // 회원탈퇴
     public void deleteUser(int userId) {
-        User user = userRepository.findByUserId(userId).orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
         Pet pet = petRepository.findByUserId(userId).orElseThrow(() -> new NullPointerException("NOT FOUND PET"));
         petRepository.delete(pet);
         userRepository.delete(user);
@@ -89,8 +89,8 @@ public class UserService {
                 .orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
     }
 
-    public User getUserByUserId(int userId) {
-        return userRepository.findByUserId(userId)
+    public User getUserById(int userId) {
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
     }
 
@@ -109,7 +109,7 @@ public class UserService {
     }
 
     public UserInfoDTO getUserInfo(int userId){
-        User user = getUserByUserId(userId);
+        User user = getUserById(userId);
         UserInfoDTO userInfoDTO = UserInfoDTO.builder()
                 .userName(user.getName())
                 .profile(user.getProfile())

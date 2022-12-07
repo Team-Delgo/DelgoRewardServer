@@ -56,7 +56,7 @@ public class UserController extends CommController {
 
         User user = userService.getUserByEmail(checkedEmail);
         int userId = user.getUserId();
-        User originUser = userService.getUserByUserId(userId);
+        User originUser = userService.getUserById(userId);
 
         if (modifyUserDTO.getName() != null)
             originUser.setName(modifyUserDTO.getName());

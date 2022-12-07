@@ -97,7 +97,7 @@ public class PhotoService extends CommService {
             f.delete(); // 서버에 저장된 사진 삭제
 
             ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1);   // Cache 무효화
-            userService.changeUserInfo(userService.getUserByUserId(userId).setProfile(ncpLink)); // User Link 저장.
+            userService.changeUserInfo(userService.getUserById(userId).setProfile(ncpLink)); // User Link 저장.
 
             return ncpLink;
         } catch (Exception e) {
