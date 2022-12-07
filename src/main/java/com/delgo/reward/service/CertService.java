@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 public class CertService {
 
     private final UserService userService;
+    private final AchievementsService achievementsService;
     private final LikeListService likeListService;
 
     private final CertRepository certRepository;
@@ -162,17 +163,6 @@ public class CertService {
     // Comment Count - 1
     public void minusCommentCount(int certificationId) {
         jdbcTemplateRankingRepository.minusCommentCount(certificationId);
-    }
-
-
-    // userId & categoryCode 만족하는 인증 개수
-    public int countCertByUserIdAndCategoryCode(int userId, String categoryCode) {
-        return certRepository.countByUserIdAndCategoryCode(userId, categoryCode);
-    }
-
-    // userId & categoryCode & mungple Id 만족하는 인증 개수
-    public int countCertByUserIdAndCategoryCodeAndMungpleId(int userId, String categoryCode, int mungpleId) {
-        return certRepository.countByUserIdAndCategoryCodeAndMungpleId(userId, categoryCode, mungpleId);
     }
 
     // 6시간 이내 같은 장소 인증 불가능 ( 멍플만 )

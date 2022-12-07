@@ -28,4 +28,10 @@ public class Archive {
 
     @CreationTimestamp
     private LocalDateTime registDt; // 등록 날짜
+
+    public Archive resetMain(){
+        this.isMain = 0;
+
+        return this;
+    }
 }
