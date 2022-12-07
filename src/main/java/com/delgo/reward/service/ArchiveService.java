@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -27,6 +28,17 @@ public class ArchiveService {
         return archiveRepository.saveAll(archives);
     }
 
+    // userId로 Archive 조회
+    public List<Archive> getArchive(int userId) {
+        return archiveRepository.findByUserId(userId);
+    }
+
+    // userId & achievementsId로 Archive 조회
+    public Archive getArchive(int userId, int achievementsId) {
+        return archiveRepository.findByUserIdAndAchievementsId(userId, achievementsId)
+                .orElseThrow(() -> new NullPointerException("NOT FOUND ARCHIVE"));
+    }
+
     // welcome 업적 등록
     public void registerWelcome(int userId) {
         Archive archive = Archive.builder()
@@ -38,8 +50,11 @@ public class ArchiveService {
         archiveRepository.save(archive);
     }
 
-    // userId로 Archive 조회
-    public List<Archive> getArchiveByUserId(int userId) {
-        return archiveRepository.findByUserId(userId);
+    // 대표 업적 초기화
+    public void resetMainArchive(int userId){
+        archiveRepository.saveAll(archiveRepository.findByUserIdAndIsMainNot(userId, 0).stream()
+                .map(archive -> archive.setMain(0))
+                .collect(Collectors.toList())
+        );
     }
 }

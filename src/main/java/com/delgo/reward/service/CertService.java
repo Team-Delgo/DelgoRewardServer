@@ -2,8 +2,16 @@ package com.delgo.reward.service;
 
 
 import com.delgo.reward.comm.code.CategoryCode;
+import com.delgo.reward.comm.ncp.ReverseGeoService;
 import com.delgo.reward.domain.Certification;
+import com.delgo.reward.domain.Code;
+import com.delgo.reward.domain.achievements.Achievements;
+import com.delgo.reward.domain.achievements.Archive;
+import com.delgo.reward.domain.common.Location;
+import com.delgo.reward.domain.user.User;
+import com.delgo.reward.dto.certification.LiveCertDTO;
 import com.delgo.reward.dto.certification.ModifyCertDTO;
+import com.delgo.reward.dto.certification.PastCertDTO;
 import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.repository.JDBCTemplateRankingRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,11 +36,19 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class CertService {
-
+    // Service
     private final UserService userService;
-    private final AchievementsService achievementsService;
+    private final CodeService codeService;
+    private final PointService pointService;
+    private final PhotoService photoService;
+    private final ArchiveService archiveService;
+    private final MungpleService mungpleService;
+    private final RankingService rankingService;
     private final LikeListService likeListService;
+    private final ReverseGeoService reverseGeoService;
+    private final AchievementsService achievementsService;
 
+    // Repository
     private final CertRepository certRepository;
     private final JDBCTemplateRankingRepository jdbcTemplateRankingRepository;
 
@@ -42,6 +58,72 @@ public class CertService {
     // Certification 등록
     public Certification register(Certification certification) {
         return certRepository.save(certification);
+    }
+
+    // Past 등록
+    public Certification registerLive(LiveCertDTO dto) {
+        // GeoCode 조회
+        Location location = reverseGeoService.getReverseGeoData(new Location(dto.getLatitude(), dto.getLongitude()));
+        Code code = codeService.getGeoCodeBySIGUGUN(location); // GeoCode
+        String address = location.getSIDO() + " " + location.getSIGUGUN(); // address
+
+        Certification certification = register(dto.toEntity(code, address));
+        // 사진 파일 저장 추가
+        photoService.uploadCertEncodingFile(certification.getCertificationId(), dto.getPhoto());
+        // 획득 가능한 업적 Check
+        List<Achievements> earnAchievements = achievementsService.checkEarnAchievements(dto.getUserId(),  dto.getMungpleId() != 0);
+        if (!earnAchievements.isEmpty()) {
+            archiveService.registerArchives(earnAchievements.stream().map(achievement ->
+                            Archive.builder()
+                                    .achievementsId(achievement.getAchievementsId())
+                                    .userId(dto.getUserId())
+                                    .isMain(0)
+                                    .build())
+                    .collect(Collectors.toList())
+            );
+
+            certification.setIsAchievements(true);
+            certification.setAchievements(earnAchievements);
+            certification = register(certification);
+        }
+
+        // Point 부여
+        User user = userService.getUserById(dto.getUserId());
+        CategoryCode category = CategoryCode.valueOf(dto.getCategoryCode());
+        pointService.updateAccumulatedPoint(user.getUserId(), category.getPoint());
+        pointService.updateWeeklyPoint(user.getUserId(), category.getPoint());
+
+        // 랭킹 실시간으로 집계
+        rankingService.rankingByPoint();
+
+        log.info("requestBody : {}", dto.toLog()); // log 출력 전 photo 삭제
+        return certification;
+    }
+
+    // Past 등록
+    public Certification registerPast(PastCertDTO dto) {
+        boolean isMungple = (dto.getMungpleId() != 0);
+        Certification certification = register((isMungple) ? dto.toEntity(mungpleService.getMungpleById(dto.getMungpleId())) : dto.toEntity());
+
+        // 인증시 획득 가능한 업적 있는지 확인 ( 멍플, 일반 구분 )
+        List<Achievements> earnAchievements = achievementsService.checkEarnAchievements(dto.getUserId(), isMungple);
+        if (!earnAchievements.isEmpty()) {
+            archiveService.registerArchives(earnAchievements.stream().map(achievement ->
+                            Archive.builder()
+                                    .achievementsId(achievement.getAchievementsId())
+                                    .userId(dto.getUserId())
+                                    .isMain(0)
+                                    .build())
+                    .collect(Collectors.toList())
+            );
+
+            // 해당 인증이 업적에 영향을 주었는지 체크
+            certification.setIsAchievements(true);
+            certification.setAchievements(earnAchievements);
+            certification = register(certification);
+        }
+
+        return certification;
     }
 
     // Certification 수정

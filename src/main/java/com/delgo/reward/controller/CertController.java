@@ -1,29 +1,21 @@
 package com.delgo.reward.controller;
 
+
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.exception.ApiCode;
 import com.delgo.reward.comm.ncp.GeoService;
-import com.delgo.reward.comm.ncp.ReverseGeoService;
 import com.delgo.reward.domain.Certification;
-import com.delgo.reward.domain.Code;
-import com.delgo.reward.domain.achievements.Achievements;
-import com.delgo.reward.domain.achievements.Archive;
-import com.delgo.reward.domain.common.Location;
-import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.certification.LiveCertDTO;
 import com.delgo.reward.dto.certification.ModifyCertDTO;
 import com.delgo.reward.dto.certification.PastCertDTO;
-import com.delgo.reward.service.*;
+import com.delgo.reward.service.CertService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -32,16 +24,7 @@ import java.util.stream.Collectors;
 public class CertController extends CommController {
 
     private final GeoService geoService;
-    private final CodeService codeService;
-    private final UserService userService;
-    private final PointService pointService;
-    private final PhotoService photoService;
-    private final RankingService rankingService;
-    private final ArchiveService archiveService;
-    private final MungpleService mungpleService;
     private final CertService certService;
-    private final ReverseGeoService reverseGeoService;
-    private final AchievementsService achievementsService;
 
     /*
      * 인증 등록 [Live]
@@ -53,55 +36,11 @@ public class CertController extends CommController {
         // 하루에 같은 카테고리 5번 이상 인증 불가능
         if (!certService.checkCategoryCountIsFive(dto.getUserId(), dto.getCategoryCode(), true))
             return ErrorReturn(ApiCode.CERTIFICATION_CATEGPRY_COUNT_ERROR);
+        // 멍플 인증 + 100m 이상 떨어진 곳에서 인증시 인증 불가
+        if (dto.getMungpleId() != 0 && geoService.getDistance(dto.getMungpleId(), dto.getLongitude(), dto.getLatitude()) > 100)
+            return ErrorReturn(ApiCode.TOO_FAR_DISTANCE);
 
-        boolean isMungple = dto.getMungpleId() != 0;
-        if (isMungple) {
-            // 6시간 이내 같은 장소 인증 불가능 (멍플만)
-//            if (!certService.checkContinueRegist(dto.getUserId(), dto.getMungpleId(), true))
-//                return ErrorReturn(ApiCode.CERTIFICATION_TIME_ERROR);
-
-            // 멍플 <-> 유저와의 거리
-            double distance = geoService.getDistance(mungpleService.getMungpleById(dto.getMungpleId()).getRoadAddress(), dto.getLongitude(), dto.getLatitude());
-            if (distance > 100) // 100m 이상 떨어진 곳에서 인증시 인증 불가
-                return ErrorReturn(ApiCode.TOO_FAR_DISTANCE);
-        }
-
-        // GeoCode 조회
-        Location location = reverseGeoService.getReverseGeoData(new Location(dto.getLatitude(), dto.getLongitude()));
-        Code code = codeService.getGeoCodeBySIGUGUN(location); // GeoCode
-        String address = location.getSIDO() + " " + location.getSIGUGUN(); // address
-
-        Certification certification = certService.register(dto.toEntity(code, address));
-        // 사진 파일 저장 추가
-        photoService.uploadCertEncodingFile(certification.getCertificationId(), dto.getPhoto());
-        // 획득 가능한 업적 Check
-        List<Achievements> earnAchievements = achievementsService.checkEarnAchievements(dto.getUserId(), isMungple);
-        if (!earnAchievements.isEmpty()) {
-            archiveService.registerArchives(earnAchievements.stream().map(achievement ->
-                            Archive.builder()
-                                    .achievementsId(achievement.getAchievementsId())
-                                    .userId(dto.getUserId())
-                                    .isMain(0)
-                                    .build())
-                    .collect(Collectors.toList())
-            );
-
-            certification.setIsAchievements(true);
-            certification.setAchievements(earnAchievements);
-            certification = certService.register(certification);
-        }
-
-        // Point 부여
-        User user = userService.getUserById(dto.getUserId());
-        CategoryCode category = CategoryCode.valueOf(dto.getCategoryCode());
-        pointService.updateAccumulatedPoint(user.getUserId(), category.getPoint());
-        pointService.updateWeeklyPoint(user.getUserId(), category.getPoint());
-
-        // 랭킹 실시간으로 집계
-        rankingService.rankingByPoint();
-
-        log.info("requestBody : {}", dto.toLog()); // log 출력 전 photo 삭제
-        return SuccessReturn(certification);
+        return SuccessReturn(certService.registerLive(dto));
     }
 
     /*
@@ -111,28 +50,7 @@ public class CertController extends CommController {
      */
     @PostMapping("/past")
     public ResponseEntity registerPast(@Validated @RequestBody PastCertDTO dto) {
-        boolean isMungple = (dto.getMungpleId() != 0);
-        Certification certification = certService.register((isMungple) ? dto.toEntity(mungpleService.getMungpleById(dto.getMungpleId())) : dto.toEntity());
-
-        // 인증시 획득 가능한 업적 있는지 확인 ( 멍플, 일반 구분 )
-        List<Achievements> earnAchievements = achievementsService.checkEarnAchievements(dto.getUserId(), isMungple);
-        if (!earnAchievements.isEmpty()) {
-            archiveService.registerArchives(earnAchievements.stream().map(achievement ->
-                            Archive.builder()
-                                    .achievementsId(achievement.getAchievementsId())
-                                    .userId(dto.getUserId())
-                                    .isMain(0)
-                                    .build())
-                    .collect(Collectors.toList())
-            );
-
-            // 해당 인증이 업적에 영향을 주었는지 체크
-            certification.setIsAchievements(true);
-            certification.setAchievements(earnAchievements);
-            certification = certService.register(certification);
-        }
-
-        return SuccessReturn(certification);
+        return SuccessReturn(certService.registerPast(dto));
     }
 
     /*

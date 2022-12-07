@@ -6,12 +6,11 @@ import com.delgo.reward.domain.achievements.Archive;
 import com.delgo.reward.dto.achievements.AchievementsDTO;
 import com.delgo.reward.dto.achievements.MainAchievementsDTO;
 import com.delgo.reward.repository.AchievementsRepository;
-import com.delgo.reward.repository.ArchiveRepository;
 import com.delgo.reward.repository.CertRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -22,17 +21,17 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class AchievementsService {
 
-    // TODO: ArchiveRepository 사용 안되고 Service에서 쓸 수 있게 수정
-    private final ArchiveRepository archiveRepository;
     private final CertRepository certRepository;
     private final AchievementsRepository achievementsRepository;
 
     private final ArchiveService archiveService; // 사용자 획득 업적
     private final AchievementsConditionService achievementsConditionService; // 특정 업적 조건
+
+    @Value("${img.lock}")
+    String LOCKIMG;
 
     // Achievements 및 Condition 등록
     public Achievements registerWithCondition(AchievementsDTO dto) {
@@ -86,7 +85,7 @@ public class AchievementsService {
     public List<Achievements> checkEarnAchievements(int userId, boolean isMungple) {
         List<Achievements> earnAchievementsList = new ArrayList<>(); // 획득한 업적 리스트
 
-        List<Archive> archiveList = archiveService.getArchiveByUserId(userId); // 사용자 획득 업적 조회
+        List<Archive> archiveList = archiveService.getArchive(userId); // 사용자 획득 업적 조회
         List<Achievements> achievementsList = getAchievementsByIsMungple(isMungple); // 일반 인증, 멍플 인증 구분해서 조회
 
         for (Archive archive : archiveList) // 사용자가 획득한 업적 삭제
@@ -124,51 +123,35 @@ public class AchievementsService {
 //        return achievements;
     }
 
-
-
     // Archive 수정
-    public List<Archive> setMainAchievements(MainAchievementsDTO dto) {
+    public void setMainAchievements(MainAchievementsDTO dto) {
         // 대표 업적 초기화
-        archiveRepository.saveAll(archiveRepository.findByUserIdAndIsMainNot(dto.getUserId(), 0).stream()
-                .map(Archive::resetMain)
-                .collect(Collectors.toList())
-        );
+        archiveService.resetMainArchive(dto.getUserId());
 
         List<Archive> archives = new ArrayList<>();
-        if (dto.getFirst() != 0)
-            archives.add(archiveRepository.findByUserIdAndAchievementsId(dto.getUserId(), dto.getFirst())
-                    .orElseThrow(() -> new NullPointerException("NOT FOUND ARCHIVE")));
-        if (dto.getSecond() != 0)
-            archives.add(archiveRepository.findByUserIdAndAchievementsId(dto.getUserId(), dto.getSecond())
-                    .orElseThrow(() -> new NullPointerException("NOT FOUND ARCHIVE")));
-        if (dto.getThird() != 0)
-            archives.add(archiveRepository.findByUserIdAndAchievementsId(dto.getUserId(), dto.getThird())
-                    .orElseThrow(() -> new NullPointerException("NOT FOUND ARCHIVE")));
-
-        for (int i = 0; i < archives.size(); i++)
-            archives.get(i).setIsMain(i + 1);
+        if (dto.getFirst() != 0) archives.add(archiveService.getArchive(dto.getUserId(),dto.getFirst()).setMain(1));
+        if (dto.getSecond() != 0) archives.add(archiveService.getArchive(dto.getUserId(),dto.getSecond()).setMain(2));
+        if (dto.getThird() != 0) archives.add(archiveService.getArchive(dto.getUserId(),dto.getThird()).setMain(3));
 
         // 사용자 지정 업적으로 대표업적 설정
-        return archiveRepository.saveAll(archives).stream().peek(archive ->{
-            archive.setAchievements(getAchievementsById(archive.getAchievementsId()));
-        }).collect(Collectors.toList());
+        archiveService.registerArchives(archives);
     }
 
     public List<Achievements> getAchievementsByUser(int userId){
-        String lockImg = "https://kr.object.ncloudstorage.com/reward-achivements/%EC%9E%A0%EA%B8%88%ED%99%94%EB%A9%B4.png";
 
         List<Achievements> achievements = getAchievementsAll();
-        List<Archive> archives = archiveService.getArchiveByUserId(userId);
+        List<Archive> archives = archiveService.getArchive(userId);
 
-        achievements = achievements.stream().map(achievement -> {
+        achievements = achievements.stream().peek(achievement -> {
             archives.forEach(archive -> { // 유저 획득 업적
                 if (Objects.equals(archive.getAchievementsId(), achievement.getAchievementsId())) {
                     achievement.setIsActive(true);
-                    achievement.setImgUrl(lockImg);
                     achievement.setIsMain(archive.getIsMain());
                 }
             });
-            return achievement;
+            // PHOTO ROCK
+            if(!achievement.getIsActive())
+                achievement.setImgUrl(LOCKIMG);
         }).collect(Collectors.toList());
 
         // 정렬 코드

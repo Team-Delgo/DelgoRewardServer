@@ -2,9 +2,11 @@ package com.delgo.reward.comm.ncp;
 
 
 import com.delgo.reward.domain.common.Location;
+import com.delgo.reward.service.MungpleService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -12,17 +14,18 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class GeoService {
     private static final String API_URL = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode";
     private static final String CLIENT_ID = "a8lt0yd9uy";
     private static final String CLIENT_SECRET = "P1WuQqH2d7rAnbWraxGwgDjPVvayuFwhV0RQAXtR";
 
+    private final MungpleService mungpleService;
 
     public Location getGeoData(String address) {
         HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
@@ -76,7 +79,8 @@ public class GeoService {
         return location;
     }
 
-    public double getDistance(@RequestParam String address, String longitude, String latitude) {
+    // 멍플과의 거리 계산
+    public double getDistance(int mungpleId, String longitude, String latitude) {
         HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
 
         RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
@@ -84,7 +88,7 @@ public class GeoService {
         headers.set("X-NCP-APIGW-API-KEY-ID", CLIENT_ID);
         headers.set("X-NCP-APIGW-API-KEY", CLIENT_SECRET);
 
-        String requestURL = API_URL + "?query=" + address + "&coordinate=" + longitude +"," + latitude;
+        String requestURL = API_URL + "?query=" + mungpleService.getAddress(mungpleId) + "&coordinate=" + longitude +"," + latitude;
 
         HttpEntity entity = new HttpEntity<>(headers);
         ResponseEntity<String> responseEntity = restTemplate.exchange(requestURL, HttpMethod.GET, entity, String.class);

@@ -1,18 +1,16 @@
 package com.delgo.reward.domain.achievements;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
 @Entity
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class Archive {
@@ -29,8 +27,8 @@ public class Archive {
     @CreationTimestamp
     private LocalDateTime registDt; // 등록 날짜
 
-    public Archive resetMain(){
-        this.isMain = 0;
+    public Archive setMain(int order){
+        this.isMain = order;
 
         return this;
     }
