@@ -1,7 +1,7 @@
 package com.delgo.reward;
 
 
-import com.delgo.reward.domain.AchievementsCondition;
+import com.delgo.reward.domain.achievements.AchievementsCondition;
 import com.delgo.reward.service.AchievementsConditionService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +31,7 @@ public class AchievementsConditionTest {
                 .build();
 
         //when
-        AchievementsCondition registeredAc = achievementsConditionService.registerAchievementsCondition(ac);
+        AchievementsCondition registeredAc = achievementsConditionService.register(ac);
 
         //then
         assertNotNull(registeredAc);
