@@ -1,8 +1,8 @@
 package com.delgo.reward;
 
 
-import com.delgo.reward.domain.Archive;
-import com.delgo.reward.dto.MainAchievementsDTO;
+import com.delgo.reward.domain.achievements.Archive;
+import com.delgo.reward.dto.achievements.MainAchievementsDTO;
 import com.delgo.reward.service.ArchiveService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
