@@ -22,6 +22,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -37,7 +39,6 @@ public class CertController extends CommController {
     private final RankingService rankingService;
     private final ArchiveService archiveService;
     private final MungpleService mungpleService;
-    private final LikeListService likeListService;
     private final CertService certService;
     private final ReverseGeoService reverseGeoService;
     private final AchievementsService achievementsService;
@@ -50,14 +51,14 @@ public class CertController extends CommController {
     @PostMapping("/live")
     public ResponseEntity registerLive(@Validated @RequestBody LiveCertDTO dto) {
         // 하루에 같은 카테고리 5번 이상 인증 불가능
-        if (!certService.checkCertRegister(dto.getUserId(), dto.getCategoryCode(), true))
+        if (!certService.checkCategoryCountIsFive(dto.getUserId(), dto.getCategoryCode(), true))
             return ErrorReturn(ApiCode.CERTIFICATION_CATEGPRY_COUNT_ERROR);
 
         boolean isMungple = dto.getMungpleId() != 0;
         if (isMungple) {
             // 6시간 이내 같은 장소 인증 불가능 (멍플만)
-            if (!certService.checkMungpleCertRegister(dto.getUserId(), dto.getMungpleId(), true))
-                return ErrorReturn(ApiCode.CERTIFICATION_TIME_ERROR);
+//            if (!certService.checkContinueRegist(dto.getUserId(), dto.getMungpleId(), true))
+//                return ErrorReturn(ApiCode.CERTIFICATION_TIME_ERROR);
 
             // 멍플 <-> 유저와의 거리
             double distance = geoService.getDistance(mungpleService.getMungpleById(dto.getMungpleId()).getRoadAddress(), dto.getLongitude(), dto.getLatitude());
@@ -76,14 +77,14 @@ public class CertController extends CommController {
         // 획득 가능한 업적 Check
         List<Achievements> earnAchievements = achievementsService.checkEarnAchievements(dto.getUserId(), isMungple);
         if (!earnAchievements.isEmpty()) {
-            earnAchievements.forEach(achievement -> {
-                Archive archive = Archive.builder()
-                        .achievementsId(achievement.getAchievementsId())
-                        .userId(dto.getUserId())
-                        .isMain(0)
-                        .build();
-                archiveService.register(archive);
-            });
+            archiveService.registerArchives(earnAchievements.stream().map(achievement ->
+                            Archive.builder()
+                                    .achievementsId(achievement.getAchievementsId())
+                                    .userId(dto.getUserId())
+                                    .isMain(0)
+                                    .build())
+                    .collect(Collectors.toList())
+            );
 
             certification.setIsAchievements(true);
             certification.setAchievements(earnAchievements);
@@ -91,7 +92,7 @@ public class CertController extends CommController {
         }
 
         // Point 부여
-        User user = userService.getUserByUserId(dto.getUserId());
+        User user = userService.getUserById(dto.getUserId());
         CategoryCode category = CategoryCode.valueOf(dto.getCategoryCode());
         pointService.updateAccumulatedPoint(user.getUserId(), category.getPoint());
         pointService.updateWeeklyPoint(user.getUserId(), category.getPoint());
@@ -116,14 +117,14 @@ public class CertController extends CommController {
         // 인증시 획득 가능한 업적 있는지 확인 ( 멍플, 일반 구분 )
         List<Achievements> earnAchievements = achievementsService.checkEarnAchievements(dto.getUserId(), isMungple);
         if (!earnAchievements.isEmpty()) {
-            earnAchievements.forEach(achievement -> {
-                Archive archive = Archive.builder()
-                        .achievementsId(achievement.getAchievementsId())
-                        .userId(dto.getUserId())
-                        .isMain(0)
-                        .build();
-                archiveService.register(archive);
-            });
+            archiveService.registerArchives(earnAchievements.stream().map(achievement ->
+                            Archive.builder()
+                                    .achievementsId(achievement.getAchievementsId())
+                                    .userId(dto.getUserId())
+                                    .isMain(0)
+                                    .build())
+                    .collect(Collectors.toList())
+            );
 
             // 해당 인증이 업적에 영향을 주었는지 체크
             certification.setIsAchievements(true);
@@ -151,7 +152,7 @@ public class CertController extends CommController {
      * Response Data : 카테고리별 인증 리스트 반환
      */
     @GetMapping("/category")
-    public ResponseEntity getCategoryData(
+    public ResponseEntity getCategory(
             @RequestParam Integer userId,
             @RequestParam String categoryCode,
             @RequestParam Integer currentPage,
@@ -167,7 +168,7 @@ public class CertController extends CommController {
      * Request Data : userId
      * Response Data : 카테고리별 인증 개수 반환
      */
-    @GetMapping(value = {"/category/count/{userId}","/category/count/"})
+    @GetMapping(value = {"/category/count/{userId}", "/category/count/"})
     public ResponseEntity getCategoryCount(@PathVariable Integer userId) {
         return SuccessReturn(certService.getCountByCategory(userId));
     }
@@ -179,23 +180,9 @@ public class CertController extends CommController {
      * : 업데이트 속도 때문에, JPA로 업데이트 할 경우 너무 느려서 놓치는 요청이 발생.
      * Response Data : X
      */
-    @PostMapping(value = {"/like/{userId}/{certificationId}","/like/"})
+    @PostMapping(value = {"/like/{userId}/{certificationId}", "/like/"})
     public ResponseEntity setLike(@PathVariable Integer userId, @PathVariable Integer certificationId) {
-
-        // USER , Certification 존재 여부 체크
-        userService.getUserByUserId(userId);
-        Certification certification = certService.getCert(certificationId);
-
-        // 사용자가 해당 Certification 좋아요 눌렀는지 체크.
-        if (likeListService.hasLiked(userId, certificationId)) { // 좋아요 존재
-            likeListService.delete(userId, certificationId);
-            if (certification.getLikeCount() > 0) // 혹시 like_count가 0이거나 혹은 음수이면 miuns 시키지 않는다.
-                certService.minusLikeCount(certificationId);
-        } else {
-            likeListService.register(userId, certificationId);
-            certService.plusLikeCount(certificationId);
-        }
-
+        certService.like(userId, certificationId);
         return SuccessReturn();
     }
 
@@ -206,7 +193,7 @@ public class CertController extends CommController {
      */
     @GetMapping("/main")
     public ResponseEntity getMainData(@RequestParam Integer userId) {
-        return SuccessReturn(certService.getRecentCertificationList(userId));
+        return SuccessReturn(certService.getTwoRecentCert(userId));
     }
 
     /*
@@ -216,7 +203,7 @@ public class CertController extends CommController {
      */
     @GetMapping("/all")
     public ResponseEntity getPagingData(@RequestParam Integer userId, @RequestParam Integer currentPage, @RequestParam Integer pageSize) {
-        return SuccessReturn(certService.getCertificationAll(userId, currentPage, pageSize, true));
+        return SuccessReturn(certService.getCertAll(userId, currentPage, pageSize, true));
     }
 
     /*
@@ -225,11 +212,11 @@ public class CertController extends CommController {
      * 요청 userId랑 등록 userId랑 비교 해야 함.
      * Response Data : null
      */
-    @DeleteMapping(value={"/{userId}/{certificationId}"})
+    @DeleteMapping(value = {"/{userId}/{certificationId}"})
     public ResponseEntity delete(@PathVariable Integer userId, @PathVariable Integer certificationId) {
         Certification certification = certService.getCert(certificationId);
 
-        if(userId != certification.getUserId())
+        if (!Objects.equals(userId, certification.getUserId()))
             return ErrorReturn(ApiCode.INVALID_USER_ERROR);
 
         certService.delete(certification);

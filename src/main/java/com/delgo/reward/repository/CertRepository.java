@@ -36,5 +36,5 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     List<Integer> findByUserIdWithoutBanList(int userId);
 
     @Query(value = "select * from certification where user_id  not in (select ban_user_id from ban_list where user_id = ?) order by regist_dt desc limit 2", nativeQuery = true)
-    List<Certification> findTop2ByOrderByRegistDtDesc(int userId);
+    List<Certification> findTwoRecentCert(int userId);
 }
