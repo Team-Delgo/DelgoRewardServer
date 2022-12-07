@@ -1,6 +1,6 @@
 package com.delgo.reward.service;
 
-import com.delgo.reward.domain.AchievementsCondition;
+import com.delgo.reward.domain.achievements.AchievementsCondition;
 import com.delgo.reward.repository.AchievementsConditionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ public class AchievementsConditionService {
     private final AchievementsConditionRepository achievementsConditionRepository; // 특정 업적 조건
 
     // AchievementsCondition 등록
-    public AchievementsCondition registerAchievementsCondition(AchievementsCondition achievementsCondition) {
+    public AchievementsCondition register(AchievementsCondition achievementsCondition) {
         return achievementsConditionRepository.save(achievementsCondition);
     }
 
