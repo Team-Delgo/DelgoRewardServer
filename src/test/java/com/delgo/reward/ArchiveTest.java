@@ -30,7 +30,7 @@ public class ArchiveTest {
                 .build();
 
         //when
-        Archive registerArchive = archiveService.registerArchive(archive);
+        Archive registerArchive = archiveService.register(archive);
 
         //then
         assertNotNull(registerArchive);
