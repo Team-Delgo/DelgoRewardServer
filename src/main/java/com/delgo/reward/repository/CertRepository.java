@@ -10,13 +10,13 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 public interface CertRepository extends JpaRepository<Certification, Integer>, JpaSpecificationExecutor<Certification> {
     List<Certification> findByUserId(int userId);
 
     // 페이징
     Slice<Certification> findByUserId(int userId, Pageable pageable);
+    Slice<Certification> findByUserIdAndCategoryCode(int userId, String categoryCode, Pageable pageable);
 
     @Query(value = "select * from certification where user_id  not in (select ban_user_id from ban_list where user_id = ?)", nativeQuery = true)
     Slice<Certification> findAllByPaging(int userId, Pageable pageable);
@@ -37,6 +37,4 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
 
     @Query(value = "select * from certification where user_id  not in (select ban_user_id from ban_list where user_id = ?) order by regist_dt desc limit 2", nativeQuery = true)
     List<Certification> findTop2ByOrderByRegistDtDesc(int userId);
-
-    Slice<Certification> findByUserIdAndCategoryCode(int userId, String categoryCode, Pageable pageable);
 }
