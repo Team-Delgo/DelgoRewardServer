@@ -1,6 +1,7 @@
 package com.delgo.reward.domain;
 
 
+import com.delgo.reward.domain.achievements.Achievements;
 import com.delgo.reward.domain.user.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
@@ -58,6 +59,12 @@ public class Certification {
 
     public Certification setPhotoUrl(String photoUrl){
         this.photoUrl = photoUrl;
+
+        return this;
+    }
+
+    public Certification modify(String description){
+        this.description = description;
 
         return this;
     }

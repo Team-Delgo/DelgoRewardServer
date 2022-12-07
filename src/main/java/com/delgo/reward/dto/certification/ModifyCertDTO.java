@@ -14,6 +14,6 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class ModifyCertDTO {
     @NotNull private Integer userId;
-    @NotNull private Integer certId;
+    @NotNull private Integer certificationId;
     @NotBlank private String description;
 }

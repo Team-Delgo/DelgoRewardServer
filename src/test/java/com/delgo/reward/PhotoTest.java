@@ -1,16 +1,11 @@
 package com.delgo.reward;
 
-import com.delgo.reward.domain.Archive;
-import com.delgo.reward.service.ArchiveService;
 import com.delgo.reward.service.PhotoService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.io.IOException;
-import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 

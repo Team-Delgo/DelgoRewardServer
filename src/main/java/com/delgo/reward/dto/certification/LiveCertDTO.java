@@ -3,17 +3,13 @@ package com.delgo.reward.dto.certification;
 
 import com.delgo.reward.domain.Certification;
 import com.delgo.reward.domain.Code;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
 public class LiveCertDTO {
     @NotNull private Integer userId;
     @NotBlank private String categoryCode;
@@ -42,5 +38,11 @@ public class LiveCertDTO {
                 .isAchievements(false)
                 .isLive(true)
                 .build();
+    }
+
+    public LiveCertDTO toLog(){
+        this.photo = "";
+
+        return this;
     }
 }
