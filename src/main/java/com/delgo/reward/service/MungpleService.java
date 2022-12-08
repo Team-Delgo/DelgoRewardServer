@@ -23,8 +23,8 @@ public class MungpleService {
     private final MungpleRepository mungpleRepository;
 
     // Mungple 등록
-    public Mungple registerMungple(Mungple mungple) {
-        return mungpleRepository.save(mungple);
+    public Mungple register(Mungple mungple) {
+        return  mungpleRepository.save(mungple);
     }
 
     // 전체 Mungple 리스트 조회
@@ -54,7 +54,7 @@ public class MungpleService {
     }
 
     // 멍플 주소 반환
-    public String getAddress(int mungpleId){
+    public String getMungpleAddress(int mungpleId){
         return getMungpleById(mungpleId).getRoadAddress();
     }
 }

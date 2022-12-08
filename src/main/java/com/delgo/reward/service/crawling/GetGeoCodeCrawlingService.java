@@ -1,6 +1,6 @@
 package com.delgo.reward.service.crawling;
 
-import com.delgo.reward.domain.Code;
+import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.service.CodeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,30 +66,30 @@ public class GetGeoCodeCrawlingService {
     private List<Code> getGeoCode() {
         List<Code> codeList = new ArrayList<>();
         List<WebElement> elements = driver.findElements(By.cssSelector("tbody tr"));
-        elements.forEach(element -> {
-            if (!element.getText().equals("")) {
-                String[] text_arr = element.getText().split(" ");
-                String isKorea = text_arr[0].substring(0, 1);
-                if (isKorea.equals("1")) {
-                    if (text_arr.length == 4)
-                        codeList.add(Code.builder()
-                                .code(text_arr[2])
-                                .pCode(text_arr[3])
-                                .codeName(text_arr[1])
-                                .codeDesc("")
-                                .registDt(LocalDateTime.now())
-                                .build());
-                    else
-                        codeList.add(Code.builder()
-                                .code(text_arr[3])
-                                .pCode(text_arr[4])
-                                .codeName(text_arr[1] + " " + text_arr[2])
-                                .codeDesc("")
-                                .registDt(LocalDateTime.now())
-                                .build());
-                }
-            }
-        });
+//        elements.forEach(element -> {
+//            if (!element.getText().equals("")) {
+//                String[] text_arr = element.getText().split(" ");
+//                String isKorea = text_arr[0].substring(0, 1);
+//                if (isKorea.equals("1")) {
+//                    if (text_arr.length == 4)
+//                        codeList.add(Code.builder()
+//                                .code(text_arr[2])
+//                                .pCode(text_arr[3])
+//                                .codeName(text_arr[1])
+//                                .codeDesc("")
+//                                .registDt(LocalDateTime.now())
+//                                .build());
+//                    else
+//                        codeList.add(Code.builder()
+//                                .code(text_arr[3])
+//                                .pCode(text_arr[4])
+//                                .codeName(text_arr[1] + " " + text_arr[2])
+//                                .codeDesc("")
+//                                .registDt(LocalDateTime.now())
+//                                .build());
+//                }
+//            }
+//        });
 
         return codeList;
     }

@@ -4,7 +4,6 @@ package com.delgo.reward.service;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.ncp.ReverseGeoService;
 import com.delgo.reward.domain.Certification;
-import com.delgo.reward.domain.Code;
 import com.delgo.reward.domain.achievements.Achievements;
 import com.delgo.reward.domain.achievements.Archive;
 import com.delgo.reward.domain.common.Location;
@@ -36,9 +35,9 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class CertService {
+
     // Service
     private final UserService userService;
-    private final CodeService codeService;
     private final PointService pointService;
     private final PhotoService photoService;
     private final ArchiveService archiveService;
@@ -62,14 +61,9 @@ public class CertService {
 
     // Past 등록
     public Certification registerLive(LiveCertDTO dto) {
-        // GeoCode 조회
         Location location = reverseGeoService.getReverseGeoData(new Location(dto.getLatitude(), dto.getLongitude()));
-        Code code = codeService.getGeoCodeBySIGUGUN(location); // GeoCode
-        String address = location.getSIDO() + " " + location.getSIGUGUN(); // address
+        Certification certification = register(dto.toEntity(location));
 
-        Certification certification = register(dto.toEntity(code, address));
-        // 사진 파일 저장 추가
-        photoService.uploadCertEncodingFile(certification.getCertificationId(), dto.getPhoto());
         // 획득 가능한 업적 Check
         List<Achievements> earnAchievements = achievementsService.checkEarnAchievements(dto.getUserId(),  dto.getMungpleId() != 0);
         if (!earnAchievements.isEmpty()) {
@@ -84,8 +78,11 @@ public class CertService {
 
             certification.setIsAchievements(true);
             certification.setAchievements(earnAchievements);
-            certification = register(certification);
         }
+
+        // 사진 파일 저장 추가
+        String photoUrl = photoService.uploadCertEncodingFile(certification.getCertificationId(), dto.getPhoto());
+        register(certification.setPhotoUrl(photoUrl));
 
         // Point 부여
         User user = userService.getUserById(dto.getUserId());
