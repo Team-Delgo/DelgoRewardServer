@@ -52,4 +52,9 @@ public class MungpleService {
         Optional<Mungple> mungple = mungpleRepository.findByLatitudeAndLongitude(location.getLatitude(), location.getLongitude());
         return mungple.isPresent();
     }
+
+    // 멍플 주소 반환
+    public String getAddress(int mungpleId){
+        return getMungpleById(mungpleId).getRoadAddress();
+    }
 }

@@ -43,7 +43,7 @@ public class GeoTest {
         String longitude = "126.99963972886282"; // 경도
 
         //when
-        Double distance = geoService.getDistance(address, longitude, latitude);
+        Double distance = geoService.getDistance(2, longitude, latitude);
 
         //then
         assertTrue(distance > 0);
