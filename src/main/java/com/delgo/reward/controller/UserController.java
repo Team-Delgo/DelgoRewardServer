@@ -5,7 +5,6 @@ import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
 import com.delgo.reward.comm.security.jwt.Access_JwtProperties;
 import com.delgo.reward.comm.security.jwt.Refresh_JwtProperties;
-import com.delgo.reward.domain.Code;
 import com.delgo.reward.domain.Point;
 import com.delgo.reward.domain.SmsAuth;
 import com.delgo.reward.domain.pet.Pet;
@@ -69,9 +68,9 @@ public class UserController extends CommController {
             originUser.setPGeoCode(modifyUserDTO.getPGeoCode());
 
             // 주소 설정
-            Code geoCode = codeService.getGeoCodeByCode(modifyUserDTO.getGeoCode());
-            Code pGeoCode = codeService.getGeoCodeByCode(modifyUserDTO.getPGeoCode());
-            String address = pGeoCode.getCodeDesc() + " " + geoCode.getCodeName();
+            String address = (modifyUserDTO.getGeoCode().equals("0"))  // 세종시는 구가 없음.
+                    ? codeService.getAddress(modifyUserDTO.getPGeoCode(), true)
+                    : codeService.getAddress(modifyUserDTO.getGeoCode(), false);
             originUser.setAddress(address);
         }
 
@@ -163,14 +162,9 @@ public class UserController extends CommController {
     public ResponseEntity<?> registerUserByOAuth(@Validated @RequestBody OAuthSignUpDTO signUpDTO, HttpServletResponse response) {
 
         // 주소 설정
-        String address;
-        Code pGeoCode = codeService.getGeoCodeByCode(signUpDTO.getPGeoCode());
-        if(!signUpDTO.getGeoCode().equals("0")) {
-            Code geoCode = codeService.getGeoCodeByCode(signUpDTO.getGeoCode());
-            address = pGeoCode.getCodeDesc() + " " + geoCode.getCodeName();
-        } else { // 세종특별시 일 경우 예외처리
-            address = pGeoCode.getCodeName();
-        }
+        String address = (signUpDTO.getGeoCode().equals("0"))  // 세종시는 구가 없음.
+                ? codeService.getAddress(signUpDTO.getPGeoCode(), true)
+                : codeService.getAddress(signUpDTO.getGeoCode(), false);
 
         User user = User.builder()
                 .name(signUpDTO.getUserName())
@@ -218,14 +212,9 @@ public class UserController extends CommController {
             return ErrorReturn(ApiCode.EMAIL_DUPLICATE_ERROR);
 
         // 주소 설정
-        String address;
-        Code pGeoCode = codeService.getGeoCodeByCode(signUpDTO.getPGeoCode());
-        if(!signUpDTO.getGeoCode().equals("0")) {
-            Code geoCode = codeService.getGeoCodeByCode(signUpDTO.getGeoCode());
-            address = pGeoCode.getCodeDesc() + " " + geoCode.getCodeName();
-        } else { // 세종특별시 일 경우 예외처리
-            address = pGeoCode.getCodeName();
-        }
+        String address = (signUpDTO.getGeoCode().equals("0"))  // 세종시는 구가 없음.
+                ? codeService.getAddress(signUpDTO.getPGeoCode(), true)
+                : codeService.getAddress(signUpDTO.getGeoCode(), false);
 
         User user = User.builder()
                 .name(signUpDTO.getUserName())

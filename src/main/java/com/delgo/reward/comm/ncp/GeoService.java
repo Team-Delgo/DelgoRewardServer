@@ -2,6 +2,7 @@ package com.delgo.reward.comm.ncp;
 
 
 import com.delgo.reward.domain.common.Location;
+import com.delgo.reward.service.CodeService;
 import com.delgo.reward.service.MungpleService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -25,6 +26,7 @@ public class GeoService {
     private static final String CLIENT_ID = "a8lt0yd9uy";
     private static final String CLIENT_SECRET = "P1WuQqH2d7rAnbWraxGwgDjPVvayuFwhV0RQAXtR";
 
+    private final CodeService codeService;
     private final MungpleService mungpleService;
 
     public Location getGeoData(String address) {
@@ -71,7 +73,8 @@ public class GeoService {
             System.out.println("SIDO: " + SIDO);
             System.out.println("************************************************");
 
-
+            // SET GEOCODE
+            location.setGeoCode(codeService.getGeoCodeByLocation(location));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -88,7 +91,7 @@ public class GeoService {
         headers.set("X-NCP-APIGW-API-KEY-ID", CLIENT_ID);
         headers.set("X-NCP-APIGW-API-KEY", CLIENT_SECRET);
 
-        String requestURL = API_URL + "?query=" + mungpleService.getAddress(mungpleId) + "&coordinate=" + longitude +"," + latitude;
+        String requestURL = API_URL + "?query=" + mungpleService.getMungpleAddress(mungpleId) + "&coordinate=" + longitude +"," + latitude;
 
         HttpEntity entity = new HttpEntity<>(headers);
         ResponseEntity<String> responseEntity = restTemplate.exchange(requestURL, HttpMethod.GET, entity, String.class);

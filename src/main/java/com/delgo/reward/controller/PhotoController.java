@@ -2,7 +2,9 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
+import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.PhotoService;
+import com.delgo.reward.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/photo")
 public class PhotoController extends CommController {
 
+    private final CertService certService;
+    private final UserService userService;
     private final PhotoService photoService;
 
     /*
@@ -28,6 +32,10 @@ public class PhotoController extends CommController {
     @PostMapping(value={"/upload/profile/{userId}","/upload/profile"})
     public ResponseEntity<?> uploadProfile(@PathVariable Integer userId, @RequestPart(required = false) MultipartFile photo) {
         if (photo.isEmpty()) return ErrorReturn(ApiCode.PARAM_ERROR);
+
+        String ncpLink = photoService.uploadCertMultipart(userId, photo);
+        userService.changeUserInfo(userService.getUserById(userId).setProfile(ncpLink)); // User Link 저장.
+
         return SuccessReturn(photoService.uploadProfile(userId, photo));
     }
 
@@ -41,6 +49,10 @@ public class PhotoController extends CommController {
     @PostMapping(value={"/upload/certification/{certificationId}","/upload/certification"})
     public ResponseEntity<?> uploadCertificationPhoto(@PathVariable Integer certificationId, @RequestPart(required = false) MultipartFile photo) {
         if (photo.isEmpty()) return ErrorReturn(ApiCode.PARAM_ERROR);
-        return SuccessReturn(photoService.uploadCertMultipart(certificationId, photo));
+
+        String ncpLink = photoService.uploadCertMultipart(certificationId, photo);
+        certService.register(certService.getCert(certificationId).setPhotoUrl(ncpLink)); // PhotoUrl 등록
+
+        return SuccessReturn(ncpLink);
     }
 }
