@@ -1,7 +1,7 @@
 package com.delgo.reward.service;
 
 
-import com.delgo.reward.domain.Code;
+import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.repository.CodeRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,26 +20,38 @@ public class CodeService {
 
     private final CodeRepository codeRepository;
 
-    // categoryCode로 Mungple 조회
-    public Code getGeoCodeBySIGUGUN(Location location) {
-        // SIGUGUNS [codeName]만으로 조회시 중복 발생 ex) 중구
-        // 따라서 pCode 조회 후 같이 조회
-        Code code = codeRepository.findByCodeName(location.getSIDO()).orElseThrow(() -> new NullPointerException("NOT FOUND GEOCODE"));
-        return codeRepository.findBypCodeAndCodeName(code.getPCode(), location.getSIGUGUN())
-                .orElseThrow(() -> new NullPointerException("NOT FOUND GEOCODE"));
+    // Code 등록
+    public void register(Code code){
+        codeRepository.save(code);
     }
 
-    // categoryCode로 Mungple 조회
-    public Code getGeoCodeByCode(String code) {
-        return codeRepository.findByCode(code)
-                .orElseThrow(() -> new NullPointerException("NOT FOUND GEOCODE"));
-    }
-
+    // Code List 등록
     public void registerCodeList(List<Code> codeList) {
         codeRepository.saveAll(codeList);
     }
 
-    public List<Code> getCodeAll() {
-       return codeRepository.findAll();
+    // GeoCode 전체 조회
+    public List<Code> getGeoCodeAll() {
+        return codeRepository.findByType("geo");
+    }
+
+    public Code getGeoCodeByLocation(Location location) {
+        // SIGUGUNS [codeName]만으로 조회시 중복 발생 ex) 서울특별시 중구, 부산광역시 중구 중복의 경우 -> 서울특별시의 Code와 같이 조회
+        Code sidoCode = codeRepository.findByCodeName(location.getSIDO()).orElseThrow(() -> new NullPointerException("NOT FOUND GEOCODE"));
+        return codeRepository.findBypCodeAndCodeName(sidoCode.getCode(), location.getSIGUGUN())
+                .orElseThrow(() -> new NullPointerException("NOT FOUND GEOCODE"));
+    }
+
+    // Code 조회
+    public Code getCode(String code) {
+        return codeRepository.findByCode(code)
+                .orElseThrow(() -> new NullPointerException("NOT FOUND CODE"));
+    }
+
+    // 주소 조회
+    public String getAddress(String code, Boolean isSejong) {
+        Code c = getCode(code); // 자식 GeoCode
+        Code p = getCode(c.getCode()); // 부모 GeoCode
+        return (isSejong) ? p.getCodeName() : p.getCodeName() + " " + c.getCodeName();
     }
 }

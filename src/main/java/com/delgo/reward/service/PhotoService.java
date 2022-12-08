@@ -21,11 +21,9 @@ import java.util.Objects;
 @Transactional
 @RequiredArgsConstructor
 public class PhotoService extends CommService {
-    private final String DIR = "/var/www/delgo-reward-api/"; // dev
-
-    private final UserService userService;
-    private final CertService certService;
     private final ObjectStorageService objectStorageService;
+
+    private final String DIR = "/var/www/delgo-reward-api/"; // dev
 
     public String uploadCertMultipart(int certificationId, MultipartFile photo) {
         String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\."); // ex) png, jpg, jpeg
@@ -45,7 +43,6 @@ public class PhotoService extends CommService {
             f.delete(); // 서버에 저장된 사진 삭제
 
             ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1); // Cache 무효화
-            certService.register(certService.getCert(certificationId).setPhotoUrl(ncpLink)); // PhotoUrl 등록
             return ncpLink;
         } catch (Exception e) {
             throw new NullPointerException("PHOTO UPLOAD ERROR");
@@ -73,7 +70,6 @@ public class PhotoService extends CommService {
             }
 
             ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1); // Cache 무효화
-            certService.register(certService.getCert(certificationId).setPhotoUrl(ncpLink)); // PhotoUrl 등록
             return ncpLink;
         } catch (Exception e) {
             throw new NullPointerException("PHOTO UPLOAD ERROR");
@@ -97,8 +93,6 @@ public class PhotoService extends CommService {
             f.delete(); // 서버에 저장된 사진 삭제
 
             ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1);   // Cache 무효화
-            userService.changeUserInfo(userService.getUserById(userId).setProfile(ncpLink)); // User Link 저장.
-
             return ncpLink;
         } catch (Exception e) {
             return "error:" + e.getMessage();

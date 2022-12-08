@@ -2,7 +2,7 @@ package com.delgo.reward.dto.certification;
 
 
 import com.delgo.reward.domain.Certification;
-import com.delgo.reward.domain.Code;
+import com.delgo.reward.domain.common.Location;
 import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
@@ -22,16 +22,16 @@ public class LiveCertDTO {
     @NotBlank private String latitude; // 위도
     @NotBlank private String longitude; // 경도
 
-    public Certification toEntity(Code code, String address) {
+    public Certification toEntity(Location location) {
         return Certification.builder()
                 .userId(this.userId)
                 .categoryCode(this.categoryCode)
                 .mungpleId(this.mungpleId)
                 .placeName(this.placeName)
                 .description(this.description)
-                .address(address)
-                .geoCode(code.getCode()) // 사용자 기준 geoCode
-                .pGeoCode(code.getPCode()) // 사용자 기준 geoCode
+                .address(location.getSIDO() + " " + location.getSIGUGUN())
+                .geoCode(location.getGeoCode()) // 사용자 기준 geoCode
+                .pGeoCode(location.getPGeoCode()) // 사용자 기준 geoCode
                 .latitude(this.latitude) // 사용자한테 입력받은 위도
                 .longitude(this.longitude) // 사용자한테 입력받은 경도
                 .isPhotoChecked(false)
