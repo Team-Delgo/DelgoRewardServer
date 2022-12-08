@@ -9,7 +9,6 @@ import com.delgo.reward.repository.AchievementsRepository;
 import com.delgo.reward.repository.CertRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,8 +29,7 @@ public class AchievementsService {
     private final ArchiveService archiveService; // 사용자 획득 업적
     private final AchievementsConditionService achievementsConditionService; // 특정 업적 조건
 
-    @Value("${img.lock}")
-    String LOCKIMG;
+    String IMG_LOCK = "https://kr.object.ncloudstorage.com/reward-achivements/%EC%9E%A0%EA%B8%88%ED%99%94%EB%A9%B4.png";
 
     // Achievements 및 Condition 등록
     public Achievements registerWithCondition(AchievementsDTO dto) {
@@ -151,7 +149,7 @@ public class AchievementsService {
             });
             // PHOTO ROCK
             if(!achievement.getIsActive())
-                achievement.setImgUrl(LOCKIMG);
+                achievement.setImgUrl(IMG_LOCK);
         }).collect(Collectors.toList());
 
         // 정렬 코드
