@@ -4,10 +4,7 @@ package com.delgo.reward.service;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.user.UserInfoDTO;
-import com.delgo.reward.repository.CertRepository;
-import com.delgo.reward.repository.JDBCTemplatePointRepository;
-import com.delgo.reward.repository.PetRepository;
-import com.delgo.reward.repository.UserRepository;
+import com.delgo.reward.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +23,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PetRepository petRepository;
     private final CertRepository certRepository;
+    private final JDBCTemplateRankingRepository jdbcTemplateRankingRepository;
     private final PasswordEncoder passwordEncoder;
     private final JDBCTemplatePointRepository jdbcTemplatePointRepository;
 
@@ -108,6 +106,7 @@ public class UserService {
     }
 
     public User changeUserInfo(User user) {
+        jdbcTemplateRankingRepository.changeUserGeoCode(user.getUserId(), user.getGeoCode());
         return userRepository.save(user);
     }
 
