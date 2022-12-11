@@ -250,7 +250,6 @@ public class UserController extends CommController {
     // 회원탈퇴
     @DeleteMapping("/user/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable Integer userId) {
-
         userService.deleteUser(userId);
         return SuccessReturn();
     }
