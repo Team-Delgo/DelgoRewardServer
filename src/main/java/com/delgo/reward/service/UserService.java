@@ -4,6 +4,7 @@ package com.delgo.reward.service;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.user.UserInfoDTO;
+import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.repository.JDBCTemplatePointRepository;
 import com.delgo.reward.repository.PetRepository;
 import com.delgo.reward.repository.UserRepository;
@@ -24,6 +25,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PetRepository petRepository;
+    private final CertRepository certRepository;
     private final PasswordEncoder passwordEncoder;
     private final JDBCTemplatePointRepository jdbcTemplatePointRepository;
 
@@ -46,6 +48,7 @@ public class UserService {
     public void deleteUser(int userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
         Pet pet = petRepository.findByUserId(userId).orElseThrow(() -> new NullPointerException("NOT FOUND PET"));
+        certRepository.deleteAllByUserId(userId);
         petRepository.delete(pet);
         userRepository.delete(user);
     }
