@@ -20,10 +20,6 @@ public class JDBCTemplateRankingRepository{
         jdbcTemplate.update("update ranking_point set last_ranking = ranking");
     }
 
-    public void changeUserGeoCode(int userId, String getCode){
-        jdbcTemplate.update("update ranking_point set geo_code = " + getCode + " where user_id = " + userId);
-    }
-
     public void deleteAllByUserId(int userId){
         jdbcTemplate.update("delete from ranking_point where user_id = " + userId);
     }

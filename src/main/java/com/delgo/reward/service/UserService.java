@@ -23,10 +23,10 @@ public class UserService {
     private final UserRepository userRepository;
     private final PetRepository petRepository;
     private final CertRepository certRepository;
+    private final JDBCTemplatePointRepository jdbcTemplatePointRepository;
     private final JDBCTemplateRankingRepository jdbcTemplateRankingRepository;
     private final CommentRepository commentRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JDBCTemplatePointRepository jdbcTemplatePointRepository;
 
     // 회원가입
     public User signup(User user, Pet pet) {
@@ -112,7 +112,7 @@ public class UserService {
     }
 
     public User changeUserInfo(User user) {
-        jdbcTemplateRankingRepository.changeUserGeoCode(user.getUserId(), user.getGeoCode());
+        jdbcTemplatePointRepository.changeGeoCode(user.getUserId(), user.getGeoCode());
         return userRepository.save(user);
     }
 
