@@ -12,6 +12,8 @@ public interface CommentRepository extends JpaRepository<Comment, Integer>{
 //    @Query(value = "select c.*, u.name, u.profile from comment c join user u on c.user_id = u.user_id where certification_id = ? and is_reply = false", nativeQuery = true)
 //    List<Comment> findByCertificationId(int certificationId);
 
+    void deleteAllByUserId(int userId);
+
     @Modifying(clearAutomatically = true)
     @Query(value = "update comment set content = :updateContent where comment_id = :commentId", nativeQuery = true)
     void updateByCommentId(@Param(value="commentId") int commentId, @Param(value="updateContent") String content);
