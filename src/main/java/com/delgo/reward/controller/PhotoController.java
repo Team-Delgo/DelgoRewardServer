@@ -33,7 +33,7 @@ public class PhotoController extends CommController {
     public ResponseEntity<?> uploadProfile(@PathVariable Integer userId, @RequestPart(required = false) MultipartFile photo) {
         if (photo.isEmpty()) return ErrorReturn(ApiCode.PARAM_ERROR);
 
-        String ncpLink = photoService.uploadCertMultipart(userId, photo);
+        String ncpLink = photoService.uploadProfile(userId, photo);
         userService.changeUserInfo(userService.getUserById(userId).setProfile(ncpLink)); // User Link 저장.
 
         return SuccessReturn(photoService.uploadProfile(userId, photo));
