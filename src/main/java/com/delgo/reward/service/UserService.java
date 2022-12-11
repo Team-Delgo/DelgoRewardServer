@@ -24,6 +24,7 @@ public class UserService {
     private final PetRepository petRepository;
     private final CertRepository certRepository;
     private final JDBCTemplateRankingRepository jdbcTemplateRankingRepository;
+    private final CommentRepository commentRepository;
     private final PasswordEncoder passwordEncoder;
     private final JDBCTemplatePointRepository jdbcTemplatePointRepository;
 
@@ -46,7 +47,12 @@ public class UserService {
     public void deleteUser(int userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
         Pet pet = petRepository.findByUserId(userId).orElseThrow(() -> new NullPointerException("NOT FOUND PET"));
+
         certRepository.deleteAllByUserId(userId);
+        commentRepository.deleteAllByUserId(userId);
+        jdbcTemplateRankingRepository.deleteAllByUserId(userId);
+        jdbcTemplatePointRepository.deleteAllByUserId(userId);
+
         petRepository.delete(pet);
         userRepository.delete(user);
     }

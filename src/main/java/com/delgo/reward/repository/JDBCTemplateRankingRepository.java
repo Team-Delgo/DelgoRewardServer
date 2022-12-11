@@ -24,6 +24,10 @@ public class JDBCTemplateRankingRepository{
         jdbcTemplate.update("update ranking_point set geo_code = " + getCode + " where user_id = " + userId);
     }
 
+    public void deleteAllByUserId(int userId){
+        jdbcTemplate.update("delete from ranking_point where user_id = " + userId);
+    }
+
     public List<RankingByPointDTO> findTopPointRankingByGeoCode(String geoCode){
         return jdbcTemplate.query("select u.user_id, ranking, weekly_point, profile, name from ranking_point natural join user u where geo_code = " + geoCode + " limit 10;", pointRankingByGeoCodeRowMapper(geoCode));
     }
