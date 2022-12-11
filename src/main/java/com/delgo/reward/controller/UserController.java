@@ -73,11 +73,13 @@ public class UserController extends CommController {
                     ? codeService.getAddress(modifyUserDTO.getPGeoCode(), true)
                     : codeService.getAddress(modifyUserDTO.getGeoCode(), false);
             originUser.setAddress(address);
-            // 랭킹 실시간으로 집계
-            rankingService.rankingByPoint();
+
         }
 
         userService.changeUserInfo(originUser);
+
+        // 랭킹 실시간으로 집계
+        rankingService.rankingByPoint();
 
         return SuccessReturn();
     }
