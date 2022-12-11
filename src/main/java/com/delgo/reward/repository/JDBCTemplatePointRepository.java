@@ -14,6 +14,10 @@ public class JDBCTemplatePointRepository {
         jdbcTemplate.update("insert into point (user_id, geo_code, p_geo_code) values (?, ?, ?)", user.getUserId(), user.getGeoCode(), user.getPGeoCode());
     }
 
+    public void deleteAllByUserId(int userId){
+        jdbcTemplate.update("delete from point where user_id = " + userId);
+    }
+
     public void updateAccumulatedPoint(int userId, int categoryPoint){
         jdbcTemplate.update("update point set accumulated_point = accumulated_point + ? where user_id = ?", categoryPoint, userId);
     }
