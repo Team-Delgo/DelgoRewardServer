@@ -30,4 +30,13 @@ public class CodeController extends CommController {
         return SuccessReturn(codeService.getGeoCodeAll().stream().map(Code::formatInteger).collect(Collectors.toList()));
     }
 
+    /*
+     * DogCode 전체 조회
+     * Request Data : ""
+     * Response Data : Geo Code List
+     */
+    @GetMapping("/dog")
+    public ResponseEntity getDogCode() {
+        return SuccessReturn(codeService.getDogCodeAll());
+    }
 }

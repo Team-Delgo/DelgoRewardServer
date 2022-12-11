@@ -35,6 +35,11 @@ public class CodeService {
         return codeRepository.findByType("geo");
     }
 
+    // DogCode 전체 조회
+    public List<Code> getDogCodeAll() {
+        return codeRepository.findByType("dog");
+    }
+
     public Code getGeoCodeByLocation(Location location) {
         // SIGUGUNS [codeName]만으로 조회시 중복 발생 ex) 서울특별시 중구, 부산광역시 중구 중복의 경우 -> 서울특별시의 Code와 같이 조회
         Code sidoCode = codeRepository.findByCodeName(location.getSIDO()).orElseThrow(() -> new NullPointerException("NOT FOUND GEOCODE"));
