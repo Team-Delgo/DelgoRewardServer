@@ -33,6 +33,7 @@ public class UserController extends CommController {
     private final CodeService codeService;
     private final TokenService tokenService;
     private final PointService pointService;
+    private final RankingService rankingService;
     private final SmsAuthService smsAuthService;
     private final ArchiveService archiveService;
 
@@ -72,9 +73,13 @@ public class UserController extends CommController {
                     ? codeService.getAddress(modifyUserDTO.getPGeoCode(), true)
                     : codeService.getAddress(modifyUserDTO.getGeoCode(), false);
             originUser.setAddress(address);
+
         }
 
         userService.changeUserInfo(originUser);
+
+        // 랭킹 실시간으로 집계
+        rankingService.rankingByPoint();
 
         return SuccessReturn();
     }
@@ -251,6 +256,8 @@ public class UserController extends CommController {
     @DeleteMapping("/user/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable Integer userId) {
         userService.deleteUser(userId);
+        // 랭킹 실시간으로 집계
+        rankingService.rankingByPoint();
         return SuccessReturn();
     }
 

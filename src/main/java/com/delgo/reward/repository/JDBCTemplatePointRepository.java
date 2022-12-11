@@ -2,6 +2,9 @@ package com.delgo.reward.repository;
 
 import com.delgo.reward.domain.user.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +17,9 @@ public class JDBCTemplatePointRepository {
         jdbcTemplate.update("insert into point (user_id, geo_code, p_geo_code) values (?, ?, ?)", user.getUserId(), user.getGeoCode(), user.getPGeoCode());
     }
 
+    public void changeGeoCode(int userId, String geoCode){
+        jdbcTemplate.update("update point set geo_code = " + geoCode + " where user_id = " + userId);
+    }
     public void deleteAllByUserId(int userId){
         jdbcTemplate.update("delete from point where user_id = " + userId);
     }
