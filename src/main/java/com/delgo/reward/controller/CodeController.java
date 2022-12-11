@@ -25,7 +25,7 @@ public class CodeController extends CommController {
      * Request Data : ""
      * Response Data : Geo Code List
      */
-    @GetMapping("/geo-data")
+    @GetMapping("/geo")
     public ResponseEntity getGeoCode() {
         return SuccessReturn(codeService.getGeoCodeAll().stream().map(Code::formatInteger).collect(Collectors.toList()));
     }
