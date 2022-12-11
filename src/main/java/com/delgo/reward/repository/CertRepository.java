@@ -13,6 +13,7 @@ import java.util.List;
 
 public interface CertRepository extends JpaRepository<Certification, Integer>, JpaSpecificationExecutor<Certification> {
     List<Certification> findByUserId(int userId);
+    void deleteAllByUserId(int userId);
 
     // 페이징
     Slice<Certification> findByUserId(int userId, Pageable pageable);
