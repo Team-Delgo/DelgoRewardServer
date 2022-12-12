@@ -23,8 +23,10 @@ public class Achievements {
     private Boolean isMungple; // 업적 조건에 멍플 조건이 있는지 여부 체크
 
     @Transient
+    @Builder.Default
     private Integer isMain = 0; // 대표 이미지일 경우 순서 표시
     @Transient
+    @Builder.Default
     private Boolean isActive = false;
 
     @CreationTimestamp
