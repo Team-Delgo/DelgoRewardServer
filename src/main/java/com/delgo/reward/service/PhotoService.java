@@ -89,7 +89,7 @@ public class PhotoService extends CommService {
             File f = new File(DIR + fileName); // 서버에 저장
             photo.transferTo(f);
 
-            objectStorageService.uploadObjects("delgo-pet-profile", fileName, DIR + fileName); // Upload NCP
+            objectStorageService.uploadObjects("reward-profile", fileName, DIR + fileName); // Upload NCP
             f.delete(); // 서버에 저장된 사진 삭제
 
             ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1);   // Cache 무효화
