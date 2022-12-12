@@ -1,18 +1,16 @@
 package com.delgo.reward.domain.achievements;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
 @Entity
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class Achievements {
@@ -20,7 +18,8 @@ public class Achievements {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer achievementsId;
     private String name; // 업적 명
-    private String imgUrl; // 업적 아이콘 이미지 url
+    private String desc; // 업적 설명
+    private String imgUrl; // 업적 아이콘 이미지 url (대표 업적 설정되었을 때만 사용 됨)
     private Boolean isMungple; // 업적 조건에 멍플 조건이 있는지 여부 체크
 
     @Transient
@@ -30,4 +29,14 @@ public class Achievements {
 
     @CreationTimestamp
     private LocalDateTime registDt; // 등록 날짜
+
+    public void beActive(int order) {
+        this.isActive = true;
+        this.isMain = order;
+    }
+
+    public void imgLock() {
+        String IMG_LOCK = "https://kr.object.ncloudstorage.com/reward-achivements/%EC%9E%A0%EA%B8%88%ED%99%94%EB%A9%B4.png";
+        this.imgUrl = IMG_LOCK;
+    }
 }
