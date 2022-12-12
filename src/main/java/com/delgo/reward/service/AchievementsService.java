@@ -29,7 +29,6 @@ public class AchievementsService {
     private final ArchiveService archiveService; // 사용자 획득 업적
     private final AchievementsConditionService achievementsConditionService; // 특정 업적 조건
 
-    String IMG_LOCK = "https://kr.object.ncloudstorage.com/reward-achivements/%EC%9E%A0%EA%B8%88%ED%99%94%EB%A9%B4.png";
 
     // Achievements 및 Condition 등록
     public Achievements registerWithCondition(AchievementsDTO dto) {
@@ -78,7 +77,6 @@ public class AchievementsService {
         return certRepository.countByUserIdAndCategoryCodeAndMungpleId(userId, categoryCode, mungpleId);
     }
 
-    // TODO : 리팩토링 필요 쿼리단에서 Archive에 잇는 업적은 안가져오도록 쿼리문 수정
     // 달성한 업적 있는지 Check
     public List<Achievements> checkEarnAchievements(int userId, boolean isMungple) {
         List<Achievements> earnAchievementsList = new ArrayList<>(); // 획득한 업적 리스트
@@ -101,24 +99,6 @@ public class AchievementsService {
             if(conditionCheck) earnAchievementsList.add(achievements);
         }
         return earnAchievementsList;
-//        List<Achievements> achievements = getAchievementsByIsMungple(isMungple); // 일반 인증, 멍플 인증 구분해서 조회
-//        List<Archive> archives = archiveService.getArchiveByUserId(userId); // 사용자 획득 업적 조회
-//
-//        List<Achievements> finalAchievements = achievements;
-//        archives.forEach(archive -> { // 사용자가 획득한 업적 삭제
-//            finalAchievements.removeIf(achievement -> Objects.equals(archive.getAchievementsId(), achievement.getAchievementsId()));
-//        });
-//
-//        achievements = achievements.stream().map(achievement -> {
-//            List<AchievementsCondition> conditions = achievementsConditionService.getConditionByAchievementsId(achievement.getAchievementsId());
-//            AtomicBoolean conditionCheck = new AtomicBoolean(true);
-//            conditions.forEach(ac -> conditionCheck.set((ac.getCount() <= getMungpleCategoryCount(userId, ac.getCategoryCode(), ac.getMungpleId()))));
-//
-//            // 모든 조건을 만족하면 획득한 업적 리스트에 저장
-//            return (conditionCheck.get()) ? achievement : null;
-//        }).collect(Collectors.toList());
-//
-//        return achievements;
     }
 
     // Archive 수정
@@ -142,14 +122,12 @@ public class AchievementsService {
 
         achievements = achievements.stream().peek(achievement -> {
             archives.forEach(archive -> { // 유저 획득 업적
-                if (Objects.equals(archive.getAchievementsId(), achievement.getAchievementsId())) {
-                    achievement.setIsActive(true);
-                    achievement.setIsMain(archive.getIsMain());
-                }
+                if (Objects.equals(archive.getAchievementsId(), achievement.getAchievementsId()))
+                    achievement.beActive(archive.getIsMain());
             });
             // PHOTO ROCK
             if(!achievement.getIsActive())
-                achievement.setImgUrl(IMG_LOCK);
+                achievement.imgLock();
         }).collect(Collectors.toList());
 
         // 정렬 코드
