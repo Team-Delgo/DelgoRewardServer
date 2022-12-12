@@ -36,9 +36,4 @@ public class Achievements {
         this.isActive = true;
         this.isMain = order;
     }
-
-    public void imgLock() {
-        String IMG_LOCK = "https://kr.object.ncloudstorage.com/reward-achivements/%EC%9E%A0%EA%B8%88%ED%99%94%EB%A9%B4.png";
-        this.imgUrl = IMG_LOCK;
-    }
 }

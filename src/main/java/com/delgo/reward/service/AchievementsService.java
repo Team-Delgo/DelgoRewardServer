@@ -125,9 +125,6 @@ public class AchievementsService {
                 if (Objects.equals(archive.getAchievementsId(), achievement.getAchievementsId()))
                     achievement.beActive(archive.getIsMain());
             });
-            // PHOTO ROCK
-            if(!achievement.getIsActive())
-                achievement.imgLock();
         }).collect(Collectors.toList());
 
         // 정렬 코드
