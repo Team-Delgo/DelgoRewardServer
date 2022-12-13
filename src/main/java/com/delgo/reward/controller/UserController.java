@@ -96,8 +96,8 @@ public class UserController extends CommController {
         if (modifyPetDTO.getName() != null)
             originPet.setName(modifyPetDTO.getName());
 
-        if (modifyPetDTO.getSize() != null)
-            originPet.setSize(modifyPetDTO.getSize());
+        if (modifyPetDTO.getBreed() != null)
+            originPet.setBreed(modifyPetDTO.getBreed());
 
         petService.changePetInfo(originPet);
 
@@ -183,7 +183,7 @@ public class UserController extends CommController {
                 .build();
         Pet pet = Pet.builder()
                 .name(signUpDTO.getPetName())
-                .size(signUpDTO.getPetSize())
+                .breed(signUpDTO.getBreed())
                 .birthday(signUpDTO.getBirthday())
                 .build();
 
@@ -233,7 +233,7 @@ public class UserController extends CommController {
                 .build();
         Pet pet = Pet.builder()
                 .name(signUpDTO.getPetName())
-                .size(signUpDTO.getPetSize())
+                .breed(signUpDTO.getBreed())
                 .birthday(signUpDTO.getBirthday())
                 .build();
 
