@@ -1,6 +1,5 @@
 package com.delgo.reward.dto.user;
 
-import com.delgo.reward.domain.pet.PetSize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,5 +15,5 @@ public class ModifyPetDTO {
     private String email;
     private String name;
     private LocalDate birthday;
-    private PetSize size;
+    private String breed;
 }

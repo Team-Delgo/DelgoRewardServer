@@ -36,8 +36,8 @@ public class CodeService {
     }
 
     // DogCode 전체 조회
-    public List<Code> getDogCodeAll() {
-        return codeRepository.findByType("dog");
+    public List<Code> getBreedCodeAll() {
+        return codeRepository.findByType("breed");
     }
 
     public Code getGeoCodeByLocation(Location location) {
