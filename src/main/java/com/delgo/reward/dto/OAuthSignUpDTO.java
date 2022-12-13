@@ -1,6 +1,5 @@
 package com.delgo.reward.dto;
 
-import com.delgo.reward.domain.pet.PetSize;
 import com.delgo.reward.domain.user.UserSocial;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -30,7 +29,7 @@ public class OAuthSignUpDTO {
     @NotBlank
     private String petName;
     @NotNull
-    private PetSize petSize;
+    private String breed;
     @NotNull
     private LocalDate birthday;
     @NotNull

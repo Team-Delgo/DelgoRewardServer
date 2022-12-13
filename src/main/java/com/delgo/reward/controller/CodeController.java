@@ -35,8 +35,8 @@ public class CodeController extends CommController {
      * Request Data : ""
      * Response Data : Geo Code List
      */
-    @GetMapping("/dog")
+    @GetMapping("/breed")
     public ResponseEntity getDogCode() {
-        return SuccessReturn(codeService.getDogCodeAll());
+        return SuccessReturn(codeService.getBreedCodeAll());
     }
 }
