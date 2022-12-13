@@ -1,6 +1,5 @@
 package com.delgo.reward.dto.user;
 
-import com.delgo.reward.domain.pet.PetSize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,7 +27,7 @@ public class SignUpDTO {
     @NotBlank
     private String petName;
     @NotNull
-    private PetSize petSize;
+    private String breed;
     @NotNull
     private LocalDate birthday;
 }
