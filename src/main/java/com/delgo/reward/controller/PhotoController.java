@@ -36,7 +36,7 @@ public class PhotoController extends CommController {
         String ncpLink = photoService.uploadProfile(userId, photo);
         userService.changeUserInfo(userService.getUserById(userId).setProfile(ncpLink)); // User Link 저장.
 
-        return SuccessReturn(photoService.uploadProfile(userId, photo));
+        return SuccessReturn(ncpLink);
     }
 
     /*

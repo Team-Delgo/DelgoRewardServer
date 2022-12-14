@@ -9,6 +9,7 @@ import com.delgo.reward.comm.security.jwt.Access_JwtProperties;
 import com.delgo.reward.comm.security.jwt.Refresh_JwtProperties;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
+import com.delgo.reward.service.CodeService;
 import com.delgo.reward.service.PetService;
 import com.delgo.reward.service.TokenService;
 import com.delgo.reward.service.UserService;
@@ -30,6 +31,7 @@ import java.util.HashMap;
 public class LoginController extends CommController {
 
     private final UserService userService;
+    private final CodeService codeService;
     private final PetService petService;
     private final TokenService tokenService;
 
@@ -51,6 +53,7 @@ public class LoginController extends CommController {
         User user = userService.getUserByEmail(email);
 //        user.setPassword(""); // TODO: 이거 키면 비밀번호가 사라짐 왜그런지 찾아볼 것
         Pet pet = petService.getPetByUserId(user.getUserId());
+        pet.setBreedName(codeService.getCode(pet.getBreed()).getCodeName()); // 견종 이름 추가
 
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("pet", pet);
