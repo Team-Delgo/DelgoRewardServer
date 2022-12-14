@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -25,7 +26,7 @@ public class CommentController extends CommController {
     private final CertService certificationService;
 
     @PostMapping("/comment")
-    public ResponseEntity createComment(@Validated @RequestBody CommentDTO commentDTO){
+    public ResponseEntity createComment(@Validated @RequestBody CommentDTO commentDTO) throws IOException {
         Comment comment = commentService.createComment(commentDTO);
         certificationService.plusCommentCount(commentDTO.getCertificationId());
 

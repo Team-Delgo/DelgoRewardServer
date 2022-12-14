@@ -1,5 +1,6 @@
 package com.delgo.reward.service;
 
+import com.delgo.reward.comm.fcm.FcmService;
 import com.delgo.reward.domain.Certification;
 import com.delgo.reward.domain.Comment;
 import com.delgo.reward.dto.CommentDTO;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -23,9 +25,12 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final CertRepository certRepository;
     private final JDBCTemplateCommentRepository jdbcTemplateCommentRepository;
+    private final CertService certService;
+    private final FcmService fcmService;
 
-    public Comment createComment(CommentDTO commentDTO){
+    public Comment createComment(CommentDTO commentDTO) throws IOException {
         Comment comment = Comment.builder().isReply(false).certificationId(commentDTO.getCertificationId()).userId(commentDTO.getUserId()).content(commentDTO.getContent()).build();
+        fcmService.commentPush(certService.getCert(commentDTO.getCertificationId()).getUserId());
         return commentRepository.save(comment);
     }
 
