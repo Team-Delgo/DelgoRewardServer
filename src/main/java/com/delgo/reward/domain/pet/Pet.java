@@ -26,4 +26,7 @@ public class Pet {
     @CreationTimestamp
     @Column(name="regist_dt")
     private LocalDateTime registDt;
+
+    @Transient
+    private String breedName;
 }
