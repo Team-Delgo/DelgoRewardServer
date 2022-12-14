@@ -30,7 +30,6 @@ public class FcmController extends CommController {
 
         fcmService.sendMessageTo(
                 sendFcmDTO.getTargetToken(),
-                sendFcmDTO.getTitle(),
                 sendFcmDTO.getBody());
 
         return SuccessReturn();

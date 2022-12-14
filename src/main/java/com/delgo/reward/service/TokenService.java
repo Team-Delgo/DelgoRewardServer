@@ -21,6 +21,11 @@ import java.util.Optional;
 public class TokenService {
     private final TokenRepository tokenRepository;
 
+    public String getFcmToken(int userId){
+        Token token = tokenRepository.findByUserId(userId).orElseThrow();
+        return token.getFcmToken();
+    }
+
     public boolean isFcmToken(int userId){
         return tokenRepository.findByUserId(userId).isPresent();
     }

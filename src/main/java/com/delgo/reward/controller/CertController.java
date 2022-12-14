@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Objects;
 
 @Slf4j
@@ -99,8 +100,9 @@ public class CertController extends CommController {
      * Response Data : X
      */
     @PostMapping(value = {"/like/{userId}/{certificationId}", "/like/"})
-    public ResponseEntity setLike(@PathVariable Integer userId, @PathVariable Integer certificationId) {
-        certService.like(userId, certificationId);
+    public ResponseEntity setLike(@PathVariable Integer userId, @PathVariable Integer certificationId) throws IOException {
+        certService.like(userId, certificationId, certService.getCert(certificationId).getUserId());
+
         return SuccessReturn();
     }
 
