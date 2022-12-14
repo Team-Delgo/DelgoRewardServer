@@ -21,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -209,17 +210,13 @@ public class CertService {
         return certRepository.findByUserId(userId);
     }
 
-    public void like(int userId, int certificationId) {
-        // USER , Certification 존재 여부 체크
-        userService.getUserById(userId);
-        getCert(certificationId);
-
+    public void like(int userId, int certificationId, int ownerId) throws IOException {
         // 사용자가 해당 Certification 좋아요 눌렀는지 체크.
         if (likeListService.hasLiked(userId, certificationId)) { // 좋아요 존재
             likeListService.delete(userId, certificationId);
             minusLikeCount(certificationId);
         } else {
-            likeListService.register(userId, certificationId);
+            likeListService.register(userId, certificationId, ownerId);
             plusLikeCount(certificationId);
         }
     }
