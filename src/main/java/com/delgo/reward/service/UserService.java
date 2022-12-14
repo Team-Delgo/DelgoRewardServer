@@ -48,8 +48,9 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
         Pet pet = petRepository.findByUserId(userId).orElseThrow(() -> new NullPointerException("NOT FOUND PET"));
 
-        certRepository.deleteAllByUserId(userId);
         commentRepository.deleteAllByUserId(userId);
+        certRepository.deleteAllByUserId(userId);
+
         jdbcTemplateRankingRepository.deleteAllByUserId(userId);
         jdbcTemplatePointRepository.deleteAllByUserId(userId);
 
