@@ -56,7 +56,7 @@ public class CodeService {
     // 주소 조회
     public String getAddress(String code, Boolean isSejong) {
         Code c = getCode(code); // 자식 GeoCode
-        Code p = getCode(c.getCode()); // 부모 GeoCode
+        Code p = getCode(c.getPCode()); // 부모 GeoCode
         return (isSejong) ? p.getCodeName() : p.getCodeName() + " " + c.getCodeName();
     }
 }
