@@ -1,5 +1,7 @@
 package com.delgo.reward.comm.fcm;
 
+import com.delgo.reward.service.CertService;
+import com.delgo.reward.service.TokenService;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,9 +22,13 @@ import java.util.List;
 public class FcmService {
     private final String API_URL = "https://fcm.googleapis.com/v1/projects/delgoreward/messages:send";
     private final ObjectMapper objectMapper;
+    private final String TITLE = "DELGO REWARD";
+    private final String likePushNotification = "나의 게시물을 좋아하는 이웃 강아지가 있습니다.";
+    private final String commentPushNotification = "나의 게시물에 이웃 강아지가 댓글을 남겼습니다.";
+    private final TokenService tokenService;
 
-    public void sendMessageTo(String targetToken, String title, String body) throws IOException {
-        String message = makeMessage(targetToken, title, body);
+    public void sendMessageTo(String targetToken, String body) throws IOException {
+        String message = makeMessage(targetToken, body);
 
         OkHttpClient client = new OkHttpClient();
         RequestBody requestBody = RequestBody.create(MediaType.get("application/json; charset=utf-8"), message);
@@ -38,12 +44,22 @@ public class FcmService {
         System.out.println(response.body().string());
     }
 
-    private String makeMessage(String targetToken, String title, String body) throws JsonParseException, JsonProcessingException {
+    public void likePush(int userId) throws IOException {
+        String ownerFcmToken = tokenService.getFcmToken(userId);
+        sendMessageTo(ownerFcmToken, likePushNotification);
+    }
+
+    public void commentPush(int userId) throws IOException {
+        String ownerFcmToken = tokenService.getFcmToken(userId);
+        sendMessageTo(ownerFcmToken, commentPushNotification);
+    }
+
+    private String makeMessage(String targetToken, String body) throws JsonParseException, JsonProcessingException {
         FcmMessageDTO fcmMessage = FcmMessageDTO.builder()
                 .message(FcmMessageDTO.Message.builder()
                         .token(targetToken)
                         .notification(FcmMessageDTO.Notification.builder()
-                                .title(title)
+                                .title(TITLE)
                                 .body(body)
                                 .image(null)
                                 .build()
