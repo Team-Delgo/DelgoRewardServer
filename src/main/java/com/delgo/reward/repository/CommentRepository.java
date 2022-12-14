@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Integer>{
@@ -14,6 +15,7 @@ public interface CommentRepository extends JpaRepository<Comment, Integer>{
 
     void deleteAllByUserId(int userId);
 
+    @Transactional
     @Modifying(clearAutomatically = true)
     @Query(value = "update comment set content = :updateContent where comment_id = :commentId", nativeQuery = true)
     void updateByCommentId(@Param(value="commentId") int commentId, @Param(value="updateContent") String content);
