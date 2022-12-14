@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -20,9 +21,17 @@ import java.util.Date;
 public class TokenService {
     private final TokenRepository tokenRepository;
 
+    public boolean isFcmToken(int userId){
+        return tokenRepository.findByUserId(userId).isPresent();
+    }
+
     public void saveFcmToken(FcmTokenDTO fcmTokenDTO){
-        Token token = Token.builder().userId(fcmTokenDTO.getUserId()).fcmToken(fcmTokenDTO.getFcmToken()).build();
-        tokenRepository.save(token);
+        if(isFcmToken(fcmTokenDTO.getUserId()))
+            tokenRepository.updateByUserId(fcmTokenDTO.getUserId(), fcmTokenDTO.getFcmToken());
+        else{
+            Token token = Token.builder().userId(fcmTokenDTO.getUserId()).fcmToken(fcmTokenDTO.getFcmToken()).build();
+            tokenRepository.save(token);
+        }
     }
 
     // Create Token
