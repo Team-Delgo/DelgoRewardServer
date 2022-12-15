@@ -22,7 +22,7 @@ import java.util.List;
 public class FcmService {
     private final String API_URL = "https://fcm.googleapis.com/v1/projects/delgoreward/messages:send";
     private final ObjectMapper objectMapper;
-    private final String TITLE = "DELGO REWARD";
+    private final String TITLE = "Delgo";
     private final String likePushNotification = "나의 게시물을 좋아하는 이웃 강아지가 있습니다.";
     private final String commentPushNotification = "나의 게시물에 이웃 강아지가 댓글을 남겼습니다.";
     private final TokenService tokenService;
