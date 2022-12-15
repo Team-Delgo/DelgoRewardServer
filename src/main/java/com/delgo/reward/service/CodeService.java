@@ -42,9 +42,9 @@ public class CodeService {
 
     public Code getGeoCodeByLocation(Location location) {
         // SIGUGUNS [codeName]만으로 조회시 중복 발생 ex) 서울특별시 중구, 부산광역시 중구 중복의 경우 -> 서울특별시의 Code와 같이 조회
-        Code sidoCode = codeRepository.findByCodeName(location.getSIDO()).orElseThrow(() -> new NullPointerException("NOT FOUND GEOCODE"));
+        Code sidoCode = codeRepository.findByCodeName(location.getSIDO()).orElseThrow(() -> new NullPointerException("NOT FOUND GEOCODE : " + location.getSIDO()));
         return codeRepository.findBypCodeAndCodeName(sidoCode.getCode(), location.getSIGUGUN())
-                .orElseThrow(() -> new NullPointerException("NOT FOUND GEOCODE"));
+                .orElseThrow(() -> new NullPointerException("NOT FOUND GEOCODE : " + sidoCode.getCode() + ", SIGUGUN : " + location.getSIGUGUN()));
     }
 
     // Code 조회
