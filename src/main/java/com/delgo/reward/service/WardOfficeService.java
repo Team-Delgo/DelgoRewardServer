@@ -19,7 +19,7 @@ public class WardOfficeService {
     private final WardOfficeRepository wardOfficeRepository;
 
     // WardOffice 등록
-    public WardOffice registerWardOffice(WardOffice wardOffice) {
+    public WardOffice register(WardOffice wardOffice) {
         return wardOfficeRepository.save(wardOffice);
     }
 
