@@ -45,7 +45,7 @@ public class SmsService {
     String sigSecretKey = "oCzPFBWmPMFYCf6Z9FU6iMMBtXB1RR7UdGV2BZuS";
     String serviceId = "ncp:sms:kr:271788577003:delgo-sms";        									// 프로젝트에 할당된 SMS 서비스 ID
     String method = "POST";											// 요청 method
-    String sendFrom = "01077652211";
+    String sendFrom = "07079542910";
     String apiUrl = requestUrlHeader + requestUrlService + serviceId + requestUrlType;
     String sigUrl = requestUrlService + serviceId + requestUrlType;
 
