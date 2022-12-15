@@ -240,6 +240,7 @@ public class UserController extends CommController {
 
         User userByDB = userService.signup(user, pet);
         Pet petByDB = petService.getPetByUserId(user.getUserId());
+        petByDB.setBreedName(codeService.getCode(signUpDTO.getBreed()).getCodeName()); // 견종 이름 추가
 
         // WELCOME 업적 부여
         archiveService.registerWelcome(userByDB.getUserId());
