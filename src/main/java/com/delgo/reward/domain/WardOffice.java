@@ -1,10 +1,9 @@
 package com.delgo.reward.domain;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.delgo.reward.domain.code.Code;
+import com.delgo.reward.domain.common.Location;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Entity;
@@ -13,9 +12,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
 @Entity
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class WardOffice {
@@ -29,4 +29,13 @@ public class WardOffice {
 
     @CreationTimestamp
     private LocalDateTime registDt;
+
+    public WardOffice toEntity(Code code, Location location){
+        return WardOffice.builder()
+                .name(code.getCodeName())
+                .geoCode(code.getCode())
+                .latitude(location.getLatitude())
+                .longitude(location.getLongitude())
+                .build();
+    }
 }
