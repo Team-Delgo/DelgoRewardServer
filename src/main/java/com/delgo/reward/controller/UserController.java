@@ -3,8 +3,10 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
-import com.delgo.reward.comm.security.jwt.Access_JwtProperties;
-import com.delgo.reward.comm.security.jwt.Refresh_JwtProperties;
+import com.delgo.reward.comm.security.jwt.JwtToken;
+import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
+import com.delgo.reward.comm.security.jwt.JwtService;
+import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
 import com.delgo.reward.domain.Point;
 import com.delgo.reward.domain.SmsAuth;
 import com.delgo.reward.domain.pet.Pet;
@@ -31,7 +33,7 @@ public class UserController extends CommController {
     private final PetService petService;
     private final UserService userService;
     private final CodeService codeService;
-    private final TokenService tokenService;
+    private final JwtService jwtService;
     private final PointService pointService;
     private final RankingService rankingService;
     private final SmsAuthService smsAuthService;
@@ -202,13 +204,11 @@ public class UserController extends CommController {
         // WELCOME 업적 부여
         archiveService.registerWelcome(userByDB.getUserId());
 
-        String Access_jwtToken = tokenService.createToken("Access", user.getEmail()); // Access Token 생성
-        String Refresh_jwtToken = tokenService.createToken("Refresh", user.getEmail()); // Refresh Token 생성
+        JwtToken jwt = jwtService.createToken(user.getUserId());
+        response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
+        response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
 
-        response.addHeader(Access_JwtProperties.HEADER_STRING, Access_JwtProperties.TOKEN_PREFIX + Access_jwtToken);
-        response.addHeader(Refresh_JwtProperties.HEADER_STRING, Refresh_JwtProperties.TOKEN_PREFIX + Refresh_jwtToken);
-
-        return SuccessReturn(new UserPetDTO(userByDB, petByDB));
+        return SuccessReturn(new UserResDTO(userByDB, petByDB));
     }
 
     // 회원가입
@@ -245,13 +245,11 @@ public class UserController extends CommController {
         // WELCOME 업적 부여
         archiveService.registerWelcome(userByDB.getUserId());
 
-        String Access_jwtToken = tokenService.createToken("Access", user.getEmail()); // Access Token 생성
-        String Refresh_jwtToken = tokenService.createToken("Refresh", user.getEmail()); // Refresh Token 생성
+        JwtToken jwt = jwtService.createToken(user.getUserId());
+        response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
+        response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
 
-        response.addHeader(Access_JwtProperties.HEADER_STRING, Access_JwtProperties.TOKEN_PREFIX + Access_jwtToken);
-        response.addHeader(Refresh_JwtProperties.HEADER_STRING, Refresh_JwtProperties.TOKEN_PREFIX + Refresh_jwtToken);
-
-        return SuccessReturn(new UserPetDTO(userByDB, petByDB));
+        return SuccessReturn(new UserResDTO(userByDB, petByDB));
     }
 
     // 회원탈퇴
