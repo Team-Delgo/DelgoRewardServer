@@ -1,4 +1,4 @@
-package com.delgo.reward.comm.security.jwt;
+package com.delgo.reward.comm.security.jwt.filter;
 
 
 import com.delgo.reward.comm.security.services.PrincipalDetails;
@@ -44,8 +44,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         log.info("JwtAuthenticationFilter : " + loginDTO);
 
         // 유저네임패스워드 토큰 생성
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword());
 
         log.info("JwtAuthenticationFilter : 토큰생성완료");
 
@@ -58,8 +57,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // Tip: 인증 프로바이더의 디폴트 서비스는 UserDetailsService 타입
         // Tip: 인증 프로바이더의 디폴트 암호화 방식은 BCryptPasswordEncoder
         // 결론은 인증 프로바이더에게 알려줄 필요가 없음.
-        Authentication authentication =
-                authenticationManager.authenticate(authenticationToken);
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
         PrincipalDetails principalDetailis = (PrincipalDetails) authentication.getPrincipal();
         log.info("Authentication : " + principalDetailis.getUser().getEmail());
@@ -68,12 +66,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     // JWT Token 생성해서 response에 담아주기
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-                                            Authentication authResult) throws IOException, ServletException {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         PrincipalDetails principalDetailis = (PrincipalDetails) authResult.getPrincipal();
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("/login/success");
-        request.setAttribute("email", principalDetailis.getUser().getEmail());
+        request.setAttribute("userId", principalDetailis.getUser().getUserId());
 
         dispatcher.forward(request, response);
     }

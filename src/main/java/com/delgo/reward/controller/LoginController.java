@@ -1,17 +1,16 @@
 package com.delgo.reward.controller;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
-import com.delgo.reward.comm.security.jwt.Access_JwtProperties;
-import com.delgo.reward.comm.security.jwt.Refresh_JwtProperties;
+import com.delgo.reward.comm.security.jwt.JwtToken;
+import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
+import com.delgo.reward.comm.security.jwt.JwtService;
+import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
+import com.delgo.reward.dto.user.UserResDTO;
 import com.delgo.reward.service.CodeService;
 import com.delgo.reward.service.PetService;
-import com.delgo.reward.service.TokenService;
 import com.delgo.reward.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,21 +22,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
+
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 public class LoginController extends CommController {
 
+    private final JwtService jwtService;
+    private final PetService petService;
     private final UserService userService;
     private final CodeService codeService;
-    private final PetService petService;
-    private final TokenService tokenService;
-
-    final String ACCESS = "Access";
-    final String REFRESH = "Refresh";
-    final String EMAIL = "email";
 
     /*
      * Login 성공
@@ -47,25 +42,17 @@ public class LoginController extends CommController {
      */
     @PostMapping("/login/success")
     public ResponseEntity<?> loginSuccess(HttpServletRequest request, HttpServletResponse response) {
-        String email = request.getAttribute(EMAIL).toString();
+        int userId = Integer.parseInt(request.getAttribute("userId").toString());
 
-
-        User user = userService.getUserByEmail(email);
-//        user.setPassword(""); // TODO: 이거 키면 비밀번호가 사라짐 왜그런지 찾아볼 것
+        User user = userService.getUserById(userId);
         Pet pet = petService.getPetByUserId(user.getUserId());
         pet.setBreedName(codeService.getCode(pet.getBreed()).getCodeName()); // 견종 이름 추가
 
-        HashMap<String, Object> map = new HashMap<String, Object>();
-        map.put("pet", pet);
-        map.put("user", user);
+        JwtToken jwt = jwtService.createToken(userId);
+        response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
+        response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
 
-        String Access_jwtToken = tokenService.createToken(ACCESS, email); // Access Token 생성
-        String Refresh_jwtToken = tokenService.createToken(REFRESH, email); // Refresh Token 생성
-
-        response.addHeader(Access_JwtProperties.HEADER_STRING, Access_JwtProperties.TOKEN_PREFIX + Access_jwtToken);
-        response.addHeader(Refresh_JwtProperties.HEADER_STRING, Refresh_JwtProperties.TOKEN_PREFIX + Refresh_jwtToken);
-
-        return SuccessReturn(map);
+        return SuccessReturn(new UserResDTO(user,pet));
     }
 
     /*
@@ -86,16 +73,9 @@ public class LoginController extends CommController {
     @GetMapping("/token/reissue")
     public ResponseEntity<?> tokenReissue(HttpServletRequest request, HttpServletResponse response) {
         try {
-            String token = request.getHeader(Refresh_JwtProperties.HEADER_STRING)
-                    .replace(Refresh_JwtProperties.TOKEN_PREFIX, "");
-            String email = JWT.require(Algorithm.HMAC512(Refresh_JwtProperties.SECRET)).build().verify(token)
-                    .getClaim(EMAIL).asString();
-
-            String Access_jwtToken = tokenService.createToken(ACCESS, email); // Access Token 생성
-            String Refresh_jwtToken = tokenService.createToken(REFRESH, email); // Refresh Token 생성
-
-            response.addHeader(Access_JwtProperties.HEADER_STRING, Access_JwtProperties.TOKEN_PREFIX + Access_jwtToken);
-            response.addHeader(Refresh_JwtProperties.HEADER_STRING, Refresh_JwtProperties.TOKEN_PREFIX + Refresh_jwtToken);
+            JwtToken jwt = jwtService.createToken(jwtService.getUserId());
+            response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
+            response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
 
             return SuccessReturn();
         } catch (Exception e) { // Refresh_Toekn 인증 실패 ( 로그인 화면으로 이동 필요 )
