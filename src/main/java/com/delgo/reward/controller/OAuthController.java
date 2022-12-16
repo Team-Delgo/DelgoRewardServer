@@ -5,15 +5,16 @@ import com.delgo.reward.comm.exception.ApiCode;
 import com.delgo.reward.comm.oauth.AppleService;
 import com.delgo.reward.comm.oauth.KakaoService;
 import com.delgo.reward.comm.oauth.NaverService;
-import com.delgo.reward.comm.security.jwt.Access_JwtProperties;
-import com.delgo.reward.comm.security.jwt.Refresh_JwtProperties;
+import com.delgo.reward.comm.security.jwt.JwtToken;
+import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
+import com.delgo.reward.comm.security.jwt.JwtService;
+import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.domain.user.UserSocial;
 import com.delgo.reward.dto.OAuthDTO;
-import com.delgo.reward.dto.user.UserPetDTO;
+import com.delgo.reward.dto.user.UserResDTO;
 import com.delgo.reward.service.PetService;
-import com.delgo.reward.service.TokenService;
 import com.delgo.reward.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import net.minidev.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
@@ -28,16 +30,18 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("oauth")
 public class OAuthController extends CommController {
-    private final UserService userService;
+
+    private final JwtService jwtService;
     private final PetService petService;
+    private final UserService userService;
     private final KakaoService kakaoService;
     private final NaverService naverService;
     private final AppleService appleService;
-    private final TokenService tokenService;
 
     // Apple
-    @PostMapping(value = {"/apple/id_token/{id_token}", "/apple/id_token/"})
+    @PostMapping(value = {"/apple/{id_token}", "/apple"})
     public ResponseEntity oauthApple(@PathVariable String id_token, HttpServletResponse response) {
         JSONObject payload = appleService.decodeFromIdToken(id_token);
         String appleUniqueNo = payload.getAsString("sub");  //  회원 고유 식별자
@@ -51,17 +55,16 @@ public class OAuthController extends CommController {
         User user = userService.getUserByAppleUniqueNo(appleUniqueNo);
         Pet pet = petService.getPetByUserId(user.getUserId());
 
-        String Access_jwtToken = tokenService.createToken("Access", user.getEmail()); // Access Token 생성
-        String Refresh_jwtToken = tokenService.createToken("Refresh", user.getEmail()); // Refresh Token 생성
+        // TOKEN 발행
+        JwtToken jwt = jwtService.createToken(user.getUserId());
+        response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
+        response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
 
-        response.addHeader(Access_JwtProperties.HEADER_STRING, Access_JwtProperties.TOKEN_PREFIX + Access_jwtToken);
-        response.addHeader(Refresh_JwtProperties.HEADER_STRING, Refresh_JwtProperties.TOKEN_PREFIX + Refresh_jwtToken);
-
-        return SuccessReturn(new UserPetDTO(user, pet));
+        return SuccessReturn(new UserResDTO(user, pet));
     }
 
     // Kakao
-    @PostMapping(value = {"/kakao/access-code/{code}","/kakao/access-code/"})
+    @PostMapping(value = {"/kakao/{code}","/kakao"})
     public ResponseEntity<?> oauthKakao(@PathVariable String code, HttpServletResponse response) throws Exception {
         String accessToken = kakaoService.getKakaoAccessToken(code);
         OAuthDTO oAuthDTO = kakaoService.createKakaoUser(accessToken);
@@ -91,18 +94,16 @@ public class OAuthController extends CommController {
         if(user.getUserSocial() != UserSocial.K)
             return ErrorReturn(ApiCode.ANOTHER_OAUTH_CONNECT, oAuthDTO);
 
-        Pet pet = petService.getPetByUserId(user.getUserId());
-        String Access_jwtToken = tokenService.createToken("Access", user.getEmail()); // Access Token 생성
-        String Refresh_jwtToken = tokenService.createToken("Refresh", user.getEmail()); // Refresh Token 생성
+        // TOKEN 발행
+        JwtToken jwt = jwtService.createToken(user.getUserId());
+        response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
+        response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
 
-        response.addHeader(Access_JwtProperties.HEADER_STRING, Access_JwtProperties.TOKEN_PREFIX + Access_jwtToken);
-        response.addHeader(Refresh_JwtProperties.HEADER_STRING, Refresh_JwtProperties.TOKEN_PREFIX + Refresh_jwtToken);
-
-        return SuccessReturn(new UserPetDTO(user, pet)); //200
+        return SuccessReturn(new UserResDTO(user, petService.getPetByUserId(user.getUserId()))); //200
     }
 
     // Naver
-    @PostMapping(value = {"/naver/state-code/{state}/{code}","/naver/state-code/"})
+    @PostMapping(value = {"/naver/{state}/{code}","/naver"})
     public ResponseEntity<?> oauthNaver(@PathVariable String state, @PathVariable String code, HttpServletResponse response) throws Exception {
         String accessToken = naverService.getNaverAccessToken(state, code);
         OAuthDTO oAuthDTO = naverService.createNaverUser(accessToken);
@@ -131,13 +132,11 @@ public class OAuthController extends CommController {
         if(user.getUserSocial() != UserSocial.N)
             return ErrorReturn(ApiCode.ANOTHER_OAUTH_CONNECT, oAuthDTO);
 
-        Pet pet = petService.getPetByUserId(user.getUserId());
-        String Access_jwtToken = tokenService.createToken("Access", user.getEmail()); // Access Token 생성
-        String Refresh_jwtToken = tokenService.createToken("Refresh", user.getEmail()); // Refresh Token 생성
+        // TOKEN 발행
+        JwtToken jwt = jwtService.createToken(user.getUserId());
+        response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
+        response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
 
-        response.addHeader(Access_JwtProperties.HEADER_STRING, Access_JwtProperties.TOKEN_PREFIX + Access_jwtToken);
-        response.addHeader(Refresh_JwtProperties.HEADER_STRING, Refresh_JwtProperties.TOKEN_PREFIX + Refresh_jwtToken);
-
-        return SuccessReturn(new UserPetDTO(user, pet)); //200
+        return SuccessReturn(new UserResDTO(user, petService.getPetByUserId(user.getUserId()))); //200
     }
 }

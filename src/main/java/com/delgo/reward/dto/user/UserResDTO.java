@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class UserPetDTO {
+public class UserResDTO {
     private User user;
     private Pet pet;
 }

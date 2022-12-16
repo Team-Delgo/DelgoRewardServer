@@ -1,8 +1,8 @@
 package com.delgo.reward.comm.security;
 
 
-import com.delgo.reward.comm.security.jwt.JwtAuthenticationFilter;
-import com.delgo.reward.comm.security.jwt.JwtAuthorizationFilter;
+import com.delgo.reward.comm.security.jwt.filter.JwtAuthenticationFilter;
+import com.delgo.reward.comm.security.jwt.filter.JwtAuthorizationFilter;
 import com.delgo.reward.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
