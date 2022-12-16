@@ -34,7 +34,7 @@ public class PhotoController extends CommController {
         if (photo.isEmpty()) return ErrorReturn(ApiCode.PARAM_ERROR);
 
         String ncpLink = photoService.uploadProfile(userId, photo);
-        userService.changeUserInfo(userService.getUserById(userId).setProfile(ncpLink)); // User Link 저장.
+        userService.changePhoto(userId, ncpLink);
 
         return SuccessReturn(ncpLink);
     }
