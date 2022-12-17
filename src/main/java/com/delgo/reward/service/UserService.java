@@ -3,6 +3,7 @@ package com.delgo.reward.service;
 
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
+import com.delgo.reward.dto.user.ModifyUserDTO;
 import com.delgo.reward.dto.user.UserInfoDTO;
 import com.delgo.reward.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class UserService {
-
+    private final CodeService codeService;
     private final UserRepository userRepository;
     private final PetRepository petRepository;
     private final CertRepository certRepository;
@@ -112,9 +113,35 @@ public class UserService {
                 .orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
     }
 
-    public User changeUserInfo(User user) {
-        jdbcTemplatePointRepository.changeGeoCode(user.getUserId(), user.getGeoCode());
+    public User changePhoto(int userId, String ncpLink){
+        User user = getUserById(userId);
+        user.setProfile(ncpLink);
         return userRepository.save(user);
+    }
+
+    public User changeUserInfo(ModifyUserDTO modifyUserDTO) {
+        User originUser = getUserByEmail(modifyUserDTO.getEmail());
+
+        if (modifyUserDTO.getName() != null)
+            originUser.setName(modifyUserDTO.getName());
+
+        if (modifyUserDTO.getProfileUrl() != null)
+            originUser.setProfile(modifyUserDTO.getProfileUrl());
+
+        if (modifyUserDTO.getGeoCode() != null && modifyUserDTO.getPGeoCode() != null) {
+            originUser.setGeoCode(modifyUserDTO.getGeoCode());
+            originUser.setPGeoCode(modifyUserDTO.getPGeoCode());
+
+            // 주소 설정
+            String address = (modifyUserDTO.getGeoCode().equals("0"))  // 세종시는 구가 없음.
+                    ? codeService.getAddress(modifyUserDTO.getPGeoCode(), true)
+                    : codeService.getAddress(modifyUserDTO.getGeoCode(), false);
+            originUser.setAddress(address);
+
+        }
+
+        jdbcTemplatePointRepository.changeGeoCode(originUser.getUserId(), modifyUserDTO.getGeoCode());
+        return userRepository.save(originUser);
     }
 
     public UserInfoDTO getUserInfo(int userId){

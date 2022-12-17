@@ -34,83 +34,11 @@ public class UserController extends CommController {
     private final UserService userService;
     private final CodeService codeService;
     private final JwtService jwtService;
-    private final PointService pointService;
-    private final RankingService rankingService;
     private final SmsAuthService smsAuthService;
     private final ArchiveService archiveService;
 
     @RequestMapping(value ="/")
     public ResponseEntity<?> defaultResponse() {
-        return SuccessReturn();
-    }
-
-    @GetMapping("/myAccount")
-    public ResponseEntity<?> myAccount(@RequestParam Integer userId) {
-        UserInfoDTO userInfoDTO = userService.getUserInfo(userId);
-
-        return SuccessReturn(userInfoDTO);
-    }
-
-    // 유저 정보 수정
-    @PostMapping("/changeUserInfo")
-    public ResponseEntity<?> changePetInfo(@Validated @RequestBody ModifyUserDTO modifyUserDTO) {
-        String checkedEmail = modifyUserDTO.getEmail();
-
-        User user = userService.getUserByEmail(checkedEmail);
-        int userId = user.getUserId();
-        User originUser = userService.getUserById(userId);
-
-        if (modifyUserDTO.getName() != null)
-            originUser.setName(modifyUserDTO.getName());
-
-        if (modifyUserDTO.getProfileUrl() != null)
-            originUser.setProfile(modifyUserDTO.getProfileUrl());
-
-        if (modifyUserDTO.getGeoCode() != null && modifyUserDTO.getPGeoCode() != null) {
-            originUser.setGeoCode(modifyUserDTO.getGeoCode());
-            originUser.setPGeoCode(modifyUserDTO.getPGeoCode());
-
-            // 주소 설정
-            String address = (modifyUserDTO.getGeoCode().equals("0"))  // 세종시는 구가 없음.
-                    ? codeService.getAddress(modifyUserDTO.getPGeoCode(), true)
-                    : codeService.getAddress(modifyUserDTO.getGeoCode(), false);
-            originUser.setAddress(address);
-
-        }
-
-        userService.changeUserInfo(originUser);
-
-        // 랭킹 실시간으로 집계
-        rankingService.rankingByPoint();
-
-        return SuccessReturn();
-    }
-
-    // 펫 정보 수정
-    @PostMapping("/changePetInfo")
-    public ResponseEntity<?> changePetInfo(@Validated @RequestBody ModifyPetDTO modifyPetDTO) {
-        String checkedEmail = modifyPetDTO.getEmail();
-
-        User user = userService.getUserByEmail(checkedEmail);
-        int userId = user.getUserId();
-        Pet originPet = petService.getPetByUserId(userId);
-
-        if (modifyPetDTO.getName() != null)
-            originPet.setName(modifyPetDTO.getName());
-
-        if (modifyPetDTO.getBreed() != null)
-            originPet.setBreed(modifyPetDTO.getBreed());
-
-        petService.changePetInfo(originPet);
-
-        return SuccessReturn();
-    }
-
-    // 비밀번호 변경 - Account Page
-    @PostMapping("/changePassword")
-    public ResponseEntity<?> changePassword(@Validated @RequestBody ResetPasswordDTO resetPassword) {
-        // 사용자 확인 - 토큰 사용
-        userService.changePassword(resetPassword.getEmail(), resetPassword.getNewPassword());
         return SuccessReturn();
     }
 
@@ -126,43 +54,7 @@ public class UserController extends CommController {
         return SuccessReturn();
     }
 
-    // 이메일 존재 유무 확인
-    @GetMapping("/emailAuth")
-    public ResponseEntity<?> emailAuth(@RequestParam String email) {
-        if (email.isBlank()) {
-            return ErrorReturn(ApiCode.PARAM_ERROR);
-        }
 
-        if (userService.isEmailExisting(email)) {
-            return SuccessReturn(userService.getUserByEmail(email).getPhoneNo());
-        }
-        return ErrorReturn(ApiCode.NOT_FOUND_DATA);
-    }
-
-    // 이메일 중복 확인
-    @GetMapping("/emailCheck")
-    public ResponseEntity<?> emailCheck(@RequestParam String email) {
-        if (email.isBlank()) {
-            return ErrorReturn(ApiCode.PARAM_ERROR);
-        }
-        if (!userService.isEmailExisting(email)) {
-            return SuccessReturn();
-        } else {
-            return ErrorReturn(ApiCode.UNKNOWN_ERROR);
-        }
-    }
-
-    // 이름 중복 확인
-    @GetMapping("/nameCheck")
-    public ResponseEntity<?> nameCheck(@RequestParam String name) {
-        if (name.isBlank()) {
-            return ErrorReturn(ApiCode.PARAM_ERROR);
-        }
-        if (!userService.isNameExisting(name))
-            return SuccessReturn();
-        else
-            return ErrorReturn(ApiCode.UNKNOWN_ERROR);
-    }
 
     // 소셜 회원가입
     @PostMapping("/signup/oauth")
@@ -250,27 +142,6 @@ public class UserController extends CommController {
         response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
 
         return SuccessReturn(new UserResDTO(userByDB, petByDB));
-    }
-
-    // 회원탈퇴
-    @DeleteMapping("/user/{userId}")
-    public ResponseEntity<?> deleteUser(@PathVariable Integer userId) {
-        userService.deleteUser(userId);
-        // 랭킹 실시간으로 집계
-        rankingService.rankingByPoint();
-        return SuccessReturn();
-    }
-
-    @GetMapping("/user/info")
-    public ResponseEntity<?> getInfo(@RequestParam Integer userId){
-        UserInfoDTO userInfoDTO = userService.getUserInfo(userId);
-        return SuccessReturn(userInfoDTO);
-    }
-
-    @GetMapping("/user/point")
-    public ResponseEntity<?> getPoint(@RequestParam Integer userId){
-        Point point = pointService.getPointByUserId(userId);
-        return SuccessReturn(point);
     }
 
 }
