@@ -51,7 +51,7 @@ public class CommentController extends CommController {
         return SuccessReturn(replyList);
     }
 
-    @PostMapping("/comment/update/{commentId}")
+    @PutMapping(value = {"/comment/{commentId}", "/comment"})
     public ResponseEntity updateComment(@PathVariable Integer commentId, @RequestBody UpdateCommentDTO updateCommentDTO){
         if(commentService.isCommentOwner(commentId, updateCommentDTO.getUserId())){
             String updateContent = updateCommentDTO.getContent();
@@ -62,7 +62,7 @@ public class CommentController extends CommController {
         return SuccessReturn();
     }
 
-    @PostMapping("/comment/delete/{commentId}/{userId}/{certificationId}")
+    @DeleteMapping(value = {"/comment/{commentId}/{userId}/{certificationId}", "/comment"})
     public ResponseEntity deleteComment(@PathVariable Integer commentId, @PathVariable Integer userId, @PathVariable Integer certificationId){
         if (commentService.isCommentOwner(commentId, userId) || commentService.isCertificationOwner(commentId, userId)) {
             commentService.deleteReplyByCommentId(commentId);

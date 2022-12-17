@@ -2,6 +2,8 @@ package com.delgo.reward.service;
 
 
 import com.delgo.reward.domain.pet.Pet;
+import com.delgo.reward.domain.user.User;
+import com.delgo.reward.dto.user.ModifyPetDTO;
 import com.delgo.reward.repository.PetRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,12 +15,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @RequiredArgsConstructor
 public class PetService {
-
+    private final UserService userService;
     private final PetRepository petRepository;
 
     @Transactional
-    public void changePetInfo(Pet pet){
-        petRepository.save(pet);
+    public void changePetInfo(ModifyPetDTO modifyPetDTO){
+        User user = userService.getUserByEmail(modifyPetDTO.getEmail());
+        int userId = user.getUserId();
+        Pet originPet = getPetByUserId(userId);
+
+        if (modifyPetDTO.getName() != null)
+            originPet.setName(modifyPetDTO.getName());
+
+        if (modifyPetDTO.getBreed() != null)
+            originPet.setBreed(modifyPetDTO.getBreed());
+
+        petRepository.save(originPet);
     }
 
     public Pet getPetByUserId(int userId) {
