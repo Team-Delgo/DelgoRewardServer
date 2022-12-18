@@ -36,7 +36,7 @@ public class JDBCTemplateRankingRepository{
     }
 
     public List<RankingPoint> findRankingByPoint() {
-        return jdbcTemplate.query("select user_id, geo_code, weekly_point, RANK() over (partition by geo_code order by weekly_point desc) ranking from point;", rankingPointRowMapper());
+        return jdbcTemplate.query("select user_id, geo_code, weekly_point, last_weekly_point, RANK() over (partition by geo_code order by weekly_point desc) ranking, RANK() over (partition by geo_code order by last_weekly_point desc) last_ranking from point;", rankingPointRowMapper());
     }
 
     public List<RankingCategory> findRankingByCategory(String categoryCode) {
@@ -50,7 +50,9 @@ public class JDBCTemplateRankingRepository{
 
     private RowMapper<RankingPoint> rankingPointRowMapper() {
         return (rs, rowNum) -> {
-            RankingPoint rankingPoint = RankingPoint.builder().userId(rs.getInt("user_id")).ranking(rs.getInt("ranking")).weeklyPoint(rs.getInt("weekly_point")).geoCode(rs.getString("geo_code")).build();
+            RankingPoint rankingPoint = RankingPoint.builder().userId(rs.getInt("user_id")).
+                    ranking(rs.getInt("ranking")).weeklyPoint(rs.getInt("weekly_point")).geoCode(rs.getString("geo_code"))
+                    .lastWeeklyPoint(rs.getInt("last_weekly_point")).lastRanking(rs.getInt("last_ranking")).build();
             return rankingPoint;
         };
     }
