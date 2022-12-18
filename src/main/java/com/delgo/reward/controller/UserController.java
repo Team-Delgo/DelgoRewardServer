@@ -39,7 +39,7 @@ public class UserController extends CommController {
 
     // User. Pet 모두 조회
     @GetMapping
-    public ResponseEntity<?> getUserAndPet(@RequestParam Integer userId) {
+    public ResponseEntity<?> getUser(@RequestParam Integer userId) {
         return SuccessReturn(new UserResDTO(userService.getUserById(userId), petService.getPetByUserId(userId)));
     }
 
@@ -90,7 +90,6 @@ public class UserController extends CommController {
 
         User userByDB = userService.signup(user, pet);
         Pet petByDB = petService.getPetByUserId(user.getUserId());
-        petByDB.setBreedName(codeService.getCode(signUpDTO.getBreed()).getCodeName()); // 견종 이름 추가
 
         // WELCOME 업적 부여
         archiveService.registerWelcome(userByDB.getUserId());
@@ -131,7 +130,6 @@ public class UserController extends CommController {
 
         User userByDB = userService.signup(user, pet);
         Pet petByDB = petService.getPetByUserId(user.getUserId());
-        petByDB.setBreedName(codeService.getCode(signUpDTO.getBreed()).getCodeName()); // 견종 이름 추가
 
         // WELCOME 업적 부여
         archiveService.registerWelcome(userByDB.getUserId());

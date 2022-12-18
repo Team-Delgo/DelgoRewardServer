@@ -68,17 +68,10 @@ public class AuthController extends CommController {
             }
             phoneNo = phoneNo.replaceAll("[^0-9]", "");
 
-            if(isJoin){
-                if(!userService.isPhoneNoExisting(phoneNo))
-                    return ErrorReturn(ApiCode.PHONE_NO_NOT_EXIST);
-            }
-            else{
-                if (userService.isPhoneNoExisting(phoneNo)) {
-                    return ErrorReturn(ApiCode.PHONE_NO_DUPLICATE_ERROR);
-                }
-            }
-            return SuccessReturn(smsAuthService.makeAuth(phoneNo));
+            if (isJoin && !userService.isPhoneNoExisting(phoneNo)) return ErrorReturn(ApiCode.PHONE_NO_NOT_EXIST);
+            if (!isJoin && userService.isPhoneNoExisting(phoneNo)) return ErrorReturn(ApiCode.PHONE_NO_DUPLICATE_ERROR);
 
+            return SuccessReturn(smsAuthService.makeAuth(phoneNo));
         } catch (Exception e) {
             return ErrorReturn(ApiCode.UNKNOWN_ERROR);
         }

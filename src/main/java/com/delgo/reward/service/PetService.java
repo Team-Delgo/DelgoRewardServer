@@ -15,7 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @RequiredArgsConstructor
 public class PetService {
+
+    // Service
     private final UserService userService;
+    private final CodeService codeService;
+
+    // Repository
     private final PetRepository petRepository;
 
     @Transactional
@@ -34,8 +39,9 @@ public class PetService {
     }
 
     public Pet getPetByUserId(int userId) {
-        return petRepository.findByUserId(userId)
+        Pet pet = petRepository.findByUserId(userId)
                 .orElseThrow(() -> new NullPointerException("NOT FOUND PET"));
+        pet.setBreedName(codeService.getCode(pet.getBreed()).getCodeName()); // 견종 이름 추가
+        return pet;
     }
-
 }
