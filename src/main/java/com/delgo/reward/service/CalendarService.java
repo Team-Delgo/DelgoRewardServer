@@ -31,6 +31,7 @@ public class CalendarService {
                     List<Certification> dateList = certifications.stream()
                             .filter(c -> c.getRegistDt().isAfter(LocalDate.from(cert.getRegistDt()).atTime(0, 0, 0).minusSeconds(1)) &&
                                     c.getRegistDt().isBefore(LocalDate.from(cert.getRegistDt()).atTime(0, 0, 0).plusDays(1)))
+                            .sorted(Comparator.comparing(Certification::getRegistDt).reversed())
                             .collect(Collectors.toList());
 
                     return CalendarDTO.builder()
