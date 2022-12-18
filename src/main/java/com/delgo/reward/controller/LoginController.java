@@ -2,14 +2,13 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
+import com.delgo.reward.comm.security.jwt.JwtService;
 import com.delgo.reward.comm.security.jwt.JwtToken;
 import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
-import com.delgo.reward.comm.security.jwt.JwtService;
 import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.user.UserResDTO;
-import com.delgo.reward.service.CodeService;
 import com.delgo.reward.service.PetService;
 import com.delgo.reward.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +31,6 @@ public class LoginController extends CommController {
     private final JwtService jwtService;
     private final PetService petService;
     private final UserService userService;
-    private final CodeService codeService;
 
     /*
      * Login 성공
@@ -46,7 +44,6 @@ public class LoginController extends CommController {
 
         User user = userService.getUserById(userId);
         Pet pet = petService.getPetByUserId(user.getUserId());
-        pet.setBreedName(codeService.getCode(pet.getBreed()).getCodeName()); // 견종 이름 추가
 
         JwtToken jwt = jwtService.createToken(userId);
         response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());

@@ -30,6 +30,7 @@ public class SmsAuth {
 
     public SmsAuth setRandNum(String randNum) {
         this.randNum = randNum;
+        this.authTime = LocalDateTime.now();
 
         return this;
     }
