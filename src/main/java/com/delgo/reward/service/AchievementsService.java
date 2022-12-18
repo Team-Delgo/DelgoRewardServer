@@ -47,7 +47,7 @@ public class AchievementsService {
         Achievements achievements =  achievementsRepository.save(dto.toEntity(img));
         // 조건 등록
         achievementsConditionService.register(AchievementsCondition.builder()
-                .achievementsId(achievements.getAchievementsId())
+                .achievements(achievements)
                 .categoryCode(dto.getCategoryCode())
                 .count(dto.getCount())
                 .mungpleId(0)
@@ -79,26 +79,21 @@ public class AchievementsService {
 
     // 달성한 업적 있는지 Check
     public List<Achievements> checkEarnAchievements(int userId, boolean isMungple) {
-        List<Achievements> earnAchievementsList = new ArrayList<>(); // 획득한 업적 리스트
-
         List<Archive> archiveList = archiveService.getArchive(userId); // 사용자 획득 업적 조회
-        List<Achievements> achievementsList = getAchievementsByIsMungple(isMungple); // 일반 인증, 멍플 인증 구분해서 조회
+        List<Achievements> achievements = getAchievementsByIsMungple(isMungple); // 일반 인증, 멍플 인증 구분해서 조회
 
         for (Archive archive : archiveList) // 사용자가 획득한 업적 삭제
-            achievementsList.removeIf(a -> Objects.equals(a.getAchievementsId(), archive.getAchievementsId()));
+            achievements.removeIf(a -> Objects.equals(a.getAchievementsId(), archive.getAchievementsId()));
 
-        for (Achievements achievements : achievementsList) {
-            List<AchievementsCondition> achievementsConditionList = achievementsConditionService.getConditionByAchievementsId(achievements.getAchievementsId());
-            boolean conditionCheck = true;
-            for (AchievementsCondition ac : achievementsConditionList) {
-                // ac.getMungpleId() == 0 -> 일반 인증 조건
-                int certCount = getMungpleCategoryCount(userId, ac.getCategoryCode(), ac.getMungpleId());
-                if (ac.getCount() > certCount)  conditionCheck = false;
-            }
+        // 획득한 업적 리스트
+        return achievements.stream().map(achievement -> {
+            achievement.getAchievementsCondition().forEach(ac -> { // ac.getMungpleId() == 0 -> 일반 인증 조건
+                if (ac.getCount() > getMungpleCategoryCount(userId, ac.getCategoryCode(), ac.getMungpleId()))
+                    achievement.setConditionCheck(false);
+            });
             // 모든 조건을 만족하면 획득한 업적 리스트에 저장
-            if(conditionCheck) earnAchievementsList.add(achievements);
-        }
-        return earnAchievementsList;
+            return (achievement.getConditionCheck()) ? achievement : null;
+        }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     // Archive 수정
