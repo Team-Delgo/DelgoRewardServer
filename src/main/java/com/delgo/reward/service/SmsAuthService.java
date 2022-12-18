@@ -27,49 +27,35 @@ public class SmsAuthService extends CommService {
         return smsAuthRepository.findByPhoneNo(phoneNo).isPresent();
     }
 
-    // 인증번호 발송 && CREATE
-    public int createSmsAuth(String phoneNo) {
+    public int makeAuth(String phoneNo){
         String randNum = numberGen(4, 1);
         String message = "[Delgo] 인증번호 " + randNum;
-        try {
-            smsService.sendSMS(phoneNo, message);
-            SmsAuth smsAuth = SmsAuth.builder().randNum(randNum).phoneNo(phoneNo).build();
-            smsAuthRepository.save(smsAuth);
 
-            int smsId = smsAuth.getSmsId();
-            return smsId;
-        } catch (Exception e) {
+        try{
+            smsService.sendSMS(phoneNo, message);
+        } catch (Exception e){
             throw new IllegalStateException();
         }
-    }
 
-    // 인증번호 발송 && UPDATE
-    public int updateSmsAuth(String phoneNo) {
-        String randNum = numberGen(4, 1);
-        String message = "[Delgo] 인증번호 " + randNum;
-        try {
-            smsService.sendSMS(phoneNo, message);
-            SmsAuth smsAuth = smsAuthRepository.findByPhoneNo(phoneNo).get();
-            int smsId = smsAuth.getSmsId();
-            smsAuthRepository.updateBySmsId(smsId, randNum, LocalDateTime.now());
+        SmsAuth smsAuth = SmsAuth.builder().randNum(randNum).phoneNo(phoneNo).build();
+        int smsId = smsAuth.getSmsId();
 
-            return smsId;
-        } catch (Exception e) {
-            throw new IllegalStateException();
-        }
+        SmsAuth savedSmsAuth = (isSmsAuthExisting(phoneNo))
+                ? smsAuthRepository.updateBySmsId(smsId, randNum, LocalDateTime.now())
+                : smsAuthRepository.save(smsAuth);
+
+        return savedSmsAuth.getSmsId();
     }
 
     // 인증번호 확인
     public Optional<ApiCode> checkSMS(int smsId, String enterNum) {
-        Optional<SmsAuth> findSmsAuth = smsAuthRepository.findBySmsId(smsId);
-        if (!findSmsAuth.get().getRandNum().equals(enterNum)) {
+        SmsAuth findSmsAuth = getSmsAuthBySmsId(smsId);
+        if (!findSmsAuth.getRandNum().equals(enterNum)) {
             log.warn("The authentication numbers do not match");
             return Optional.of(ApiCode.AUTH_DO_NOT_MATCHING);
         }
-        LocalDateTime sendTime = findSmsAuth.get().getAuthTime();
-        LocalDateTime authTime = LocalDateTime.now();
-        Long effectTime = ChronoUnit.MINUTES.between(sendTime, authTime);
-        if (effectTime > 3)
+
+        if (ChronoUnit.MINUTES.between(findSmsAuth.getAuthTime(), LocalDateTime.now()) > 3)
             return Optional.of(ApiCode.AUTH_DO_NOT_MATCHING);
 
         return Optional.empty();
@@ -80,18 +66,12 @@ public class SmsAuthService extends CommService {
                 .orElseThrow(() -> new NullPointerException("NOT FOUND SMS AUTH DATA"));
     }
 
-    public SmsAuth getSmsAuthBySmsId(int smsId) {
+    public SmsAuth getSmsAuthBySmsId(int smsId){
         return smsAuthRepository.findBySmsId(smsId)
                 .orElseThrow(() -> new NullPointerException("NOT FOUND SMS AUTH DATA"));
     }
 
     public boolean isAuth(SmsAuth smsAuth) {
-        LocalDateTime sendTime = smsAuth.getAuthTime();
-        LocalDateTime authTime = LocalDateTime.now();
-        Long effectTime = ChronoUnit.MINUTES.between(sendTime, authTime);
-        if (effectTime < 10)
-            return true;
-
-        return false;
+        return (ChronoUnit.MINUTES.between(smsAuth.getAuthTime(), LocalDateTime.now()) < 10);
     }
 }
