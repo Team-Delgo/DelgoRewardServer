@@ -50,6 +50,9 @@ public class User {
     @Column(name = "regist_dt")
     private LocalDateTime registDt;
 
+    @Column(nullable = false, name="is_notify")
+    private boolean isNotify;
+
     private String profile;
 
 //    // 권한
@@ -64,6 +67,11 @@ public class User {
 //        }
 //        return new ArrayList<>();
 //    }
+
+    public Boolean setNotify(){
+        this.isNotify = !isNotify;
+        return this.isNotify;
+    }
 
     public User setProfile(String profile) {
         this.profile = profile;
