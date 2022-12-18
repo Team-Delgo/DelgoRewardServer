@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,61 +18,74 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class SmsAuthController extends CommController {
+@RequestMapping("/auth")
+public class AuthController extends CommController {
     private final UserService userService;
     private final SmsAuthService smsAuthService;
 
-    // 회원가입 전 인증번호 전송
-    @GetMapping("/phoneNoAuth")
-    public ResponseEntity<?> phoneNoAuth(@RequestParam String phoneNo) {
-        try {
-            if (phoneNo.isBlank()) {
-                return ErrorReturn(ApiCode.PARAM_ERROR);
-            }
-            phoneNo = phoneNo.replaceAll("[^0-9]", "");
+    @GetMapping("/email")
+    public ResponseEntity<?> emailAuth(@RequestParam String email) {
+        if (email.isBlank()) {
+            return ErrorReturn(ApiCode.PARAM_ERROR);
+        }
 
-            if (userService.isPhoneNoExisting(phoneNo)) {
-                return ErrorReturn(ApiCode.PHONE_NO_DUPLICATE_ERROR);
-            }
+        if (userService.isEmailExisting(email)) {
+            return SuccessReturn(userService.getUserByEmail(email).getPhoneNo());
+        }
+        return ErrorReturn(ApiCode.NOT_FOUND_DATA);
+    }
 
-            if (smsAuthService.isSmsAuthExisting(phoneNo)) {
-                int smsId = smsAuthService.updateSmsAuth(phoneNo);
-                return SuccessReturn(smsId);
-            } else {
-                int smsId = smsAuthService.createSmsAuth(phoneNo);
-                return SuccessReturn(smsId);
-            }
-
-        } catch (Exception e) {
+    // 이메일 중복 확인
+    @GetMapping("/email/check")
+    public ResponseEntity<?> emailCheck(@RequestParam String email) {
+        if (email.isBlank()) {
+            return ErrorReturn(ApiCode.PARAM_ERROR);
+        }
+        if (!userService.isEmailExisting(email)) {
+            return SuccessReturn();
+        } else {
             return ErrorReturn(ApiCode.UNKNOWN_ERROR);
         }
     }
 
-    // 회원가입 후 인증번호 전송
-    @GetMapping("/phoneNoCheck")
-    public ResponseEntity<?> phoneNoCheck(@RequestParam String phoneNo) {
+    // 이름 중복 확인
+    @GetMapping("/name/check")
+    public ResponseEntity<?> nameCheck(@RequestParam String name) {
+        if (name.isBlank()) {
+            return ErrorReturn(ApiCode.PARAM_ERROR);
+        }
+        if (!userService.isNameExisting(name))
+            return SuccessReturn();
+        else
+            return ErrorReturn(ApiCode.UNKNOWN_ERROR);
+    }
+
+    @GetMapping("/sms")
+    public ResponseEntity<?> phoneNoAuth(@RequestParam String phoneNo, @RequestParam Boolean isLogin) {
         try {
             if (phoneNo.isBlank()) {
                 return ErrorReturn(ApiCode.PARAM_ERROR);
             }
             phoneNo = phoneNo.replaceAll("[^0-9]", "");
-            if (!userService.isPhoneNoExisting(phoneNo)) {
-                return ErrorReturn(ApiCode.PHONE_NO_NOT_EXIST);
+
+            if(isLogin){
+                if(!userService.isPhoneNoExisting(phoneNo))
+                    return ErrorReturn(ApiCode.PHONE_NO_NOT_EXIST);
             }
-            if (smsAuthService.isSmsAuthExisting(phoneNo)) {
-                int smsId = smsAuthService.updateSmsAuth(phoneNo);
-                return SuccessReturn(smsId);
-            } else {
-                int smsId = smsAuthService.createSmsAuth(phoneNo);
-                return SuccessReturn(smsId);
+            else{
+                if (userService.isPhoneNoExisting(phoneNo)) {
+                    return ErrorReturn(ApiCode.PHONE_NO_DUPLICATE_ERROR);
+                }
             }
+            return SuccessReturn(smsAuthService.makeAuth(phoneNo));
+
         } catch (Exception e) {
             return ErrorReturn(ApiCode.UNKNOWN_ERROR);
         }
     }
 
     // 인증번호 확인
-    @GetMapping("/authRandNum")
+    @GetMapping("/sms/check")
     public ResponseEntity<?> randNumCheck(@RequestParam Integer smsId, @RequestParam String enterNum) {
         if (enterNum.isBlank()) {
             return ErrorReturn(ApiCode.PARAM_ERROR);

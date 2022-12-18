@@ -17,5 +17,5 @@ public interface SmsAuthRepository extends JpaRepository<SmsAuth, Integer> {
 
     @Modifying(clearAutomatically = true)
     @Query(value = "update sms_auth set rand_num = :updateRandNum, auth_time = :updateAuthTime where sms_id = :smsId", nativeQuery = true)
-    void updateBySmsId(@Param(value="smsId") int smsId, @Param(value="updateRandNum") String updateRandNum, @Param(value="updateAuthTime") LocalDateTime updateAuthTime);
+    SmsAuth updateBySmsId(@Param(value="smsId") int smsId, @Param(value="updateRandNum") String updateRandNum, @Param(value="updateAuthTime") LocalDateTime updateAuthTime);
 }
