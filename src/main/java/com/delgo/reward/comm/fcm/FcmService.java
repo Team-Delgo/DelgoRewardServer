@@ -1,7 +1,8 @@
 package com.delgo.reward.comm.fcm;
 
-import com.delgo.reward.service.CertService;
+import com.delgo.reward.domain.user.User;
 import com.delgo.reward.service.TokenService;
+import com.delgo.reward.service.UserService;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,6 +27,7 @@ public class FcmService {
     private final String likePushNotification = "나의 게시물을 좋아하는 이웃 강아지가 있습니다.";
     private final String commentPushNotification = "나의 게시물에 이웃 강아지가 댓글을 남겼습니다.";
     private final TokenService tokenService;
+    private final UserService userService;
 
     public void sendMessageTo(String targetToken, String body) throws IOException {
         String message = makeMessage(targetToken, body);
@@ -41,17 +43,29 @@ public class FcmService {
 
         Response response = client.newCall(request).execute();
 
-        System.out.println(response.body().string());
+    }
+
+    public boolean checkNotify(int userId){
+        User user = userService.getUserById(userId);
+        return user.isNotify();
     }
 
     public void likePush(int userId) throws IOException {
-        String ownerFcmToken = tokenService.getFcmToken(userId);
-        sendMessageTo(ownerFcmToken, likePushNotification);
+        if(checkNotify(userId)){
+            String ownerFcmToken = tokenService.getFcmToken(userId);
+            sendMessageTo(ownerFcmToken, likePushNotification);
+        }
+        else
+            return ;
     }
 
     public void commentPush(int userId) throws IOException {
-        String ownerFcmToken = tokenService.getFcmToken(userId);
-        sendMessageTo(ownerFcmToken, commentPushNotification);
+        if(checkNotify(userId)){
+            String ownerFcmToken = tokenService.getFcmToken(userId);
+            sendMessageTo(ownerFcmToken, commentPushNotification);
+        }
+        else
+            return ;
     }
 
     private String makeMessage(String targetToken, String body) throws JsonParseException, JsonProcessingException {
@@ -78,4 +92,6 @@ public class FcmService {
         googleCredentials.refreshIfExpired();
         return googleCredentials.getAccessToken().getTokenValue();
     }
+
+
 }
