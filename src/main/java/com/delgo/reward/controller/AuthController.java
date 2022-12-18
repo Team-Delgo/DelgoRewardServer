@@ -61,14 +61,14 @@ public class AuthController extends CommController {
     }
 
     @GetMapping("/sms")
-    public ResponseEntity<?> phoneNoAuth(@RequestParam String phoneNo, @RequestParam Boolean isLogin) {
+    public ResponseEntity<?> phoneNoAuth(@RequestParam String phoneNo, @RequestParam Boolean isJoin) {
         try {
             if (phoneNo.isBlank()) {
                 return ErrorReturn(ApiCode.PARAM_ERROR);
             }
             phoneNo = phoneNo.replaceAll("[^0-9]", "");
 
-            if(isLogin){
+            if(isJoin){
                 if(!userService.isPhoneNoExisting(phoneNo))
                     return ErrorReturn(ApiCode.PHONE_NO_NOT_EXIST);
             }
