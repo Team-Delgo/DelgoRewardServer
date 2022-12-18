@@ -93,6 +93,12 @@ public class UserService {
         return findUser.isPresent();
     }
 
+    // 알림 정보 수정
+    public boolean changeNotify(int userId){
+        userRepository.updateNotify(userId, !getUserById(userId).isNotify());
+        return getUserById(userId).setNotify();
+    }
+
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new NullPointerException("NOT FOUND USER"));

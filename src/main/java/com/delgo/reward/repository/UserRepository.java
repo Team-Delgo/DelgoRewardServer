@@ -13,6 +13,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByName(String name);
     Optional<User> findByAppleUniqueNo(String appleUniqueNo);
 
+    @Query(value = "update user set is_notify = :isNotify where user_id = :userId", nativeQuery = true)
+    void updateNotify(int userId, boolean isNotify);
+
     @Query(value = "update point set last_weekly_point = 0", nativeQuery = true)
     void initLastWeeklyPoint();
 
