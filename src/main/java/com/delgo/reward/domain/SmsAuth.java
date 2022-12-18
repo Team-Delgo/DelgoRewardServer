@@ -1,17 +1,15 @@
 package com.delgo.reward.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
 @Entity
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class SmsAuth {
@@ -29,4 +27,11 @@ public class SmsAuth {
 
     @Column(name = "phone_no")
     private String phoneNo;
+
+    public SmsAuth setRandNum(String randNum) {
+        this.randNum = randNum;
+        this.authTime = LocalDateTime.now();
+
+        return this;
+    }
 }

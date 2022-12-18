@@ -37,14 +37,10 @@ public class SmsAuthService extends CommService {
             throw new IllegalStateException();
         }
 
-        SmsAuth smsAuth = SmsAuth.builder().randNum(randNum).phoneNo(phoneNo).build();
-        int smsId = smsAuth.getSmsId();
-
-        SmsAuth savedSmsAuth = (isSmsAuthExisting(phoneNo))
-                ? smsAuthRepository.updateBySmsId(smsId, randNum, LocalDateTime.now())
-                : smsAuthRepository.save(smsAuth);
-
-        return savedSmsAuth.getSmsId();
+        return smsAuthRepository.save(
+                isSmsAuthExisting(phoneNo)
+                        ? getSmsAuthByPhoneNo(phoneNo).setRandNum(randNum)
+                        : SmsAuth.builder().randNum(randNum).phoneNo(phoneNo).build()).getSmsId();
     }
 
     // 인증번호 확인
