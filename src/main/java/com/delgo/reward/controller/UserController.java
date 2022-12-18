@@ -7,7 +7,6 @@ import com.delgo.reward.comm.security.jwt.JwtToken;
 import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
 import com.delgo.reward.comm.security.jwt.JwtService;
 import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
-import com.delgo.reward.domain.Point;
 import com.delgo.reward.domain.SmsAuth;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
@@ -27,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/user")
 public class UserController extends CommController {
     private final PasswordEncoder passwordEncoder;
 
@@ -37,13 +37,14 @@ public class UserController extends CommController {
     private final SmsAuthService smsAuthService;
     private final ArchiveService archiveService;
 
-    @RequestMapping(value ="/")
-    public ResponseEntity<?> defaultResponse() {
-        return SuccessReturn();
+    // User. Pet 모두 조회
+    @GetMapping
+    public ResponseEntity<?> getUserAndPet(@RequestParam Integer userId) {
+        return SuccessReturn(new UserResDTO(userService.getUserById(userId), petService.getPetByUserId(userId)));
     }
 
     // 비밀번호 재설정
-    @PostMapping("/resetPassword")
+    @PutMapping("/password")
     public ResponseEntity<?> resetPassword(@Validated @RequestBody ResetPasswordDTO resetPasswordDTO) {
         User user = userService.getUserByEmail(resetPasswordDTO.getEmail()); // 유저 조회
         SmsAuth smsAuth = smsAuthService.getSmsAuthByPhoneNo(user.getPhoneNo()); // SMS DATA 조회
@@ -54,10 +55,8 @@ public class UserController extends CommController {
         return SuccessReturn();
     }
 
-
-
     // 소셜 회원가입
-    @PostMapping("/signup/oauth")
+    @PostMapping("/oauth")
     public ResponseEntity<?> registerUserByOAuth(@Validated @RequestBody OAuthSignUpDTO signUpDTO, HttpServletResponse response) {
 
         // 주소 설정
@@ -104,7 +103,7 @@ public class UserController extends CommController {
     }
 
     // 회원가입
-    @PostMapping("/signup")
+    @PostMapping
     public ResponseEntity<?> registerUser(@Validated @RequestBody SignUpDTO signUpDTO, HttpServletResponse response) {
         if (userService.isEmailExisting(signUpDTO.getEmail())) // Email 중복확인
             return ErrorReturn(ApiCode.EMAIL_DUPLICATE_ERROR);
