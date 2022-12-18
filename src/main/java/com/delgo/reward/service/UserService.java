@@ -149,13 +149,4 @@ public class UserService {
         jdbcTemplatePointRepository.changeGeoCode(originUser.getUserId(), modifyUserDTO.getGeoCode());
         return userRepository.save(originUser);
     }
-
-    public UserInfoDTO getUserInfo(int userId){
-        User user = getUserById(userId);
-        UserInfoDTO userInfoDTO = UserInfoDTO.builder()
-                .userName(user.getName())
-                .profile(user.getProfile())
-                .build();
-        return userInfoDTO;
-    }
 }
