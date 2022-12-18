@@ -25,9 +25,6 @@ public class FcmController extends CommController {
 
     @PostMapping("/api/fcm")
     public ResponseEntity pushMessage(@RequestBody SendFcmDTO sendFcmDTO) throws IOException {
-        System.out.println(sendFcmDTO.getTargetToken() + " "
-                +sendFcmDTO.getTitle() + " " + sendFcmDTO.getBody());
-
         fcmService.sendMessageTo(
                 sendFcmDTO.getTargetToken(),
                 sendFcmDTO.getBody());

@@ -21,6 +21,17 @@ public class AccountController extends CommController {
     private final PetService petService;
     private final PointService pointService;
 
+    // 알림 정보 수정
+//    @PutMapping(value = {"/notify/{userId}, /notify"})
+//    public ResponseEntity<?> changeNotify(@PathVariable Integer userId){
+//        log.info("test");
+//        return SuccessReturn(userService.changeNotify(userId));
+//    }
+    @PutMapping(value = {"/notify/{userId}", "/notify"})
+    public ResponseEntity<?> changeNotify(@PathVariable Integer userId){
+        return SuccessReturn(userService.changeNotify(userId));
+    }
+
     // 유저 정보 수정
     @PutMapping("/user")
     public ResponseEntity<?> changePetInfo(@Validated @RequestBody ModifyUserDTO modifyUserDTO) {
