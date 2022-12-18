@@ -7,7 +7,6 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
 @Entity
 @Builder
 @ToString
@@ -75,6 +74,36 @@ public class User {
 
     public User setProfile(String profile) {
         this.profile = profile;
+        return this;
+    }
+
+    public User setPassword(String password){
+        this.password = password;
+        return this;
+    }
+
+    public User setName(String name){
+        this.name = name;
+        return this;
+    }
+
+    public User setGeoCode(String geoCode){
+        this.geoCode = geoCode;
+        return this;
+    }
+
+    public User setPGeoCode(String pGeoCode){
+        this.pGeoCode = pGeoCode;
+        return this;
+    }
+
+    public User setAddress(String address){
+        this.address = address;
+        return this;
+    }
+
+    public User setAppleUniqueNo(String appleUniqueNo){
+        this.appleUniqueNo = appleUniqueNo;
         return this;
     }
 
