@@ -19,10 +19,11 @@ public class InitWeeklyPoint extends QuartzJobBean {
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         log.info(LocalTime.now() + ": InitialLastWeeklyPoint Execute");
 
-        rankingService.initLastWeeklyPoint();
+//        rankingService.initLastWeeklyPoint();
         rankingService.setLastWeeklyPoint();
         rankingService.setLastRanking();
         rankingService.initWeeklyPoint();
+        rankingService.rankingByPoint();
 
         log.info(LocalTime.now() + ": InitialLastWeeklyPoint Exit");
     }

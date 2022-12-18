@@ -7,35 +7,33 @@ import com.delgo.reward.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Slf4j
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class RankingService {
     private final JDBCTemplateRankingRepository jdbcTemplateRankingRepository;
     private final RankingCategoryRepository rankingCategoryRepository;
     private final RankingPointRepository rankingPointRepository;
+    private final PointRepository pointRepository;
     private final UserRepository userRepository;
 
     // 주 1회 이전 주간 포인트 초기화
     public void initLastWeeklyPoint(){
-        rankingCategoryRepository.deleteAll();
-        rankingPointRepository.deleteAll();
-        userRepository.initLastWeeklyPoint();
+//        rankingCategoryRepository.deleteAll();
+//        rankingPointRepository.deleteAll();
+        pointRepository.initLastWeeklyPoint();
     }
 
     // 이전 주간 포인트 0으로 세팅
     public void setLastWeeklyPoint(){
-        userRepository.setLastWeeklyPoint();
+        pointRepository.setLastWeeklyPoint();
     }
 
     // 주간 포인트 0으로 초기화
     public void initWeeklyPoint(){
-        userRepository.initWeeklyPoint();
+        pointRepository.initWeeklyPoint();
     }
 
     // 이전 주간 랭킹 세팅
