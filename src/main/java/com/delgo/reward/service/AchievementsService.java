@@ -120,6 +120,6 @@ public class AchievementsService {
 
     // 사용자가 특정 카테고리의 인증을 몇번했는지 조회
     public int getCategoryCount(int userId, String categoryCode, int mungpleId) {
-        return certRepository.countByUserIdAndCategoryCodeAndMungpleId(userId, categoryCode, mungpleId);
+        return certRepository.countByCategory(userId, categoryCode, mungpleId);
     }
 }
