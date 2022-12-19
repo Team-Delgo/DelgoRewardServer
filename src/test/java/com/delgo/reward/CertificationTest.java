@@ -48,33 +48,33 @@ public class CertificationTest {
 //        assertNotNull(certification);
 //    }
 
-    @Test
-    public void checkMungpleCertRegisterTest() {
-        //given
-        int userId = 0;
-        int mungpleId = 8;
-
-        //when
-        Boolean result = certificationService.checkMungpleCertRegister(userId, mungpleId,true);
-        System.out.println("result : " + result);
-
-        //then
-        assertTrue(result);
-    }
-
-    @Test
-    public void checkCertRegisterTest() {
-        //given
-        int userId = 0;
-        String categoryCode = "CA0002";
-
-        //when
-        Boolean result = certificationService.checkCertRegister(userId, categoryCode,true);
-        System.out.println("result : " + result);
-
-        //then
-        assertTrue(result);
-    }
+//    @Test
+//    public void checkMungpleCertRegisterTest() {
+//        //given
+//        int userId = 0;
+//        int mungpleId = 8;
+//
+//        //when
+//        Boolean result = certificationService.checkMungpleCertRegister(userId, mungpleId,true);
+//        System.out.println("result : " + result);
+//
+//        //then
+//        assertTrue(result);
+//    }
+//
+//    @Test
+//    public void checkCertRegisterTest() {
+//        //given
+//        int userId = 0;
+//        String categoryCode = "CA0002";
+//
+//        //when
+//        Boolean result = certificationService.checkCertRegister(userId, categoryCode,true);
+//        System.out.println("result : " + result);
+//
+//        //then
+//        assertTrue(result);
+//    }
 
     @Test
     public void timeDifferenceCalculationTest() {
