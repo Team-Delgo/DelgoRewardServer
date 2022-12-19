@@ -70,7 +70,7 @@ public class LoginController extends CommController {
     @GetMapping("/token/reissue")
     public ResponseEntity<?> tokenReissue(HttpServletRequest request, HttpServletResponse response) {
         try {
-            JwtToken jwt = jwtService.createToken(jwtService.getUserId());
+            JwtToken jwt = jwtService.createToken(jwtService.getUserIdByRefreshToken());
             response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
             response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
 
