@@ -52,9 +52,18 @@ public class JwtService {
      * @return String
      **/
     public String getAccessToken() {
-        HttpServletRequest request =
-                ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         return request.getHeader(AccessTokenProperties.HEADER_STRING).replace(AccessTokenProperties.TOKEN_PREFIX, "");
+    }
+
+    /**
+     * Header에서 X-REFRESH-TOKEN 으로 JWT 추출
+     *
+     * @return String
+     **/
+    public String getRefreshToken() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        return request.getHeader(RefreshTokenProperties.HEADER_STRING).replace(RefreshTokenProperties.TOKEN_PREFIX, "");
     }
 
     /**
@@ -63,14 +72,19 @@ public class JwtService {
      * @return int
      * @throws BaseException
      */
-    public Integer getUserId() throws BaseException {
-        //1. JWT 추출
+    public Integer getUserIdByAccessToken() throws BaseException {
         String accessToken = getAccessToken();
-        if (accessToken == null || accessToken.length() == 0) throw new BaseException(ApiCode.TOKEN_ERROR);
-        // jwt 에서 userId를 추출합니다.
-        int userId = Integer.parseInt(String.valueOf(JWT.require(Algorithm.HMAC512(AccessTokenProperties.SECRET)).build().verify(accessToken).getClaim("userId")));
-        log.info("get Token UserId: {}", userId);
-        return userId;
+        if (accessToken == null || accessToken.length() == 0)
+            throw new BaseException(ApiCode.TOKEN_ERROR);
+
+        return Integer.parseInt(String.valueOf(JWT.require(Algorithm.HMAC512(AccessTokenProperties.SECRET)).build().verify(accessToken).getClaim("userId")));
+    }
+
+    public Integer getUserIdByRefreshToken() throws BaseException {
+        String refreshToken = getRefreshToken();
+        if (refreshToken == null || refreshToken.length() == 0) throw new BaseException(ApiCode.TOKEN_ERROR);
+
+        return Integer.parseInt(String.valueOf(JWT.require(Algorithm.HMAC512(RefreshTokenProperties.SECRET)).build().verify(refreshToken).getClaim("userId")));
     }
 }
 
