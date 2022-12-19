@@ -113,7 +113,7 @@ public class CertController extends CommController {
      */
     @GetMapping("/main")
     public ResponseEntity getMainData(@RequestParam Integer userId) {
-        return SuccessReturn(certService.getTwoRecentCert(userId));
+        return SuccessReturn(certService.getTheLastTwoCert(userId));
     }
 
     /*
