@@ -24,7 +24,7 @@ public class CalendarTest {
         int userId = 0;
 
         //when
-        List<CalendarDTO> calendarList = calendarService.makeCalendarData(userId);
+        List<CalendarDTO> calendarList = calendarService.getCalendar(userId);
         for (CalendarDTO calendar : calendarList) {
             System.out.println("calendar : " + calendar);
         }

@@ -11,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 
+import java.util.List;
+
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
@@ -24,35 +26,38 @@ public class AchievementsTest {
     private RankingService rankingService;
 
     @Test
-    public void registerCertificationTest() {
-        //given
-        Achievements achievements = Achievements.builder()
-                .name("test")
-                .imgUrl("http://test.com")
-                .isMungple(true)
-                .build();
-
-        //when
-        Achievements registeredAc = achievementsService.register(achievements);
-
-        //then
-        assertNotNull(registeredAc);
-    }
-
-    @Test
     public void checkEarnAchievementsTest() {
         //given
-        int userId = 0;
+        int userId = 91;
         int isMungple = 0;
 
         //when
-//        List<Achievements> list = achievementsService.checkEarnAchievements(userId, isMungple);
+        List<Achievements> list = achievementsService.checkEarnAchievements(userId, false);
+//
+        for(Achievements achievements : list){
+            System.out.println("achievements : " + achievements);
+        }
+
+//        rankingService.rankingByPoint();
+
+        //then
+        assertNotNull(1);
+    }
+
+    @Test
+    public void getAchievementsByUserTest() {
+        //given
+        int userId = 91;
+        int isMungple = 0;
+
+        //when
+        List<Achievements> list = achievementsService.getAchievementsByUser(userId);
 //
 //        for(Achievements achievements : list){
 //            System.out.println("achievements : " + achievements);
 //        }
 
-        rankingService.rankingByPoint();
+//        rankingService.rankingByPoint();
 
         //then
         assertNotNull(1);

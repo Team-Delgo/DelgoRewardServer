@@ -1,11 +1,8 @@
 package com.delgo.reward.domain.achievements;
 
-
+import lombok.*;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 
@@ -53,5 +50,13 @@ public class Achievements {
 
     public void setConditionCheck(boolean check) {
         this.conditionCheck = check;
+    }
+
+    public Archive toArchive(int userId) {
+       return Archive.builder()
+                .achievementsId(achievementsId)
+                .userId(userId)
+                .isMain(0)
+                .build();
     }
 }
