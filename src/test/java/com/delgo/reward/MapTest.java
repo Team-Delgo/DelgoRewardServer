@@ -24,7 +24,7 @@ public class MapTest {
         int userId = 0;
 
         //when
-        Map result = mapService.getMapData(userId);
+        Map result = mapService.getMap(userId);
 
         System.out.println("mungpleList : " + result.get("mungpleList")); // mungpleList :  멍플 리스트 ( 인증된 멍플은 제거된 리스트 )
         System.out.println("certNormalList : " + result.get("certNormalList"));  // certNormalList : 일반 인증 리스트 ( 하얀 테두리 )

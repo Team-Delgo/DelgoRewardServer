@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@Setter
 @Entity
 @Builder
 @NoArgsConstructor
@@ -65,6 +64,20 @@ public class Certification {
 
     public Certification modify(String description){
         this.description = description;
+
+        return this;
+    }
+
+    public Certification setAchievements(List<Achievements> achievements){
+        this.isAchievements = true;
+        this.achievements = achievements;
+
+        return this;
+    }
+
+    public Certification setUserAndLike(User user, Boolean isLike){
+        this.user = user;
+        this.isLike = isLike;
 
         return this;
     }

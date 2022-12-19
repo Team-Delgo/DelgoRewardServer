@@ -1,7 +1,7 @@
 package com.delgo.reward;
 
 
-import com.delgo.reward.domain.Code;
+import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.service.CodeService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +24,6 @@ public class CodeTest {
         String SIGUGUN = "송파구";
 
         //when
-//        Code code = codeService.getGeoCodeBySIGUGUN(SIGUGUN);
         Code code = new Code();
 
         System.out.println("geoCode : " + code.getCode());
