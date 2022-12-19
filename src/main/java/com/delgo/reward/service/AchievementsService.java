@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -23,9 +24,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AchievementsService {
 
+    // Repository
     private final CertRepository certRepository;
     private final AchievementsRepository achievementsRepository;
 
+    // Service
     private final ArchiveService archiveService; // 사용자 획득 업적
     private final AchievementsConditionService achievementsConditionService; // 특정 업적 조건
 
@@ -53,42 +56,16 @@ public class AchievementsService {
                 .mungpleId(0)
                 .build()
         );
+
         return achievementsRepository.save(achievements);
     }
 
-    // 전체 Achievements 리스트 조회
-    public List<Achievements> getAchievementsAll() {
-        return achievementsRepository.findAll();
-    }
-
-    // Achievements ID 로 조회
-    public Achievements getAchievementsById(int achievementsId) {
-        return achievementsRepository.findByAchievementsId(achievementsId)
-                .orElseThrow(() -> new NullPointerException("NOT FOUND Achievements"));
-    }
-
-    // 멍플 조건 체크 후 Achievements List 조회
-    public List<Achievements> getAchievementsByIsMungple(boolean isMungple) {
-        return achievementsRepository.findByIsMungple(isMungple);
-    }
-
-    // userId & categoryCode & mungple Id 만족하는 인증 개수
-    public int getMungpleCategoryCount(int userId, String categoryCode, int mungpleId) {
-        return certRepository.countByUserIdAndCategoryCodeAndMungpleId(userId, categoryCode, mungpleId);
-    }
-
     // 달성한 업적 있는지 Check
+    @Transactional
     public List<Achievements> checkEarnAchievements(int userId, boolean isMungple) {
-        List<Archive> archiveList = archiveService.getArchive(userId); // 사용자 획득 업적 조회
-        List<Achievements> achievements = getAchievementsByIsMungple(isMungple); // 일반 인증, 멍플 인증 구분해서 조회
-
-        for (Archive archive : archiveList) // 사용자가 획득한 업적 삭제
-            achievements.removeIf(a -> Objects.equals(a.getAchievementsId(), archive.getAchievementsId()));
-
-        // 획득한 업적 리스트
-        return achievements.stream().map(achievement -> {
+        return achievementsRepository.findAchievementsNotEarned(userId, isMungple).stream().map(achievement -> {
             achievement.getAchievementsCondition().forEach(ac -> { // ac.getMungpleId() == 0 -> 일반 인증 조건
-                if (ac.getCount() > getMungpleCategoryCount(userId, ac.getCategoryCode(), ac.getMungpleId()))
+                if (ac.getCount() > getCategoryCount(userId, ac.getCategoryCode(), ac.getMungpleId()))
                     achievement.setConditionCheck(false);
             });
             // 모든 조건을 만족하면 획득한 업적 리스트에 저장
@@ -134,5 +111,15 @@ public class AchievementsService {
         achievements.addAll(notMainAchievements);
 
         return achievements;
+    }
+
+    // 전체 Achievements 리스트 조회
+    public List<Achievements> getAchievementsAll() {
+        return achievementsRepository.findAll();
+    }
+
+    // 사용자가 특정 카테고리의 인증을 몇번했는지 조회
+    public int getCategoryCount(int userId, String categoryCode, int mungpleId) {
+        return certRepository.countByUserIdAndCategoryCodeAndMungpleId(userId, categoryCode, mungpleId);
     }
 }
