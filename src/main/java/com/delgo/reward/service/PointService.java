@@ -17,12 +17,9 @@ public class PointService {
     private final PointRepository pointRepository;
     private final JDBCTemplatePointRepository jdbcTemplatePointRepository;
 
-    public void updateAccumulatedPoint(int userId, int categoryPoint){
-        jdbcTemplatePointRepository.updateAccumulatedPoint(userId, categoryPoint);
-    }
-
-    public void updateWeeklyPoint(int userId, int categoryPoint){
-        jdbcTemplatePointRepository.updateWeeklyPoint(userId, categoryPoint);
+    public void givePoint(int userId, int categoryPoint) {
+        jdbcTemplatePointRepository.updateAccumulatedPoint(userId, categoryPoint); // updateAccumulatedPoint
+        jdbcTemplatePointRepository.updateWeeklyPoint(userId, categoryPoint); // updateWeeklyPoint
     }
 
     public Point getPointByUserId(int userId){
