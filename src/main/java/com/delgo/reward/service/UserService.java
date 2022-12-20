@@ -28,6 +28,7 @@ public class UserService {
     private final JDBCTemplateRankingRepository jdbcTemplateRankingRepository;
     private final CommentRepository commentRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RankingService rankingService;
 
     // 회원가입
     public User signup(User user, Pet pet) {
@@ -37,6 +38,7 @@ public class UserService {
         // User Data save
         User owner = userRepository.save(user);
         jdbcTemplatePointRepository.createUserPoint(user);
+        rankingService.rankingByPoint();
         // Pet Data save
         pet.setUserId(owner.getUserId());
         petRepository.save(pet);
