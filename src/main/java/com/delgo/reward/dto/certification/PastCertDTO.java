@@ -1,7 +1,7 @@
 package com.delgo.reward.dto.certification;
 
 
-import com.delgo.reward.domain.Certification;
+import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.Mungple;
 import lombok.*;
 

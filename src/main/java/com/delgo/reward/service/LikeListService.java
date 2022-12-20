@@ -4,7 +4,7 @@ package com.delgo.reward.service;
 
 
 import com.delgo.reward.comm.fcm.FcmService;
-import com.delgo.reward.domain.LikeList;
+import com.delgo.reward.domain.like.LikeList;
 import com.delgo.reward.repository.LikeListRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.Optional;
 
 
 @Slf4j
@@ -21,6 +22,10 @@ import java.io.IOException;
 public class LikeListService {
     private final LikeListRepository likeListRepository;
     private final FcmService fcmService;
+
+    public Optional<LikeList> getLike(int userId, int certificationId) {
+        return likeListRepository.findByUserIdAndCertificationId(userId, certificationId);
+    }
 
     // 특정 유저가 해당 게시글에 좋아요 눌렀는지 체크
     public boolean hasLiked(int userId, int certificationId) {
@@ -35,9 +40,7 @@ public class LikeListService {
         fcmService.likePush(ownerId);
     }
 
-    public int delete(int userId,int certificationId){
-        int test = likeListRepository.deleteByUserIdAndCertificationId(userId,certificationId);
-        log.info("test : {}", test);
-        return test;
+    public void delete(LikeList likeList){
+        likeListRepository.delete(likeList);
     }
 }
