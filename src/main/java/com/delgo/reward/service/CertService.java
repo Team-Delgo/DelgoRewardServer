@@ -3,10 +3,10 @@ package com.delgo.reward.service;
 
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.ncp.ReverseGeoService;
-import com.delgo.reward.domain.Certification;
+import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.achievements.Achievements;
 import com.delgo.reward.domain.common.Location;
-import com.delgo.reward.domain.user.User;
+import com.delgo.reward.domain.like.LikeList;
 import com.delgo.reward.dto.certification.LiveCertDTO;
 import com.delgo.reward.dto.certification.ModifyCertDTO;
 import com.delgo.reward.dto.certification.PastCertDTO;
@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.counting;
@@ -181,8 +182,9 @@ public class CertService {
     // 좋아요 Check
     public void like(int userId, int certificationId, int ownerId) throws IOException {
         // 사용자가 해당 Certification 좋아요 눌렀는지 체크.
-        if (likeListService.hasLiked(userId, certificationId)) { // 좋아요 존재
-            likeListService.delete(userId, certificationId);
+        Optional<LikeList> option = likeListService.getLike(userId, certificationId);
+        if (option.isPresent()) { // 좋아요 존재
+            likeListService.delete(option.get());
             minusLikeCount(certificationId);
         } else {
             likeListService.register(userId, certificationId, ownerId);

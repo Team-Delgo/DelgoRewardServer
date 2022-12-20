@@ -1,6 +1,6 @@
 package com.delgo.reward.dto;
 
-import com.delgo.reward.domain.Certification;
+import com.delgo.reward.domain.certification.Certification;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

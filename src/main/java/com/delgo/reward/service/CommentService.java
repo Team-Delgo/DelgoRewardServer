@@ -1,7 +1,7 @@
 package com.delgo.reward.service;
 
 import com.delgo.reward.comm.fcm.FcmService;
-import com.delgo.reward.domain.Certification;
+import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.Comment;
 import com.delgo.reward.dto.CommentDTO;
 import com.delgo.reward.dto.GetCommentDTO;
