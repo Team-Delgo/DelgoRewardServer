@@ -1,7 +1,7 @@
 package com.delgo.reward.service;
 
 
-import com.delgo.reward.domain.Certification;
+import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.dto.CalendarDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
