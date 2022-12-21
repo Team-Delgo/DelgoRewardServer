@@ -20,6 +20,7 @@ public class AccountController extends CommController {
     private final RankingService rankingService;
     private final PetService petService;
     private final PointService pointService;
+    private final TokenService tokenService;
 
     // 알림 정보 수정
 //    @PutMapping(value = {"/notify/{userId}, /notify"})
@@ -69,5 +70,11 @@ public class AccountController extends CommController {
     public ResponseEntity<?> getPoint(@RequestParam Integer userId){
         Point point = pointService.getPointByUserId(userId);
         return SuccessReturn(point);
+    }
+
+    @PostMapping(value = {"/logout/{userId}","/logout"})
+    public ResponseEntity<?> logout(@PathVariable Integer userId){
+        tokenService.deleteToken(userId);
+        return SuccessReturn();
     }
 }

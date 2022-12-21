@@ -30,4 +30,8 @@ public class TokenService {
             tokenRepository.save(token);
         }
     }
+
+    public void deleteToken(int userId){
+        tokenRepository.deleteById(userId);
+    }
 }
