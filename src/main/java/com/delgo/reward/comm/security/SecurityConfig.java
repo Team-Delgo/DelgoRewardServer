@@ -38,13 +38,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.addFilter(new JwtAuthenticationFilter(authenticationManager()))
 				.addFilter(new JwtAuthorizationFilter(authenticationManager(),userRepository))
 				.authorizeRequests()
-//				.antMatchers("/wish/**").authenticated()
-//				.antMatchers("/booking/**").authenticated()
-//				.antMatchers("/photo/**").authenticated()
-//				.antMatchers("/coupon/**").authenticated()
-//				.antMatchers("/review/**").authenticated()
-//				.antMatchers("/changePassword").authenticated()
-				.anyRequest().permitAll();
+				.antMatchers("/oauth/**").permitAll()
+				.antMatchers("/auth/**").permitAll()
+				.antMatchers("/user/**").permitAll()
+				.antMatchers("/code/**").permitAll()
+				.antMatchers("/token/reissue").permitAll()
+				.antMatchers("/**").authenticated();
+//				.anyRequest().permitAll();
 	}
 }
 
