@@ -29,7 +29,7 @@ public class PhotoService extends CommService {
         String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\."); // ex) png, jpg, jpeg
         String extension = type[type.length - 1];
 
-        if (!extension.equals("png") && !extension.equals("jpg") && !extension.equals("jpeg"))
+        if (!extension.equals("png") && !extension.equals("jpg") && !extension.equals("jpeg") && !extension.equals("jfif"))
             throw new NullPointerException("PHOTO EXTENSION IS WRONG");
 
         String fileName = certificationId + "_cert." + extension;
@@ -55,8 +55,7 @@ public class PhotoService extends CommService {
         String ncpLink = "https://kr.object.ncloudstorage.com/reward-certification/" + fileName;
 
         try {
-            byte[] decodedByte =
-                    Base64.getMimeDecoder().decode(photoUrl.replace("data:image/jpeg;base64,", "").getBytes());
+            byte[] decodedByte = Base64.getMimeDecoder().decode(photoUrl.replace("data:image/jpeg;base64,", "").getBytes());
             File convertFile = new File(DIR + fileName);
             if (convertFile.createNewFile()) {
                 FileOutputStream fos = new FileOutputStream(convertFile);
@@ -79,7 +78,8 @@ public class PhotoService extends CommService {
     public String uploadProfile(int userId, MultipartFile photo) {
         String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\."); // ex) png, jpg, jpeg
         String extension = type[type.length - 1];
-        if (!extension.equals("png") && !extension.equals("jpg") && !extension.equals("jpeg"))
+
+        if (!extension.equals("png") && !extension.equals("jpg") && !extension.equals("jpeg") && !extension.equals("jfif"))
             throw new NullPointerException("PHOTO EXTENSION IS WRONG");
 
         String fileName = userId + "_profile." + extension;
