@@ -28,6 +28,7 @@ public class AccountController extends CommController {
 //        log.info("test");
 //        return SuccessReturn(userService.changeNotify(userId));
 //    }
+
     @PutMapping(value = {"/notify/{userId}", "/notify"})
     public ResponseEntity<?> changeNotify(@PathVariable Integer userId){
         return SuccessReturn(userService.changeNotify(userId));

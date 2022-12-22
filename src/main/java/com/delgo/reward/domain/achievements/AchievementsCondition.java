@@ -34,6 +34,7 @@ public class AchievementsCondition {
     private Achievements achievements;
 
     @Transient
+    @Builder.Default
     private boolean conditionCheck = true;
 
     @CreationTimestamp
