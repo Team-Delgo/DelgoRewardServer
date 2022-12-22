@@ -46,10 +46,10 @@ public class NaverService {
             JsonNode jsonNode = objectMapper.readTree(responseEntity.getBody());
             accessToken = jsonNode.get("access_token").toString().replace("\"","");
 
-            System.out.println("************************************************");
-            System.out.println("jsonNode: " + jsonNode);
-            System.out.println("accessToken: " + accessToken);
-            System.out.println("************************************************");
+//            System.out.println("************************************************");
+//            System.out.println("jsonNode: " + jsonNode);
+//            System.out.println("accessToken: " + accessToken);
+//            System.out.println("************************************************");
 
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -82,8 +82,8 @@ public class NaverService {
 
             System.out.println("************************************************");
             System.out.println("jsonNode: " + jsonNode);
-            System.out.println("phoneNo: " + phoneNo);
-            System.out.println("email: " + email);
+//            System.out.println("phoneNo: " + phoneNo);
+//            System.out.println("email: " + email);
             System.out.println("************************************************");
 
         } catch (JsonProcessingException e) {
