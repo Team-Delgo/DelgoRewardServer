@@ -51,11 +51,11 @@ public class ReverseGeoService {
             location.setSIDO(SIDO.toString().replace("\"", ""));
             location.setSIGUGUN(SIGUGUN.toString().replace("\"", ""));
 
-            System.out.println("************************************************");
-            System.out.println("jsonNode: " + jsonNode);
-            System.out.println("SIDO: " + SIDO);
-            System.out.println("SIGUGUN: " + SIGUGUN);
-            System.out.println("************************************************");
+//            System.out.println("************************************************");
+//            System.out.println("jsonNode: " + jsonNode);
+//            System.out.println("SIDO: " + SIDO);
+//            System.out.println("SIGUGUN: " + SIGUGUN);
+//            System.out.println("************************************************");
 
             // SET GEOCODE
             location.setGeoCode(codeService.getGeoCodeByLocation(location));
