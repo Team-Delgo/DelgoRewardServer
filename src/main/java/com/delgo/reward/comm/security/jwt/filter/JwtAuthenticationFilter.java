@@ -31,7 +31,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
 
-        log.info("JwtAuthenticationFilter : 진입");
+//        log.info("JwtAuthenticationFilter : 진입");
 
         ObjectMapper om = new ObjectMapper();
         LoginDTO loginDTO = null;
@@ -41,12 +41,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             e.printStackTrace();
         }
 
-        log.info("JwtAuthenticationFilter : " + loginDTO);
+//        log.info("JwtAuthenticationFilter : " + loginDTO);
 
         // 유저네임패스워드 토큰 생성
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword());
 
-        log.info("JwtAuthenticationFilter : 토큰생성완료");
+//        log.info("JwtAuthenticationFilter : 토큰생성완료");
 
         // authenticate() 함수가 호출 되면 인증 프로바이더가 유저 디테일 서비스의
         // loadUserByUsername(토큰의 첫번째 파라메터) 를 호출하고

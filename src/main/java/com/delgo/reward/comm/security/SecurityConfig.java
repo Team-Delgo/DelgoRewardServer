@@ -42,14 +42,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.antMatchers("/auth/**").permitAll()
 				.antMatchers("/user/**").permitAll()
 				.antMatchers("/code/**").permitAll()
+				.antMatchers("/api/fcm/**").permitAll()
 				.antMatchers("/token/reissue").permitAll()
 				.antMatchers("/**").authenticated();
-//				.anyRequest().permitAll();
 	}
 }
-
-
-
-
-
-
