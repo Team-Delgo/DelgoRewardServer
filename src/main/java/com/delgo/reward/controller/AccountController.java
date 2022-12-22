@@ -75,7 +75,7 @@ public class AccountController extends CommController {
 
     @PostMapping(value = {"/logout/{userId}","/logout"})
     public ResponseEntity<?> logout(@PathVariable Integer userId){
-//        tokenService.deleteToken(userId);
+        tokenService.deleteToken(userId);
         return SuccessReturn();
     }
 }
