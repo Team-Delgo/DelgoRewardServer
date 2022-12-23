@@ -25,7 +25,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.counting;
@@ -68,7 +67,8 @@ public class CertService {
         // 획득 가능한 업적 Check
         List<Achievements> earnAchievements = achievementsService.checkEarnAchievements(dto.getUserId(), dto.getMungpleId() != 0);
         if (!earnAchievements.isEmpty()) {
-            archiveService.registerArchives(earnAchievements.stream().map(achievement -> achievement.toArchive(dto.getUserId())).collect(Collectors.toList()));
+            archiveService.registerArchives(earnAchievements.stream()
+                    .map(achievement -> achievement.toArchive(dto.getUserId())).collect(Collectors.toList()));
             certification.setAchievements(earnAchievements);
         }
 
@@ -92,7 +92,8 @@ public class CertService {
         // 획득 가능한 업적 Check
         List<Achievements> earnAchievements = achievementsService.checkEarnAchievements(dto.getUserId(), dto.getMungpleId() != 0);
         if (!earnAchievements.isEmpty()) {
-            archiveService.registerArchives(earnAchievements.stream().map(achievement -> achievement.toArchive(dto.getUserId())).collect(Collectors.toList()));
+            archiveService.registerArchives(earnAchievements.stream()
+                    .map(achievement -> achievement.toArchive(dto.getUserId())).collect(Collectors.toList()));
             certification.setAchievements(earnAchievements);
         }
 
@@ -121,8 +122,7 @@ public class CertService {
     }
 
     // 카테고리 별 조회
-    public Slice<Certification> getCertByCategory(int userId, String categoryCode, int currentPage, int pageSize,
-                                                  boolean isDesc) {
+    public Slice<Certification> getCertByCategory(int userId, String categoryCode, int currentPage, int pageSize, boolean isDesc) {
         PageRequest pageRequest = PageRequest.of(currentPage, pageSize, (isDesc) ? Sort.by("registDt").descending() :
                 Sort.by("registDt"));
 
@@ -147,8 +147,9 @@ public class CertService {
 
     public Certification setUserAndLike(int userId, Certification cert) {
         return cert.setUserAndLike(
-                userService.getUserById(cert.getUserId()),
-                likeListService.hasLiked(userId, cert.getCertificationId())
+                userService.getUserById(cert.getUserId()), // USER
+                likeListService.hasLiked(userId, cert.getCertificationId()), // User is Liked?
+                likeListService.getLikeCount(cert.getCertificationId()) // Like Count
         );
     }
 
@@ -182,24 +183,11 @@ public class CertService {
     // 좋아요 Check
     public void like(int userId, int certificationId, int ownerId) throws IOException {
         // 사용자가 해당 Certification 좋아요 눌렀는지 체크.
-        Optional<LikeList> option = likeListService.getLike(userId, certificationId);
-        if (option.isPresent()) { // 좋아요 존재
-            likeListService.delete(option.get());
-            minusLikeCount(certificationId);
-        } else {
+        boolean isLike = LikeListService.likeHashMap.getOrDefault(new LikeList(userId, certificationId), false);
+        if (isLike)  // 좋아요 존재
+            likeListService.delete(userId, certificationId);
+        else
             likeListService.register(userId, certificationId, ownerId);
-            plusLikeCount(certificationId);
-        }
-    }
-
-    // Like Plus Count + 1
-    public void plusLikeCount(int certificationId) {
-        jdbcTemplateRankingRepository.plusLikeCount(certificationId);
-    }
-
-    // Like Minus Count + 1
-    public void minusLikeCount(int certificationId) {
-        jdbcTemplateRankingRepository.minusLikeCount(certificationId);
     }
 
     // Comment Count + 1
