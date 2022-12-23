@@ -75,6 +75,30 @@ public class PhotoService extends CommService {
         }
     }
 
+    public String uploadMungple(int mungpleId, MultipartFile photo) {
+        String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\."); // ex) png, jpg, jpeg
+        String extension = type[type.length - 1];
+
+        if (!extension.equals("png") && !extension.equals("jpg") && !extension.equals("jpeg") && !extension.equals("jfif"))
+            throw new NullPointerException("PHOTO EXTENSION IS WRONG");
+
+        String fileName = mungpleId + "_mungple." + extension;
+        String ncpLink = "https://kr.object.ncloudstorage.com/reward-mungple/" + fileName;
+
+        try {
+            File f = new File(DIR + fileName); // 서버에 저장
+            photo.transferTo(f);
+
+            objectStorageService.uploadObjects("reward-mungple", fileName, DIR + fileName); // Upload NCP
+            f.delete(); // 서버에 저장된 사진 삭제
+
+            ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1); // Cache 무효화
+            return ncpLink;
+        } catch (Exception e) {
+            throw new NullPointerException("PHOTO UPLOAD ERROR");
+        }
+    }
+
     public String uploadProfile(int userId, MultipartFile photo) {
         String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\."); // ex) png, jpg, jpeg
         String extension = type[type.length - 1];

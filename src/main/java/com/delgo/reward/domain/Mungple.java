@@ -1,18 +1,20 @@
 package com.delgo.reward.domain;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 
-@Data
+
+@Getter
 @Entity
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class Mungple {
@@ -34,4 +36,10 @@ public class Mungple {
 
     @CreationTimestamp
     private LocalDateTime registDt;
+
+    public Mungple setPhotoUrl(String photoUrl){
+        this.photoUrl = photoUrl;
+
+        return this;
+    }
 }

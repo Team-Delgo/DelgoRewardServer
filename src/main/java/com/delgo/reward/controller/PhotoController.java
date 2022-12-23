@@ -3,6 +3,7 @@ package com.delgo.reward.controller;
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
 import com.delgo.reward.service.CertService;
+import com.delgo.reward.service.MungpleService;
 import com.delgo.reward.service.PhotoService;
 import com.delgo.reward.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class PhotoController extends CommController {
     private final CertService certService;
     private final UserService userService;
     private final PhotoService photoService;
+    private final MungpleService mungpleService;
 
     /*
      * profile 등록 및 수정 [회원가입 or AccountPage]
@@ -52,6 +54,21 @@ public class PhotoController extends CommController {
 
         String ncpLink = photoService.uploadCertMultipart(certificationId, photo);
         certService.register(certService.getCert(certificationId).setPhotoUrl(ncpLink)); // PhotoUrl 등록
+
+        return SuccessReturn(ncpLink);
+    }
+
+    /*
+     * 멍플 사진 등록 및 수정
+     * Request Data : mungpleId, photo
+     * Response Data : 사진 저장된 URL
+     */
+    @PostMapping(value={"/upload/mungple/{mungpleId}","/upload/mungple"})
+    public ResponseEntity<?> uploadMungplePhoto(@PathVariable Integer mungpleId, @RequestPart(required = false) MultipartFile photo) {
+        if (photo.isEmpty()) return ErrorReturn(ApiCode.PARAM_ERROR);
+
+        String ncpLink = photoService.uploadMungple(mungpleId, photo);
+        mungpleService.register(mungpleService.getMungpleById(mungpleId).setPhotoUrl(ncpLink)); // PhotoUrl 등록
 
         return SuccessReturn(ncpLink);
     }
