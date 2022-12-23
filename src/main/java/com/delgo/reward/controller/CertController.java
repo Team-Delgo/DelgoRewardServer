@@ -95,8 +95,7 @@ public class CertController extends CommController {
     /*
      * 인증 게시글의 좋아요 + 1
      * Request Data : userId, certificationId
-     * - plusLikeCount: JPA 안 쓰고 JDBC_TEMPLATE 사용한 이유
-     * : 업데이트 속도 때문에, JPA로 업데이트 할 경우 너무 느려서 놓치는 요청이 발생.
+     * - ConcurrentHashMap 사용 이유 - 모든 요청 DB Connection 시 감당 불가능
      * Response Data : X
      */
     @PostMapping(value = {"/like/{userId}/{certificationId}", "/like/"})
