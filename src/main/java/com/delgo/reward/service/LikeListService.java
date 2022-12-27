@@ -1,7 +1,6 @@
 package com.delgo.reward.service;
 
 
-
 import com.delgo.reward.comm.fcm.FcmService;
 import com.delgo.reward.domain.like.LikeList;
 import com.delgo.reward.repository.LikeListRepository;
@@ -37,13 +36,25 @@ public class LikeListService {
         return likeHashMap.getOrDefault(new LikeList(userId, certificationId), false);
     }
 
-    public void register(int userId, int certificationId, int ownerId) throws IOException {
+    public void like(int userId, int certificationId, int ownerId) throws IOException {
         likeHashMap.put(new LikeList(userId, certificationId), true);
         fcmService.likePush(ownerId);
     }
 
-    public void delete(int userId, int certificationId) {
+    public void unlike(int userId, int certificationId) {
         likeHashMap.put(new LikeList(userId, certificationId), false);
+    }
+
+    // HashMap에서 특정 User 관련 데이터 삭제.
+    public void deleteUserRelatedLike(int userId) {
+        likeHashMap.keySet().removeIf(like-> like.getUserId().equals(userId)); // HashMap Remove
+        likeListRepository.deleteByUserId(userId); // DB Remove
+    }
+
+    // HashMap에서 특정 Certification 관련 데이터 삭제.
+    public void deleteCertificationRelatedLike(int certificationId) {
+        likeHashMap.keySet().removeIf(like-> like.getCertificationId().equals(certificationId)); // HashMap Remove
+        likeListRepository.deleteByCertificationId(certificationId); // DB Remove
     }
 
     public int getLikeCount(int certificationId) {
