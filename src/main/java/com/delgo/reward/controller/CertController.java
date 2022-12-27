@@ -9,6 +9,7 @@ import com.delgo.reward.dto.certification.LiveCertDTO;
 import com.delgo.reward.dto.certification.ModifyCertDTO;
 import com.delgo.reward.dto.certification.PastCertDTO;
 import com.delgo.reward.service.CertService;
+import com.delgo.reward.service.LikeListService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ public class CertController extends CommController {
 
     private final GeoService geoService;
     private final CertService certService;
+    private final LikeListService likeListService;
 
     /*
      * 인증 등록 [Live]
@@ -138,7 +140,8 @@ public class CertController extends CommController {
         if (!Objects.equals(userId, certification.getUserId()))
             return ErrorReturn(ApiCode.INVALID_USER_ERROR);
 
-        certService.delete(certification);
+        certService.delete(certification); // DB에서 삭제
+        likeListService.deleteCertificationRelatedLike(certificationId);
         return SuccessReturn();
     }
 }
