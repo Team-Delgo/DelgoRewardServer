@@ -16,11 +16,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/account")
 public class AccountController extends CommController {
 
-    private final UserService userService;
-    private final RankingService rankingService;
     private final PetService petService;
+    private final UserService userService;
     private final PointService pointService;
     private final TokenService tokenService;
+    private final RankingService rankingService;
+    private final LikeListService likeListService;
 
     // 알림 정보 수정
 //    @PutMapping(value = {"/notify/{userId}, /notify"})
@@ -61,9 +62,10 @@ public class AccountController extends CommController {
     // 회원탈퇴
     @DeleteMapping("/user/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable Integer userId) {
-        userService.deleteUser(userId);
-        // 랭킹 실시간으로 집계
-        rankingService.rankingByPoint();
+        userService.deleteUser(userId); // USER DELETE
+        likeListService.deleteUserRelatedLike(userId); // USER가 좋아요 누른 DATA 삭제
+        rankingService.rankingByPoint(); // 랭킹 실시간으로 집계
+
         return SuccessReturn();
     }
 
