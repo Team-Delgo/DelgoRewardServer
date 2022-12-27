@@ -185,9 +185,9 @@ public class CertService {
         // 사용자가 해당 Certification 좋아요 눌렀는지 체크.
         boolean isLike = LikeListService.likeHashMap.getOrDefault(new LikeList(userId, certificationId), false);
         if (isLike)  // 좋아요 존재
-            likeListService.delete(userId, certificationId);
+            likeListService.unlike(userId, certificationId);
         else
-            likeListService.register(userId, certificationId, ownerId);
+            likeListService.like(userId, certificationId, ownerId);
     }
 
     // Comment Count + 1
