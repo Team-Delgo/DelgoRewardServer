@@ -33,6 +33,7 @@ public class Mungple {
     private String longitude; // 경도
 
     private String photoUrl; // 사진 url 위치
+    private String detailUrl; // 상세 페이지 url 위치
 
     @CreationTimestamp
     private LocalDateTime registDt;

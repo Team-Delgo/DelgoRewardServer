@@ -1,5 +1,7 @@
 package com.delgo.reward.comm.code;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public enum CategoryCode {
     TOTAL("CA0000","전체",0),
     CA0001("CA0001","산책",10), // 산책
@@ -30,5 +32,11 @@ public enum CategoryCode {
 
     public Integer getPoint(){
         return this.point;
+    }
+
+    // @RequestParam ENUM Parsing
+    @JsonCreator
+    public static CategoryCode from(String s) {
+        return CategoryCode.valueOf(s);
     }
 }
