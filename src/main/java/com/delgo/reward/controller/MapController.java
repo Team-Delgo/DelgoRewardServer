@@ -1,6 +1,7 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.service.MapService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,5 +26,15 @@ public class MapController extends CommController {
     @GetMapping("/{userId}")
     public ResponseEntity getMap(@PathVariable Integer userId) {
         return SuccessReturn(mapService.getMap(userId));
+    }
+
+    /*
+     * Map 멍플 카테고리별로 조회
+     * Request Data : CategoryCode
+     * Response Data : 멍플 List
+     */
+    @GetMapping("/mungple")
+    public ResponseEntity getMapOfMungple(@RequestParam CategoryCode categoryCode) {
+        return SuccessReturn(mapService.getMapOfMungple(categoryCode));
     }
 }
