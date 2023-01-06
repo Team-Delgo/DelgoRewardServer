@@ -45,7 +45,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.antMatchers("/api/fcm/**").permitAll()
 				.antMatchers("/token/reissue").permitAll()
 
+				// delgo-map
 				.antMatchers("/map/mungple").permitAll()
+				.antMatchers("/survey/**").permitAll()
 
 				.antMatchers("/**").authenticated();
 //				.antMatchers("/**").permitAll();
