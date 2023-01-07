@@ -37,7 +37,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 
-    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5'
+    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
 
     implementation 'org.springframework.boot:spring-boot-starter-quartz'
 
@@ -58,6 +58,10 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-admin:6.8.1'
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.2.2'
+
+    // jpg -> webp
+    implementation("com.sksamuel.scrimage:scrimage-core:4.0.32")
+    implementation("com.sksamuel.scrimage:scrimage-webp:4.0.32")
 }
 
 tasks.named('test') {
