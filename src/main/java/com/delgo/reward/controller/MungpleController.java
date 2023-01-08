@@ -2,7 +2,7 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.comm.exception.ApiCode;
+import com.delgo.reward.comm.code.ApiCode;
 import com.delgo.reward.comm.ncp.GeoService;
 import com.delgo.reward.domain.Mungple;
 import com.delgo.reward.dto.MungpleDTO;
