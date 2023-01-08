@@ -24,6 +24,7 @@ public class Mungple {
     private String categoryCode; // 카테고리 코드 ( ex. 카페, 음식점 .. )
 
     private String placeName;
+    private String placeNameEn;
     private String roadAddress; // 도로명 주소
     private String jibunAddress; // 지번 주소
 
