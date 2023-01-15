@@ -42,7 +42,7 @@ public class MungpleService {
 
     // categoryCode로 Mungple 조회
     public List<Mungple> getMungpleByCategoryCode(String categoryCode) {
-        List<Mungple> mungpleList = mungpleRepository.findByCategoryCode(categoryCode);
+        List<Mungple> mungpleList = mungpleRepository.findByCategoryCodeAndIsActive(categoryCode, true);
 
         return mungpleList.stream().sorted(Comparator.comparing(Mungple::getPlaceName)).collect(Collectors.toList());
     }

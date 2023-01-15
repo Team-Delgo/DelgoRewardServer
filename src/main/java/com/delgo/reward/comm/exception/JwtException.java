@@ -7,6 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class BaseException extends Exception{
+public class JwtException extends Exception{
     private ApiCode status;
 }
