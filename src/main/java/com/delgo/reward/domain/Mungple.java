@@ -37,6 +37,8 @@ public class Mungple {
     private String instaUrl; // Instagram url
     private String detailUrl; // 상세 페이지 url
 
+    private boolean isActive; // 활성화 여부
+
     @CreationTimestamp
     private LocalDateTime registDt;
 
