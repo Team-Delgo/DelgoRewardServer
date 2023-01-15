@@ -33,4 +33,6 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
 
     @Query(value = "select count(category_code) from certification where user_id = ? and category_code = ? and mungple_id = ?", nativeQuery = true)
     Integer countByCategory(int userId, String categoryCode, int mungpleId);
+
+    Integer countByUserId(int userId);
 }

@@ -144,6 +144,11 @@ public class CertService {
         return map;
     }
 
+    // 유저별 전체 개수 조회
+    public int getTotalCountByUser(int userId) {
+        return certRepository.countByUserId(userId);
+    }
+
 
     public Certification setUserAndLike(int userId, Certification cert) {
         return cert.setUserAndLike(
