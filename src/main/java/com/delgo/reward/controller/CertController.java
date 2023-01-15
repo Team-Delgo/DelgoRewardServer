@@ -95,6 +95,16 @@ public class CertController extends CommController {
     }
 
     /*
+     * 유저 별 인증 개수 반환
+     * Request Data : userId
+     * Response Data : 총 개수 반환
+     */
+    @GetMapping(value = {"/count/{userId}", "/count/"})
+    public ResponseEntity getTotalCount(@PathVariable Integer userId) {
+        return SuccessReturn(certService.getTotalCountByUser(userId));
+    }
+
+    /*
      * 인증 게시글의 좋아요 + 1
      * Request Data : userId, certificationId
      * - ConcurrentHashMap 사용 이유 - 모든 요청 DB Connection 시 감당 불가능
