@@ -62,6 +62,12 @@ dependencies {
     // jpg -> webp
     implementation("com.sksamuel.scrimage:scrimage-core:4.0.32")
     implementation("com.sksamuel.scrimage:scrimage-webp:4.0.32")
+
+    // kafka chat
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.springframework.kafka:spring-kafka'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+
 }
 
 tasks.named('test') {
