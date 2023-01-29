@@ -87,7 +87,9 @@ public class CertService {
     // Past 등록
     public Certification registerPast(PastCertDTO dto) {
         boolean isMungple = (dto.getMungpleId() != 0);
-        Certification certification = register((isMungple) ? dto.toEntity(mungpleService.getMungpleById(dto.getMungpleId())) : dto.toEntity());
+        Certification certification = register((isMungple)
+                ? dto.toEntity(mungpleService.getMungpleById(dto.getMungpleId())) // 멍플
+                : dto.toEntity()); // 멍플 X
 
         // 획득 가능한 업적 Check
         List<Achievements> earnAchievements = achievementsService.checkEarnAchievements(dto.getUserId(), dto.getMungpleId() != 0);
