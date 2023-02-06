@@ -65,7 +65,7 @@ public class CertService {
         Certification certification = register(dto.toEntity(location));
 
         // 획득 가능한 업적 Check
-        List<Achievements> earnAchievements = achievementsService.checkEarnAchievements(dto.getUserId(), dto.getMungpleId() != 0);
+        List<Achievements> earnAchievements = achievementsService.checkEarnedAchievements(dto.getUserId(), dto.getMungpleId() != 0);
         if (!earnAchievements.isEmpty()) {
             archiveService.registerArchives(earnAchievements.stream()
                     .map(achievement -> achievement.toArchive(dto.getUserId())).collect(Collectors.toList()));
@@ -87,16 +87,15 @@ public class CertService {
     // Past 등록
     public Certification registerPast(PastCertDTO dto) {
         boolean isMungple = (dto.getMungpleId() != 0);
-        Certification certification = register((isMungple)
-                ? dto.toEntity(mungpleService.getMungpleById(dto.getMungpleId())) // 멍플
-                : dto.toEntity()); // 멍플 X
+        Certification certification = register(!isMungple ? dto.toEntity()
+                : dto.toEntity(mungpleService.getMungpleById(dto.getMungpleId())));
 
         // 획득 가능한 업적 Check
-        List<Achievements> earnAchievements = achievementsService.checkEarnAchievements(dto.getUserId(), dto.getMungpleId() != 0);
-        if (!earnAchievements.isEmpty()) {
-            archiveService.registerArchives(earnAchievements.stream()
+        List<Achievements> earnedAchievements = achievementsService.checkEarnedAchievements(dto.getUserId(), dto.getMungpleId() != 0);
+        if (!earnedAchievements.isEmpty()) {
+            archiveService.registerArchives(earnedAchievements.stream()
                     .map(achievement -> achievement.toArchive(dto.getUserId())).collect(Collectors.toList()));
-            certification.setAchievements(earnAchievements);
+            certification.setAchievements(earnedAchievements);
         }
 
         return register(certification);
