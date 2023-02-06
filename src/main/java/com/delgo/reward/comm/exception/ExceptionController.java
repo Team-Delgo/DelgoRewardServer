@@ -72,7 +72,7 @@ public class ExceptionController extends CommController {
     }
 
     @ExceptionHandler
-    public ResponseEntity jwtException(BaseException e){
+    public ResponseEntity jwtException(JwtException e){
         return ErrorReturn(e.getStatus());
     }
 }
