@@ -3,11 +3,9 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
-import com.delgo.reward.comm.ncp.GeoService;
 import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.dto.certification.LiveCertDTO;
+import com.delgo.reward.dto.certification.CertDTO;
 import com.delgo.reward.dto.certification.ModifyCertDTO;
-import com.delgo.reward.dto.certification.PastCertDTO;
 import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.LikeListService;
 import lombok.RequiredArgsConstructor;
@@ -25,35 +23,17 @@ import java.util.Objects;
 @RequestMapping("/certification")
 public class CertController extends CommController {
 
-    private final GeoService geoService;
     private final CertService certService;
     private final LikeListService likeListService;
 
     /*
-     * 인증 등록 [Live]
-     * Request Data : LiveCertDTO
-     * Response Data : 등록한 인증 데이터 반환
-     */
-    @PostMapping("/live")
-    public ResponseEntity registerLive(@Validated @RequestBody LiveCertDTO dto) {
-        // 하루에 같은 카테고리 5번 이상 인증 불가능
-        if (!certService.checkCategoryCountIsFive(dto.getUserId(), dto.getCategoryCode(), true))
-            return ErrorReturn(ApiCode.CERTIFICATION_CATEGPRY_COUNT_ERROR);
-        // 멍플 인증 + 100m 이상 떨어진 곳에서 인증시 인증 불가
-        if (dto.getMungpleId() != 0 && geoService.getDistance(dto.getMungpleId(), dto.getLongitude(), dto.getLatitude()) > 100)
-            return ErrorReturn(ApiCode.TOO_FAR_DISTANCE);
-
-        return SuccessReturn(certService.registerLive(dto));
-    }
-
-    /*
-     * 인증 등록 [Past]
+     * 인증 등록
      * Request Data : PastCertificationDTO
      * Response Data : 등록한 인증 데이터 반환
      */
-    @PostMapping("/past")
-    public ResponseEntity registerPast(@Validated @RequestBody PastCertDTO dto) {
-        return SuccessReturn(certService.registerPast(dto));
+    @PostMapping
+    public ResponseEntity register(@Validated @RequestBody CertDTO dto) {
+        return SuccessReturn(certService.register(dto));
     }
 
     /*
@@ -154,4 +134,34 @@ public class CertController extends CommController {
         likeListService.deleteCertificationRelatedLike(certificationId);
         return SuccessReturn();
     }
+
+    /***Deprecated***
+     /*
+     * 인증 등록 [Live]
+     * Request Data : LiveCertDTO
+     * Response Data : 등록한 인증 데이터 반환
+     */
+//    @PostMapping("/live")
+//    public ResponseEntity registerLive(@Validated @RequestBody LiveCertDTO dto) {
+//        // 하루에 같은 카테고리 5번 이상 인증 불가능
+//        if (!certService.checkCategoryCountIsFive(dto.getUserId(), dto.getCategoryCode(), true))
+//            return ErrorReturn(ApiCode.CERTIFICATION_CATEGPRY_COUNT_ERROR);
+//        // 멍플 인증 + 100m 이상 떨어진 곳에서 인증시 인증 불가
+//        if (dto.getMungpleId() != 0 && geoService.getDistance(dto.getMungpleId(), dto.getLongitude(), dto.getLatitude()) > 100)
+//            return ErrorReturn(ApiCode.TOO_FAR_DISTANCE);
+//
+//        return SuccessReturn(certService.registerLive(dto));
+//    }
+
+    /***Deprecated***
+     /*
+     * 인증 등록 [Past]
+     * Request Data : PastCertificationDTO
+     * Response Data : 등록한 인증 데이터 반환
+     */
+//    @PostMapping("/past")
+//    public ResponseEntity registerPast(@Validated @RequestBody PastCertDTO dto) {
+//        return SuccessReturn(certService.registerPast(dto));
+//    }
+
 }
