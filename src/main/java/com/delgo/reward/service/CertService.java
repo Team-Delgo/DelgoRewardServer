@@ -181,8 +181,8 @@ public class CertService {
     }
 
     // 최근 2개 인증 조회
-    public List<Certification> getTheLastTwoCert(int userId) {
-        return certRepository.findTwoRecentCert(userId).stream()
+    public List<Certification> getRecentCert(int userId, int count) {
+        return certRepository.findRecentCert(userId, count).stream()
                 .peek(cert -> setUserAndLike(userId, cert)).collect(Collectors.toList());
     }
 

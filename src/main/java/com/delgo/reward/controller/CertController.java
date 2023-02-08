@@ -122,9 +122,9 @@ public class CertController extends CommController {
      * Request Data :
      * Response Data : 최근 등록 인증 2개 반환
      */
-    @GetMapping("/main")
-    public ResponseEntity getMainData(@RequestParam Integer userId) {
-        return SuccessReturn(certService.getTheLastTwoCert(userId));
+    @GetMapping("/recent")
+    public ResponseEntity getMainData(@RequestParam Integer userId, @RequestParam Integer count) {
+        return SuccessReturn(certService.getRecentCert(userId, count));
     }
 
     /*
