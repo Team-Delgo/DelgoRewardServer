@@ -29,12 +29,12 @@ public class MapController extends CommController {
     }
 
     /*
-     * Map 멍플 카테고리별로 조회
+     * Map 멍플 카테고리별로 조회 ( CA0000 = 전체 조회 )
      * Request Data : CategoryCode
      * Response Data : 멍플 List
      */
     @GetMapping("/mungple")
-    public ResponseEntity getMapOfMungple(@RequestParam CategoryCode categoryCode) {
-        return SuccessReturn(mapService.getMapOfMungple(categoryCode));
+    public ResponseEntity getMungple(@RequestParam CategoryCode categoryCode) {
+        return SuccessReturn(mapService.getMungple(categoryCode));
     }
 }

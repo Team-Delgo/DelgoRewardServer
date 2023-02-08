@@ -3,11 +3,9 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
-import com.delgo.reward.comm.ncp.GeoService;
 import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.dto.certification.LiveCertDTO;
+import com.delgo.reward.dto.certification.CertDTO;
 import com.delgo.reward.dto.certification.ModifyCertDTO;
-import com.delgo.reward.dto.certification.PastCertDTO;
 import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.LikeListService;
 import lombok.RequiredArgsConstructor;
@@ -25,35 +23,17 @@ import java.util.Objects;
 @RequestMapping("/certification")
 public class CertController extends CommController {
 
-    private final GeoService geoService;
     private final CertService certService;
     private final LikeListService likeListService;
 
     /*
-     * 인증 등록 [Live]
-     * Request Data : LiveCertDTO
-     * Response Data : 등록한 인증 데이터 반환
-     */
-    @PostMapping("/live")
-    public ResponseEntity registerLive(@Validated @RequestBody LiveCertDTO dto) {
-        // 하루에 같은 카테고리 5번 이상 인증 불가능
-        if (!certService.checkCategoryCountIsFive(dto.getUserId(), dto.getCategoryCode(), true))
-            return ErrorReturn(ApiCode.CERTIFICATION_CATEGPRY_COUNT_ERROR);
-        // 멍플 인증 + 100m 이상 떨어진 곳에서 인증시 인증 불가
-        if (dto.getMungpleId() != 0 && geoService.getDistance(dto.getMungpleId(), dto.getLongitude(), dto.getLatitude()) > 100)
-            return ErrorReturn(ApiCode.TOO_FAR_DISTANCE);
-
-        return SuccessReturn(certService.registerLive(dto));
-    }
-
-    /*
-     * 인증 등록 [Past]
+     * 인증 등록
      * Request Data : PastCertificationDTO
      * Response Data : 등록한 인증 데이터 반환
      */
-    @PostMapping("/past")
-    public ResponseEntity registerPast(@Validated @RequestBody PastCertDTO dto) {
-        return SuccessReturn(certService.registerPast(dto));
+    @PostMapping
+    public ResponseEntity register(@Validated @RequestBody CertDTO dto) {
+        return SuccessReturn(certService.register(dto));
     }
 
     /*
@@ -95,6 +75,16 @@ public class CertController extends CommController {
     }
 
     /*
+     * 유저 별 인증 개수 반환
+     * Request Data : userId
+     * Response Data : 총 개수 반환
+     */
+    @GetMapping(value = {"/count/{userId}", "/count/"})
+    public ResponseEntity getTotalCount(@PathVariable Integer userId) {
+        return SuccessReturn(certService.getTotalCountByUser(userId));
+    }
+
+    /*
      * 인증 게시글의 좋아요 + 1
      * Request Data : userId, certificationId
      * - ConcurrentHashMap 사용 이유 - 모든 요청 DB Connection 시 감당 불가능
@@ -112,9 +102,9 @@ public class CertController extends CommController {
      * Request Data :
      * Response Data : 최근 등록 인증 2개 반환
      */
-    @GetMapping("/main")
-    public ResponseEntity getMainData(@RequestParam Integer userId) {
-        return SuccessReturn(certService.getTheLastTwoCert(userId));
+    @GetMapping("/recent")
+    public ResponseEntity getMainData(@RequestParam Integer userId, @RequestParam Integer count) {
+        return SuccessReturn(certService.getRecentCert(userId, count));
     }
 
     /*
@@ -144,4 +134,34 @@ public class CertController extends CommController {
         likeListService.deleteCertificationRelatedLike(certificationId);
         return SuccessReturn();
     }
+
+    /***Deprecated***
+     /*
+     * 인증 등록 [Live]
+     * Request Data : LiveCertDTO
+     * Response Data : 등록한 인증 데이터 반환
+     */
+//    @PostMapping("/live")
+//    public ResponseEntity registerLive(@Validated @RequestBody LiveCertDTO dto) {
+//        // 하루에 같은 카테고리 5번 이상 인증 불가능
+//        if (!certService.checkCategoryCountIsFive(dto.getUserId(), dto.getCategoryCode(), true))
+//            return ErrorReturn(ApiCode.CERTIFICATION_CATEGPRY_COUNT_ERROR);
+//        // 멍플 인증 + 100m 이상 떨어진 곳에서 인증시 인증 불가
+//        if (dto.getMungpleId() != 0 && geoService.getDistance(dto.getMungpleId(), dto.getLongitude(), dto.getLatitude()) > 100)
+//            return ErrorReturn(ApiCode.TOO_FAR_DISTANCE);
+//
+//        return SuccessReturn(certService.registerLive(dto));
+//    }
+
+    /***Deprecated***
+     /*
+     * 인증 등록 [Past]
+     * Request Data : PastCertificationDTO
+     * Response Data : 등록한 인증 데이터 반환
+     */
+//    @PostMapping("/past")
+//    public ResponseEntity registerPast(@Validated @RequestBody PastCertDTO dto) {
+//        return SuccessReturn(certService.registerPast(dto));
+//    }
+
 }

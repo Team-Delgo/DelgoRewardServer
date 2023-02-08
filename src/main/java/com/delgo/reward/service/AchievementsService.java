@@ -10,8 +10,9 @@ import com.delgo.reward.repository.CertRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -62,7 +63,7 @@ public class AchievementsService {
 
     // 달성한 업적 있는지 Check
     @Transactional
-    public List<Achievements> checkEarnAchievements(int userId, boolean isMungple) {
+    public List<Achievements> checkEarnedAchievements(int userId, boolean isMungple) {
         return achievementsRepository.findAchievementsNotEarned(userId, isMungple).stream().map(achievement -> {
             achievement.getAchievementsCondition().forEach(ac -> { // ac.getMungpleId() == 0 -> 일반 인증 조건
                 if (ac.getCount() > getCategoryCount(userId, ac.getCategoryCode(), ac.getMungpleId()))

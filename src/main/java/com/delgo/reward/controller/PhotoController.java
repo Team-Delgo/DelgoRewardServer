@@ -53,7 +53,7 @@ public class PhotoController extends CommController {
         if (photo.isEmpty()) return ErrorReturn(ApiCode.PARAM_ERROR);
 
         String ncpLink = photoService.uploadCertMultipart(certificationId, photo);
-        certService.register(certService.getCert(certificationId).setPhotoUrl(ncpLink)); // PhotoUrl 등록
+        certService.save(certService.getCert(certificationId).setPhotoUrl(ncpLink)); // PhotoUrl 등록
 
         return SuccessReturn(ncpLink);
     }
