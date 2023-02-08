@@ -1,9 +1,13 @@
 package com.delgo.reward.dto.certification;
 
 
-import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.Mungple;
-import lombok.*;
+import com.delgo.reward.domain.certification.Certification;
+import com.delgo.reward.domain.common.Location;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -13,25 +17,28 @@ import javax.validation.constraints.NotNull;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class PastCertDTO {
+public class CertDTO {
     @NotNull private Integer userId;
     @NotBlank private String categoryCode;
 
     @NotNull private Integer mungpleId; // mungpleId == 0이면 mungple 장소 아님.
     @NotBlank private String placeName; // 장소 명
     @NotBlank private String description; // 내용
-    @NotBlank private String address; // 장소 주소 (멍플 아닌 경에 해당 주소로 위도경도 체크해야함.)
+    private String latitude; // 위도
+    private String longitude; // 경도
 
-    public Certification toEntity() {
-        String[] arr = this.address.split(" ");
-        String address = arr[0] + " " + arr[1];
+    public Certification toEntity(Location location) {
         return Certification.builder()
                 .userId(this.userId)
                 .categoryCode(this.categoryCode)
                 .mungpleId(this.mungpleId)
                 .placeName(this.placeName)
                 .description(this.description)
-                .address(address)
+                .address(location.getSIDO() + " " + location.getSIGUGUN())
+                .geoCode(location.getGeoCode()) // 사용자 기준 geoCode
+                .pGeoCode(location.getPGeoCode()) // 사용자 기준 geoCode
+                .latitude(this.latitude) // 사용자한테 입력받은 위도
+                .longitude(this.longitude) // 사용자한테 입력받은 경도
                 .isPhotoChecked(false)
                 .isAchievements(false)
                 .isLive(false)
