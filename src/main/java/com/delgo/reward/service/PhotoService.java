@@ -26,7 +26,7 @@ import java.util.Objects;
 public class PhotoService extends CommService {
     private final ObjectStorageService objectStorageService;
 
-    private final String DIR = "/var/www/delgo-reward-api/"; // dev
+    private final String DIR = "/var/www/reward-backend/"; // dev
 //    private final String DIR = "C:\\testPhoto\\"; // local
 
     // Encoding File Upload
