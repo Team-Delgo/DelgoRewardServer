@@ -36,7 +36,9 @@ public class MapService {
                 "certMungpleList", certifications.stream().filter(c -> c.getMungpleId() != 0).collect(Collectors.toList())); // certMunpleList : 멍플 인증 리스트 ( 주황 테두리 )
     }
 
-    public List<Mungple> getMapOfMungple(CategoryCode categoryCode) {
-        return mungpleService.getMungpleByCategoryCode(categoryCode.getCode());
+    public List<Mungple> getMungple(CategoryCode categoryCode) {
+        return (categoryCode.equals(CategoryCode.TOTAL))
+                ? mungpleService.getMungpleAll()
+                : mungpleService.getMungpleByCategoryCode(categoryCode.getCode());
     }
 }
