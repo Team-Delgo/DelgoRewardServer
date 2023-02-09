@@ -41,7 +41,7 @@ public class CertDTO {
                 .longitude(this.longitude) // 사용자한테 입력받은 경도
                 .isPhotoChecked(false)
                 .isAchievements(false)
-                .isLive(false)
+                .isExpose(false)
                 .build();
     }
 
@@ -61,7 +61,7 @@ public class CertDTO {
                 .longitude(mungple.getLongitude()) // 멍플 경도
                 .isPhotoChecked(false)
                 .isAchievements(false)
-                .isLive(false)
+                .isExpose(false)
                 .build();
     }
 }
