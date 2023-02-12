@@ -42,7 +42,7 @@ public class MapService {
                 "exposedMungpleCertList", exposedCertList.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList())); // 사용자들에게 노출시킬 인증 리스트
     }
 
-    public MultiValueMap<String, List<Certification>> test(){
+    public Map<String, List<Certification>> test(){
 
         return certService.test(6);
     }
