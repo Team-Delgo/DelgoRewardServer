@@ -26,7 +26,8 @@ import java.util.Objects;
 public class PhotoService extends CommService {
     private final ObjectStorageService objectStorageService;
 
-    private final String DIR = "/var/www/reward-backend/"; // dev
+//    private final String DIR = "/var/www/develop-backend/"; // dev
+    private final String DIR = "/var/www/reward-backend/"; // real
 //    private final String DIR = "C:\\testPhoto\\"; // local
 
     // Encoding File Upload
@@ -51,6 +52,7 @@ public class PhotoService extends CommService {
             ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1); // Cache 무효화
             return ncpLink;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new NullPointerException("PHOTO UPLOAD ERROR");
         }
     }
@@ -75,6 +77,7 @@ public class PhotoService extends CommService {
             ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1); // Cache 무효화
             return ncpLink;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new NullPointerException("PHOTO UPLOAD ERROR");
         }
     }
@@ -99,6 +102,7 @@ public class PhotoService extends CommService {
             ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1); // Cache 무효화
             return ncpLink;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new NullPointerException("PHOTO UPLOAD ERROR");
         }
     }
