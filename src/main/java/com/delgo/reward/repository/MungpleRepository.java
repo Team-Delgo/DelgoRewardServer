@@ -15,4 +15,6 @@ public interface MungpleRepository extends JpaRepository<Mungple, Integer>, JpaS
     Optional<Mungple> findByLatitudeAndLongitude(String latitude, String longitude);
 
     List<Mungple> findByCategoryCodeAndIsActive(String categoryCode, boolean isActive);
+
+    List<Mungple> findAllByIsActive(boolean isActive);
 }
