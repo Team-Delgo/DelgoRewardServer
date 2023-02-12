@@ -1,14 +1,17 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.domain.Point;
-import com.delgo.reward.dto.user.*;
+import com.delgo.reward.dto.user.ModifyPetDTO;
+import com.delgo.reward.dto.user.ModifyUserDTO;
+import com.delgo.reward.dto.user.ResetPasswordDTO;
 import com.delgo.reward.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController extends CommController {
 
     private final PetService petService;
+    private final CertService certService;
     private final UserService userService;
     private final PointService pointService;
     private final TokenService tokenService;
@@ -69,10 +73,13 @@ public class AccountController extends CommController {
         return SuccessReturn();
     }
 
-    @GetMapping("/point")
-    public ResponseEntity<?> getPoint(@RequestParam Integer userId){
-        Point point = pointService.getPointByUserId(userId);
-        return SuccessReturn(point);
+    @GetMapping
+    public ResponseEntity<?> getAccount(@RequestParam Integer userId){
+        return SuccessReturn(Map.of(
+                "user",userService.getUserById(userId), // user
+                "totalCount",certService.getTotalCountByUser(userId), // totalCount
+                "mungpleCount",certService.getTotalCountOfMungpleByUser(userId) // mungpleCount
+        ));
     }
 
     @PostMapping(value = {"/logout/{userId}","/logout"})
