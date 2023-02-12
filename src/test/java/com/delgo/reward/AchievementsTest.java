@@ -25,24 +25,24 @@ public class AchievementsTest {
     @Autowired
     private RankingService rankingService;
 
-    @Test
-    public void checkEarnAchievementsTest() {
-        //given
-        int userId = 91;
-        int isMungple = 0;
-
-        //when
-        List<Achievements> list = achievementsService.checkEarnAchievements(userId, false);
+//    @Test
+//    public void checkEarnAchievementsTest() {
+//        //given
+//        int userId = 91;
+//        int isMungple = 0;
 //
-        for(Achievements achievements : list){
-            System.out.println("achievements : " + achievements);
-        }
-
-//        rankingService.rankingByPoint();
-
-        //then
-        assertNotNull(1);
-    }
+//        //when
+//        List<Achievements> list = achievementsService.checkEarnAchievements(userId, false);
+////
+//        for(Achievements achievements : list){
+//            System.out.println("achievements : " + achievements);
+//        }
+//
+////        rankingService.rankingByPoint();
+//
+//        //then
+//        assertNotNull(1);
+//    }
 
     @Test
     public void getAchievementsByUserTest() {

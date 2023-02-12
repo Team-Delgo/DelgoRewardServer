@@ -1,5 +1,8 @@
 package com.delgo.reward.dto.user;
 
+import com.delgo.reward.domain.pet.Pet;
+import com.delgo.reward.domain.user.User;
+import com.delgo.reward.domain.user.UserSocial;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,4 +33,26 @@ public class SignUpDTO {
     private String breed;
     @NotNull
     private LocalDate birthday;
+
+    public User makeUser(String password, String address){
+        return User.builder()
+                .name(userName)
+                .email(email)
+                .password(password)
+                .phoneNo(phoneNo.replaceAll("[^0-9]", ""))
+                .userSocial(UserSocial.D)
+                .address(address)
+                .geoCode(geoCode)
+                .pGeoCode(pGeoCode)
+                .build();
+    }
+
+    public Pet makePet(){
+        return Pet.builder()
+                .name(petName)
+                .breed(breed)
+                .birthday(birthday)
+                .build();
+    }
+
 }

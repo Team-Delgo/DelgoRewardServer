@@ -1,5 +1,7 @@
 package com.delgo.reward;
 
+import com.delgo.reward.comm.code.PCode;
+import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.service.MapService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
@@ -32,5 +37,18 @@ public class MapTest {
 
         //then
         assertNotNull(result);
+    }
+
+    @Test
+    public void test(){
+
+        Map<String, List<List<Certification>>> result = mapService.test();
+
+        List<PCode> pCodeList = new ArrayList<>(Arrays.asList(PCode.values()));
+
+        for(PCode p: pCodeList){
+            System.out.println("PCode: " + p.getPCode() + " cert: " + result.get(p.getPCode()));
+        }
+
     }
 }

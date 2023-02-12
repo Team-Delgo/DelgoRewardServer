@@ -2,6 +2,7 @@ package com.delgo.reward.service;
 
 
 import com.delgo.reward.comm.code.CategoryCode;
+import com.delgo.reward.comm.code.PCode;
 import com.delgo.reward.comm.ncp.ReverseGeoService;
 import com.delgo.reward.domain.achievements.Achievements;
 import com.delgo.reward.domain.certification.Certification;
@@ -11,6 +12,7 @@ import com.delgo.reward.dto.certification.CertDTO;
 import com.delgo.reward.dto.certification.ModifyCertDTO;
 import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.repository.JDBCTemplateRankingRepository;
+import com.google.api.client.util.ArrayMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -18,10 +20,14 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -158,6 +164,20 @@ public class CertService {
     // 노출 가능한 인증 조회
     public List<Certification> getExposedCert(int count) {
         return certRepository.findByIsExpose(count);
+    }
+
+    // TODO: 서울시 경우 송파구 3개 / 그 외 3개 구분 필요
+    public Map<String, List<Certification>> test(int count){
+        Map<String, List<Certification>> certByPGeoCode = new LinkedMultiValueMap<>();
+
+        for(PCode p: PCode.values()){
+            List<Certification> certificationList = certRepository.findByPGeoCode(p.getPCode(), count);
+            if(certificationList.size() > 0){
+                certByPGeoCode.put(p.getPCode(), certificationList);
+            }
+        }
+
+        return certByPGeoCode;
     }
 
     // 좋아요 Check
