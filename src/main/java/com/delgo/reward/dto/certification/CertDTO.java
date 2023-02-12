@@ -1,26 +1,31 @@
 package com.delgo.reward.dto.certification;
 
 
+import com.delgo.reward.domain.Mungple;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.common.Location;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 
 @Getter
-public class LiveCertDTO {
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+public class CertDTO {
     @NotNull private Integer userId;
     @NotBlank private String categoryCode;
 
     @NotNull private Integer mungpleId; // mungpleId == 0이면 mungple 장소 아님.
     @NotBlank private String placeName; // 장소 명
     @NotBlank private String description; // 내용
-    @NotBlank private String photo; // 인코딩 된 사진 파일
-
-    @NotBlank private String latitude; // 위도
-    @NotBlank private String longitude; // 경도
+    private String latitude; // 위도
+    private String longitude; // 경도
 
     public Certification toEntity(Location location) {
         return Certification.builder()
@@ -36,13 +41,27 @@ public class LiveCertDTO {
                 .longitude(this.longitude) // 사용자한테 입력받은 경도
                 .isPhotoChecked(false)
                 .isAchievements(false)
-                .isLive(true)
+                .isExpose(false)
                 .build();
     }
 
-    public LiveCertDTO toLog(){
-        this.photo = "";
-
-        return this;
+    public Certification toEntity(Mungple mungple) {
+        String[] arr = mungple.getJibunAddress().split(" ");
+        String address = arr[0] + " " + arr[1];
+        return Certification.builder()
+                .userId(this.userId)
+                .categoryCode(mungple.getCategoryCode())
+                .mungpleId(this.mungpleId)
+                .placeName(mungple.getPlaceName())
+                .description(this.description)
+                .address(address)
+                .geoCode(mungple.getGeoCode()) // 멍플 geoCode
+                .pGeoCode(mungple.getPGeoCode()) // 멍플 geoCode
+                .latitude(mungple.getLatitude()) // 멍플 위도
+                .longitude(mungple.getLongitude()) // 멍플 경도
+                .isPhotoChecked(false)
+                .isAchievements(false)
+                .isExpose(false)
+                .build();
     }
 }

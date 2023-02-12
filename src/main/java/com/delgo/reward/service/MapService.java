@@ -26,17 +26,20 @@ public class MapService {
     private final WardOfficeService wardOfficeService;
 
     public Map<String, Object> getMap(int userId) {
-        List<Certification> certifications = certService.getLive(userId);  // 라이브 인증 리스트 조회
-        certifications.forEach(c ->c.liked(likeListService.hasLiked(userId, c.getCertificationId()))); // 유저가 좋아요 누른 인증 체크
+        List<Certification> certifications = certService.getCertByUserId(userId);  // 인증 리스트 조회
+        certifications.forEach(c -> c.liked(likeListService.hasLiked(userId, c.getCertificationId()))); // 유저가 좋아요 누른
 
-       return Map.of(
-                "mungpleList", mungpleService.getMungpleAll(), // mungpleList :  멍플 리스트
-                "wardOffice", wardOfficeService.getWardOfficeByGeoCode(userService.getUserById(userId).getGeoCode()), // wardOfficeList : 구군청 위치
-                "certNormalList", certifications.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList()), // certNormalList : 일반 인증 리스트 ( 하얀 테두리 )
-                "certMungpleList", certifications.stream().filter(c -> c.getMungpleId() != 0).collect(Collectors.toList())); // certMunpleList : 멍플 인증 리스트 ( 주황 테두리 )
+        return Map.of(
+                "mungpleList", mungpleService.getMungpleAll(), // 멍플 리스트
+                "wardOffice", wardOfficeService.getWardOfficeByGeoCode(userService.getUserById(userId).getGeoCode()),// 구군청 위치
+                "certNormalList", certifications.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList()), // 일반 인증 리스트
+                "certMungpleList", certifications.stream().filter(c -> c.getMungpleId() != 0).collect(Collectors.toList()), // 멍플 인증 리스트
+                "exposedCertList", certService.getExposedCert(3)); // 사용자들에게 노출시킬 인증 리스트
     }
 
-    public List<Mungple> getMapOfMungple(CategoryCode categoryCode) {
-        return mungpleService.getMungpleByCategoryCode(categoryCode.getCode());
+    public List<Mungple> getMungple(CategoryCode categoryCode) {
+        return (categoryCode.equals(CategoryCode.TOTAL))
+                ? mungpleService.getMungpleAll()
+                : mungpleService.getMungpleByCategoryCode(categoryCode.getCode());
     }
 }

@@ -38,7 +38,7 @@ public class Certification {
     private Boolean isAchievements; // 업적 영향 여부 ( 해당 인증이 등록되었을 때 가지게 된 업적이 있는가?)
 
     private int commentCount; // 댓글 개수
-    private Boolean isLive; // live 인증 , 갤러리 인증인지 구분
+    private Boolean isExpose; // Map에 노출 시키는 인증 구분. ( 초기엔 운영진이 직접 추가 예정 )
 
     @Transient private User user;
     @Transient private List<Achievements> achievements;
