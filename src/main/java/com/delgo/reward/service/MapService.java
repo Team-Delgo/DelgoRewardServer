@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.MultiValueMap;
 
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,11 @@ public class MapService {
                 "mungpleCertList", certifications.stream().filter(c -> c.getMungpleId() != 0).collect(Collectors.toList()), // 멍플 인증 리스트
                 "exposedNormalCertList", exposedCertList.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList()), // 사용자들에게 노출시킬 인증 리스트
                 "exposedMungpleCertList", exposedCertList.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList())); // 사용자들에게 노출시킬 인증 리스트
+    }
+
+    public MultiValueMap<String, List<Certification>> test(int userId){
+
+        return certService.test(6);
     }
 
     public List<Mungple> getMungple(CategoryCode categoryCode) {
