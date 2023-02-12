@@ -29,12 +29,16 @@ public class MapService {
         List<Certification> certifications = certService.getCertByUserId(userId);  // 인증 리스트 조회
         certifications.forEach(c -> c.liked(likeListService.hasLiked(userId, c.getCertificationId()))); // 유저가 좋아요 누른
 
+        List<Certification> exposedCertList = certService.getExposedCert(3);  // 노출시킬 인증 리스트 조회
+        exposedCertList.forEach(c -> c.liked(likeListService.hasLiked(userId, c.getCertificationId())));
+
         return Map.of(
                 "mungpleList", mungpleService.getMungpleAll(), // 멍플 리스트
                 "wardOffice", wardOfficeService.getWardOfficeByGeoCode(userService.getUserById(userId).getGeoCode()),// 구군청 위치
-                "certNormalList", certifications.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList()), // 일반 인증 리스트
-                "certMungpleList", certifications.stream().filter(c -> c.getMungpleId() != 0).collect(Collectors.toList()), // 멍플 인증 리스트
-                "exposedCertList", certService.getExposedCert(3)); // 사용자들에게 노출시킬 인증 리스트
+                "normalCertList", certifications.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList()), // 일반 인증 리스트
+                "mungpleCertList", certifications.stream().filter(c -> c.getMungpleId() != 0).collect(Collectors.toList()), // 멍플 인증 리스트
+                "exposedNormalCertList", exposedCertList.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList()), // 사용자들에게 노출시킬 인증 리스트
+                "exposedMungpleCertList", exposedCertList.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList())); // 사용자들에게 노출시킬 인증 리스트
     }
 
     public List<Mungple> getMungple(CategoryCode categoryCode) {
