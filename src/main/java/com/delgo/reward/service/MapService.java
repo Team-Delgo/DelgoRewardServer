@@ -33,7 +33,8 @@ public class MapService {
         List<Certification> exposedCertList = certService.getExposedCert(3);  // 노출시킬 인증 리스트 조회
         exposedCertList.forEach(c -> c.liked(likeListService.hasLiked(userId, c.getCertificationId())));
 
-        return Map.of(
+        return (userId == 0) ? Map.of("mungpleList", mungpleService.getMungpleAll()) // 멍플 리스트
+                : Map.of(
                 "mungpleList", mungpleService.getMungpleAll(), // 멍플 리스트
                 "wardOffice", wardOfficeService.getWardOfficeByGeoCode(userService.getUserById(userId).getGeoCode()),// 구군청 위치
                 "normalCertList", certifications.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList()), // 일반 인증 리스트

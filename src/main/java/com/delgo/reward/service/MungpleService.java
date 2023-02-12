@@ -29,7 +29,7 @@ public class MungpleService {
 
     // 전체 Mungple 리스트 조회
     public List<Mungple> getMungpleAll() {
-        List<Mungple> mungpleList = mungpleRepository.findAll();
+        List<Mungple> mungpleList = mungpleRepository.findAllByIsActive(true);
 
         return mungpleList.stream().sorted(Comparator.comparing(Mungple::getCategoryCode)).collect(Collectors.toList());
     }

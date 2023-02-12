@@ -1,5 +1,6 @@
 package com.delgo.reward.domain.user;
 
+import com.delgo.reward.domain.Point;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -53,6 +54,11 @@ public class User {
     private boolean isNotify;
 
     private String profile;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="userId")
+    private Point point;
+
 
 //    // 권한
 //    @JsonIgnore
