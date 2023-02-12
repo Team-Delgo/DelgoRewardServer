@@ -167,7 +167,6 @@ public class CertService {
     }
 
     // TODO: 서울시 경우 송파구 3개 / 그 외 3개 구분 필요
-    // TODO: 유저별 좋아요 여부 확인 필요한지
     public MultiValueMap<String, List<Certification>> test(int count){
         MultiValueMap<String, List<Certification>> certByPGeoCode = new LinkedMultiValueMap<>();
         List<PCode> pCodeList = new ArrayList<>(Arrays.asList(PCode.values()));
