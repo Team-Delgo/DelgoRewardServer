@@ -2,9 +2,9 @@
 spring:
   datasource:
 #    url: jdbc:mariadb://101.101.208.202:3306/delgo_reward // DB 추가되면 변경
-    url: ***********************
-    username: **********
-    password: **********
+    url: jdbc:mariadb://101.101.208.202:3306/delgo_reward
+    username: delgo
+    password: Zlzl2022!
     driverClassName: org.mariadb.jdbc.Driver
     hikari:
       connectionTimeout: 30000 #30000ms
@@ -20,6 +20,12 @@ spring:
     multipart:
       maxFileSize: 10MB
       maxRequestSize: 12MB
+  kafka:
+     consumer:
+        bootstrap-servers: localhost:9092 # 컨슈머 서버 주소
+        group-id: tester
+     producer:
+        bootstrap-servers: localhost:9092 # 프로듀서 서버 주소
 
 server:
   port: 8081
