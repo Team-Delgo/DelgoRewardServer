@@ -129,6 +129,11 @@ public class CertService {
         return certRepository.countByUserId(userId);
     }
 
+    // 유저별 전체 멍플 개수 조회
+    public int getTotalCountOfMungpleByUser(int userId) {
+        return certRepository.countOfMungpleByUser(userId);
+    }
+
 
     public Certification setUserAndLike(int userId, Certification cert) {
         return cert.setUserAndLike(
