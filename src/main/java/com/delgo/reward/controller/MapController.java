@@ -29,9 +29,9 @@ public class MapController extends CommController {
     }
 
     // 시, 도, 광역시 기준 6개 노출(서울특별시 기준 송파구 3개 외 지역 3개)
-    @GetMapping("/test/{userId}")
-    public ResponseEntity test(@PathVariable Integer userId){
-        return SuccessReturn(mapService.test(userId));
+    @GetMapping("/test")
+    public ResponseEntity test(){
+        return SuccessReturn(mapService.test());
     }
 
     /*
