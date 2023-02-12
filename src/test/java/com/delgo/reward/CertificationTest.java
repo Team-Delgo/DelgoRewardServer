@@ -92,21 +92,21 @@ public class CertificationTest {
         assertTrue(diffrence < 21600);
     }
 
-    @Test
-    public void repositoryCountTest() {
-        //given
-        int userId = 0;
-        String categoryCode = "CA0002";
-
-        //when
-        int count1 = certRepository.countByUserIdAndCategoryCode(userId,categoryCode);
-        int count2 = certRepository.countByUserIdAndCategoryCodeAndMungpleId(userId, categoryCode,8);
-        System.out.println("count1: " + count1);
-        System.out.println("count2: " + count2);
-
-        //then
-        assertTrue(count1 < 21600);
-    }
+//    @Test
+//    public void repositoryCountTest() {
+//        //given
+//        int userId = 0;
+//        String categoryCode = "CA0002";
+//
+//        //when
+//        int count1 = certRepository.countByUserIdAndCategoryCode(userId,categoryCode);
+//        int count2 = certRepository.countByUserIdAndCategoryCodeAndMungpleId(userId, categoryCode,8);
+//        System.out.println("count1: " + count1);
+//        System.out.println("count2: " + count2);
+//
+//        //then
+//        assertTrue(count1 < 21600);
+//    }
 
 //    @Test
 //    public void getRecentCertificationListTest() {

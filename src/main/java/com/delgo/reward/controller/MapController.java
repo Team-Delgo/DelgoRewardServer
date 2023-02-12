@@ -28,6 +28,12 @@ public class MapController extends CommController {
         return SuccessReturn(mapService.getMap(userId));
     }
 
+    // 시, 도, 광역시 기준 6개 노출(서울특별시 기준 송파구 3개 외 지역 3개)
+    @GetMapping("/test/{userId}")
+    public ResponseEntity test(@PathVariable Integer userId){
+        return SuccessReturn(mapService.test(userId));
+    }
+
     /*
      * Map 멍플 카테고리별로 조회 ( CA0000 = 전체 조회 )
      * Request Data : CategoryCode
