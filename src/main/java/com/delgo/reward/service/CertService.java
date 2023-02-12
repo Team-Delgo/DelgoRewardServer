@@ -167,14 +167,13 @@ public class CertService {
     }
 
     // TODO: 서울시 경우 송파구 3개 / 그 외 3개 구분 필요
-    public MultiValueMap<String, List<Certification>> test(int count){
-        MultiValueMap<String, List<Certification>> certByPGeoCode = new LinkedMultiValueMap<>();
-        List<PCode> pCodeList = new ArrayList<>(Arrays.asList(PCode.values()));
+    public Map<String, List<Certification>> test(int count){
+        Map<String, List<Certification>> certByPGeoCode = new LinkedMultiValueMap<>();
 
-        for(PCode p: pCodeList){
+        for(PCode p: PCode.values()){
             List<Certification> certificationList = certRepository.findByPGeoCode(p.getPCode(), count);
             if(certificationList.size() > 0){
-                certByPGeoCode.add(p.getPCode(), certificationList);
+                certByPGeoCode.put(p.getPCode(), certificationList);
             }
         }
 

@@ -41,9 +41,8 @@ public class MapTest {
 
     @Test
     public void test(){
-        int userId = 0;
 
-        Map<String, List<List<Certification>>> result = mapService.test(userId);
+        Map<String, List<List<Certification>>> result = mapService.test();
 
         List<PCode> pCodeList = new ArrayList<>(Arrays.asList(PCode.values()));
 
