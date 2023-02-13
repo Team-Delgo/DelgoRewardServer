@@ -2,11 +2,7 @@ package com.delgo.reward.comm.code;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-public enum PCode {
+public enum PGeoCode {
     P101000("101000", "서울시"),
     P102000("102000", "경기도"),
     P103000("103000", "광주광역시"),
@@ -24,16 +20,16 @@ public enum PCode {
     P115000("115000", "충청남도"),
     P116000("116000", "제주도");
 
-    private final String pCode;
+    private final String pGeoCode;
     private final String codeDesc;
 
-    PCode(String pCode, String codeDesc){
-        this.pCode = pCode;
+    PGeoCode(String pGeoCode, String codeDesc){
+        this.pGeoCode = pGeoCode;
         this.codeDesc = codeDesc;
     }
 
-    public String getPCode(){
-        return this.pCode;
+    public String getPGeoCode(){
+        return this.pGeoCode;
     }
     public String getCodeDesc() {
         return this.codeDesc;
@@ -41,7 +37,7 @@ public enum PCode {
 
     // @RequestParam ENUM Parsing
     @JsonCreator
-    public static PCode from(String s) {
-        return PCode.valueOf(s);
+    public static PGeoCode from(String s) {
+        return PGeoCode.valueOf(s);
     }
 }

@@ -1,6 +1,6 @@
 package com.delgo.reward;
 
-import com.delgo.reward.comm.code.PCode;
+import com.delgo.reward.comm.code.PGeoCode;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.service.MapService;
 import org.junit.Test;
@@ -42,12 +42,12 @@ public class MapTest {
     @Test
     public void test(){
 
-        Map<String, List<List<Certification>>> result = mapService.test();
+        Map<String, List<Certification>> result = mapService.test();
 
-        List<PCode> pCodeList = new ArrayList<>(Arrays.asList(PCode.values()));
+        List<PGeoCode> pGeoCodeList = new ArrayList<>(Arrays.asList(PGeoCode.values()));
 
-        for(PCode p: pCodeList){
-            System.out.println("PCode: " + p.getPCode() + " cert: " + result.get(p.getPCode()));
+        for(PGeoCode p: pGeoCodeList){
+            System.out.println("PCode: " + p.getPGeoCode() + " cert: " + result.get(p.getPGeoCode()));
         }
 
     }
