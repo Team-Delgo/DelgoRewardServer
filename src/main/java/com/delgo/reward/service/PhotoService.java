@@ -8,6 +8,7 @@ import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.webp.WebpWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,9 +31,8 @@ public class PhotoService extends CommService {
     private final MungpleService mungpleService;
     private final ObjectStorageService objectStorageService;
 
-//    private final String DIR = "/var/www/develop-backend/"; // dev
-    private final String DIR = "/var/www/reward-backend/"; // real
-//    private final String DIR = "C:\\testPhoto\\"; // local
+    @Value("${config.photoDir}")
+    String DIR;
 
     // Encoding File Upload
     public String uploadCertEncodingFile(int certificationId, String photoUrl) {
@@ -62,6 +62,8 @@ public class PhotoService extends CommService {
     }
 
     public String uploadCertMultipart(int certificationId, MultipartFile photo) {
+
+        log.info("dir :{}", DIR);
         String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\."); // ex) png, jpg, jpeg
         String extension = type[type.length - 1];
 
