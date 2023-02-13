@@ -100,13 +100,23 @@ public class CertController extends CommController {
     }
 
     /*
-     * 가장 최근 등록한 인증 반환 [ Main ]
-     * Request Data :
-     * Response Data : 최근 등록 인증 2개 반환
+     * 가장 최근 등록한 인증 반환
+     * Request Data : userId, count(N)
+     * Response Data : 최근 등록 인증 N개 반환
      */
     @GetMapping("/recent")
-    public ResponseEntity getMainData(@RequestParam Integer userId, @RequestParam Integer count) {
+    public ResponseEntity getRecentData(@RequestParam Integer userId, @RequestParam Integer count) {
         return SuccessReturn(certService.getRecentCert(userId, count));
+    }
+
+    /*
+     * 특정 Mungple 관련 인증 반환
+     * Request Data : mungpleId
+     * Response Data : 특정 Mungple 관련 인증 반환
+     */
+    @GetMapping("/mungple")
+    public ResponseEntity getMungplePagingData(@RequestParam Integer userId, @RequestParam Integer mungpleId, @RequestParam Integer currentPage, @RequestParam Integer pageSize) {
+        return SuccessReturn(certService.getCertByMungpleId(userId, mungpleId, currentPage, pageSize, true));
     }
 
     /*

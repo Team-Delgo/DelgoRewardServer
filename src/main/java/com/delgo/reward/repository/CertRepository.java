@@ -33,6 +33,9 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @Query(value = "select * from certification where user_id  not in (select ban_user_id from ban_list where user_id = ?)", nativeQuery = true)
     Slice<Certification> findAllByPaging(int userId, Pageable pageable);
 
+    @Query(value = "select * from certification where mungple_id = ?", nativeQuery = true)
+    Slice<Certification> findMungpleByPaging(int mungpleId, Pageable pageable);
+
     @Query(value = "select * from certification where user_id  not in (select ban_user_id from ban_list where user_id = ?) order by regist_dt desc limit ?", nativeQuery = true)
     List<Certification> findRecentCert(int userId, int count);
 
