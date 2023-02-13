@@ -4,7 +4,6 @@ package com.delgo.reward.service;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.user.ModifyUserDTO;
-import com.delgo.reward.dto.user.UserInfoDTO;
 import com.delgo.reward.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -122,9 +121,7 @@ public class UserService {
     }
 
     public User changePhoto(int userId, String ncpLink){
-        User user = getUserById(userId);
-        user.setProfile(ncpLink);
-        return userRepository.save(user);
+        return getUserById(userId).setProfile(ncpLink);
     }
 
     public User changeUserInfo(ModifyUserDTO modifyUserDTO) {

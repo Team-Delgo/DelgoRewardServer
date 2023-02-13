@@ -3,7 +3,6 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
-import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.dto.certification.CertDTO;
 import com.delgo.reward.dto.certification.ModifyCertDTO;
 import com.delgo.reward.service.CertService;
@@ -43,6 +42,9 @@ public class CertController extends CommController {
      */
     @PutMapping
     public ResponseEntity modify(@Validated @RequestBody ModifyCertDTO dto) {
+        if (!Objects.equals(dto.getUserId(), certService.getCert(dto.getCertificationId()).getUserId()))
+            return ErrorReturn(ApiCode.INVALID_USER_ERROR);
+
         return SuccessReturn(certService.modify(dto));
     }
 
@@ -125,12 +127,10 @@ public class CertController extends CommController {
      */
     @DeleteMapping(value = {"/{userId}/{certificationId}"})
     public ResponseEntity delete(@PathVariable Integer userId, @PathVariable Integer certificationId) {
-        Certification certification = certService.getCert(certificationId);
-
-        if (!Objects.equals(userId, certification.getUserId()))
+        if (!Objects.equals(userId, certService.getCert(certificationId).getUserId()))
             return ErrorReturn(ApiCode.INVALID_USER_ERROR);
 
-        certService.delete(certification); // DB에서 삭제
+        certService.delete(certificationId); // DB에서 삭제
         likeListService.deleteCertificationRelatedLike(certificationId);
         return SuccessReturn();
     }
