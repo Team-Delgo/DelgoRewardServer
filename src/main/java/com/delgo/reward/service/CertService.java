@@ -2,7 +2,8 @@ package com.delgo.reward.service;
 
 
 import com.delgo.reward.comm.code.CategoryCode;
-import com.delgo.reward.comm.code.PCode;
+import com.delgo.reward.comm.code.GeoCode;
+import com.delgo.reward.comm.code.PGeoCode;
 import com.delgo.reward.comm.ncp.ReverseGeoService;
 import com.delgo.reward.domain.achievements.Achievements;
 import com.delgo.reward.domain.certification.Certification;
@@ -21,16 +22,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
@@ -171,14 +171,22 @@ public class CertService {
         return certRepository.findByIsExpose(count);
     }
 
-    // TODO: 서울시 경우 송파구 3개 / 그 외 3개 구분 필요
     public Map<String, List<Certification>> test(int count){
-        Map<String, List<Certification>> certByPGeoCode = new LinkedMultiValueMap<>();
+        Map<String, List<Certification>> certByPGeoCode = new ArrayMap<>();
+        List<Certification> certificationList = new ArrayList<>();
 
-        for(PCode p: PCode.values()){
-            List<Certification> certificationList = certRepository.findByPGeoCode(p.getPCode(), count);
+        for(PGeoCode p: PGeoCode.values()){
+            if(p.getPGeoCode().equals(PGeoCode.P101000.getPGeoCode())){
+                List<Certification> certificationListOfSongPa = certRepository.findByGeoCode(GeoCode.C101180.getGeoCode(), 3);
+                List<Certification> certificationListNotOfSongPa = certRepository.findByPGeoCodeExceptGeoCode(p.getPGeoCode(), GeoCode.C101180.getGeoCode(), 3);
+
+                certificationList = Stream.concat(certificationListOfSongPa.stream(), certificationListNotOfSongPa.stream())
+                        .collect(Collectors.toList());
+            } else {
+                certificationList = certRepository.findByPGeoCode(p.getPGeoCode(), count);
+            }
             if(certificationList.size() > 0){
-                certByPGeoCode.put(p.getPCode(), certificationList);
+                certByPGeoCode.put(p.getPGeoCode(), certificationList);
             }
         }
 
