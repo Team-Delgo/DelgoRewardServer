@@ -21,11 +21,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -55,8 +52,6 @@ public class CertService {
     private final CertRepository certRepository;
     private final JDBCTemplateRankingRepository jdbcTemplateRankingRepository;
 
-    private final LocalDateTime start = LocalDate.now().atTime(0, 0, 0);
-    private final LocalDateTime end = LocalDate.now().atTime(0, 0, 0).plusDays(1);
 
     // Certification DB에 저장
     public Certification save(Certification certification) {
@@ -83,17 +78,17 @@ public class CertService {
         // 랭킹 실시간으로 집계
         rankingService.rankingByPoint();
 
-        return save(certification);
+        return certification;
     }
 
     // Certification 수정
     public Certification modify(ModifyCertDTO dto) {
-        return certRepository.save(getCert(dto.getCertificationId()).modify(dto.getDescription()));
+        return getCert(dto.getCertificationId()).modify(dto.getDescription());
     }
 
     // Certification 삭제
-    public void delete(Certification certification) {
-        certRepository.delete(certification);
+    public void delete(int certificationId) {
+        certRepository.deleteById(certificationId);
     }
 
     // 전체 Certification 리스트 조회
