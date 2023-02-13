@@ -8,6 +8,7 @@ import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.webp.WebpWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,11 +25,14 @@ import java.util.Objects;
 @Transactional
 @RequiredArgsConstructor
 public class PhotoService extends CommService {
+
+    private final CertService certService;
+    private final UserService userService;
+    private final MungpleService mungpleService;
     private final ObjectStorageService objectStorageService;
 
-//    private final String DIR = "/var/www/develop-backend/"; // dev
-    private final String DIR = "/var/www/reward-backend/"; // real
-//    private final String DIR = "C:\\testPhoto\\"; // local
+    @Value("${config.photoDir}")
+    String DIR;
 
     // Encoding File Upload
     public String uploadCertEncodingFile(int certificationId, String photoUrl) {
@@ -58,6 +62,8 @@ public class PhotoService extends CommService {
     }
 
     public String uploadCertMultipart(int certificationId, MultipartFile photo) {
+
+        log.info("dir :{}", DIR);
         String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\."); // ex) png, jpg, jpeg
         String extension = type[type.length - 1];
 
@@ -75,6 +81,8 @@ public class PhotoService extends CommService {
             webpFile.delete(); // 서버에 저장된 사진.webp 삭제
 
             ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1); // Cache 무효화
+            certService.getCert(certificationId).setPhotoUrl(ncpLink); // DB에 저장.
+
             return ncpLink;
         } catch (Exception e) {
             e.printStackTrace();
@@ -100,6 +108,8 @@ public class PhotoService extends CommService {
             webpFile.delete();
 
             ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1); // Cache 무효화
+            mungpleService.getMungpleById(mungpleId).setPhotoUrl(ncpLink);
+
             return ncpLink;
         } catch (Exception e) {
             e.printStackTrace();
@@ -107,7 +117,7 @@ public class PhotoService extends CommService {
         }
     }
 
-    public String uploadMungpleNote(MultipartFile photo) {
+    public String uploadMungpleNote(int mungpleId, MultipartFile photo) {
         String[] photoName = photo.getOriginalFilename().split("\\.");
 
         String fileName = photoName[0] + ".webp";
@@ -124,6 +134,8 @@ public class PhotoService extends CommService {
             webpFile.delete();
 
             ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1); // Cache 무효화
+            mungpleService.getMungpleById(mungpleId).setDetailUrl(ncpLink);
+
             return ncpLink;
         } catch (Exception e) {
             throw new NullPointerException("PHOTO UPLOAD ERROR");
@@ -149,6 +161,8 @@ public class PhotoService extends CommService {
             webpFile.delete();
 
             ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1);   // Cache 무효화
+            userService.changePhoto(userId, ncpLink);
+
             return ncpLink;
         } catch (Exception e) {
             return "error:" + e.getMessage();

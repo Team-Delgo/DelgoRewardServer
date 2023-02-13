@@ -1,10 +1,11 @@
 # spring MariaDB Connect
 spring:
+  profiles:
+    active: local
   datasource:
-#    url: jdbc:mariadb://101.101.208.202:3306/delgo_reward // DB 추가되면 변경
-    url: jdbc:mariadb://101.101.208.202:3306/delgo_reward
-    username: delgo
-    password: Zlzl2022!
+    url: *************
+    username: *************
+    password: *************
     driverClassName: org.mariadb.jdbc.Driver
     hikari:
       connectionTimeout: 30000 #30000ms
@@ -30,6 +31,27 @@ spring:
 server:
   port: 8081
 
+---
+spring:
+  profiles: local
+
 config:
-#  driverLocation: C:\\chrome\\chromedriver.exe #Local
-  driverLocation: /var/www/chrome/chromedriver #Dev
+  driverLocation: C:\\chrome\\chromedriver.exe
+  photoDir: C:\\testPhoto\\
+
+---
+spring:
+  profiles: dev
+
+config:
+  driverLocation: /var/www/chrome/chromedriver
+  photoDir: /var/www/develop-backend/
+
+
+---
+spring:
+  profiles: real
+
+config:
+  driverLocation: /var/www/chrome/chromedriver
+  photoDir: /var/www/reward-backend/
