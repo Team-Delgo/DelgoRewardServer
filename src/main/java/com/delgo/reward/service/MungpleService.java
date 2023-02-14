@@ -57,4 +57,9 @@ public class MungpleService {
     public String getMungpleAddress(int mungpleId){
         return getMungpleById(mungpleId).getRoadAddress();
     }
+
+    // 인증 개수 많은 멍플 조회
+    public List<Mungple> getMungpleOfMostCount(int count){
+        return mungpleRepository.findMungpleOfMostCount(count);
+    }
 }
