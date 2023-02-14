@@ -14,6 +14,7 @@ import java.util.List;
 @Getter
 @Entity
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class Certification {

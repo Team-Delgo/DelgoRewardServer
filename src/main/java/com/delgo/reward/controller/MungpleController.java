@@ -58,4 +58,14 @@ public class MungpleController extends CommController {
 
         return SuccessReturn(mungpleList);
     }
+
+    /*
+     * 인증 개수 많은 순으로 정렬해서 반환 ( 추후 광고 관련 코드 넣을 예정 )
+     * Request Data : count
+     * Response Data :
+     */
+    @GetMapping("/top")
+    public ResponseEntity getTopData(@RequestParam Integer count) {
+        return SuccessReturn(mungpleService.getMungpleOfMostCount(count));
+    }
 }

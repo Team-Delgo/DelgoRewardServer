@@ -102,6 +102,19 @@ public class CertService {
         return certifications;
     }
 
+    // mungpleId로 Certification 조회
+    public Slice<Certification> getCertByMungpleId(int userId, int mungpleId, int currentPage, int pageSize, boolean isDesc) {
+        PageRequest pageRequest = (isDesc)
+                ? PageRequest.of(currentPage, pageSize, Sort.by("regist_dt").descending()) // 내림차순 정렬
+                : PageRequest.of(currentPage, pageSize, Sort.by("regist_dt")); // 오름차순 정렬
+
+        Slice<Certification> certifications = certRepository.findMungpleByPaging(mungpleId, pageRequest);
+        if(userId != 0) certifications.getContent().forEach(cert -> setUserAndLike(userId, cert));
+
+        return certifications;
+    }
+
+
     // 카테고리 별 조회
     public Slice<Certification> getCertByCategory(int userId, String categoryCode, int currentPage, int pageSize, boolean isDesc) {
         PageRequest pageRequest = PageRequest.of(currentPage, pageSize, (isDesc) ? Sort.by("registDt").descending() :
@@ -133,15 +146,6 @@ public class CertService {
     // 유저별 전체 멍플 개수 조회
     public int getTotalCountOfMungpleByUser(int userId) {
         return certRepository.countOfMungpleByUser(userId);
-    }
-
-
-    public Certification setUserAndLike(int userId, Certification cert) {
-        return cert.setUserAndLike(
-                userService.getUserById(cert.getUserId()), // USER
-                likeListService.hasLiked(userId, cert.getCertificationId()), // User is Liked?
-                likeListService.getLikeCount(cert.getCertificationId()) // Like Count
-        );
     }
 
     // Id로 Certification 조회
@@ -187,6 +191,15 @@ public class CertService {
 
         return certByPGeoCode;
     }
+
+    public Certification setUserAndLike(int userId, Certification cert) {
+        return cert.setUserAndLike(
+                userService.getUserById(cert.getUserId()), // USER
+                likeListService.hasLiked(userId, cert.getCertificationId()), // User is Liked?
+                likeListService.getLikeCount(cert.getCertificationId()) // Like Count
+        );
+    }
+
 
     // 좋아요 Check
     public void like(int userId, int certificationId, int ownerId) throws IOException {
