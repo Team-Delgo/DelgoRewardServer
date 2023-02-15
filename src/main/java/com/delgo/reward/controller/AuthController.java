@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -79,7 +80,10 @@ public class AuthController extends CommController {
 
     // 인증번호 확인
     @GetMapping("/sms/check")
-    public ResponseEntity<?> randNumCheck(@RequestParam Integer smsId, @RequestParam String enterNum) {
+        public ResponseEntity<?> randNumCheck(@RequestParam Integer smsId, @RequestParam String enterNum) {
+            if(Objects.equals(enterNum, "9999")) // 9999로 무조건 되는 코드 추가
+                return SuccessReturn();
+
         if (enterNum.isBlank()) {
             return ErrorReturn(ApiCode.PARAM_ERROR);
         }
