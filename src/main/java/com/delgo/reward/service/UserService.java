@@ -125,27 +125,27 @@ public class UserService {
     }
 
     public User changeUserInfo(ModifyUserDTO modifyUserDTO) {
-        User originUser = getUserByEmail(modifyUserDTO.getEmail());
+        User user = getUserById(modifyUserDTO.getUserId());
 
         if (modifyUserDTO.getName() != null)
-            originUser.setName(modifyUserDTO.getName());
+            user.setName(modifyUserDTO.getName());
 
         if (modifyUserDTO.getProfileUrl() != null)
-            originUser.setProfile(modifyUserDTO.getProfileUrl());
+            user.setProfile(modifyUserDTO.getProfileUrl());
 
         if (modifyUserDTO.getGeoCode() != null && modifyUserDTO.getPGeoCode() != null) {
-            originUser.setGeoCode(modifyUserDTO.getGeoCode());
-            originUser.setPGeoCode(modifyUserDTO.getPGeoCode());
+            user.setGeoCode(modifyUserDTO.getGeoCode());
+            user.setPGeoCode(modifyUserDTO.getPGeoCode());
 
             // 주소 설정
             String address = (modifyUserDTO.getGeoCode().equals("0"))  // 세종시는 구가 없음.
                     ? codeService.getAddress(modifyUserDTO.getPGeoCode(), true)
                     : codeService.getAddress(modifyUserDTO.getGeoCode(), false);
-            originUser.setAddress(address);
+            user.setAddress(address);
 
+            jdbcTemplatePointRepository.changeGeoCode(user.getUserId(), modifyUserDTO.getGeoCode());
         }
 
-        jdbcTemplatePointRepository.changeGeoCode(originUser.getUserId(), modifyUserDTO.getGeoCode());
-        return userRepository.save(originUser);
+        return user;
     }
 }
