@@ -22,7 +22,6 @@ public class AccountController extends CommController {
     private final PetService petService;
     private final CertService certService;
     private final UserService userService;
-    private final PointService pointService;
     private final TokenService tokenService;
     private final RankingService rankingService;
     private final LikeListService likeListService;
@@ -41,7 +40,7 @@ public class AccountController extends CommController {
 
     // 유저 정보 수정
     @PutMapping("/user")
-    public ResponseEntity<?> changePetInfo(@Validated @RequestBody ModifyUserDTO modifyUserDTO) {
+    public ResponseEntity<?> changeUserInfo(@Validated @RequestBody ModifyUserDTO modifyUserDTO) {
         userService.changeUserInfo(modifyUserDTO);
         // 랭킹 실시간으로 집계
         rankingService.rankingByPoint();

@@ -1,9 +1,8 @@
 # spring MariaDB Connect
 spring:
   profiles:
-    active: local
+    active: dev
   datasource:
-    url: *************
     username: *************
     password: *************
     driverClassName: org.mariadb.jdbc.Driver
@@ -34,6 +33,8 @@ server:
 ---
 spring:
   profiles: local
+  datasource:
+    url: jdbc:mariadb://101.101.208.202:3306/delgo_reward_develop
 
 config:
   driverLocation: C:\\chrome\\chromedriver.exe
@@ -42,15 +43,19 @@ config:
 ---
 spring:
   profiles: dev
+  datasource:
+    url: jdbc:mariadb://101.101.208.202:3306/delgo_reward_develop
 
 config:
   driverLocation: /var/www/chrome/chromedriver
-  photoDir: /var/www/develop-backend/
+  photoDir: /var/www/reward-backend/
 
 
 ---
 spring:
   profiles: real
+  datasource:
+    url: jdbc:mariadb://101.101.208.202:3306/delgo_reward
 
 config:
   driverLocation: /var/www/chrome/chromedriver

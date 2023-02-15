@@ -11,10 +11,11 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @Builder
 public class ModifyUserDTO {
-    private String profileUrl;
-    private String name;
     @NotNull
-    private String email;
+    private Integer userId;
+    private String name;
+    private String profileUrl;
+
     private String geoCode;
     @JsonProperty("pGeoCode")
     private String pGeoCode;
