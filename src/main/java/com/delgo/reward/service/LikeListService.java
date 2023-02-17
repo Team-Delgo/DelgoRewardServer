@@ -38,7 +38,7 @@ public class LikeListService {
 
     public void like(int userId, int certificationId, int ownerId) throws IOException {
         likeHashMap.put(new LikeList(userId, certificationId), true);
-        fcmService.likePush(ownerId);
+//        fcmService.likePush(ownerId);
     }
 
     public void unlike(int userId, int certificationId) {
