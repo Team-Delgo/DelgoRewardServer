@@ -26,11 +26,12 @@ public class CommentService {
     private final CertRepository certRepository;
     private final JDBCTemplateCommentRepository jdbcTemplateCommentRepository;
     private final CertService certService;
+    private final UserService userService;
     private final FcmService fcmService;
 
     public Comment createComment(CommentDTO commentDTO) throws IOException {
         Comment comment = Comment.builder().isReply(false).certificationId(commentDTO.getCertificationId()).userId(commentDTO.getUserId()).content(commentDTO.getContent()).build();
-        fcmService.commentPush(certService.getCert(commentDTO.getCertificationId()).getUserId());
+        fcmService.commentPush(certService.getCert(commentDTO.getCertificationId()).getUserId(), userService.getUserById(commentDTO.getUserId()).getName(), commentDTO.getContent());
         return commentRepository.save(comment);
     }
 
