@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/map")
+@RequestMapping("/api/map")
 public class MapController extends CommController {
 
     private final MapService mapService;

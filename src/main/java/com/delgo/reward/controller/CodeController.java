@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/code")
+@RequestMapping("/api/code")
 public class CodeController extends CommController {
     private final CodeService codeService;
 

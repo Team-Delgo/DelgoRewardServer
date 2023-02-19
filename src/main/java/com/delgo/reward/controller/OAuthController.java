@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("oauth")
+@RequestMapping("/api/oauth")
 public class OAuthController extends CommController {
 
     private final JwtService jwtService;

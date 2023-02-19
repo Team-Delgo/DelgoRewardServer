@@ -16,7 +16,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/account")
+@RequestMapping("/api/account")
 public class AccountController extends CommController {
 
     private final PetService petService;

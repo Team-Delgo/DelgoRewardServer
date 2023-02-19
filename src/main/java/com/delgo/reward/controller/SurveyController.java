@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/survey")
+@RequestMapping("/api/survey")
 public class SurveyController extends CommController {
 
     private final SurveyService surveyService;

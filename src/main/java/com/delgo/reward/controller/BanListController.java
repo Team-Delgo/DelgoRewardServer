@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/ban")
+@RequestMapping("/api/ban")
 public class BanListController extends CommController {
     private final BanService banService;
 

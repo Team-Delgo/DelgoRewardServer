@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/wardoffice")
+@RequestMapping("/api/wardoffice")
 public class WardOfficeController extends CommController {
 
     private final GeoService geoService;
