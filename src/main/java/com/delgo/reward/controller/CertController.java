@@ -19,7 +19,7 @@ import java.util.Objects;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/certification")
+@RequestMapping("/api/certification")
 public class CertController extends CommController {
 
     private final CertService certService;

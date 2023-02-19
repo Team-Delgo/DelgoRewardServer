@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/achievements")
+@RequestMapping("/api/achievements")
 public class AchievementsController extends CommController {
 
     private final AchievementsService achievementsService;

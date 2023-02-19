@@ -67,7 +67,7 @@ public class LoginController extends CommController {
      * Refresh_Token 인증 진행
      * 성공 : 재발급, 실패 : 오류 코드 반환
      */
-    @GetMapping("/token/reissue")
+    @GetMapping("/api/token/reissue")
     public ResponseEntity<?> tokenReissue(HttpServletRequest request, HttpServletResponse response) {
         try {
             JwtToken jwt = jwtService.createToken(jwtService.getUserIdByRefreshToken());
@@ -76,6 +76,7 @@ public class LoginController extends CommController {
 
             return SuccessReturn();
         } catch (Exception e) { // Refresh_Toekn 인증 실패 ( 로그인 화면으로 이동 필요 )
+            e.printStackTrace();
             return ErrorReturn(ApiCode.TOKEN_ERROR);
         }
     }

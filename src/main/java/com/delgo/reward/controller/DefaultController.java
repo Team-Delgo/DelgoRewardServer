@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class DefaultController extends CommController {
 
     @RequestMapping(value ="/")
