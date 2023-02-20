@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController extends CommController {
     private final PasswordEncoder passwordEncoder;
 

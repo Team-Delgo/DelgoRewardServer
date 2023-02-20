@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/calendar")
+@RequestMapping("/api/calendar")
 public class CalendarController extends CommController {
 
     private final CalendarService calendarService;

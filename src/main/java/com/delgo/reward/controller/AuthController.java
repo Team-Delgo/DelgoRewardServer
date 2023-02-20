@@ -19,7 +19,7 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController extends CommController {
     private final UserService userService;
     private final SmsAuthService smsAuthService;

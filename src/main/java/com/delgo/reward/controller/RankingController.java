@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/ranking")
+@RequestMapping("/api/ranking")
 public class RankingController extends CommController {
     private final RankingService rankingService;
 

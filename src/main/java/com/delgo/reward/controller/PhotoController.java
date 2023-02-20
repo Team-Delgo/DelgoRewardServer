@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/photo")
+@RequestMapping("/api/photo")
 public class PhotoController extends CommController {
 
     private final PhotoService photoService;
