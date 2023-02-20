@@ -7,6 +7,7 @@ import com.delgo.reward.dto.certification.CertDTO;
 import com.delgo.reward.dto.certification.ModifyCertDTO;
 import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.LikeListService;
+import com.delgo.reward.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class CertController extends CommController {
     private final LikeListService likeListService;
 
     /*
-     * 인증 등록
+     * 인증 등록 [ Deprecated ]
      * Request Data : PastCertificationDTO
      * Response Data : 등록한 인증 데이터 반환
      */
@@ -34,6 +35,21 @@ public class CertController extends CommController {
     public ResponseEntity register(@Validated @RequestBody CertDTO dto) {
         return SuccessReturn(certService.register(dto));
     }
+
+//    /*
+//     * 인증 등록
+//     * Request Data : PastCertificationDTO
+//     * Response Data : 등록한 인증 데이터 반환
+//     */
+//    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+//    public ResponseEntity<?> register(@Validated @RequestPart CertDTO dto, @RequestPart(required = false) MultipartFile photo) {
+//        if(photo.isEmpty()) ErrorReturn(ApiCode.PARAM_ERROR);
+//
+//        Certification certification = certService.register(dto);
+//        String photoUrl = photoService.uploadCertMultipart(certification.getCertificationId(), photo); // DB에 저장.
+//
+//        return SuccessReturn(certification.setPhotoUrl(photoUrl));
+//    }
 
     /*
      * 인증 수정
