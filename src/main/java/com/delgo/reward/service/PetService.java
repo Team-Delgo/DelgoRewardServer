@@ -23,6 +23,10 @@ public class PetService {
     // Repository
     private final PetRepository petRepository;
 
+    public Pet register(Pet pet) {
+        return petRepository.save(pet);
+    }
+
     @Transactional
     public void changePetInfo(ModifyPetDTO modifyPetDTO){
         User user = userService.getUserByEmail(modifyPetDTO.getEmail());

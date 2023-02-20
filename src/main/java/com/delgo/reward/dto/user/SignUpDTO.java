@@ -47,11 +47,12 @@ public class SignUpDTO {
                 .build();
     }
 
-    public Pet makePet(){
+    public Pet makePet(int userId){
         return Pet.builder()
                 .name(petName)
                 .breed(breed)
                 .birthday(birthday)
+                .userId(userId)
                 .build();
     }
 
