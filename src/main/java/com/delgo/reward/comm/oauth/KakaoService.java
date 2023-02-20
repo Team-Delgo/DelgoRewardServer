@@ -35,7 +35,8 @@ public class KakaoService {
 
             sb.append("grant_type=authorization_code");
             sb.append("&client_id=b40f84b68ce44634317bb5530b0166c1");
-            sb.append("&redirect_uri=https://www.reward.delgo.pet/oauth/callback/kakao");
+            sb.append("&redirect_uri=https://www.reward.delgo.pet/oauth/callback/kakao"); // reward
+//            sb.append("&redirect_uri=https://www.test.delgo.pet/oauth/callback/kakao"); // test
             sb.append("&code=" + code);
             bw.write(sb.toString());
             bw.flush();
@@ -43,6 +44,7 @@ public class KakaoService {
             //결과 코드가 200이라면 성공
             int responseCode = conn.getResponseCode();
             System.out.println("get token responseCode : " + responseCode);
+            System.out.println("get token responseMessage : " + conn.getResponseMessage());
             if(responseCode != 200)
                 return null;
 
