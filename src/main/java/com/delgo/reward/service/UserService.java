@@ -30,19 +30,9 @@ public class UserService {
     private final RankingService rankingService;
 
     // 회원가입
-    public User signup(User user, Pet pet) {
-        // 패스워드 암호화 및 적용
-//        String encodedPassword = passwordEncoder.encode(user.getPassword());
-//        user.setPassword(encodedPassword);
-        // User Data save
-        User owner = userRepository.save(user);
-        jdbcTemplatePointRepository.createUserPoint(user);
-        rankingService.rankingByPoint();
-        // Pet Data save
-        pet.setUserId(owner.getUserId());
-        petRepository.save(pet);
-
-        return owner;
+    public User signup(User user) {
+        jdbcTemplatePointRepository.createUserPoint(user); // Point 생성
+        return userRepository.save(user);
     }
 
     // 회원탈퇴
