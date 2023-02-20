@@ -21,6 +21,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class CommentController extends CommController {
     private final CommentService commentService;
     private final CertService certificationService;

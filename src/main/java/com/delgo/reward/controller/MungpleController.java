@@ -20,7 +20,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/mungple")
+@RequestMapping("/api/mungple")
 public class MungpleController extends CommController {
 
     private final GeoService geoService;
