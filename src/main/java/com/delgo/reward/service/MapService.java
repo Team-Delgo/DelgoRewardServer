@@ -1,14 +1,11 @@
 package com.delgo.reward.service;
 
 
-import com.delgo.reward.comm.code.CategoryCode;
-import com.delgo.reward.domain.Mungple;
 import com.delgo.reward.domain.certification.Certification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.MultiValueMap;
 
 import java.util.List;
 import java.util.Map;
@@ -46,11 +43,5 @@ public class MapService {
     public Map<String, List<Certification>> test(){
 
         return certService.test(6);
-    }
-
-    public List<Mungple> getMungple(CategoryCode categoryCode) {
-        return (categoryCode.equals(CategoryCode.TOTAL))
-                ? mungpleService.getMungpleAll()
-                : mungpleService.getMungpleByCategoryCode(categoryCode.getCode());
     }
 }
