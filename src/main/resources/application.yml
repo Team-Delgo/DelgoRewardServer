@@ -49,6 +49,8 @@ spring:
 config:
   driverLocation: /var/www/chrome/chromedriver
   photoDir: /var/www/reward-backend/
+  kakao:
+    REDIRECT_URL: "https://www.test.delgo.pet/oauth/callback/kakao"
 
 
 ---
@@ -60,3 +62,5 @@ spring:
 config:
   driverLocation: /var/www/chrome/chromedriver
   photoDir: /var/www/reward-backend/
+  kakao:
+    REDIRECT_URL: "https://www.reward.delgo.pet/oauth/callback/kakao"
