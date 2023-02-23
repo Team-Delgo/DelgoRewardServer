@@ -18,50 +18,52 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OAuthSignUpDTO {
-    private String email;
-    @NotBlank
-    private String userName;
-    @NotBlank
-    private String phoneNo;
-    @NotBlank
-    private String geoCode;
-    @NotBlank
+    @NotBlank private String email;
+    @NotBlank private String userName;
+    @NotBlank private String phoneNo;
+    @NotBlank private String geoCode;
     @JsonProperty("pGeoCode")
-    private String pGeoCode;
-    @NotBlank
-    private String petName;
-    @NotNull
-    private String breed;
-    @NotNull
-    private LocalDate birthday;
-    @NotNull
-    private UserSocial userSocial;
+    @NotBlank private String pGeoCode;
+    @NotBlank private String petName;
+    @NotNull private String breed;
+    @NotNull private LocalDate birthday;
+    @NotNull private UserSocial userSocial;
 
-    // KAKAO, NAVER 때는 필요없어서 @NotNull 넣지 않음.
-    private String appleUniqueNo;
+    private String appleUniqueNo; // apple 로그인 시에만 @NotNull 넣지 않음.
+    private String kakaoId; // kakao 로그인 시에만 @NotNull 넣지 않음.
 
-    public User makeUserSocial(UserSocial userSocial, String address){
-        return User.builder()
-                .name(userName)
-                .email(email)
-                .phoneNo(phoneNo.replaceAll("[^0-9]", ""))
-                .userSocial(userSocial)
-                .address(address)
-                .geoCode(geoCode)
-                .pGeoCode(pGeoCode)
-                .build();
-    }
-
-    public User makeUserApple(String appleUniqueNo, String address){
-        return User.builder()
-                .name(userName)
-                .email(email)
-                .phoneNo(phoneNo.replaceAll("[^0-9]", ""))
-                .userSocial(UserSocial.A)
-                .address(address)
-                .geoCode(geoCode)
-                .pGeoCode(pGeoCode)
-                .build();
+    public User makeUserSocial(UserSocial userSocial, String address) {
+        switch (userSocial) {
+            case A: return User.builder()
+                        .name(userName)
+                        .email(email)
+                        .phoneNo(phoneNo.replaceAll("[^0-9]", ""))
+                        .userSocial(userSocial)
+                        .address(address)
+                        .geoCode(geoCode)
+                        .pGeoCode(pGeoCode)
+                        .appleUniqueNo(appleUniqueNo)
+                        .build();
+            case K: return User.builder()
+                        .name(userName)
+                        .email(email)
+                        .phoneNo(phoneNo.replaceAll("[^0-9]", ""))
+                        .userSocial(userSocial)
+                        .address(address)
+                        .geoCode(geoCode)
+                        .pGeoCode(pGeoCode)
+                        .kakaoId(kakaoId)
+                        .build();
+            default: return User.builder()
+                        .name(userName)
+                        .email(email)
+                        .phoneNo(phoneNo.replaceAll("[^0-9]", ""))
+                        .userSocial(userSocial)
+                        .address(address)
+                        .geoCode(geoCode)
+                        .pGeoCode(pGeoCode)
+                        .build();
+        }
     }
 
     public Pet makePet(int userId){

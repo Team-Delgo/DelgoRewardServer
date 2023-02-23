@@ -133,10 +133,7 @@ public class UserController extends CommController {
                 ? codeService.getAddress(oAuthSignUpDTO.getPGeoCode(), true)
                 : codeService.getAddress(oAuthSignUpDTO.getGeoCode(), false);
 
-        User user = userService.signup((oAuthSignUpDTO.getUserSocial() == UserSocial.A)
-                ? oAuthSignUpDTO.makeUserApple(oAuthSignUpDTO.getAppleUniqueNo(), address) // Apple Login 일 경우
-                : oAuthSignUpDTO.makeUserSocial(oAuthSignUpDTO.getUserSocial(), address)); // Kakao, Naver Login 일 경우
-
+        User user = userService.signup(oAuthSignUpDTO.makeUserSocial(oAuthSignUpDTO.getUserSocial(), address));
         Pet pet = petService.register(oAuthSignUpDTO.makePet(user.getUserId()));
 
         archiveService.registerWelcome(user.getUserId()); // WELCOME 업적 부여

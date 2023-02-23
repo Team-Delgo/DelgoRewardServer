@@ -6,6 +6,7 @@ import com.delgo.reward.dto.OAuthDTO;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -15,10 +16,11 @@ import java.net.URL;
 @Service
 @NoArgsConstructor
 public class KakaoService {
+    @Value("${config.kakao.REDIRECT_URL}")
+    String REDIRECT_URL;
 
     public String getKakaoAccessToken (String code) {
         String access_Token = "";
-        String refresh_Token = "";
         String reqURL = "https://kauth.kakao.com/oauth/token";
 
         try {
@@ -30,13 +32,10 @@ public class KakaoService {
 
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
             StringBuilder sb = new StringBuilder();
-            // 직접
-            // https://kauth.kakao.com/oauth/authorize?client_id=b40f84b68ce44634317bb5530b0166c1&redirect_uri=https://delgo.pet/oauth/callback/kakao&response_type=code
 
             sb.append("grant_type=authorization_code");
             sb.append("&client_id=b40f84b68ce44634317bb5530b0166c1");
-            sb.append("&redirect_uri=https://www.reward.delgo.pet/oauth/callback/kakao"); // reward
-//            sb.append("&redirect_uri=https://www.test.delgo.pet/oauth/callback/kakao"); // test
+            sb.append("&redirect_uri=" + REDIRECT_URL); // test
             sb.append("&code=" + code);
             bw.write(sb.toString());
             bw.flush();
@@ -62,15 +61,11 @@ public class KakaoService {
             JsonElement element = parser.parse(result);
 
             access_Token = element.getAsJsonObject().get("access_token").getAsString();
-//            refresh_Token = element.getAsJsonObject().get("refresh_token").getAsString();
-
-//            System.out.println("access_token : " + access_Token);
-//            System.out.println("refresh_token : " + refresh_Token);
 
             br.close();
             bw.close();
-        } catch (IOException ignored) {
-
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return access_Token;
@@ -114,21 +109,22 @@ public class KakaoService {
             JsonParser parser = new JsonParser();
             JsonElement element = parser.parse(result);
 
-            int id = element.getAsJsonObject().get("id").getAsInt();
             boolean hasPhoneNo = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("has_phone_number").getAsBoolean();
+            if(!hasPhoneNo) return oAuthDTO;
 
-            if(!hasPhoneNo)
-                return oAuthDTO;
-
-            String phoneNo = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("phone_number").getAsString();
+            String id = element.getAsJsonObject().get("id").getAsString();
             String email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
+            String phoneNo = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("phone_number").getAsString();
 
             br.close();
 
+            oAuthDTO.setId(id);
             oAuthDTO.setEmail(email);
             oAuthDTO.setPhoneNo(phoneNo);
+
             return oAuthDTO;
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            e.printStackTrace();
             return oAuthDTO;
         }
     }
