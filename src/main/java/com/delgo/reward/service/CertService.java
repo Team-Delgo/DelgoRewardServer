@@ -8,7 +8,6 @@ import com.delgo.reward.comm.ncp.ReverseGeoService;
 import com.delgo.reward.domain.achievements.Achievements;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.common.Location;
-import com.delgo.reward.domain.like.LikeList;
 import com.delgo.reward.dto.certification.CertDTO;
 import com.delgo.reward.dto.certification.ModifyCertDTO;
 import com.delgo.reward.repository.CertRepository;
@@ -88,6 +87,7 @@ public class CertService {
 
     // Certification 삭제
     public void delete(int certificationId) {
+        likeListService.deleteCertificationRelatedLike(certificationId);
         certRepository.deleteById(certificationId);
     }
 
@@ -109,7 +109,7 @@ public class CertService {
                 : PageRequest.of(currentPage, pageSize, Sort.by("regist_dt")); // 오름차순 정렬
 
         Slice<Certification> certifications = certRepository.findMungpleByPaging(mungpleId, pageRequest);
-        if(userId != 0) certifications.getContent().forEach(cert -> setUserAndLike(userId, cert));
+        certifications.getContent().forEach(cert -> setUserAndLike(userId, cert));
 
         return certifications;
     }
@@ -192,23 +192,20 @@ public class CertService {
         return certByPGeoCode;
     }
 
-    public Certification setUserAndLike(int userId, Certification cert) {
-        return cert.setUserAndLike(
+    public void setUserAndLike(int userId, Certification cert) {
+        if (userId != 0) cert.setUserAndLike(
                 userService.getUserById(cert.getUserId()), // USER
                 likeListService.hasLiked(userId, cert.getCertificationId()), // User is Liked?
                 likeListService.getLikeCount(cert.getCertificationId()) // Like Count
         );
     }
 
-
-    // 좋아요 Check
+    // 좋아요
     public void like(int userId, int certificationId, int ownerId) throws IOException {
-        // 사용자가 해당 Certification 좋아요 눌렀는지 체크.
-        boolean isLike = LikeListService.likeHashMap.getOrDefault(new LikeList(userId, certificationId), false);
-        if (isLike)  // 좋아요 존재
+        if (likeListService.hasLiked(userId, certificationId)) // User is Liked?
             likeListService.unlike(userId, certificationId);
         else
-            likeListService.like(userId, certificationId, ownerId);
+            likeListService.like(userId, certificationId);
     }
 
     // Comment Count + 1

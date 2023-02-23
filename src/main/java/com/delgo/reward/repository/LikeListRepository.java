@@ -9,6 +9,8 @@ import java.util.Optional;
 
 public interface LikeListRepository extends JpaRepository<LikeList, LikeListPK>, JpaSpecificationExecutor<LikeList> {
     Optional<LikeList> findByUserIdAndCertificationId(int userId, int certificationId);
+    void deleteByUserIdAndCertificationId(int userId, int certificationId);
+    int countByCertificationId(int certificationId);
 
     void deleteByCertificationId(int certificateId);
     void deleteByUserId(int userId);
