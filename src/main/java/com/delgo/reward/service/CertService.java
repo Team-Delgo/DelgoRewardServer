@@ -193,10 +193,10 @@ public class CertService {
     }
 
     public void setUserAndLike(int userId, Certification cert) {
-        if (userId != 0) cert.setUserAndLike(
-                userService.getUserById(cert.getUserId()), // USER
-                likeListService.hasLiked(userId, cert.getCertificationId()), // User is Liked?
-                likeListService.getLikeCount(cert.getCertificationId()) // Like Count
+        cert.setUserAndLike(
+                userService.getUserById(cert.getUserId()), // Certification 작성한 User 정보
+                userId != 0 && likeListService.hasLiked(userId, cert.getCertificationId()), // User is Liked?
+                likeListService.getLikeCount(cert.getCertificationId()) // Certification Like Count
         );
     }
 
