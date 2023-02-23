@@ -2,7 +2,6 @@ package com.delgo.reward.comm.quartz;
 
 import com.delgo.reward.comm.quartz.job.InitWeeklyPoint;
 import com.delgo.reward.comm.quartz.job.RefreshDailyRanking;
-import com.delgo.reward.comm.quartz.job.RefreshLike;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,17 +37,6 @@ public class JobSetting {
         try{
             scheduler.scheduleJob(jobDetail, buildJobTrigger("0 0 0 ? * MON *"));
 //            scheduler.scheduleJob(jobDetail, buildJobTrigger("0/10 * * * * ?"));
-
-        } catch (SchedulerException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @PostConstruct
-    public void start_refreshLikeJob(){
-        JobDetail jobDetail = buildJobDetail(RefreshLike.class, new HashMap());
-        try{
-            scheduler.scheduleJob(jobDetail, buildJobTrigger("0 */1 * * * ?"));
 
         } catch (SchedulerException e) {
             e.printStackTrace();
