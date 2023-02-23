@@ -1,16 +1,21 @@
 # spring MariaDB Connect
 spring:
+  data:
+    mongodb:
+      database: testdb
+      uri: mongodb://101.101.208.202:27017
   profiles:
     active: dev
   datasource:
-    username: *************
-    password: *************
+    username: delgo
+    password: Zlzl2022!
     driverClassName: org.mariadb.jdbc.Driver
     hikari:
       connectionTimeout: 30000 #30000ms
       maxLifetime: 290000 #1800000ms(30?). maria db ??? 28800? (8??) -> ?? 1???? ??
-#      maximumPoolSize: 20 #?? 10
-#      validationTimeout: 1000 #5000ms, connectionTimeout ?? ??? ?
+                          #      maximumPoolSize: 20 #?? 10
+                          #      validationTimeout: 1000 #5000ms, connectionTimeout ?? ??? ?
+
   # data - jpa ??
   jpa:
     show-sql: false
