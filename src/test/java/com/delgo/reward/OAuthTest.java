@@ -27,6 +27,12 @@ public class OAuthTest {
     }
 
     @Test
+    public void KakaoLogout() throws Exception {
+        String id = "2371231033";
+        kakaoService.logout(id);
+    }
+
+    @Test
     public void NaverLogin() throws Exception {
 //       https://www.delgo.pet/oauth/callback/naver?code=GWx84ipdno3k59z44N&state=9kgsGTfH4j7IyAkg
         String state = "9kgsGTfH4j7IyAkg";
