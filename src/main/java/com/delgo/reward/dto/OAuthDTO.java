@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class OAuthDTO {
+    private String id = "";
     private String email = "";
     private String phoneNo = "";
     private UserSocial userSocial;
