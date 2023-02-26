@@ -31,8 +31,10 @@ public class UserService {
 
     // 회원가입
     public User signup(User user) {
-        jdbcTemplatePointRepository.createUserPoint(user); // Point 생성
-        return userRepository.save(user);
+        User registeredUser = userRepository.save(user);
+        jdbcTemplatePointRepository.createUserPoint(registeredUser); // Point 생성
+
+        return registeredUser;
     }
 
     // 회원탈퇴
