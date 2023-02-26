@@ -118,7 +118,7 @@ public class KakaoService {
 
             br.close();
 
-            oAuthDTO.setId(id);
+            oAuthDTO.setSocialId(id);
             oAuthDTO.setEmail(email);
             oAuthDTO.setPhoneNo(phoneNo);
 
