@@ -8,10 +8,7 @@ import com.delgo.reward.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -24,6 +21,7 @@ public class AuthController extends CommController {
     private final UserService userService;
     private final SmsAuthService smsAuthService;
 
+    // 이메일 존재 유무 확인
     @GetMapping("/email")
     public ResponseEntity<?> emailAuth(@RequestParam String email) {
         if (email.isBlank()) {
@@ -61,7 +59,8 @@ public class AuthController extends CommController {
             return ErrorReturn(ApiCode.UNKNOWN_ERROR);
     }
 
-    @GetMapping("/sms")
+    // 인증번호 생성
+    @PostMapping("/sms")
     public ResponseEntity<?> phoneNoAuth(@RequestParam String phoneNo, @RequestParam Boolean isJoin) {
         try {
             if (phoneNo.isBlank()) {
