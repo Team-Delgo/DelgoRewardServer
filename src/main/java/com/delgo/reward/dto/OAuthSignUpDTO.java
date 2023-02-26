@@ -30,7 +30,7 @@ public class OAuthSignUpDTO {
     @NotNull private UserSocial userSocial;
 
     private String appleUniqueNo; // apple 로그인 시에만 @NotNull 넣지 않음.
-    private String kakaoId; // kakao 로그인 시에만 @NotNull 넣지 않음.
+    private String socialId; // kakao Or Naver 고유 Id
 
     public User makeUserSocial(UserSocial userSocial, String address) {
         switch (userSocial) {
@@ -52,7 +52,7 @@ public class OAuthSignUpDTO {
                         .address(address)
                         .geoCode(geoCode)
                         .pGeoCode(pGeoCode)
-                        .kakaoId(kakaoId)
+                        .kakaoId(socialId)
                         .build();
             default: return User.builder()
                         .name(userName)
