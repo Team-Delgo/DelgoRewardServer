@@ -1,5 +1,6 @@
-package com.delgo.reward.dto.user;
+package com.delgo.reward.dto;
 
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,5 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SmsAuthDTO {
-    private String randNum;
+    @NotNull
+    private String phoneNo;
+    @NotNull
+    private Boolean isJoin;
 }
