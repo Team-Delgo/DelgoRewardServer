@@ -4,7 +4,6 @@ import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.ncp.GeoService;
-import com.delgo.reward.domain.Mungple;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.dto.MungpleDTO;
 import com.delgo.reward.service.MungpleService;
@@ -14,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 
 @Slf4j
@@ -48,15 +46,11 @@ public class MungpleController extends CommController {
      */
     @GetMapping("/category/{categoryCode}")
     public ResponseEntity getCategory(@PathVariable String categoryCode) {
-        // Validate - Blank Check; [ String 만 해주면 됨 ]
-        if (categoryCode.isBlank())
-            return ErrorReturn(ApiCode.PARAM_ERROR);
+        if (categoryCode.isBlank()) return ErrorReturn(ApiCode.PARAM_ERROR); // Validate - Blank Check
 
-        List<Mungple> mungpleList = (!categoryCode.equals(CategoryCode.TOTAL.getCode()))
+        return SuccessReturn((!categoryCode.equals(CategoryCode.TOTAL.getCode()))
                 ? mungpleService.getMungpleByCategoryCode(categoryCode)
-                : mungpleService.getMungpleAll();
-
-        return SuccessReturn(mungpleList);
+                : mungpleService.getMungpleAll());
     }
 
     /*

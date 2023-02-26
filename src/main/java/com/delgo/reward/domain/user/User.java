@@ -44,8 +44,6 @@ public class User {
     @Column(nullable = true, name = "social")
     private UserSocial userSocial;
 
-    private String appleUniqueNo; // Apple 연동시에만 필요.
-
     @CreationTimestamp
     @Column(name = "regist_dt")
     private LocalDateTime registDt;
@@ -59,6 +57,8 @@ public class User {
     @JoinColumn(name="userId")
     private Point point;
 
+    private String appleUniqueNo; // Apple 연동 시에만 필요.
+    private String kakaoId; // Kakao 연동 시에만 필요.
 
 //    // 권한
 //    @JsonIgnore
