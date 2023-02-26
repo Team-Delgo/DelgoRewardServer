@@ -1,11 +1,11 @@
 # spring MariaDB Connect
 spring:
+  profiles:
+      active: dev
   data:
     mongodb:
       database: testdb
       uri: mongodb://101.101.208.202:27017
-  profiles:
-    active: dev
   datasource:
     username: delgo
     password: Zlzl2022!
