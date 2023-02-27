@@ -35,18 +35,22 @@ public class MungpleController extends CommController {
      * Response Data : 등록한 멍플 데이터 반환
      */
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity register(@Validated @RequestPart MungpleDTO dto, @RequestPart MultipartFile thumbnail, @RequestPart MultipartFile mungpleNote) {
-        if (thumbnail.isEmpty()) return ErrorReturn(ApiCode.PARAM_ERROR);
-        if (mungpleNote.isEmpty()) return ErrorReturn(ApiCode.PARAM_ERROR);
+    public ResponseEntity register(
+            @Validated @RequestPart(value="data") MungpleDTO dto,
+            @RequestPart MultipartFile mungpleNote,
+            @RequestPart MultipartFile thumbnail) {
+
+        if (thumbnail.isEmpty()) return ParamErrorReturn("thumbnail");
+        if (mungpleNote.isEmpty()) return ParamErrorReturn("mungpleNote");
 
         Location location = geoService.getGeoData(dto.getAddress()); // 위도, 경도
         if (!mungpleService.isMungpleExisting(location)) ErrorReturn(ApiCode.MUNGPLE_DUPLICATE_ERROR);
 
         Mungple mungple = mungpleService.register(dto.toEntity(location));
-
         photoService.uploadMungple(mungple.getMungpleId(), thumbnail);
         photoService.uploadMungpleNote(mungple.getMungpleId(), mungpleNote);
 
+        log.info("등록한 Mungple : {}", mungple);
         return SuccessReturn(mungple);
     }
 
