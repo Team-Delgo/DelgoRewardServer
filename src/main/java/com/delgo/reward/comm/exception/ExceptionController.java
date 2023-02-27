@@ -45,7 +45,7 @@ public class ExceptionController extends CommController {
         if(field.equals("latitude") || field.equals("longitude"))
             return ErrorReturn(ApiCode.NOT_FONUD_GPS_DATA);
 
-        return ErrorReturn(ApiCode.PARAM_ERROR.getCode(),ApiCode.PARAM_ERROR + " : " + field);
+        return ParamErrorReturn(field);
     }
 
     // Optional Select Error Check
