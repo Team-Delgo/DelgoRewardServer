@@ -29,7 +29,7 @@ public class ExceptionController extends CommController {
     // @RequestParam Param Error Check
     @ExceptionHandler({MissingServletRequestParameterException.class})
     public ResponseEntity missingServletRequestParameterException(MissingServletRequestParameterException e) {
-        return ErrorReturn(ApiCode.PARAM_ERROR);
+        return ParamErrorReturn(e.getParameterName());
     }
 
     // @RequestParam File Error Check

@@ -25,8 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class MungpleController extends CommController {
 
     private final GeoService geoService;
-    private final MungpleService mungpleService;
     private final PhotoService photoService;
+    private final MungpleService mungpleService;
 
     /*
      * 멍플 등록
@@ -62,7 +62,7 @@ public class MungpleController extends CommController {
      */
     @GetMapping("/category/{categoryCode}")
     public ResponseEntity getCategory(@PathVariable String categoryCode) {
-        if (categoryCode.isBlank()) return ErrorReturn(ApiCode.PARAM_ERROR); // Validate - Blank Check
+        if (categoryCode.isBlank()) return ParamErrorReturn("categoryCode"); // Validate - Blank Check
 
         return SuccessReturn((!categoryCode.equals(CategoryCode.TOTAL.getCode()))
                 ? mungpleService.getMungpleByCategoryCode(categoryCode)
@@ -70,12 +70,23 @@ public class MungpleController extends CommController {
     }
 
     /*
-     * 인증 개수 많은 순으로 정렬해서 반환 ( 추후 광고 관련 코드 넣을 예정 )
+     * Mungple 인증 개수 많은 순으로 조회 ( 추후 광고 관련 코드 넣을 예정 )
      * Request Data : count
      * Response Data :
      */
     @GetMapping("/top")
     public ResponseEntity getTopData(@RequestParam Integer count) {
         return SuccessReturn(mungpleService.getMungpleOfMostCount(count));
+    }
+
+    /*
+     * Mungple 삭제
+     * Request Data : mungpleId
+     * Response Data :
+     */
+    @DeleteMapping("/{mungpleId}")
+    public ResponseEntity deleteMungple(@PathVariable Integer mungpleId) {
+        mungpleService.delete(mungpleId);
+        return SuccessReturn();
     }
 }
