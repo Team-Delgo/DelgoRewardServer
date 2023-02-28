@@ -1,6 +1,8 @@
 package com.delgo.reward.service;
 
 
+import com.delgo.reward.comm.ncp.storage.BucketName;
+import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.user.ModifyUserDTO;
@@ -19,15 +21,21 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class UserService {
+    private final PasswordEncoder passwordEncoder;
+
+    // Service
     private final CodeService codeService;
-    private final UserRepository userRepository;
+    private final ObjectStorageService objectStorageService;
+
+    // Repository
     private final PetRepository petRepository;
+    private final UserRepository userRepository;
     private final CertRepository certRepository;
+    private final CommentRepository commentRepository;
+
+    // JDBC Templates
     private final JDBCTemplatePointRepository jdbcTemplatePointRepository;
     private final JDBCTemplateRankingRepository jdbcTemplateRankingRepository;
-    private final CommentRepository commentRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final RankingService rankingService;
 
     // 회원가입
     public User signup(User user) {
@@ -50,6 +58,8 @@ public class UserService {
 
         petRepository.delete(pet);
         userRepository.delete(user);
+
+        objectStorageService.deleteObject(BucketName.PROFILE, userId + "_profile.webp");
     }
 
     // 비밀번호 변경
