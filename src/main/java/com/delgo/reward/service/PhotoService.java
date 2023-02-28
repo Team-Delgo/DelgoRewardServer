@@ -2,7 +2,7 @@ package com.delgo.reward.service;
 
 
 import com.delgo.reward.comm.CommService;
-import com.delgo.reward.comm.ncp.ObjectStorageService;
+import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.sksamuel.scrimage.ImmutableImage;
 
 import com.sksamuel.scrimage.webp.WebpWriter;
@@ -120,7 +120,7 @@ public class PhotoService extends CommService {
     public String uploadMungpleNote(int mungpleId, MultipartFile photo) {
         String[] photoName = photo.getOriginalFilename().split("\\.");
 
-        String fileName = photoName[0] + ".webp";
+        String fileName = mungpleId + "_mungplenote.webp";
         String ncpLink = "https://kr.object.ncloudstorage.com/reward-mungplenote/" + fileName;
 
         try {
