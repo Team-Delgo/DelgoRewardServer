@@ -1,8 +1,12 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.comm.exception.ApiCode;
+import com.delgo.reward.domain.Mungple;
+import com.delgo.reward.domain.certification.Certification;
+import com.delgo.reward.service.CertService;
+import com.delgo.reward.service.MungpleService;
 import com.delgo.reward.service.PhotoService;
+import com.delgo.reward.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +20,10 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/photo")
 public class PhotoController extends CommController {
 
+    private final CertService certService;
+    private final UserService userService;
     private final PhotoService photoService;
+    private final MungpleService mungpleService;
 
     /*
      * profile 등록 및 수정 [회원가입 or AccountPage]
@@ -27,8 +34,9 @@ public class PhotoController extends CommController {
      */
     @PostMapping(value={"/upload/profile/{userId}","/upload/profile"})
     public ResponseEntity<?> uploadProfile(@PathVariable Integer userId, @RequestPart(required = false) MultipartFile photo) {
-        return (photo.isEmpty()) ? ErrorReturn(ApiCode.PARAM_ERROR)
-                : SuccessReturn(photoService.uploadProfile(userId, photo));
+        if (photo.isEmpty()) ParamErrorReturn("photo");
+
+        return SuccessReturn(userService.changePhoto(userId, photoService.uploadProfile(userId, photo)));
     }
 
     /*
@@ -39,9 +47,11 @@ public class PhotoController extends CommController {
      * Response Data : 사진 저장된 URL
      */
     @PostMapping(value={"/upload/certification/{certificationId}","/upload/certification"})
-    public ResponseEntity<?> uploadCertificationPhoto(@PathVariable Integer certificationId, @RequestPart(required = false) MultipartFile photo) {
-        return (photo.isEmpty()) ? ErrorReturn(ApiCode.PARAM_ERROR) :
-                SuccessReturn(photoService.uploadCertMultipart(certificationId, photo));
+    public ResponseEntity<?> uploadCertificationPhoto(@PathVariable Integer certificationId, @RequestPart MultipartFile photo) {
+        if (photo.isEmpty()) ParamErrorReturn("photo");
+
+        Certification cert = certService.getCert(certificationId).setPhotoUrl(photoService.uploadCertMultipart(certificationId, photo));
+        return SuccessReturn(certService.save(cert));
     }
 
     /*
@@ -50,20 +60,24 @@ public class PhotoController extends CommController {
      * Response Data : 사진 저장된 URL
      */
     @PostMapping(value={"/upload/mungple/{mungpleId}","/upload/mungple"})
-    public ResponseEntity<?> uploadMungplePhoto(@PathVariable Integer mungpleId, @RequestPart(required = false) MultipartFile photo) {
-        return  (photo.isEmpty()) ? ErrorReturn(ApiCode.PARAM_ERROR)
-                : SuccessReturn(photoService.uploadMungple(mungpleId, photo));
+    public ResponseEntity<?> uploadMungplePhoto(@PathVariable Integer mungpleId, @RequestPart MultipartFile photo) {
+        if (photo.isEmpty()) ParamErrorReturn("photo");
+
+        Mungple mungple = mungpleService.getMungpleById(mungpleId).setPhotoUrl(photoService.uploadMungple(mungpleId, photo));
+        return SuccessReturn(mungpleService.register(mungple));
     }
 
     /*
-     * 멍플노트 등록
+     * 멍플 노트 등록
      * Request Data : mungpleId, photo
      * Response Data : 사진 저장된 URL
      */
     @PostMapping(value={"/upload/mungplenote/{mungpleId}","/upload/mungplenote"})
     public ResponseEntity<?> uploadMungpleNote(@PathVariable Integer mungpleId, @RequestPart(required = false) MultipartFile photo) {
-        return  (photo.isEmpty()) ? ErrorReturn(ApiCode.PARAM_ERROR)
-                : SuccessReturn(photoService.uploadMungpleNote(mungpleId, photo));
+        if (photo.isEmpty()) ParamErrorReturn("photo");
+
+        Mungple mungple = mungpleService.getMungpleById(mungpleId).setPhotoUrl(photoService.uploadMungpleNote(mungpleId, photo));
+        return SuccessReturn(mungpleService.register(mungple));
     }
 
     /*
