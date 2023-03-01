@@ -19,15 +19,27 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class UserService {
+
+    private final PasswordEncoder passwordEncoder;
+
+    // Service
     private final CodeService codeService;
-    private final UserRepository userRepository;
+    private final ObjectStorageService objectStorageService;
+
+    // Repository
     private final PetRepository petRepository;
+    private final UserRepository userRepository;
     private final CertRepository certRepository;
+    private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
+    private final LikeListRepository likeListRepository;
+
+    // JDBCTemplate
+    private final CommentRepository commentRepository;
+
+    // JDBC Templates
     private final JDBCTemplatePointRepository jdbcTemplatePointRepository;
     private final JDBCTemplateRankingRepository jdbcTemplateRankingRepository;
-    private final CommentRepository commentRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final RankingService rankingService;
 
     // 회원가입
     public User signup(User user) {
@@ -42,14 +54,20 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
         Pet pet = petRepository.findByUserId(userId).orElseThrow(() -> new NullPointerException("NOT FOUND PET"));
 
+        if (user.getUserSocial().equals(UserSocial.K))
+            kakaoService.logout(user.getKakaoId()); // kakao 로그아웃
+
         commentRepository.deleteAllByUserId(userId);
         certRepository.deleteAllByUserId(userId);
+        likeListRepository.deleteByUserId(userId);; // USER가 좋아요 누른 DATA 삭제
 
         jdbcTemplateRankingRepository.deleteAllByUserId(userId);
         jdbcTemplatePointRepository.deleteAllByUserId(userId);
 
         petRepository.delete(pet);
         userRepository.delete(user);
+
+        objectStorageService.deleteObject(BucketName.PROFILE, userId + "_profile.webp");
     }
 
     // 비밀번호 변경

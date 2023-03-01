@@ -24,6 +24,18 @@ public class CertificationTest {
     @Autowired
     private CertRepository certRepository;
 
+    @Test
+    public void DeleteTest() {
+        //given
+        int certificationId = 935;
+
+        //when
+        certificationService.delete(certificationId);
+
+        //then
+    }
+
+
 //    @Test
 //    public void registerCertificationTest() {
 //        //given
@@ -75,22 +87,6 @@ public class CertificationTest {
 //        //then
 //        assertTrue(result);
 //    }
-
-    @Test
-    public void timeDifferenceCalculationTest() {
-        //given
-        LocalDate today = LocalDate.now();
-        LocalDateTime testDateTime = today.atTime(4, 0, 5);
-        System.out.println("testDateTime: " + testDateTime);
-        System.out.println("now: " + LocalDateTime.now());
-
-        //when
-        long diffrence = ChronoUnit.SECONDS.between(testDateTime, LocalDateTime.now());
-        System.out.println("diffrence: " + diffrence);
-
-        //then
-        assertTrue(diffrence < 21600);
-    }
 
 //    @Test
 //    public void repositoryCountTest() {
