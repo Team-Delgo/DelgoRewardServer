@@ -2,7 +2,8 @@ package com.delgo.reward.service;
 
 
 import com.delgo.reward.comm.CommService;
-import com.delgo.reward.comm.ncp.ObjectStorageService;
+import com.delgo.reward.comm.ncp.storage.BucketName;
+import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.sksamuel.scrimage.ImmutableImage;
 
 import com.sksamuel.scrimage.webp.WebpWriter;
@@ -25,19 +26,15 @@ import java.util.Objects;
 @Transactional
 @RequiredArgsConstructor
 public class PhotoService extends CommService {
-
-    private final CertService certService;
-    private final UserService userService;
-    private final MungpleService mungpleService;
-    private final ObjectStorageService objectStorageService;
-
     @Value("${config.photoDir}")
     String DIR;
+
+    private final ObjectStorageService objectStorageService;
 
     // Encoding File Upload
     public String uploadCertEncodingFile(int certificationId, String photoUrl) {
         String fileName = certificationId + "_cert.jpeg";
-        String ncpLink = "https://kr.object.ncloudstorage.com/reward-certification/" + fileName;
+        String ncpLink = BucketName.CERTIFICATION.getUrl() + fileName;
 
         try {
             byte[] decodedByte = Base64.getMimeDecoder().decode(photoUrl.replace("data:image/jpeg;base64,", "").getBytes());
@@ -49,12 +46,11 @@ public class PhotoService extends CommService {
             }
 
             if (convertFile.exists()) {
-                objectStorageService.uploadObjects("reward-certification", fileName, DIR + fileName);  // Upload NCP
+                objectStorageService.uploadObjects(BucketName.CERTIFICATION, fileName, DIR + fileName);  // Upload NCP
                 convertFile.delete(); // 서버에 저장된 사진 삭제
             }
 
-            ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1); // Cache 무효화
-            return ncpLink;
+            return setCacheInvalidation(ncpLink);
         } catch (Exception e) {
             e.printStackTrace();
             throw new NullPointerException("PHOTO UPLOAD ERROR");
@@ -62,28 +58,23 @@ public class PhotoService extends CommService {
     }
 
     public String uploadCertMultipart(int certificationId, MultipartFile photo) {
-
-        log.info("dir :{}", DIR);
         String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\."); // ex) png, jpg, jpeg
         String extension = type[type.length - 1];
 
         String fileName = certificationId + "_cert.webp";
-        String ncpLink = "https://kr.object.ncloudstorage.com/reward-certification/" + fileName;
+        String ncpLink = BucketName.CERTIFICATION.getUrl() + fileName;
 
         try {
             File file = new File(DIR + certificationId + "_cert." + extension);
             photo.transferTo(file); // 서버에 저장
 
             File webpFile = convertWebp(fileName, file);  // filePath에서 File 불러온 뒤 webp로 변환 후 저장.
-            objectStorageService.uploadObjects("reward-certification", fileName, DIR + fileName); // Upload NCP
+            objectStorageService.uploadObjects(BucketName.CERTIFICATION, fileName, DIR + fileName); // Upload NCP
 
             file.delete(); // 서버에 저장된 사진.jpg 삭제
             webpFile.delete(); // 서버에 저장된 사진.webp 삭제
 
-            ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1); // Cache 무효화
-            certService.getCert(certificationId).setPhotoUrl(ncpLink); // DB에 저장.
-
-            return ncpLink;
+            return setCacheInvalidation(ncpLink);
         } catch (Exception e) {
             e.printStackTrace();
             throw new NullPointerException("PHOTO UPLOAD ERROR");
@@ -95,7 +86,7 @@ public class PhotoService extends CommService {
         String extension = type[type.length - 1];
 
         String fileName = mungpleId + "_mungple.webp";
-        String ncpLink = "https://kr.object.ncloudstorage.com/reward-mungple/" + fileName;
+        String ncpLink = BucketName.MUNGPLE.getUrl() + fileName;
 
         try {
             File file = new File(DIR + mungpleId + "_mungple." + extension); // 서버에 저장
@@ -103,14 +94,11 @@ public class PhotoService extends CommService {
 
             File webpFile = convertWebp(fileName, file);  // filePath에서 File 불러온 뒤 webp로 변환 후 저장.
 
-            objectStorageService.uploadObjects("reward-mungple", fileName, DIR + fileName); // Upload NCP
+            objectStorageService.uploadObjects(BucketName.MUNGPLE, fileName, DIR + fileName); // Upload NCP
             file.delete(); // 서버에 저장된 사진 삭제
             webpFile.delete();
 
-            ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1); // Cache 무효화
-            mungpleService.getMungpleById(mungpleId).setPhotoUrl(ncpLink);
-
-            return ncpLink;
+            return setCacheInvalidation(ncpLink);
         } catch (Exception e) {
             e.printStackTrace();
             throw new NullPointerException("PHOTO UPLOAD ERROR");
@@ -118,10 +106,8 @@ public class PhotoService extends CommService {
     }
 
     public String uploadMungpleNote(int mungpleId, MultipartFile photo) {
-        String[] photoName = photo.getOriginalFilename().split("\\.");
-
-        String fileName = photoName[0] + ".webp";
-        String ncpLink = "https://kr.object.ncloudstorage.com/reward-mungplenote/" + fileName;
+        String fileName = mungpleId + "_mungplenote.webp";
+        String ncpLink = BucketName.MUNGPLE_NOTE.getUrl() + fileName;
 
         try {
             File file = new File(DIR + photo.getOriginalFilename()); // 서버에 저장
@@ -129,15 +115,13 @@ public class PhotoService extends CommService {
 
             File webpFile = convertWebp(fileName, file);  // filePath에서 File 불러온 뒤 webp로 변환 후 저장.
 
-            objectStorageService.uploadObjects("reward-mungplenote", fileName, DIR + fileName); // Upload NCP
+            objectStorageService.uploadObjects(BucketName.MUNGPLE_NOTE, fileName, DIR + fileName); // Upload NCP
             file.delete(); // 서버에 저장된 사진 삭제
             webpFile.delete();
 
-            ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1); // Cache 무효화
-            mungpleService.getMungpleById(mungpleId).setDetailUrl(ncpLink);
-
-            return ncpLink;
+            return setCacheInvalidation(ncpLink);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new NullPointerException("PHOTO UPLOAD ERROR");
         }
     }
@@ -147,7 +131,7 @@ public class PhotoService extends CommService {
         String extension = type[type.length - 1];
 
         String fileName = userId + "_profile.webp";
-        String ncpLink = "https://kr.object.ncloudstorage.com/reward-profile/" + fileName; // NCP Link
+        String ncpLink = BucketName.PROFILE.getUrl() + fileName; // NCP Link
 
         try {
             File file = new File(DIR + userId + "_profile." + extension); // 서버에 저장
@@ -155,17 +139,15 @@ public class PhotoService extends CommService {
 
             File webpFile = convertWebp(fileName, file);  // filePath에서 File 불러온 뒤 webp로 변환 후 저장.
 
-            objectStorageService.uploadObjects("reward-profile", fileName, DIR + fileName); // Upload NCP
+            objectStorageService.uploadObjects(BucketName.PROFILE, fileName, DIR + fileName); // Upload NCP
 
             file.delete(); // 서버에 저장된 사진 삭제
             webpFile.delete();
 
-            ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1);   // Cache 무효화
-            userService.changePhoto(userId, ncpLink);
-
-            return ncpLink;
+            return setCacheInvalidation(ncpLink);
         } catch (Exception e) {
-            return "error:" + e.getMessage();
+            e.printStackTrace();
+            throw new NullPointerException("PHOTO UPLOAD ERROR");
         }
     }
 
@@ -182,11 +164,16 @@ public class PhotoService extends CommService {
             File webpFile = convertWebp(fileName, file);  // filePath에서 File 불러온 뒤 webp로 변환 후 저장.
         } catch (Exception e) {
             e.printStackTrace();
+            throw new NullPointerException("Convert Webp ERROR");
         }
     }
 
     public File convertWebp(String fileName, File file) throws IOException {
         return ImmutableImage.loader().fromFile(file)
                 .output(WebpWriter.DEFAULT, new File(DIR + fileName));
+    }
+
+    String setCacheInvalidation(String ncpLink){
+        return ncpLink + "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1); // Cache 무효화
     }
 }

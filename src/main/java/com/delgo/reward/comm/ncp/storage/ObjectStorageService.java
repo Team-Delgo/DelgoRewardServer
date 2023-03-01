@@ -1,4 +1,4 @@
-package com.delgo.reward.comm.ncp;
+package com.delgo.reward.comm.ncp.storage;
 
 import com.amazonaws.SdkClientException;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -100,7 +100,7 @@ public class ObjectStorageService {
         }
     }
 
-    public void uploadObjects(String bucketName, String objectName, String filePath) {
+    public void uploadObjects(BucketName bucketName, String objectName, String filePath) {
         // create folder
 //        String folderName = "sample-folder/";
 //
@@ -118,7 +118,7 @@ public class ObjectStorageService {
         // upload local file
 //        String objectName = "sample-object";
         try {
-            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, objectName,
+            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName.getName(), objectName,
                     new File(filePath)).withCannedAcl(CannedAccessControlList.PublicRead);
             s3.putObject(putObjectRequest);
             System.out.format("Object %s has been created.\n", objectName);
@@ -253,10 +253,10 @@ public class ObjectStorageService {
         }
     }
 
-    public void deleteObject(String bucketName, String objectName) {
+    public void deleteObject(BucketName bucketName, String objectName) {
         // delete object
         try {
-            s3.deleteObject(bucketName, objectName);
+            s3.deleteObject(bucketName.getName(), objectName);
             System.out.format("Object %s has been deleted.\n", objectName);
         } catch (SdkClientException e) {
             e.printStackTrace();
