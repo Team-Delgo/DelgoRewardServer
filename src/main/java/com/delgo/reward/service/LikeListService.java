@@ -37,12 +37,12 @@ public class LikeListService {
         likeListRepository.deleteByUserIdAndCertificationId(userId, certificationId);
     }
 
-    // HashMap에서 특정 User 관련 데이터 삭제.
+    // 특정 User 관련 데이터 삭제.
     public void deleteUserRelatedLike(int userId) {
         likeListRepository.deleteByUserId(userId); // DB Remove
     }
 
-    // HashMap에서 특정 Certification 관련 데이터 삭제.
+    // 특정 Certification 관련 데이터 삭제.
     public void deleteCertificationRelatedLike(int certificationId) {
         likeListRepository.deleteByCertificationId(certificationId); // DB Remove
     }

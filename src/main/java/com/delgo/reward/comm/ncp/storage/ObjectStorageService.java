@@ -100,7 +100,7 @@ public class ObjectStorageService {
         }
     }
 
-    public void uploadObjects(String bucketName, String objectName, String filePath) {
+    public void uploadObjects(BucketName bucketName, String objectName, String filePath) {
         // create folder
 //        String folderName = "sample-folder/";
 //
@@ -118,7 +118,7 @@ public class ObjectStorageService {
         // upload local file
 //        String objectName = "sample-object";
         try {
-            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, objectName,
+            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName.getName(), objectName,
                     new File(filePath)).withCannedAcl(CannedAccessControlList.PublicRead);
             s3.putObject(putObjectRequest);
             System.out.format("Object %s has been created.\n", objectName);
