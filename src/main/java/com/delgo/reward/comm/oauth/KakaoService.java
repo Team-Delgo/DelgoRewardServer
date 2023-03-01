@@ -128,4 +128,51 @@ public class KakaoService {
             return oAuthDTO;
         }
     }
+
+    public void logout(String kakaoId) throws Exception {
+
+        String reqURL = "https://kapi.kakao.com/v1/user/logout";
+        String APP_ADMIN_KEY ="7c55121fe68a5339bab4a1611a1e67d5";
+
+        try {
+            URL url = new URL(reqURL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
+            conn.setRequestProperty("Authorization", "KakaoAK " + APP_ADMIN_KEY); //전송할 header 작성, access_token전송
+
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
+            StringBuilder sb = new StringBuilder();
+
+            sb.append("target_id_type=user_id");
+            sb.append("&target_id=" + kakaoId);
+            bw.write(sb.toString());
+            bw.flush();
+
+            //결과 코드가 200이라면 성공
+            int responseCode = conn.getResponseCode();
+            System.out.println("logout kakao user responseCode : " + responseCode);
+
+            if (responseCode != 200)
+                throw new Exception(ApiCode.UNKNOWN_ERROR.getMsg());
+
+            //요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String line = "";
+            String result = "";
+
+            while ((line = br.readLine()) != null) {
+                result += line;
+            }
+
+            System.out.println("************************************************");
+            System.out.println("response body : " + result);
+            System.out.println("************************************************");
+
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
