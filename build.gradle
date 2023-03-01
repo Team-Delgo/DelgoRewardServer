@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.delgo.reward'
-version = '0.0.1-SNAPSHOT'
+version = '0.1-TEST'
 sourceCompatibility = '11'
 apply plugin:'war'
 
@@ -60,17 +60,16 @@ dependencies {
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.2.2'
 
     // jpg -> webp
-    implementation("com.sksamuel.scrimage:scrimage-core:4.0.32")
-    implementation("com.sksamuel.scrimage:scrimage-webp:4.0.32")
+    implementation "com.sksamuel.scrimage:scrimage-core:4.0.32"
+    implementation "com.sksamuel.scrimage:scrimage-webp:4.0.32"
 
     // kafka chat
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework.kafka:spring-kafka'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
 
-    // mongoDB
-    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
-
+    // Mongo DB
+    implementation "org.springframework.boot:spring-boot-starter-data-mongodb"
 }
 
 tasks.named('test') {
