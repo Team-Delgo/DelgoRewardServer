@@ -1,6 +1,8 @@
 package com.delgo.reward.service;
 
 
+import com.delgo.reward.comm.ncp.storage.BucketName;
+import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.Mungple;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.repository.MungpleRepository;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 public class MungpleService {
 
     private final MungpleRepository mungpleRepository;
+    private final ObjectStorageService objectStorageService;
 
     // Mungple 등록
     public Mungple register(Mungple mungple) {
@@ -61,5 +64,12 @@ public class MungpleService {
     // 인증 개수 많은 멍플 조회
     public List<Mungple> getMungpleOfMostCount(int count){
         return mungpleRepository.findMungpleOfMostCount(count);
+    }
+
+    // 멍플 삭제
+    public void delete(int mungpleId){
+        mungpleRepository.deleteById(mungpleId);
+        objectStorageService.deleteObject(BucketName.MUNGPLE,mungpleId + "_mungple.webp"); // Thumbnail delete
+        objectStorageService.deleteObject(BucketName.MUNGPLE_NOTE,mungpleId + "_mungplenote.webp"); // mungpleNote delete
     }
 }

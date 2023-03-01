@@ -5,6 +5,8 @@ import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.GeoCode;
 import com.delgo.reward.comm.code.PGeoCode;
 import com.delgo.reward.comm.ncp.ReverseGeoService;
+import com.delgo.reward.comm.ncp.storage.BucketName;
+import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.achievements.Achievements;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.common.Location;
@@ -46,6 +48,7 @@ public class CertService {
     private final LikeListService likeListService;
     private final ReverseGeoService reverseGeoService;
     private final AchievementsService achievementsService;
+    private final ObjectStorageService objectStorageService;
 
     // Repository
     private final CertRepository certRepository;
@@ -87,8 +90,9 @@ public class CertService {
 
     // Certification 삭제
     public void delete(int certificationId) {
-        likeListService.deleteCertificationRelatedLike(certificationId);
         certRepository.deleteById(certificationId);
+        likeListService.deleteCertificationRelatedLike(certificationId);
+        objectStorageService.deleteObject(BucketName.CERTIFICATION,certificationId + "_cert.webp");
     }
 
     // 전체 Certification 리스트 조회
