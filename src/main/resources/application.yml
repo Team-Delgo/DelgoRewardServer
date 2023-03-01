@@ -1,7 +1,7 @@
 # spring MariaDB Connect
 spring:
   profiles:
-      active: dev
+      active: real
   data:
     mongodb:
       database: testdb
