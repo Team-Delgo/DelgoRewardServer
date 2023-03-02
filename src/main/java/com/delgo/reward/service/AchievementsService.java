@@ -33,6 +33,14 @@ public class AchievementsService {
     private final ArchiveService archiveService; // 사용자 획득 업적
     private final AchievementsConditionService achievementsConditionService; // 특정 업적 조건
 
+    public Achievements save(Achievements achievements){
+        return achievementsRepository.save(achievements);
+    }
+
+    public Achievements getAchievements(int achievementsId){
+        return achievementsRepository.findById(achievementsId)
+                .orElseThrow(() -> new NullPointerException("NOT FOUND Achievements"));
+    }
 
     // Achievements 및 Condition 등록
     public Achievements registerWithCondition(AchievementsDTO dto) {
