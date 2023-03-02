@@ -60,7 +60,7 @@ public class MungpleController extends CommController {
      * - CA0000 = 전체 조회
      * Response Data : 카테고리별 멍플 리스트 반환
      */
-    @GetMapping("/category/{categoryCode}")
+    @GetMapping(value={"/category/{categoryCode}","/category"})
     public ResponseEntity getCategory(@PathVariable String categoryCode) {
         if (categoryCode.isBlank()) return ParamErrorReturn("categoryCode"); // Validate - Blank Check
 
@@ -84,7 +84,7 @@ public class MungpleController extends CommController {
      * Request Data : mungpleId
      * Response Data :
      */
-    @DeleteMapping("/{mungpleId}")
+    @DeleteMapping(value={"/{mungpleId}",""})
     public ResponseEntity deleteMungple(@PathVariable Integer mungpleId) {
         mungpleService.delete(mungpleId);
         return SuccessReturn();

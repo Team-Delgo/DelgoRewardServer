@@ -35,16 +35,13 @@ public class ExceptionController extends CommController {
     // @RequestParam File Error Check
     @ExceptionHandler({MissingServletRequestPartException.class})
     public ResponseEntity missingServletRequestPartException(MissingServletRequestPartException e) {
-        return ErrorReturn(ApiCode.PARAM_ERROR);
+        return ParamErrorReturn(e.getRequestPartName());
     }
 
     // @RequestBody DTO Param Error Check
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity methodArgumentNotValidException(MethodArgumentNotValidException e) {
         String field = Objects.requireNonNull(e.getFieldError()).getField();
-        if(field.equals("latitude") || field.equals("longitude"))
-            return ErrorReturn(ApiCode.NOT_FONUD_GPS_DATA);
-
         return ParamErrorReturn(field);
     }
 
@@ -62,13 +59,13 @@ public class ExceptionController extends CommController {
     // @PathVariable ERROR - 1
     @ExceptionHandler({MissingPathVariableException.class})
     public ResponseEntity missingPathVariableException(MissingPathVariableException e) {
-        return ErrorReturn(ApiCode.PARAM_ERROR);
+        return ParamErrorReturn(e.getParameter().getParameterName());
     }
 
     // @PathVariable ERROR - 2
     @ExceptionHandler({MethodArgumentTypeMismatchException.class})
     public ResponseEntity methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
-        return ErrorReturn(ApiCode.PARAM_ERROR);
+        return ParamErrorReturn(e.getParameter().getParameterName());
     }
 
     @ExceptionHandler
