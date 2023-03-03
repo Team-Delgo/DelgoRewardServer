@@ -151,6 +151,31 @@ public class PhotoService extends CommService {
         }
     }
 
+    public String uploadAchievements(int achievementsId, MultipartFile photo) {
+        String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\."); // ex) png, jpg, jpeg
+        String extension = type[type.length - 1];
+
+        String fileName = achievementsId + "_achievements.webp";
+        String ncpLink = BucketName.ACHIEVEMENTS.getUrl() + fileName; // NCP Link
+
+        try {
+            File file = new File(DIR + achievementsId + "_achievements." + extension); // 서버에 저장
+            photo.transferTo(file);
+
+            File webpFile = convertWebp(fileName, file);  // filePath에서 File 불러온 뒤 webp로 변환 후 저장.
+
+            objectStorageService.uploadObjects(BucketName.ACHIEVEMENTS, fileName, DIR + fileName); // Upload NCP
+
+            file.delete(); // 서버에 저장된 사진 삭제
+            webpFile.delete();
+
+            return setCacheInvalidation(ncpLink);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new NullPointerException("PHOTO UPLOAD ERROR");
+        }
+    }
+
     // jpg -> webp 변경
     public void convertWebp(MultipartFile photo) {
         String[] photoName = photo.getOriginalFilename().split("\\.");

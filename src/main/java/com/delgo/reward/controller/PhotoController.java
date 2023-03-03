@@ -2,11 +2,9 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.domain.Mungple;
+import com.delgo.reward.domain.achievements.Achievements;
 import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.service.CertService;
-import com.delgo.reward.service.MungpleService;
-import com.delgo.reward.service.PhotoService;
-import com.delgo.reward.service.UserService;
+import com.delgo.reward.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +22,7 @@ public class PhotoController extends CommController {
     private final UserService userService;
     private final PhotoService photoService;
     private final MungpleService mungpleService;
+    private final AchievementsService achievementsService;
 
     /*
      * profile 등록 및 수정 [회원가입 or AccountPage]
@@ -59,7 +58,7 @@ public class PhotoController extends CommController {
      * Request Data : mungpleId, photo
      * Response Data : 사진 저장된 URL
      */
-    @PostMapping(value={"/upload/mungple/{mungpleId}","/upload/mungple"})
+    @PostMapping(value={"/mungple/{mungpleId}","/upload/mungple"})
     public ResponseEntity<?> uploadMungplePhoto(@PathVariable Integer mungpleId, @RequestPart MultipartFile photo) {
         if (photo.isEmpty()) ParamErrorReturn("photo");
 
@@ -72,12 +71,29 @@ public class PhotoController extends CommController {
      * Request Data : mungpleId, photo
      * Response Data : 사진 저장된 URL
      */
-    @PostMapping(value={"/upload/mungplenote/{mungpleId}","/upload/mungplenote"})
+    @PostMapping(value={"/mungplenote/{mungpleId}","/upload/mungplenote"})
     public ResponseEntity<?> uploadMungpleNote(@PathVariable Integer mungpleId, @RequestPart(required = false) MultipartFile photo) {
         if (photo.isEmpty()) ParamErrorReturn("photo");
 
         Mungple mungple = mungpleService.getMungpleById(mungpleId).setPhotoUrl(photoService.uploadMungpleNote(mungpleId, photo));
         return SuccessReturn(mungpleService.register(mungple));
+    }
+
+    /*
+     * 업적 사진 등록
+     * Request Data : achievementsId, photo
+     * Response Data : 사진 저장된 URL
+     */
+    @PostMapping(value={"/achievements/{achievementsId}","/achievements"})
+    public ResponseEntity<?> uploadAchievements(@PathVariable Integer achievementsId, @RequestPart(required = false) MultipartFile photo) {
+        if (photo.isEmpty()) ParamErrorReturn("photo");
+
+        Achievements achievements = achievementsService.getAchievements(achievementsId)
+                .setImg(photoService.uploadAchievements(achievementsId, photo));
+
+        log.info("achievements : {}", achievements);
+
+        return SuccessReturn(achievementsService.save(achievements));
     }
 
     /*
