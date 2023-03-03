@@ -31,7 +31,7 @@ public class LogFilter extends OncePerRequestFilter {
         // form-data로 받을 때는 Wrapper 사용하면 ERROR 발생
         if (request.getMethod().equals(POST) && !requestUrl.contains("/photo") && !requestUrl.contains("/login")
 //                && !requestUrl.equals("/api/certification") && !requestUrl.equals("/api/certification")
-                && !requestUrl.equals("/api/mungple")
+                && !requestUrl.equals("/api/mungple") && !requestUrl.equals("/api/achievements")
         ) {
             RequestBodyWrapper wrappingRequest = new RequestBodyWrapper((HttpServletRequest) request);
             wrappingRequest.setAttribute("requestBody", wrappingRequest.getRequestBody());

@@ -1,5 +1,7 @@
 package com.delgo.reward.service;
 
+import com.delgo.reward.comm.ncp.storage.BucketName;
+import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.achievements.Achievements;
 import com.delgo.reward.domain.achievements.AchievementsCondition;
 import com.delgo.reward.domain.achievements.Archive;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.util.ArrayList;
@@ -22,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AchievementsService {
 
@@ -30,11 +34,22 @@ public class AchievementsService {
     private final AchievementsRepository achievementsRepository;
 
     // Service
+    private final PhotoService photoService;
     private final ArchiveService archiveService; // 사용자 획득 업적
+    private final ObjectStorageService objectStorageService;
     private final AchievementsConditionService achievementsConditionService; // 특정 업적 조건
 
     public Achievements save(Achievements achievements){
         return achievementsRepository.save(achievements);
+    }
+
+    // 업적 및 조건 삭제
+    public void delete(int achievementId){
+        Achievements achievements = getAchievements(achievementId);
+        achievementsRepository.delete(achievements); // 업적 삭제
+        achievementsConditionService.delete(achievements); // 업적 조건 삭제
+        objectStorageService.deleteObject(BucketName.ACHIEVEMENTS, achievementId + "_achievements.webp");
+
     }
 
     public Achievements getAchievements(int achievementsId){
@@ -42,21 +57,12 @@ public class AchievementsService {
                 .orElseThrow(() -> new NullPointerException("NOT FOUND Achievements"));
     }
 
-    // Achievements 및 Condition 등록
-    public Achievements registerWithCondition(AchievementsDTO dto) {
-        String img; // 업적 이미지.
-        switch (dto.getCategoryCode()) {
-            case "CA0001": img = "https://kr.object.ncloudstorage.com/reward-achivements/%ED%98%95%ED%83%9C%3D%EC%B9%B4%EB%93%9C%2C%20%EC%B9%B4%ED%85%8C%EA%B3%A0%EB%A6%AC%3D%EC%82%B0%EC%B1%85.png";break;
-            case "CA0002": img = "https://kr.object.ncloudstorage.com/reward-achivements/%ED%98%95%ED%83%9C%3D%EC%B9%B4%EB%93%9C%2C%20%EC%B9%B4%ED%85%8C%EA%B3%A0%EB%A6%AC%3D%EC%B9%B4%ED%8E%98.png";break;
-            case "CA0003": img = "https://kr.object.ncloudstorage.com/reward-achivements/%ED%98%95%ED%83%9C%3D%EC%B9%B4%EB%93%9C%2C%20%EC%B9%B4%ED%85%8C%EA%B3%A0%EB%A6%AC%3D%EC%8B%9D%EB%8B%B9.png";break;
-            case "CA0004": img = "https://kr.object.ncloudstorage.com/reward-achivements/%ED%98%95%ED%83%9C%3D%EC%B9%B4%EB%93%9C%2C%20%EC%B9%B4%ED%85%8C%EA%B3%A0%EB%A6%AC%3D%EB%AA%A9%EC%9A%95.png";break;
-            case "CA0005": img = "https://kr.object.ncloudstorage.com/reward-achivements/%ED%98%95%ED%83%9C%3D%EC%B9%B4%EB%93%9C%2C%20%EC%B9%B4%ED%85%8C%EA%B3%A0%EB%A6%AC%3D%EB%AF%B8%EC%9A%A9.png";break;
-            case "CA0006": img = "https://kr.object.ncloudstorage.com/reward-achivements/%ED%98%95%ED%83%9C%3D%EC%B9%B4%EB%93%9C%2C%20%EC%B9%B4%ED%85%8C%EA%B3%A0%EB%A6%AC%3D%EB%B3%91%EC%9B%90.png";break;
-            default: img = ""; break;
-        }
-
+    // Achievements Condition 등록
+    public Achievements registerWithCondition(AchievementsDTO dto, MultipartFile photo) {
         // 업적 등록
-        Achievements achievements =  achievementsRepository.save(dto.toEntity(img));
+        Achievements achievements =  achievementsRepository.save(dto.toEntity());
+        // 사진 등록
+        String imgUrl = photoService.uploadAchievements(achievements.getAchievementsId(), photo);
         // 조건 등록
         achievementsConditionService.register(AchievementsCondition.builder()
                 .achievements(achievements)
@@ -66,11 +72,10 @@ public class AchievementsService {
                 .build()
         );
 
-        return achievementsRepository.save(achievements);
+        return achievements.setImg(imgUrl);
     }
 
     // 달성한 업적 있는지 Check
-    @Transactional
     public List<Achievements> checkEarnedAchievements(int userId, boolean isMungple) {
         return achievementsRepository.findAchievementsNotEarned(userId, isMungple).stream().map(achievement -> {
             achievement.getAchievementsCondition().forEach(ac -> { // ac.getMungpleId() == 0 -> 일반 인증 조건
@@ -82,21 +87,7 @@ public class AchievementsService {
         }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
-    // Archive 수정
-    public void setMainAchievements(MainAchievementsDTO dto) {
-        // 대표 업적 초기화
-        archiveService.resetMainArchive(dto.getUserId());
-
-        List<Archive> archives = new ArrayList<>();
-        if (dto.getFirst() != 0) archives.add(archiveService.getArchive(dto.getUserId(),dto.getFirst()).setMain(1));
-        if (dto.getSecond() != 0) archives.add(archiveService.getArchive(dto.getUserId(),dto.getSecond()).setMain(2));
-        if (dto.getThird() != 0) archives.add(archiveService.getArchive(dto.getUserId(),dto.getThird()).setMain(3));
-
-        // 사용자 지정 업적으로 대표업적 설정
-        archiveService.registerArchives(archives);
-    }
-
-    public List<Achievements> getAchievementsByUser(int userId){
+    public List<Achievements> getUserEarnedAchievements(int userId){
 
         List<Achievements> achievements = getAchievementsAll();
         List<Archive> archives = archiveService.getArchive(userId);
@@ -130,5 +121,19 @@ public class AchievementsService {
     // 사용자가 특정 카테고리의 인증을 몇번했는지 조회
     public int getCategoryCount(int userId, String categoryCode, int mungpleId) {
         return certRepository.countByCategory(userId, categoryCode, mungpleId);
+    }
+
+    // Archive 수정
+    public void setMainAchievements(MainAchievementsDTO dto) {
+        // 대표 업적 초기화
+        archiveService.resetMainArchive(dto.getUserId());
+
+        List<Archive> archives = new ArrayList<>();
+        if (dto.getFirst() != 0) archives.add(archiveService.getArchive(dto.getUserId(),dto.getFirst()).setMain(1));
+        if (dto.getSecond() != 0) archives.add(archiveService.getArchive(dto.getUserId(),dto.getSecond()).setMain(2));
+        if (dto.getThird() != 0) archives.add(archiveService.getArchive(dto.getUserId(),dto.getThird()).setMain(3));
+
+        // 사용자 지정 업적으로 대표업적 설정
+        archiveService.registerArchives(archives);
     }
 }

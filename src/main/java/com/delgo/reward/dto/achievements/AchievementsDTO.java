@@ -10,14 +10,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AchievementsDTO {
     private String name; // 업적 명
+    private String description; // 업적 설명
     private Boolean isMungple; // 업적 조건에 멍플 조건이 있는지 여부 체크
     private String categoryCode; // 업적 조건 카테고리
-    private Integer count; // 얼마나 만족해야 하는지 개수
+    private Integer count; // 얼마나 만족 해야 하는지 개수
 
-    public Achievements toEntity(String img){
+    public Achievements toEntity(){
         return Achievements.builder()
-                .imgUrl(img)
                 .name(name)
+                .description(description)
                 .isMungple(isMungple)
                 .build();
     }
