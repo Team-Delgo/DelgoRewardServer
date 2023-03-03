@@ -22,7 +22,7 @@ public class Achievements {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer achievementsId;
     private String name; // 업적 명
-    private String desc; // 업적 설명
+    private String description; // 업적 설명
     private String imgUrl; // 업적 아이콘 이미지 url (대표 업적 설정되었을 때만 사용 됨)
     private Boolean isMungple; // 업적 조건에 멍플 조건이 있는지 여부 체크
 
@@ -33,14 +33,11 @@ public class Achievements {
     @OneToMany(mappedBy = "achievements", cascade = CascadeType.REMOVE)
     private List<AchievementsCondition> achievementsCondition;
 
-    @Transient
-    @Builder.Default
+    @Transient @Builder.Default
     private Integer isMain = 0; // 대표 이미지일 경우 순서 표시
-    @Transient
-    @Builder.Default
+    @Transient @Builder.Default
     private Boolean isActive = false;
-    @Transient
-    @Builder.Default
+    @Transient @Builder.Default
     private Boolean conditionCheck = true;
 
     public void beActive(int order) {
@@ -58,5 +55,11 @@ public class Achievements {
                 .userId(userId)
                 .isMain(0)
                 .build();
+    }
+
+    public Achievements setImg(String imgUrl) {
+        this.imgUrl = imgUrl;
+
+        return this;
     }
 }
