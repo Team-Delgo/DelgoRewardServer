@@ -1,5 +1,6 @@
 package com.delgo.reward.service;
 
+import com.delgo.reward.domain.achievements.Achievements;
 import com.delgo.reward.domain.achievements.AchievementsCondition;
 import com.delgo.reward.repository.AchievementsConditionRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,5 +19,10 @@ public class AchievementsConditionService {
     // AchievementsCondition 등록
     public AchievementsCondition register(AchievementsCondition achievementsCondition) {
         return achievementsConditionRepository.save(achievementsCondition);
+    }
+
+    // achievementsId로 AchievementsCondition 삭제
+    public void delete(Achievements achievements) {
+        achievementsConditionRepository.deleteAllByAchievements(achievements);
     }
 }
