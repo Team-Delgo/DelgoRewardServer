@@ -42,9 +42,14 @@ public class UserService {
     private final JDBCTemplatePointRepository jdbcTemplatePointRepository;
     private final JDBCTemplateRankingRepository jdbcTemplateRankingRepository;
 
+    // DB 저장
+    public User save(User user) {
+       return userRepository.save(user);
+    }
+
     // 회원가입
     public User signup(User user) {
-        User registeredUser = userRepository.save(user);
+        User registeredUser = save(user);
         jdbcTemplatePointRepository.createUserPoint(registeredUser); // Point 생성
 
         return registeredUser;
