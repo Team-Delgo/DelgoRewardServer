@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -29,6 +30,7 @@ public class UserService {
     // Service
     private final CodeService codeService;
     private final KakaoService kakaoService;
+    private final PhotoService photoService;
     private final ObjectStorageService objectStorageService;
 
     // Repository
@@ -42,12 +44,17 @@ public class UserService {
     private final JDBCTemplatePointRepository jdbcTemplatePointRepository;
     private final JDBCTemplateRankingRepository jdbcTemplateRankingRepository;
 
+    // DB 저장
+    public User save(User user) {
+       return userRepository.save(user);
+    }
+
     // 회원가입
-    public User signup(User user) {
-        User registeredUser = userRepository.save(user);
+    public User signup(User user, MultipartFile profile) {
+        User registeredUser = save(user);
         jdbcTemplatePointRepository.createUserPoint(registeredUser); // Point 생성
 
-        return registeredUser;
+        return registeredUser.setProfile(photoService.uploadProfile(user.getUserId(), profile)); // User Profile 등록
     }
 
     // 회원탈퇴
