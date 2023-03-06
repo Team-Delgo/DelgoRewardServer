@@ -78,8 +78,7 @@ public class UserController extends CommController {
                 ? codeService.getAddress(oAuthSignUpDTO.getPGeoCode(), true)
                 : codeService.getAddress(oAuthSignUpDTO.getGeoCode(), false);
 
-        User user = userService.signup(oAuthSignUpDTO.makeUserSocial(oAuthSignUpDTO.getUserSocial(), address));
-        User modifyUser = userService.save(user.setProfile(photoService.uploadProfile(user.getUserId(), profile))); // User Profile 등록
+        User user = userService.signup(oAuthSignUpDTO.makeUserSocial(oAuthSignUpDTO.getUserSocial(), address), profile);
         Pet pet = petService.register(oAuthSignUpDTO.makePet(user.getUserId()));
 
         archiveService.registerWelcome(user.getUserId()); // WELCOME 업적 부여
@@ -89,7 +88,7 @@ public class UserController extends CommController {
         response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
         response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
 
-        UserResDTO returnDto = new UserResDTO(modifyUser, pet);
+        UserResDTO returnDto = new UserResDTO(user, pet);
         log.info("user : {}", returnDto);
         return SuccessReturn(returnDto);
     }
@@ -109,8 +108,7 @@ public class UserController extends CommController {
                 ? codeService.getAddress(signUpDTO.getPGeoCode(), true)
                 : codeService.getAddress(signUpDTO.getGeoCode(), false);
 
-        User user = userService.signup(signUpDTO.makeUser(passwordEncoder.encode(signUpDTO.getPassword()), address));
-        User modifyUser = userService.save(user.setProfile(photoService.uploadProfile(user.getUserId(), profile)));  // User Profile 등록
+        User user = userService.signup(signUpDTO.makeUser(passwordEncoder.encode(signUpDTO.getPassword()), address), profile);
         Pet pet = petService.register(signUpDTO.makePet(user.getUserId()));
 
         archiveService.registerWelcome(user.getUserId()); // WELCOME 업적 부여
@@ -120,58 +118,8 @@ public class UserController extends CommController {
         response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
         response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
 
-        UserResDTO returnDto = new UserResDTO(modifyUser, pet);
+        UserResDTO returnDto = new UserResDTO(user, pet);
         log.info("user : {}", returnDto);
         return SuccessReturn(returnDto);
     }
-
-    // 소셜 회원가입 [ Deprecated ]
-//    @PostMapping("/oauth")
-//    public ResponseEntity<?> registerUserByOAuth(@Validated @RequestBody OAuthSignUpDTO oAuthSignUpDTO, HttpServletResponse response) {
-//        // Apple 회원가입 시 appleUniqueNo 넣어주어야 함.
-//        if ((oAuthSignUpDTO.getAppleUniqueNo() == null || oAuthSignUpDTO.getAppleUniqueNo().isBlank())
-//                && oAuthSignUpDTO.getUserSocial() == UserSocial.A)
-//            return ErrorReturn(ApiCode.PARAM_ERROR);
-//
-//        // 주소 설정
-//        String address = (oAuthSignUpDTO.getGeoCode().equals("0"))  // 세종시는 구가 없음.
-//                ? codeService.getAddress(oAuthSignUpDTO.getPGeoCode(), true)
-//                : codeService.getAddress(oAuthSignUpDTO.getGeoCode(), false);
-//
-//        User user = userService.signup(oAuthSignUpDTO.makeUserSocial(oAuthSignUpDTO.getUserSocial(), address));
-//        Pet pet = petService.register(oAuthSignUpDTO.makePet(user.getUserId()));
-//
-//        archiveService.registerWelcome(user.getUserId()); // WELCOME 업적 부여
-//        rankingService.rankingByPoint(); // 랭킹 업데이트
-//
-//        JwtToken jwt = jwtService.createToken(user.getUserId());
-//        response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
-//        response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
-//
-//        return SuccessReturn(new UserResDTO(user, pet));
-//    }
-//
-//    // 회원가입 [ Deprecated ]
-//    @PostMapping
-//    public ResponseEntity<?> registerUser(@Validated @RequestBody SignUpDTO signUpDTO, HttpServletResponse response) {
-//        if (userService.isEmailExisting(signUpDTO.getEmail())) // Email 중복확인
-//            return ErrorReturn(ApiCode.EMAIL_DUPLICATE_ERROR);
-//
-//        // 주소 설정
-//        String address = (signUpDTO.getGeoCode().equals("0"))  // 세종시는 구가 없음.
-//                ? codeService.getAddress(signUpDTO.getPGeoCode(), true)
-//                : codeService.getAddress(signUpDTO.getGeoCode(), false);
-//
-//        User user = userService.signup(signUpDTO.makeUser(passwordEncoder.encode(signUpDTO.getPassword()), address));
-//        Pet pet = petService.register(signUpDTO.makePet(user.getUserId()));
-//
-//        archiveService.registerWelcome(user.getUserId()); // WELCOME 업적 부여
-//        rankingService.rankingByPoint(); // 랭킹 업데이트
-//
-//        JwtToken jwt = jwtService.createToken(user.getUserId());
-//        response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
-//        response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
-//
-//        return SuccessReturn(new UserResDTO(user, pet));
-//    }
 }

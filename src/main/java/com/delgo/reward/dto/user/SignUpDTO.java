@@ -15,24 +15,15 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor
 public class SignUpDTO {
-    @NotBlank
-    private String userName;
-    @NotBlank
-    private String email;
-    @NotBlank
-    private String password;
-    @NotBlank
-    private String phoneNo;
-    @NotBlank
-    private String geoCode;
-    @NotBlank
-    private String pGeoCode;
-    @NotBlank
-    private String petName;
-    @NotNull
-    private String breed;
-    @NotNull
-    private LocalDate birthday;
+    @NotBlank private String userName;
+    @NotBlank private String email;
+    @NotBlank private String password;
+    @NotBlank private String phoneNo;
+    @NotBlank private String geoCode;
+    @NotBlank private String pGeoCode;
+    @NotBlank private String petName;
+    @NotNull private String breed;
+    @NotNull private LocalDate birthday;
 
     public User makeUser(String password, String address){
         return User.builder()
