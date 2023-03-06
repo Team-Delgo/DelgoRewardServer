@@ -3,6 +3,7 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
+import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.dto.certification.CertDTO;
 import com.delgo.reward.dto.certification.ModifyCertDTO;
 import com.delgo.reward.service.CertService;
@@ -36,7 +37,9 @@ public class CertController extends CommController {
     public ResponseEntity<?> register(@Validated @RequestPart(value = "data") CertDTO dto, @RequestPart(required = false) MultipartFile photo) {
         if(photo.isEmpty()) ErrorReturn(ApiCode.PARAM_ERROR);
 
-        return SuccessReturn(certService.register(dto, photo));
+        Certification certification = certService.register(dto, photo);
+        log.info("{}", certification);
+        return SuccessReturn(certification);
     }
 
     /*
