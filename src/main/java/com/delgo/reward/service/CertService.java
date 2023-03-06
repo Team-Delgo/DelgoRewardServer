@@ -22,6 +22,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class CertService {
     // Service
     private final UserService userService;
     private final PointService pointService;
+    private final PhotoService photoService;
     private final ArchiveService archiveService;
     private final MungpleService mungpleService;
     private final RankingService rankingService;
@@ -61,7 +63,7 @@ public class CertService {
     }
 
     // Certification 등록
-    public Certification register(CertDTO dto) {
+    public Certification register(CertDTO dto, MultipartFile photo) {
         Certification certification = save(
                 (dto.getMungpleId() == 0) // 일반 인증의 경우 - (위도,경도)로 주소 가져와서 등록해야 함.
                         ? dto.toEntity(reverseGeoService.getReverseGeoData(new Location(dto.getLatitude(), dto.getLongitude())))
@@ -79,8 +81,8 @@ public class CertService {
         pointService.givePoint(userService.getUserById(dto.getUserId()).getUserId(), CategoryCode.valueOf(dto.getCategoryCode()).getPoint());
         // 랭킹 실시간으로 집계
         rankingService.rankingByPoint();
-
-        return certification;
+        // 인증 사진 Upload 및 설정
+        return certification.setPhotoUrl(photoService.uploadCertMultipart(certification.getCertificationId(), photo));
     }
 
     // Certification 수정

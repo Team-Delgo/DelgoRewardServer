@@ -3,23 +3,27 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
+import com.delgo.reward.comm.security.jwt.JwtService;
 import com.delgo.reward.comm.security.jwt.JwtToken;
 import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
-import com.delgo.reward.comm.security.jwt.JwtService;
 import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
 import com.delgo.reward.domain.SmsAuth;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.domain.user.UserSocial;
 import com.delgo.reward.dto.OAuthSignUpDTO;
-import com.delgo.reward.dto.user.*;
+import com.delgo.reward.dto.user.ResetPasswordDTO;
+import com.delgo.reward.dto.user.SignUpDTO;
+import com.delgo.reward.dto.user.UserResDTO;
 import com.delgo.reward.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -57,72 +61,13 @@ public class UserController extends CommController {
         return SuccessReturn();
     }
 
-//    /*
-//     * 소셜 회원가입 ( Kakao, Naver, Apple )
-//     * Request Data : OAuthSignUpDTO, MultipartFile (프로필 사진)
-//     * Response Data : 등록한 인증 데이터 반환
-//     */
-//    @PostMapping(value = "/oauth",consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-//    public ResponseEntity<?> registerUserByOAuth(@Validated @RequestPart OAuthSignUpDTO oAuthSignUpDTO, @RequestPart MultipartFile profile, HttpServletResponse response) {
-//        // Apple 회원가입 시 appleUniqueNo 넣어주어야 함.
-//        if ((oAuthSignUpDTO.getAppleUniqueNo() == null || oAuthSignUpDTO.getAppleUniqueNo().isBlank())
-//                && oAuthSignUpDTO.getUserSocial() == UserSocial.A)
-//            return ErrorReturn(ApiCode.PARAM_ERROR);
-//
-//        // 주소 설정
-//        String address = (oAuthSignUpDTO.getGeoCode().equals("0"))  // 세종시는 구가 없음.
-//                ? codeService.getAddress(oAuthSignUpDTO.getPGeoCode(), true)
-//                : codeService.getAddress(oAuthSignUpDTO.getGeoCode(), false);
-//
-//        User user = userService.signup((oAuthSignUpDTO.getUserSocial() == UserSocial.A)
-//                ? oAuthSignUpDTO.makeUserApple(oAuthSignUpDTO.getAppleUniqueNo(), address) // Apple Login 일 경우
-//                : oAuthSignUpDTO.makeUserSocial(oAuthSignUpDTO.getUserSocial(), address)); // Kakao, Naver Login 일 경우
-//        photoService.uploadProfile(user.getUserId(), profile); // User Profile 등록
-//
-//        Pet pet = petService.register(oAuthSignUpDTO.makePet(user.getUserId()));
-//
-//        archiveService.registerWelcome(user.getUserId()); // WELCOME 업적 부여
-//        rankingService.rankingByPoint(); // 랭킹 업데이트
-//
-//        JwtToken jwt = jwtService.createToken(user.getUserId());
-//        response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
-//        response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
-//
-//        return SuccessReturn(new UserResDTO(user, pet));
-//    }
-//
-//    /*
-//     * 일반 회원가입
-//     * Request Data : SignUpDTO, MultipartFile (프로필 사진)
-//     * Response Data : 등록한 인증 데이터 반환
-//     */
-//    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-//    public ResponseEntity<?> registerUser(@Validated @RequestPart SignUpDTO signUpDTO, @RequestPart MultipartFile profile, HttpServletResponse response) {
-//        if (userService.isEmailExisting(signUpDTO.getEmail())) // Email 중복확인
-//            return ErrorReturn(ApiCode.EMAIL_DUPLICATE_ERROR);
-//
-//        // 주소 설정
-//        String address = (signUpDTO.getGeoCode().equals("0"))  // 세종시는 구가 없음.
-//                ? codeService.getAddress(signUpDTO.getPGeoCode(), true)
-//                : codeService.getAddress(signUpDTO.getGeoCode(), false);
-//
-//        User user = userService.signup(signUpDTO.makeUser(passwordEncoder.encode(signUpDTO.getPassword()), address));
-//        photoService.uploadProfile(user.getUserId(), profile); // User Profile 등록
-//        Pet pet = petService.register(signUpDTO.makePet(user.getUserId()));
-//
-//        archiveService.registerWelcome(user.getUserId()); // WELCOME 업적 부여
-//        rankingService.rankingByPoint(); // 랭킹 업데이트
-//
-//        JwtToken jwt = jwtService.createToken(user.getUserId());
-//        response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
-//        response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
-//
-//        return SuccessReturn(new UserResDTO(user, pet));
-//    }
-
-    // 소셜 회원가입 [ Deprecated ]
-    @PostMapping("/oauth")
-    public ResponseEntity<?> registerUserByOAuth(@Validated @RequestBody OAuthSignUpDTO oAuthSignUpDTO, HttpServletResponse response) {
+    /*
+     * 소셜 회원가입 ( Kakao, Naver, Apple )
+     * Request Data : OAuthSignUpDTO, MultipartFile (프로필 사진)
+     * Response Data : 등록한 인증 데이터 반환
+     */
+    @PostMapping(value = "/oauth",consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> registerUserByOAuth(@Validated @RequestPart(value = "data") OAuthSignUpDTO oAuthSignUpDTO, @RequestPart MultipartFile profile, HttpServletResponse response) {
         // Apple 회원가입 시 appleUniqueNo 넣어주어야 함.
         if ((oAuthSignUpDTO.getAppleUniqueNo() == null || oAuthSignUpDTO.getAppleUniqueNo().isBlank())
                 && oAuthSignUpDTO.getUserSocial() == UserSocial.A)
@@ -133,7 +78,7 @@ public class UserController extends CommController {
                 ? codeService.getAddress(oAuthSignUpDTO.getPGeoCode(), true)
                 : codeService.getAddress(oAuthSignUpDTO.getGeoCode(), false);
 
-        User user = userService.signup(oAuthSignUpDTO.makeUserSocial(oAuthSignUpDTO.getUserSocial(), address));
+        User user = userService.signup(oAuthSignUpDTO.makeUserSocial(oAuthSignUpDTO.getUserSocial(), address), profile);
         Pet pet = petService.register(oAuthSignUpDTO.makePet(user.getUserId()));
 
         archiveService.registerWelcome(user.getUserId()); // WELCOME 업적 부여
@@ -143,12 +88,18 @@ public class UserController extends CommController {
         response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
         response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
 
-        return SuccessReturn(new UserResDTO(user, pet));
+        UserResDTO returnDto = new UserResDTO(user, pet);
+        log.info("user : {}", returnDto);
+        return SuccessReturn(returnDto);
     }
 
-    // 회원가입 [ Deprecated ]
-    @PostMapping
-    public ResponseEntity<?> registerUser(@Validated @RequestBody SignUpDTO signUpDTO, HttpServletResponse response) {
+    /*
+     * 일반 회원가입
+     * Request Data : SignUpDTO, MultipartFile (프로필 사진)
+     * Response Data : 등록한 인증 데이터 반환
+     */
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> registerUser(@Validated @RequestPart(value = "data") SignUpDTO signUpDTO, @RequestPart MultipartFile profile, HttpServletResponse response) {
         if (userService.isEmailExisting(signUpDTO.getEmail())) // Email 중복확인
             return ErrorReturn(ApiCode.EMAIL_DUPLICATE_ERROR);
 
@@ -157,7 +108,7 @@ public class UserController extends CommController {
                 ? codeService.getAddress(signUpDTO.getPGeoCode(), true)
                 : codeService.getAddress(signUpDTO.getGeoCode(), false);
 
-        User user = userService.signup(signUpDTO.makeUser(passwordEncoder.encode(signUpDTO.getPassword()), address));
+        User user = userService.signup(signUpDTO.makeUser(passwordEncoder.encode(signUpDTO.getPassword()), address), profile);
         Pet pet = petService.register(signUpDTO.makePet(user.getUserId()));
 
         archiveService.registerWelcome(user.getUserId()); // WELCOME 업적 부여
@@ -167,6 +118,8 @@ public class UserController extends CommController {
         response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
         response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
 
-        return SuccessReturn(new UserResDTO(user, pet));
+        UserResDTO returnDto = new UserResDTO(user, pet);
+        log.info("user : {}", returnDto);
+        return SuccessReturn(returnDto);
     }
 }

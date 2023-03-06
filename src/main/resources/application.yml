@@ -44,6 +44,8 @@ spring:
 config:
   driverLocation: C:\\chrome\\chromedriver.exe
   photoDir: C:\\testPhoto\\
+  kakao:
+    REDIRECT_URL: "https://www.test.delgo.pet/oauth/callback/kakao"
 
 ---
 spring:
