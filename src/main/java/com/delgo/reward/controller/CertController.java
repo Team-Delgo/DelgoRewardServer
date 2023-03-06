@@ -3,7 +3,6 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
-import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.dto.certification.CertDTO;
 import com.delgo.reward.dto.certification.ModifyCertDTO;
 import com.delgo.reward.service.CertService;
@@ -29,17 +28,7 @@ public class CertController extends CommController {
     private final PhotoService photoService;
 
     /*
-     * 인증 등록 [ Deprecated ]
-     * Request Data : PastCertificationDTO
-     * Response Data : 등록한 인증 데이터 반환
-     */
-//    @PostMapping
-//    public ResponseEntity register(@Validated @RequestBody CertDTO dto) {
-//        return SuccessReturn(certService.register(dto));
-//    }
-
-    /*
-     * 인증 등록 Version 2
+     * 인증 등록
      * Request Data : PastCertificationDTO
      * Response Data : 등록한 인증 데이터 반환
      */
@@ -47,10 +36,7 @@ public class CertController extends CommController {
     public ResponseEntity<?> register(@Validated @RequestPart(value = "data") CertDTO dto, @RequestPart(required = false) MultipartFile photo) {
         if(photo.isEmpty()) ErrorReturn(ApiCode.PARAM_ERROR);
 
-        Certification certification = certService.register(dto);
-        String photoUrl = photoService.uploadCertMultipart(certification.getCertificationId(), photo); // DB에 저장.
-
-        return SuccessReturn(certService.save(certification.setPhotoUrl(photoUrl)));
+        return SuccessReturn(certService.register(dto, photo));
     }
 
     /*
