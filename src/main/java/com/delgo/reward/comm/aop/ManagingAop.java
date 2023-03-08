@@ -12,6 +12,8 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Method;
+
 @Slf4j
 @Aspect
 @Component
@@ -19,30 +21,38 @@ import org.springframework.stereotype.Component;
 public class ManagingAop {
     private final ManagingService managingService;
 
-    @Pointcut("execution(* com.delgo.reward.controller..*.*(..))")
-    private void cut() {}
+    //    @Pointcut("execution(* com.delgo.reward.controller..*.*(..))")
+    @Pointcut("@annotation(org.springframework.web.bind.annotation.PostMapping) " +
+            "|| @annotation(org.springframework.web.bind.annotation.PutMapping)" +
+            "|| @annotation(org.springframework.web.bind.annotation.DeleteMapping)")
+    private void cut() {
+    }
 
     @Before("cut()")
     public void before(JoinPoint joinPoint) {
         String controllerName = joinPoint.getSignature().getDeclaringType().getName();
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         String methodName = methodSignature.getMethod().getName();
+
+        System.out.println("method name: " + methodName);
+
+
         ArrayMap<String, Object> args = new ArrayMap<>();
         Object[] argsList = joinPoint.getArgs();
 
-        for(Object obj : argsList) {
+        for (Object obj : argsList) {
             args.put("type: " + obj.getClass().getSimpleName(), "value: " + obj);
         }
         Managing managing = managingService.createLog(controllerName, methodName, args);
-        log.info("[ManagingAop]\n" +
-                "controller: " + managing.getControllerName() +
+        log.info("\n[ManagingAop]" +
+                "\ncontroller: " + managing.getControllerName() +
                 "\nmethod: " + managing.getMethodName());
         ArrayMap<String, Object> argsMap = managing.getArgs();
 
-        for(int i=0;i<argsMap.size();i++){
+        for (int i = 0; i < argsMap.size(); i++) {
             log.info("\nargs" +
-                    "\n\ttype: " + argsMap.getKey(i) +
-                    "\n\tvalue: " + argsMap.getValue(i));
+                    "\n\t" + argsMap.getKey(i) +
+                    "\n\t" + argsMap.getValue(i));
         }
     }
 }
