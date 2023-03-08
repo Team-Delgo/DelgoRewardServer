@@ -129,11 +129,14 @@ public class CertController extends CommController {
     /*
      * 모든 인증 리스트 페이징으로 반환 [ Main ]
      * Request Data : currentPage ( 현재 페이지 번호 ), pageSize ( 페이지 크기 )
+     * certificationId - 해당 Cert는 제외하고 조회한다.
      * Response Data : 인증 모두 조회 ( 페이징 처리 되어 있음 )
      */
     @GetMapping("/all")
-    public ResponseEntity getPagingData(@RequestParam Integer userId, @RequestParam Integer currentPage, @RequestParam Integer pageSize) {
-        return SuccessReturn(certService.getCertAll(userId, currentPage, pageSize, true));
+    public ResponseEntity getPagingData(@RequestParam Integer userId, @RequestParam Integer currentPage, @RequestParam Integer pageSize,
+                                        @RequestParam(required = false) Integer certificationId) {
+        return (certificationId == null) ? SuccessReturn(certService.getCertAll(userId, currentPage, pageSize, true))
+                : SuccessReturn(certService.getCertAllExcludeSpecificCert(userId, currentPage, pageSize, true, certificationId));
     }
 
     /*
