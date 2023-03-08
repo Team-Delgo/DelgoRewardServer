@@ -71,6 +71,9 @@ dependencies {
 
     // Mongo DB
     implementation "org.springframework.boot:spring-boot-starter-data-mongodb"
+
+    // AOP
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
 }
 
 tasks.named('test') {
