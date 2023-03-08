@@ -20,6 +20,17 @@ public class Managing {
     private String id;
     private String controllerName;
     private String methodName;
+    private String httpMethod;
     private ArrayMap<String, Object> args;
     private LocalDateTime createAt;
+
+    public Managing toEntity(String controllerName, String methodName, ArrayMap<String, Object> args){
+        return Managing.builder()
+                .controllerName(controllerName)
+                .methodName(methodName)
+                .args(args)
+                .createAt(LocalDateTime.now())
+                .build();
+
+    }
 }

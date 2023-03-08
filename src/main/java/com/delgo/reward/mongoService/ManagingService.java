@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 
 @Slf4j
 @Service
@@ -16,6 +15,6 @@ public class ManagingService {
     private final ManagingRepository managingRepository;
 
     public Managing createLog(String controllerName, String methodName, ArrayMap<String, Object> args) {
-        return managingRepository.save(Managing.builder().controllerName(controllerName).methodName(methodName).args(args).createAt(LocalDateTime.now()).build());
+        return managingRepository.save(new Managing().toEntity(controllerName, methodName, args));
     }
 }
