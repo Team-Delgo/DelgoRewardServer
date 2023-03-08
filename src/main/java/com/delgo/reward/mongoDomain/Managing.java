@@ -20,7 +20,6 @@ public class Managing {
     private String id;
     private String controllerName;
     private String methodName;
-    private String httpMethod;
     private ArrayMap<String, Object> args;
     private LocalDateTime createAt;
 
