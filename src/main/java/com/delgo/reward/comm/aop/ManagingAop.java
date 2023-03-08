@@ -6,6 +6,7 @@ import com.google.api.client.util.ArrayMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -34,9 +35,6 @@ public class ManagingAop {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         String methodName = methodSignature.getMethod().getName();
 
-        System.out.println("method name: " + methodName);
-
-
         ArrayMap<String, Object> args = new ArrayMap<>();
         Object[] argsList = joinPoint.getArgs();
 
@@ -53,6 +51,15 @@ public class ManagingAop {
             log.info("\nargs" +
                     "\n\t" + argsMap.getKey(i) +
                     "\n\t" + argsMap.getValue(i));
+        }
+    }
+
+    @AfterReturning(value = "cut()", returning = "obj")
+    public void afterReturn(JoinPoint joinPoint, Object obj) {
+        System.out.println("return");
+        String[] strings = obj.toString().split(",");
+        for(String str: strings){
+            System.out.println(str);
         }
     }
 }
