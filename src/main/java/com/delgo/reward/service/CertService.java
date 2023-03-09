@@ -108,6 +108,17 @@ public class CertService {
         return certifications;
     }
 
+    // 전체 Certification 리스트 조회
+    public Slice<Certification> getCertAllExcludeSpecificCert(int userId, int currentPage, int pageSize, boolean isDesc, int certificationId) {
+        PageRequest pageRequest = (isDesc)
+                ? PageRequest.of(currentPage, pageSize, Sort.by("regist_dt").descending()) // 내림차순 정렬
+                : PageRequest.of(currentPage, pageSize, Sort.by("regist_dt")); // 오름차순 정렬
+
+        Slice<Certification> certifications = certRepository.findAllExcludeSpecificCert(userId, certificationId, pageRequest);
+        certifications.getContent().forEach(cert -> setUserAndLike(userId, cert));
+        return certifications;
+    }
+
     // mungpleId로 Certification 조회
     public Slice<Certification> getCertByMungpleId(int userId, int mungpleId, int currentPage, int pageSize, boolean isDesc) {
         PageRequest pageRequest = (isDesc)
