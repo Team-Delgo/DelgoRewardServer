@@ -14,20 +14,24 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection="managing")
-public class Managing {
+@Document(collection="log")
+public class Log {
     @Id
     private String id;
+    private String httpMethod;
     private String controllerName;
     private String methodName;
     private ArrayMap<String, Object> args;
+    private String responseDTO;
     private LocalDateTime createAt;
 
-    public Managing toEntity(String controllerName, String methodName, ArrayMap<String, Object> args){
-        return Managing.builder()
+    public Log toEntity(String httpMethod, String controllerName, String methodName, ArrayMap<String, Object> args, String responseDTO){
+        return Log.builder()
+                .httpMethod(httpMethod)
                 .controllerName(controllerName)
                 .methodName(methodName)
                 .args(args)
+                .responseDTO(responseDTO)
                 .createAt(LocalDateTime.now())
                 .build();
 
