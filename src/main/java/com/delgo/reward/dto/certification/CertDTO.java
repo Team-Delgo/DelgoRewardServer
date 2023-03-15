@@ -39,7 +39,7 @@ public class CertDTO {
                 .pGeoCode(location.getPGeoCode()) // 사용자 기준 geoCode
                 .latitude(this.latitude) // 사용자한테 입력받은 위도
                 .longitude(this.longitude) // 사용자한테 입력받은 경도
-                .isPhotoChecked(false)
+                .isCorrectPhoto(true)
                 .isAchievements(false)
                 .isExpose(false)
                 .build();
@@ -59,7 +59,7 @@ public class CertDTO {
                 .pGeoCode(mungple.getPGeoCode()) // 멍플 geoCode
                 .latitude(mungple.getLatitude()) // 멍플 위도
                 .longitude(mungple.getLongitude()) // 멍플 경도
-                .isPhotoChecked(false)
+                .isCorrectPhoto(true)
                 .isAchievements(false)
                 .isExpose(false)
                 .build();
