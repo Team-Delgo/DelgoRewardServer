@@ -4,20 +4,30 @@ package com.delgo.reward.service;
 import com.delgo.reward.comm.CommService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
+import com.delgo.reward.dto.common.ResponseDTO;
 import com.sksamuel.scrimage.ImmutableImage;
-
 import com.sksamuel.scrimage.webp.WebpWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Objects;
 
 
@@ -30,6 +40,31 @@ public class PhotoService extends CommService {
     String DIR;
 
     private final ObjectStorageService objectStorageService;
+
+    public Boolean checkCorrectPhoto(String path){
+        // Flask URL
+        String url = "http://localhost:5000/check-photo?path=" + path;
+        ResponseEntity<ResponseDTO> result;
+
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+
+            HttpHeaders header = new HttpHeaders();
+            HttpEntity<?> entity = new HttpEntity<>(header);
+
+            UriComponents uri = UriComponentsBuilder.fromHttpUrl(url).build();
+            result = restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, ResponseDTO.class);
+            ResponseDTO<HashMap> responseDTO = result.getBody();
+
+            log.info("statusCode : {}", result.getStatusCodeValue()); //http status code를 확인
+            log.info("body : {}", responseDTO.getData()); //실제 데이터 정보 확인
+
+            return (Boolean) responseDTO.getData().get("result");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     // Encoding File Upload
     public String uploadCertEncodingFile(int certificationId, String photoUrl) {
