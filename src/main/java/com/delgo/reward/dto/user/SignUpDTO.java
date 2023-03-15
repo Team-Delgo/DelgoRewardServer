@@ -35,6 +35,7 @@ public class SignUpDTO {
                 .address(address)
                 .geoCode(geoCode)
                 .pGeoCode(pGeoCode)
+                .isNotify(true)
                 .build();
     }
 
@@ -46,5 +47,4 @@ public class SignUpDTO {
                 .userId(userId)
                 .build();
     }
-
 }

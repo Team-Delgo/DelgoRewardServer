@@ -42,6 +42,7 @@ public class OAuthSignUpDTO {
                         .address(address)
                         .geoCode(geoCode)
                         .pGeoCode(pGeoCode)
+                        .isNotify(true)
                         .appleUniqueNo(appleUniqueNo)
                         .build();
             case K: return User.builder()
@@ -52,6 +53,7 @@ public class OAuthSignUpDTO {
                         .address(address)
                         .geoCode(geoCode)
                         .pGeoCode(pGeoCode)
+                        .isNotify(true)
                         .kakaoId(socialId)
                         .build();
             default: return User.builder()
@@ -62,6 +64,7 @@ public class OAuthSignUpDTO {
                         .address(address)
                         .geoCode(geoCode)
                         .pGeoCode(pGeoCode)
+                        .isNotify(true)
                         .build();
         }
     }

@@ -42,7 +42,7 @@ public class FcmService {
                 .build();
 
         Response response = client.newCall(request).execute();
-
+        response.close();
     }
 
     public boolean checkNotify(int userId){
