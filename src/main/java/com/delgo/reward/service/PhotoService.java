@@ -22,11 +22,9 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -66,31 +64,31 @@ public class PhotoService extends CommService {
         }
     }
 
-    // Encoding File Upload
-    public String uploadCertEncodingFile(int certificationId, String photoUrl) {
-        String fileName = certificationId + "_cert.jpeg";
-        String ncpLink = BucketName.CERTIFICATION.getUrl() + fileName;
-
-        try {
-            byte[] decodedByte = Base64.getMimeDecoder().decode(photoUrl.replace("data:image/jpeg;base64,", "").getBytes());
-            File convertFile = new File(DIR + fileName);
-            if (convertFile.createNewFile()) {
-                FileOutputStream fos = new FileOutputStream(convertFile);
-                fos.write(decodedByte);
-                fos.close();
-            }
-
-            if (convertFile.exists()) {
-                objectStorageService.uploadObjects(BucketName.CERTIFICATION, fileName, DIR + fileName);  // Upload NCP
-                convertFile.delete(); // 서버에 저장된 사진 삭제
-            }
-
-            return setCacheInvalidation(ncpLink);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new NullPointerException("PHOTO UPLOAD ERROR");
-        }
-    }
+    // Encoding File Upload [ Deprecated ]
+//    public String uploadCertEncodingFile(int certificationId, String photoUrl) {
+//        String fileName = certificationId + "_cert.jpeg";
+//        String ncpLink = BucketName.CERTIFICATION.getUrl() + fileName;
+//
+//        try {
+//            byte[] decodedByte = Base64.getMimeDecoder().decode(photoUrl.replace("data:image/jpeg;base64,", "").getBytes());
+//            File convertFile = new File(DIR + fileName);
+//            if (convertFile.createNewFile()) {
+//                FileOutputStream fos = new FileOutputStream(convertFile);
+//                fos.write(decodedByte);
+//                fos.close();
+//            }
+//
+//            if (convertFile.exists()) {
+//                objectStorageService.uploadObjects(BucketName.CERTIFICATION, fileName, DIR + fileName);  // Upload NCP
+//                convertFile.delete(); // 서버에 저장된 사진 삭제
+//            }
+//
+//            return setCacheInvalidation(ncpLink);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new NullPointerException("PHOTO UPLOAD ERROR");
+//        }
+//    }
 
     public String uploadCertMultipart(int certificationId, MultipartFile photo) {
         String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\."); // ex) png, jpg, jpeg
@@ -102,6 +100,10 @@ public class PhotoService extends CommService {
         try {
             File file = new File(DIR + certificationId + "_cert." + extension);
             photo.transferTo(file); // 서버에 저장
+
+            // TODO: checkCorrectPhoto 해야함.
+            if(!checkCorrectPhoto(file.getPath()))
+                throw new NullPointerException("NOT CORRECT PHOTO ERROR");
 
             File webpFile = convertWebp(fileName, file);  // filePath에서 File 불러온 뒤 webp로 변환 후 저장.
             objectStorageService.uploadObjects(BucketName.CERTIFICATION, fileName, DIR + fileName); // Upload NCP

@@ -82,7 +82,9 @@ public class CertService {
         // 랭킹 실시간으로 집계
         rankingService.rankingByPoint();
         // 인증 사진 Upload 및 설정
-        return certification.setPhotoUrl(photoService.uploadCertMultipart(certification.getCertificationId(), photo));
+        certification.setPhotoUrl(photoService.uploadCertMultipart(certification.getCertificationId(), photo));
+
+        return certification;
     }
 
     // Certification 수정
