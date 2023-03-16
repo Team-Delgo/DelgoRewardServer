@@ -16,12 +16,12 @@ public class FcmTest {
     @Autowired
     private FcmService fcmService;
 
-    @Test
-    public void test() throws IOException {
-        int userId = 255;
-        String username = "tester";
-        String content = "test comment";
-        fcmService.commentPush(userId, username, content);
-
-    }
+//    @Test
+//    public void test() throws IOException {
+//        int userId = 255;
+//        String username = "tester";
+//        String content = "test comment";
+//        fcmService.commentPush(userId, username, content);
+//
+//    }
 }

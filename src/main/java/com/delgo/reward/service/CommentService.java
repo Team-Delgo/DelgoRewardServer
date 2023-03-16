@@ -3,6 +3,7 @@ package com.delgo.reward.service;
 import com.delgo.reward.comm.fcm.FcmService;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.Comment;
+import com.delgo.reward.domain.notify.NotifyType;
 import com.delgo.reward.dto.CommentDTO;
 import com.delgo.reward.dto.GetCommentDTO;
 import com.delgo.reward.dto.ReplyDTO;
@@ -28,10 +29,23 @@ public class CommentService {
     private final CertService certService;
     private final UserService userService;
     private final FcmService fcmService;
+    private final NotifyService notifyService;
 
+    /**
+     *  유저가 댓글을 작성하면 알림을 저장하고 푸시 알림을 보냄
+     * @param commentDTO
+     * @return 저장된 댓글 데이터 반환
+     * @throws IOException
+     */
     public Comment createComment(CommentDTO commentDTO) throws IOException {
         Comment comment = Comment.builder().isReply(false).certificationId(commentDTO.getCertificationId()).userId(commentDTO.getUserId()).content(commentDTO.getContent()).build();
-        fcmService.commentPush(certService.getCert(commentDTO.getCertificationId()).getUserId(), userService.getUserById(commentDTO.getUserId()).getName(), commentDTO.getContent());
+
+        int userId = certService.getCert(commentDTO.getCertificationId()).getUserId();
+        String notifyMsg = userService.getUserById(commentDTO.getUserId()).getName() + "님이 나의 게시글에 댓글을 남겼습니다.\n" + commentDTO.getContent();
+
+        notifyService.saveNotify(userId, NotifyType.COMMENT, notifyMsg);
+        fcmService.commentPush(userId, notifyMsg);
+
         return commentRepository.save(comment);
     }
 
