@@ -35,7 +35,7 @@ public class Certification {
     private String longitude; // 경도
 
     private String photoUrl; // 사진 URL
-    private Boolean isPhotoChecked; // 운영진 체크 여부
+    private Boolean isCorrectPhoto; // 올바른 사진 여부 ( 파이썬 모듈로 체크 )
     private Boolean isAchievements; // 업적 영향 여부 ( 해당 인증이 등록되었을 때 가지게 된 업적이 있는가?)
 
     private int commentCount; // 댓글 개수
@@ -56,6 +56,12 @@ public class Certification {
 
     public Certification setPhotoUrl(String photoUrl){
         this.photoUrl = photoUrl;
+
+        return this;
+    }
+
+    public Certification setIsCorrectPhoto(boolean isCorrectPhoto){
+        this.isCorrectPhoto = isCorrectPhoto;
 
         return this;
     }
