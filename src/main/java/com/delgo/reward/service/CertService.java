@@ -81,8 +81,11 @@ public class CertService {
         pointService.givePoint(userService.getUserById(dto.getUserId()).getUserId(), CategoryCode.valueOf(dto.getCategoryCode()).getPoint());
         // 랭킹 실시간으로 집계
         rankingService.rankingByPoint();
-        // 인증 사진 Upload 및 설정
-        certification.setPhotoUrl(photoService.uploadCertMultipart(certification.getCertificationId(), photo));
+        // 인증 사진 NCP Upload
+        String ncpLink = photoService.uploadCertMultipart(certification.getCertificationId(), photo);
+        certification.setPhotoUrl(photoService.setCacheInvalidation(ncpLink));
+        // 인증 사진에 강아지가 있는지 여부 체크
+        certification.setIsCorrectPhoto(photoService.checkCorrectPhoto(ncpLink));
 
         return certification;
     }
