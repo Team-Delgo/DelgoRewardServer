@@ -60,6 +60,12 @@ public class Certification {
         return this;
     }
 
+    public Certification setIsCorrectPhoto(boolean isCorrectPhoto){
+        this.isCorrectPhoto = isCorrectPhoto;
+
+        return this;
+    }
+
     public Certification modify(String description){
         this.description = description;
 

@@ -101,17 +101,13 @@ public class PhotoService extends CommService {
             File file = new File(DIR + certificationId + "_cert." + extension);
             photo.transferTo(file); // 서버에 저장
 
-            // TODO: checkCorrectPhoto 해야함.
-            if(!checkCorrectPhoto(file.getPath()))
-                throw new NullPointerException("NOT CORRECT PHOTO ERROR");
-
             File webpFile = convertWebp(fileName, file);  // filePath에서 File 불러온 뒤 webp로 변환 후 저장.
             objectStorageService.uploadObjects(BucketName.CERTIFICATION, fileName, DIR + fileName); // Upload NCP
 
             file.delete(); // 서버에 저장된 사진.jpg 삭제
             webpFile.delete(); // 서버에 저장된 사진.webp 삭제
 
-            return setCacheInvalidation(ncpLink);
+            return ncpLink;
         } catch (Exception e) {
             e.printStackTrace();
             throw new NullPointerException("PHOTO UPLOAD ERROR");
