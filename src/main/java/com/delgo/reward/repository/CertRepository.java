@@ -30,16 +30,16 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @Query(value = "SELECT * FROM certification where p_geo_code = ? and not geo_code = ? order by RAND() limit ?", nativeQuery = true)
     List<Certification> findByPGeoCodeExceptGeoCode(String pGeoCode, String geoCode, int count);
 
-    @Query(value = "select * from certification where user_id  not in (select ban_user_id from ban_list where user_id = ?)", nativeQuery = true)
+    @Query(value = "select * from certification where user_id  not in (select ban_user_id from ban_list where user_id = ?) and is_correct_photo = true", nativeQuery = true)
     Slice<Certification> findAllByPaging(int userId, Pageable pageable);
 
-    @Query(value = "select * from certification where user_id  not in (select ban_user_id from ban_list where user_id = ?) and certification_id != ?", nativeQuery = true)
+    @Query(value = "select * from certification where user_id  not in (select ban_user_id from ban_list where user_id = ?) and certification_id != ? and is_correct_photo = true", nativeQuery = true)
     Slice<Certification> findAllExcludeSpecificCert(int userId, int certificationId, Pageable pageable);
 
-    @Query(value = "select * from certification where mungple_id = ?", nativeQuery = true)
+    @Query(value = "select * from certification where mungple_id = ? and is_correct_photo = true", nativeQuery = true)
     Slice<Certification> findMungpleByPaging(int mungpleId, Pageable pageable);
 
-    @Query(value = "select * from certification where user_id  not in (select ban_user_id from ban_list where user_id = ?) order by regist_dt desc limit ?", nativeQuery = true)
+    @Query(value = "select * from certification where user_id  not in (select ban_user_id from ban_list where user_id = ?) and is_correct_photo = true order by regist_dt desc limit ?", nativeQuery = true)
     List<Certification> findRecentCert(int userId, int count);
 
     @Query(value = "select count(category_code) from certification where user_id = ? and category_code = ? and mungple_id = ?", nativeQuery = true)

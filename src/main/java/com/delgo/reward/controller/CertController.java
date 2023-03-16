@@ -7,7 +7,6 @@ import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.dto.certification.CertDTO;
 import com.delgo.reward.dto.certification.ModifyCertDTO;
 import com.delgo.reward.service.CertService;
-import com.delgo.reward.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -26,7 +25,6 @@ import java.util.Objects;
 public class CertController extends CommController {
 
     private final CertService certService;
-    private final PhotoService photoService;
 
     /*
      * 인증 등록
