@@ -227,7 +227,7 @@ public class CertService {
         if (likeListService.hasLiked(userId, certificationId)) // User is Liked?
             likeListService.unlike(userId, certificationId);
         else
-            likeListService.like(userId, certificationId);
+            likeListService.like(userId, certificationId, ownerId);
     }
 
     // Comment Count + 1

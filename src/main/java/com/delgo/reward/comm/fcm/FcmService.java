@@ -59,13 +59,13 @@ public class FcmService {
             return ;
     }
 
-    public void commentPush(int certOwnerId, String username, String content) throws IOException {
+    public void commentPush(int certOwnerId, String notifyMsg) throws IOException {
         if(checkNotify(certOwnerId)){
             String ownerFcmToken = tokenService.getFcmToken(certOwnerId);
-            String body = username + "님이 나의 게시글에 댓글을 남겼습니다.\n" + content;
+//            String body = username + "님이 나의 게시글에 댓글을 남겼습니다.\n" + content;
 //            System.out.println("[FcmService]: " + body);
 //            sendMessageTo(ownerFcmToken, commentPushNotification);
-            sendMessageTo(ownerFcmToken, body);
+            sendMessageTo(ownerFcmToken, notifyMsg);
         }
         else
             return ;
