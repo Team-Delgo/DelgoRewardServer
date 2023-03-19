@@ -1,19 +1,46 @@
 package com.delgo.reward.comm.ncp.storage;
 
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public enum BucketName {
-    ACHIEVEMENTS("reward-achievements","https://kr.object.ncloudstorage.com/reward-achievements/"),
-    CERTIFICATION("reward-certification","https://kr.object.ncloudstorage.com/reward-certification/"), // 산책
-    MUNGPLE("reward-mungple", "https://kr.object.ncloudstorage.com/reward-mungple/"), // 카페
-    MUNGPLE_NOTE("reward-mungplenote", "https://kr.object.ncloudstorage.com/reward-mungplenote/"), // 식당
-    PROFILE("reward-profile","https://kr.object.ncloudstorage.com/reward-profile/");
+    ACHIEVEMENTS(
+            "reward-achievements",
+            "reward-achievements",
+            "https://kr.object.ncloudstorage.com/reward-achievements/",
+            "https://kr.object.ncloudstorage.com/reward-achievements/"),
+    CERTIFICATION(
+            "reward-certification",
+            "test-certification",
+            "https://kr.object.ncloudstorage.com/reward-certification/",
+            "https://kr.object.ncloudstorage.com/test-certification/"), // 산책
+    MUNGPLE(
+            "reward-mungple",
+            "reward-mungple",
+            "https://kr.object.ncloudstorage.com/reward-mungple/",
+            "https://kr.object.ncloudstorage.com/reward-mungple/"), // 카페
+    MUNGPLE_NOTE(
+            "reward-mungplenote",
+            "reward-mungplenote",
+            "https://kr.object.ncloudstorage.com/reward-mungplenote/",
+            "https://kr.object.ncloudstorage.com/reward-mungplenote/"), // 식당
+    PROFILE(
+            "reward-profile",
+            "test-profile",
+            "https://kr.object.ncloudstorage.com/reward-profile/",
+            "https://kr.object.ncloudstorage.com/test-profile/");
 
     private final String name;
+    private final String testName;
     private final String url;
+    private final String testUrl;
 
-    BucketName(String name, String url) {
+    BucketName(String name, String testName, String url, String testUrl) {
         this.name = name;
+        this.testName = testName;
         this.url = url;
+        this.testUrl = testUrl;
     }
 
     public String getName() {
@@ -22,5 +49,13 @@ public enum BucketName {
 
     public String getUrl() {
         return this.url;
+    }
+
+    public String getTestName() {
+        return this.testName;
+    }
+
+    public String getTestUrl() {
+        return this.testUrl;
     }
 }
