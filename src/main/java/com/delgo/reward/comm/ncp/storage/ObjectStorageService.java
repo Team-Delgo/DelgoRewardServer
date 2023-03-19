@@ -8,6 +8,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -17,6 +18,9 @@ import java.util.List;
 
 @Service
 public class ObjectStorageService {
+
+    @Value("${config.profiles}")
+    String profiles;
 
     final String endPoint = "https://kr.object.ncloudstorage.com";
     final String regionName = "kr-standard";
@@ -117,8 +121,10 @@ public class ObjectStorageService {
 //        }
         // upload local file
 //        String objectName = "sample-object";
+
+        String name = (profiles.equals("real")) ? bucketName.getName() : bucketName.getTestName();
         try {
-            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName.getName(), objectName,
+            PutObjectRequest putObjectRequest = new PutObjectRequest(name, objectName,
                     new File(filePath)).withCannedAcl(CannedAccessControlList.PublicRead);
             s3.putObject(putObjectRequest);
             System.out.format("Object %s has been created.\n", objectName);
@@ -255,8 +261,9 @@ public class ObjectStorageService {
 
     public void deleteObject(BucketName bucketName, String objectName) {
         // delete object
+        String name = (profiles.equals("real")) ? bucketName.getName() : bucketName.getTestName();
         try {
-            s3.deleteObject(bucketName.getName(), objectName);
+            s3.deleteObject(name, objectName);
             System.out.format("Object %s has been deleted.\n", objectName);
         } catch (SdkClientException e) {
             e.printStackTrace();

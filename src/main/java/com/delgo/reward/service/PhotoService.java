@@ -37,6 +37,9 @@ public class PhotoService extends CommService {
     @Value("${config.photoDir}")
     String DIR;
 
+    @Value("${config.profiles}")
+    String profiles;
+
     private final ObjectStorageService objectStorageService;
 
     public Boolean checkCorrectPhoto(String path){
@@ -95,7 +98,9 @@ public class PhotoService extends CommService {
         String extension = type[type.length - 1];
 
         String fileName = certificationId + "_cert.webp";
-        String ncpLink = BucketName.CERTIFICATION.getUrl() + fileName;
+        String ncpLink = (profiles.equals("real"))
+                ? BucketName.CERTIFICATION.getUrl() + fileName
+                : BucketName.CERTIFICATION.getTestUrl() + fileName;
 
         try {
             File file = new File(DIR + certificationId + "_cert." + extension);
@@ -164,7 +169,9 @@ public class PhotoService extends CommService {
         String extension = type[type.length - 1];
 
         String fileName = userId + "_profile.webp";
-        String ncpLink = BucketName.PROFILE.getUrl() + fileName; // NCP Link
+        String ncpLink = (profiles.equals("real"))
+                ? BucketName.PROFILE.getUrl() + fileName
+                : BucketName.PROFILE.getTestUrl() + fileName;
 
         try {
             File file = new File(DIR + userId + "_profile." + extension); // 서버에 저장
