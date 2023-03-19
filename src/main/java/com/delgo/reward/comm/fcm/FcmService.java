@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -51,21 +52,18 @@ public class FcmService {
     }
 
     public void likePush(int userId) throws IOException {
-        if(checkNotify(userId)){
-            String ownerFcmToken = tokenService.getFcmToken(userId);
-            sendMessageTo(ownerFcmToken, likePushNotification);
+        Optional<String> ownerFcmToken = tokenService.getFcmToken(userId);
+        if(checkNotify(userId) && ownerFcmToken.isPresent()){
+            sendMessageTo(ownerFcmToken.get(), likePushNotification);
         }
         else
             return ;
     }
 
     public void commentPush(int certOwnerId, String notifyMsg) throws IOException {
-        if(checkNotify(certOwnerId)){
-            String ownerFcmToken = tokenService.getFcmToken(certOwnerId);
-//            String body = username + "님이 나의 게시글에 댓글을 남겼습니다.\n" + content;
-//            System.out.println("[FcmService]: " + body);
-//            sendMessageTo(ownerFcmToken, commentPushNotification);
-            sendMessageTo(ownerFcmToken, notifyMsg);
+        Optional<String> ownerFcmToken = tokenService.getFcmToken(certOwnerId);
+        if(checkNotify(certOwnerId) && ownerFcmToken.isPresent()){
+            sendMessageTo(ownerFcmToken.get(), notifyMsg);
         }
         else
             return ;

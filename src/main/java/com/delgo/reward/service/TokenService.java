@@ -7,15 +7,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class TokenService {
     private final TokenRepository tokenRepository;
 
-    public String getFcmToken(int userId){
+    public Optional<String> getFcmToken(int userId){
         Token token = tokenRepository.findByUserId(userId).orElseThrow();
-        return token.getFcmToken();
+        return Optional.ofNullable(token.getFcmToken());
     }
 
     public boolean isFcmToken(int userId){
