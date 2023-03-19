@@ -1,7 +1,7 @@
 # spring MariaDB Connect
 spring:
   profiles:
-      active: real
+      active: local
   data:
     mongodb:
       database: testdb
@@ -42,6 +42,7 @@ spring:
     url: jdbc:mariadb://101.101.208.202:3306/delgo_reward_develop
 
 config:
+  profiles: local
   driverLocation: C:\\chrome\\chromedriver.exe
   photoDir: C:\\testPhoto\\
   kakao:
@@ -54,6 +55,7 @@ spring:
     url: jdbc:mariadb://101.101.208.202:3306/delgo_reward_develop
 
 config:
+  profiles: dev
   driverLocation: /var/www/chrome/chromedriver
   photoDir: /var/www/reward-backend/
   kakao:
@@ -67,6 +69,7 @@ spring:
     url: jdbc:mariadb://101.101.208.202:3306/delgo_reward
 
 config:
+  profiles: real
   driverLocation: /var/www/chrome/chromedriver
   photoDir: /var/www/reward-backend/
   kakao:
