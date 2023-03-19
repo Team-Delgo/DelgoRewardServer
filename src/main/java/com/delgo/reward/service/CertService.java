@@ -109,12 +109,16 @@ public class CertService {
                 .orElseThrow(() -> new NullPointerException("NOT FOUND Certification id : " + certificationId));
     }
 
+
     // Certification 조회 및 좋아요 여부 설정 후 반환
-    public Certification getCert(int userId, int certificationId) {
+    public List<Certification> getCert(int userId, int certificationId) {
         Certification certification = getCert(certificationId);
         setUserAndLike(userId, certification);
 
-        return certification;
+        // 프론트 편의를 위해 LIST로 반환
+        List<Certification> certifications = new ArrayList<>();
+        certifications.add(certification);
+        return certifications;
     }
 
     // 날짜 별 Certification 조회
