@@ -16,7 +16,7 @@ public class TokenService {
     private final TokenRepository tokenRepository;
 
     public Optional<String> getFcmToken(int userId){
-        Token token = tokenRepository.findByUserId(userId).orElseThrow();
+        Token token = tokenRepository.findByUserId(userId).orElse(new Token());
         return Optional.ofNullable(token.getFcmToken());
     }
 
