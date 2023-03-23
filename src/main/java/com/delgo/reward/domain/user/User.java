@@ -1,6 +1,7 @@
 package com.delgo.reward.domain.user;
 
 import com.delgo.reward.domain.Point;
+import com.delgo.reward.dto.user.WriterDTO;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -113,4 +114,11 @@ public class User {
         return this;
     }
 
+    public WriterDTO toWriterDTO(){
+        return WriterDTO.builder()
+                .userId(userId)
+                .name(name)
+                .profile(profile)
+                .build();
+    }
 }
