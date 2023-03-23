@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Slf4j
@@ -51,6 +52,26 @@ public class CertController extends CommController {
             return ErrorReturn(ApiCode.INVALID_USER_ERROR);
 
         return SuccessReturn(certService.modify(dto));
+    }
+
+    /*
+     * CertificationId로 조회
+     * Request Data : CertificationId로
+     * Response Data : Certification
+     */
+    @GetMapping
+    public ResponseEntity getData(@RequestParam Integer userId, @RequestParam Integer certificationId) {
+        return SuccessReturn(certService.getCert(userId, certificationId));
+    }
+
+    /*
+     * 날짜로 Certification 조회
+     * Request Data : CertificationId로
+     * Response Data : Certification
+     */
+    @GetMapping("/date")
+    public ResponseEntity getDataByDate(@RequestParam Integer userId, @RequestParam String date) {
+        return SuccessReturn(certService.getCertByDate(userId, LocalDate.parse(date)));
     }
 
     /*

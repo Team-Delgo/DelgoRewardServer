@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -102,6 +103,32 @@ public class CertService {
         objectStorageService.deleteObject(BucketName.CERTIFICATION,certificationId + "_cert.webp");
     }
 
+    // Id로 Certification 조회
+    public Certification getCert(int certificationId) {
+        return certRepository.findById(certificationId)
+                .orElseThrow(() -> new NullPointerException("NOT FOUND Certification id : " + certificationId));
+    }
+
+
+    // Certification 조회 및 좋아요 여부 설정 후 반환
+    public List<Certification> getCert(int userId, int certificationId) {
+        Certification certification = getCert(certificationId);
+        setUserAndLike(userId, certification);
+
+        // 프론트 편의를 위해 LIST로 반환
+        List<Certification> certifications = new ArrayList<>();
+        certifications.add(certification);
+        return certifications;
+    }
+
+    // 날짜 별 Certification 조회
+    public List<Certification> getCertByDate(int userId, LocalDate date) {
+        List<Certification> certification = certRepository.findByDateAndUser(userId, date, date.plusDays(1));
+        certification.forEach(cert-> setUserAndLike(userId, cert));
+
+        return certification;
+    }
+
     // 전체 Certification 리스트 조회
     public Slice<Certification> getCertAll(int userId, int currentPage, int pageSize, boolean isDesc) {
         PageRequest pageRequest = (isDesc)
@@ -168,12 +195,6 @@ public class CertService {
     // 유저별 전체 멍플 개수 조회
     public int getTotalCountOfMungpleByUser(int userId) {
         return certRepository.countOfMungpleByUser(userId);
-    }
-
-    // Id로 Certification 조회
-    public Certification getCert(int certificationId) {
-        return certRepository.findById(certificationId)
-                .orElseThrow(() -> new NullPointerException("NOT FOUND Certification id : " + certificationId));
     }
 
     // userId로 Certification 조회

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface CertRepository extends JpaRepository<Certification, Integer>, JpaSpecificationExecutor<Certification> {
@@ -38,6 +39,10 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
 
     @Query(value = "select * from certification where mungple_id = ? and is_correct_photo = true", nativeQuery = true)
     Slice<Certification> findMungpleByPaging(int mungpleId, Pageable pageable);
+
+    // 자신 거 조회라 is_correct_photo 없어도 됨.
+    @Query(value = "select * from certification where user_id = ? and  regist_dt between ? and ? order by regist_dt desc", nativeQuery = true)
+    List<Certification> findByDateAndUser(int userId, LocalDate startDate, LocalDate endDate);
 
     @Query(value = "select * from certification where user_id  not in (select ban_user_id from ban_list where user_id = ?) and is_correct_photo = true order by regist_dt desc limit ?", nativeQuery = true)
     List<Certification> findRecentCert(int userId, int count);
