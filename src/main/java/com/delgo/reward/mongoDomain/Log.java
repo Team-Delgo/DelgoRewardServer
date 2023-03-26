@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.persistence.Id;
 import java.time.LocalDateTime;
@@ -18,12 +19,18 @@ import java.time.LocalDateTime;
 public class Log {
     @Id
     private String id;
+    @Field("http_method")
     private String httpMethod;
+    @Field("controller_name")
     private String controllerName;
+    @Field("method_name")
     private String methodName;
+    @Field("args")
     private ArrayMap<String, Object> args;
+    @Field("responseDTO")
     private String responseDTO;
-    private LocalDateTime createAt;
+    @Field("created_at")
+    private LocalDateTime createdAt;
 
     public Log toEntity(String httpMethod, String controllerName, String methodName, ArrayMap<String, Object> args, String responseDTO){
         return Log.builder()
@@ -32,7 +39,7 @@ public class Log {
                 .methodName(methodName)
                 .args(args)
                 .responseDTO(responseDTO)
-                .createAt(LocalDateTime.now())
+                .createdAt(LocalDateTime.now())
                 .build();
 
     }
