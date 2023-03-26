@@ -2,10 +2,6 @@
 spring:
   profiles:
       active: local
-  data:
-    mongodb:
-      database: testdb
-      uri: mongodb://101.101.208.202:27017
   datasource:
     username: delgo
     password: Zlzl2022!
@@ -38,6 +34,10 @@ server:
 ---
 spring:
   profiles: local
+  data:
+      mongodb:
+        database: delgo_reward_develop
+        uri: mongodb://101.101.208.202:27017
   datasource:
     url: jdbc:mariadb://101.101.208.202:3306/delgo_reward_develop
 
@@ -51,6 +51,10 @@ config:
 ---
 spring:
   profiles: dev
+  data:
+        mongodb:
+          database: delgo_reward_develop
+          uri: mongodb://101.101.208.202:27017
   datasource:
     url: jdbc:mariadb://101.101.208.202:3306/delgo_reward_develop
 
@@ -65,6 +69,10 @@ config:
 ---
 spring:
   profiles: real
+  data:
+        mongodb:
+          database: delgo_reward
+          uri: mongodb://101.101.208.202:27017
   datasource:
     url: jdbc:mariadb://101.101.208.202:3306/delgo_reward
 
