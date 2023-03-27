@@ -32,7 +32,7 @@ public class CommentService {
     private final NotifyService notifyService;
 
     /**
-     *  유저가 댓글을 작성하면 알림을 저장하고 푸시 알림을 보냄
+     *  유저가 댓글을 작성하면 알림을 저장하고 인증 주인에게 푸시 알림을 보냄
      * @param commentDTO
      * @return 저장된 댓글 데이터 반환
      * @throws IOException
@@ -49,15 +49,31 @@ public class CommentService {
         return commentRepository.save(comment);
     }
 
-    public Comment createReply(ReplyDTO replyDTO){
+    /**
+     * 유저가 답글을 작성하면 알림을 저장하고 인증 주인과 댓글 주인에게 푸시 알림을 보냄
+     * @param replyDTO
+     * @return 저장된 답글 데이터 반환
+     * @throws IOException
+     */
+    public Comment createReply(ReplyDTO replyDTO) throws IOException {
         Comment comment = Comment.builder().isReply(true).certificationId(replyDTO.getCertificationId()).userId(replyDTO.getUserId()).content(replyDTO.getContent()).parentCommentId(replyDTO.getParentCommentId()).build();
+
+        int certUserId = certService.getCert(replyDTO.getCertificationId()).getUserId();
+        String certUserNotifyMsg = userService.getUserById(replyDTO.getUserId()).getName() + "님이 나의 게시글에 댓글을 남겼습니다.\n" + replyDTO.getContent();
+
+        int commentUserId = getCommentByCommentId(replyDTO.getParentCommentId()).getUserId();
+        String commentUserNotifyMsg = userService.getUserById(replyDTO.getUserId()).getName() + "님이 나의 댓글에 답글을 남겼습니다.\n" + replyDTO.getContent();
+
+        notifyService.saveNotify(certUserId, NotifyType.COMMENT, certUserNotifyMsg);
+        fcmService.commentPush(certUserId, certUserNotifyMsg);
+        notifyService.saveNotify(commentUserId, NotifyType.REPLY, commentUserNotifyMsg);
+        fcmService.commentPush(commentUserId, commentUserNotifyMsg);
+
         return commentRepository.save(comment);
     }
 
     public List<GetCommentDTO> getCommentByCertificationId(int certificationId){
-//        List<Comment> commentList = commentRepository.findByCertificationId(certificationId);
         List<GetCommentDTO> getCommentDTOList = jdbcTemplateCommentRepository.findCommentByCertificationId(certificationId);
-//        return commentList;
         return getCommentDTOList;
     }
 
@@ -87,11 +103,11 @@ public class CommentService {
         return commentRepository.findById(commentId).orElseThrow();
     }
 
-    public void updateReplyByCommentId(int commentId, String updateContent){
+    public void updateCommentByCommentId(int commentId, String updateContent){
         commentRepository.updateByCommentId(commentId, updateContent);
     }
 
-    public void deleteReplyByCommentId(int commentId){
+    public void deleteCommentByCommentId(int commentId){
         commentRepository.deleteById(commentId);
     }
 }
