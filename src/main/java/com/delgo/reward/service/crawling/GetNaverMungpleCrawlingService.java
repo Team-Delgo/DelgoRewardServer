@@ -1,5 +1,8 @@
 package com.delgo.reward.service.crawling;
 
+import com.delgo.reward.dto.MungpleDTO;
+import com.delgo.reward.mongoDomain.NaverPlace;
+import com.delgo.reward.mongoService.NaverPlaceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.*;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -21,6 +25,8 @@ public class GetNaverMungpleCrawlingService {
     String driverLocation;
     JavascriptExecutor js;
     private WebDriver driver;
+
+    private final NaverPlaceService naverPlaceService;
 
     public void crawlingProcess(String url) {
         System.setProperty("webdriver.chrome.whitelistedIps", "");
@@ -80,7 +86,9 @@ public class GetNaverMungpleCrawlingService {
             log.info("place count : {}", elements.size());
 
             for (WebElement element : elements) {
+                NaverPlace np = new NaverPlace();
                 log.info("place Name : {}", element.getText());
+                np.setPlaceName(element.getText());
                 // 상세 페이지 이동을 위해 PLACE NAME 클릭
                 js.executeScript("arguments[0].click();", element);Thread.sleep(2000);
 
@@ -88,7 +96,11 @@ public class GetNaverMungpleCrawlingService {
                 driver.switchTo().parentFrame();Thread.sleep(100); // 기존 IFRAME으로 이동
                 driver.switchTo().frame(driver.findElement(By.cssSelector("#entryIframe")));
                 WebElement address = driver.findElement(By.cssSelector(".LDgIH")); // 주소 Class
+                WebElement category = driver.findElement(By.cssSelector(".DJJvD")); // 주소 Class
                 log.info("address : {}", address.getText());
+                np.setAddress(address.getText());
+                log.info("category : {}", category.getText());
+                np.setCategory(category.getText());
 
                 // 사진 버튼
                 List<WebElement> photoButtonList = driver.findElements(By.cssSelector(".veBoZ")); // Class
@@ -111,8 +123,14 @@ public class GetNaverMungpleCrawlingService {
 
                 List<WebElement> photoUrls = driver.findElements(By.cssSelector(".wzrbN a.place_thumb img"));
                 log.info("photoUrl Count : {}", photoUrls.size());
-//            for(WebElement photoUrl : photoUrls)
-//                log.info("photoUrls : {}", photoUrl.getAttribute("src"));
+                List<String> photos = photoUrls.stream().map(photo -> photo.getAttribute("src")).collect(Collectors.toList());
+
+                log.info("photos : {}", photos);
+                np.setPhotos(photos);
+
+                log.info("return np : {}", np);
+
+                naverPlaceService.register(np);
 
                 // SCROLL IFRAME 이동
                 driver.switchTo().parentFrame();Thread.sleep(100);  // 기존 아이프레임으로 이동
