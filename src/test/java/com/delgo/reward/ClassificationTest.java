@@ -20,6 +20,7 @@ import java.util.*;
 public class ClassificationTest {
     @Test
     public void classificationByCertificationTest() throws IOException, ParseException {
+        // 시간 재는 코드 시작
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
@@ -60,6 +61,7 @@ public class ClassificationTest {
             System.out.println("outputCategoryCode categoryName: " + categoryMap.get(outputCategoryCode));
         }
 
+        // 시간 재는 코드 끝
         stopWatch.stop();
         System.out.println(stopWatch.prettyPrint());
         System.out.println("코드 실행 시간 (s): " + stopWatch.getTotalTimeSeconds());

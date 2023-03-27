@@ -49,7 +49,12 @@ public class UserService {
        return userRepository.save(user);
     }
 
-    // 회원가입
+    /**
+     * 회원가입
+     * @param user
+     * @param profile
+     * @return 가입한 회원 정보 반환
+     */
     public User signup(User user, MultipartFile profile) {
         User registeredUser = save(user);
         jdbcTemplatePointRepository.createUserPoint(registeredUser); // Point 생성
@@ -57,7 +62,11 @@ public class UserService {
         return registeredUser.setProfile(photoService.uploadProfile(user.getUserId(), profile)); // User Profile 등록
     }
 
-    // 회원탈퇴
+    /**
+     * 회원탈퇴
+     * @param userId
+     * @throws Exception
+     */
     public void deleteUser(int userId) throws Exception {
         User user = userRepository.findById(userId).orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
         Pet pet = petRepository.findByUserId(userId).orElseThrow(() -> new NullPointerException("NOT FOUND PET"));
@@ -78,7 +87,11 @@ public class UserService {
         objectStorageService.deleteObject(BucketName.PROFILE, userId + "_profile.webp");
     }
 
-    // 비밀번호 변경
+    /**
+     * 비밀번호 변경
+     * @param checkedEmail
+     * @param newPassword
+     */
     public void changePassword(String checkedEmail, String newPassword) {
         User user = userRepository.findByEmail(checkedEmail).orElseThrow(() -> new IllegalArgumentException("The email does not exist"));
         String encodedPassword = passwordEncoder.encode(newPassword);
@@ -87,31 +100,51 @@ public class UserService {
     }
 
 
-    // 전화번호 존재 유무 확인
+    /**
+     * 전화번호 존재 여부 확인
+     * @param phoneNo
+     * @return 존재 여부 반환
+     */
     public boolean isPhoneNoExisting(String phoneNo) {
         Optional<User> findUser = userRepository.findByPhoneNo(phoneNo);
         return findUser.isPresent();
     }
 
-    // 이메일 존재 유무 확인
+    /**
+     * 이메일 존재 여부 확인
+     * @param email
+     * @return 존재 여부 반환
+     */
     public boolean isEmailExisting(String email) {
         Optional<User> findUser = userRepository.findByEmail(email);
         return findUser.isPresent();
     }
 
-    // 이름 존재 유무 확인
+    /**
+     * 이름 존재 여부 확인
+     * @param name
+     * @return 존재 여부 반환
+     */
     public boolean isNameExisting(String name) {
         Optional<User> findUser = userRepository.findByName(name);
         return findUser.isPresent();
     }
 
-    // 애플 연동 유무 확인
+    /**
+     * 애플 유저인지 판단
+     * @param appleUniqueNo
+     * @return 애플 유저 여부 반환
+     */
     public boolean isAppleUniqueNoExisting(String appleUniqueNo) {
         Optional<User> findUser = userRepository.findByAppleUniqueNo(appleUniqueNo);
         return findUser.isPresent();
     }
 
-    // 알림 정보 수정
+    /**
+     * 알림 동의 여부 수정
+     * @param userId
+     * @return 수정된 알람 동의 여부 반환
+     */
     public boolean changeNotify(int userId){
         userRepository.updateNotify(userId, !getUserById(userId).isNotify());
         return getUserById(userId).setNotify();
@@ -141,6 +174,11 @@ public class UserService {
         return getUserById(userId).setProfile(ncpLink);
     }
 
+    /**
+     * 유저 정보 수정
+     * @param modifyUserDTO
+     * @return 수정된 유저 정보 반환
+     */
     public User changeUserInfo(ModifyUserDTO modifyUserDTO) {
         User user = getUserById(modifyUserDTO.getUserId());
 
