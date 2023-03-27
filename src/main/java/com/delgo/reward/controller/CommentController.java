@@ -26,6 +26,12 @@ public class CommentController extends CommController {
     private final CommentService commentService;
     private final CertService certificationService;
 
+    /**
+     * 댓글 생성
+     * @param commentDTO
+     * @return 생성된 댓글 데이터
+     * @throws IOException
+     */
     @PostMapping("/comment")
     public ResponseEntity createComment(@Validated @RequestBody CommentDTO commentDTO) throws IOException {
         Comment comment = commentService.createComment(commentDTO);
@@ -34,39 +40,68 @@ public class CommentController extends CommController {
         return SuccessReturn(comment);
     }
 
+    /**
+     * 답글 생성
+     * @param replyDTO
+     * @return 생성된 답글 데이터
+     * @throws IOException
+     */
     @PostMapping("/reply")
-    public ResponseEntity createReply(@Validated @RequestBody ReplyDTO replyDTO){
+    public ResponseEntity createReply(@Validated @RequestBody ReplyDTO replyDTO) throws IOException{
         Comment comment = commentService.createReply(replyDTO);
         return SuccessReturn(comment);
     }
 
+    /**
+     * 인증에 대한 댓글 조회
+     * @param certificationId
+     * @return 댓글 데이터
+     */
     @GetMapping("/comment")
     public ResponseEntity getComment(@RequestParam int certificationId){
         List<GetCommentDTO> commentList = commentService.getCommentByCertificationId(certificationId);
         return SuccessReturn(commentList);
     }
 
+    /**
+     * 댓글에 대한 답글 조회
+     * @param parentCommentId
+     * @return 답글 데이터
+     */
     @GetMapping("/reply")
     public ResponseEntity getReply(@RequestParam int parentCommentId){
         List<Comment> replyList = commentService.getReplyByParentCommentId(parentCommentId);
         return SuccessReturn(replyList);
     }
 
+    /**
+     * 댓글 / 답글 수정
+     * @param commentId
+     * @param updateCommentDTO
+     * @return 수정된 댓글 데이터
+     */
     @PutMapping(value = {"/comment/{commentId}", "/comment"})
     public ResponseEntity updateComment(@PathVariable Integer commentId, @RequestBody UpdateCommentDTO updateCommentDTO){
         if(commentService.isCommentOwner(commentId, updateCommentDTO.getUserId())){
             String updateContent = updateCommentDTO.getContent();
-            commentService.updateReplyByCommentId(commentId, updateContent);
+            commentService.updateCommentByCommentId(commentId, updateContent);
         }
         else
             return ErrorReturn(ApiCode.INVALID_USER_ERROR);
         return SuccessReturn();
     }
 
+    /**
+     * 댓글 / 답글 삭제
+     * @param commentId
+     * @param userId
+     * @param certificationId
+     * @return 성공 / 실패 여부
+     */
     @DeleteMapping(value = {"/comment/{commentId}/{userId}/{certificationId}", "/comment"})
     public ResponseEntity deleteComment(@PathVariable Integer commentId, @PathVariable Integer userId, @PathVariable Integer certificationId){
         if (commentService.isCommentOwner(commentId, userId) || commentService.isCertificationOwner(commentId, userId)) {
-            commentService.deleteReplyByCommentId(commentId);
+            commentService.deleteCommentByCommentId(commentId);
             certificationService.minusCommentCount(certificationId);
         } else
             return ErrorReturn(ApiCode.INVALID_USER_ERROR);
