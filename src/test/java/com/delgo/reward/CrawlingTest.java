@@ -2,6 +2,7 @@ package com.delgo.reward;
 
 
 import com.delgo.reward.service.crawling.GetDogCodeCrawlingService;
+import com.delgo.reward.service.crawling.GetNaverMungpleCrawlingService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +16,13 @@ public class CrawlingTest {
     @Autowired
     private GetDogCodeCrawlingService crawlingService;
 
-    @Test
-    public void getDogTest() throws Exception {
-        String url = "https://ddnews.co.kr/%EA%B0%95%EC%95%84%EC%A7%80%EC%A2%85%EB%A5%98-%EA%B0%9C%EC%A2%85%EB%A5%98/";
+    @Autowired
+    private GetNaverMungpleCrawlingService naverCrawlingService;
 
-//        String test = "DT00" + 15;
-//        System.out.println(test);
-        crawlingService.crawlingProcess(url);
+    @Test
+    public void getCrawlingTest() throws Exception {
+        String url = "https://map.naver.com/v5/search/%EC%8B%A0%EC%82%AC%EC%97%AD?c=15,0,0,0,dh";
+
+        naverCrawlingService.crawlingProcess(url);
     }
 }
