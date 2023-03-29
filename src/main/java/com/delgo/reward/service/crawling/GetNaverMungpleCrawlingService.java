@@ -1,6 +1,5 @@
 package com.delgo.reward.service.crawling;
 
-import com.delgo.reward.dto.MungpleDTO;
 import com.delgo.reward.mongoDomain.NaverPlace;
 import com.delgo.reward.mongoService.NaverPlaceService;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +50,7 @@ public class GetNaverMungpleCrawlingService {
             e.printStackTrace();
         }
         System.out.println("driver 종료");
-//        driver.quit();     //브라우저 닫기
+        driver.quit();     //브라우저 닫기
 
     }
 
@@ -69,6 +68,7 @@ public class GetNaverMungpleCrawlingService {
         driver.switchTo().frame(driver.findElement(By.cssSelector("#searchIframe")));
         Thread.sleep(2000);
 
+        int num = 1;
         int page = 0;
         while (true) {
             page++;
@@ -83,11 +83,9 @@ public class GetNaverMungpleCrawlingService {
             }
 
             List<WebElement> elements = driver.findElements(By.cssSelector(".place_bluelink"));
-            log.info("place count : {}", elements.size());
-
             for (WebElement element : elements) {
                 NaverPlace np = new NaverPlace();
-                log.info("place Name : {}", element.getText());
+                log.info("{} 번째 장소 , place Name : {}", num++ , element.getText());
                 np.setPlaceName(element.getText());
                 // 상세 페이지 이동을 위해 PLACE NAME 클릭
                 js.executeScript("arguments[0].click();", element);Thread.sleep(2000);
@@ -95,11 +93,20 @@ public class GetNaverMungpleCrawlingService {
                 // 상세 페이지 IFRAME으로 이동
                 driver.switchTo().parentFrame();Thread.sleep(100); // 기존 IFRAME으로 이동
                 driver.switchTo().frame(driver.findElement(By.cssSelector("#entryIframe")));
+
                 WebElement address = driver.findElement(By.cssSelector(".LDgIH")); // 주소 Class
-                WebElement category = driver.findElement(By.cssSelector(".DJJvD")); // 주소 Class
-                log.info("address : {}", address.getText());
                 np.setAddress(address.getText());
-                log.info("category : {}", category.getText());
+
+                // 장소 중복 시 넘어감
+                if(naverPlaceService.checkDuplicate(np)) {
+                    // SCROLL IFRAME 이동
+                    driver.switchTo().parentFrame();Thread.sleep(100);  // 기존 아이프레임으로 이동
+                    driver.switchTo().frame(driver.findElement(By.cssSelector("#searchIframe")));Thread.sleep(500);
+
+                    continue;
+                }
+
+                WebElement category = driver.findElement(By.cssSelector(".DJJvD")); // 주소 Class
                 np.setCategory(category.getText());
 
                 // 사진 버튼
@@ -122,13 +129,9 @@ public class GetNaverMungpleCrawlingService {
                 Thread.sleep(2000);
 
                 List<WebElement> photoUrls = driver.findElements(By.cssSelector(".wzrbN a.place_thumb img"));
-                log.info("photoUrl Count : {}", photoUrls.size());
                 List<String> photos = photoUrls.stream().map(photo -> photo.getAttribute("src")).collect(Collectors.toList());
-
-                log.info("photos : {}", photos);
                 np.setPhotos(photos);
-
-                log.info("return np : {}", np);
+                log.info("Naver Place : {}", np);
 
                 naverPlaceService.register(np);
 
