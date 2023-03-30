@@ -1,6 +1,5 @@
 package com.delgo.reward.mongoDomain;
 
-import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
@@ -13,6 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Getter
 @Builder
@@ -28,10 +28,18 @@ public class Classification {
     private Pet pet;
     @Field("certification")
     private Certification certification;
-    @Field("category_code")
-    private String categoryCode;
-    @Field("category_name")
-    private String categoryName;
+    @Field("category")
+    private Map<String, String> category;
     @Field("created_at")
     private LocalDateTime createdAt;
+
+    public Classification toEntity(User user, Pet pet, Certification certification, Map<String, String> category){
+        return Classification.builder()
+                .user(user)
+                .pet(pet)
+                .certification(certification)
+                .category(category)
+                .createdAt(LocalDateTime.now())
+                .build();
+    }
 }
