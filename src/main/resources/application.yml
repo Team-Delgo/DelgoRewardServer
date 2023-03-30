@@ -8,7 +8,7 @@ spring:
     driverClassName: org.mariadb.jdbc.Driver
     hikari:
       connectionTimeout: 30000 #30000ms
-      maxLifetime: 290000 #1800000ms(30?). maria db ??? 28800? (8??) -> ?? 1???? ??
+      maxLifetime: 280000 #1800000ms(30?). maria db ??? 28800? (8??) -> ?? 1???? ??
                           #      maximumPoolSize: 20 #?? 10
                           #      validationTimeout: 1000 #5000ms, connectionTimeout ?? ??? ?
 
