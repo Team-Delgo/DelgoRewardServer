@@ -2,7 +2,7 @@ package com.delgo.reward.service;
 
 
 import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.record.CalendarRecord;
+import com.delgo.reward.record.calendar.CalendarRecord;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
