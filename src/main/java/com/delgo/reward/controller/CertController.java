@@ -4,8 +4,8 @@ package com.delgo.reward.controller;
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
 import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.dto.certification.CertDTO;
-import com.delgo.reward.dto.certification.ModifyCertDTO;
+import com.delgo.reward.record.certification.CertRecord;
+import com.delgo.reward.record.certification.ModifyCertRecord;
 import com.delgo.reward.service.CertService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,10 +33,10 @@ public class CertController extends CommController {
      * Response Data : 등록한 인증 데이터 반환
      */
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<?> register(@Validated @RequestPart(value = "data") CertDTO dto, @RequestPart(required = false) MultipartFile photo) {
+    public ResponseEntity<?> register(@Validated @RequestPart(value = "data") CertRecord record, @RequestPart(required = false) MultipartFile photo) {
         if(photo.isEmpty()) ErrorReturn(ApiCode.PARAM_ERROR);
 
-        Certification certification = certService.register(dto, photo);
+        Certification certification = certService.register(record, photo);
         log.info("{}", certification);
         return SuccessReturn(certification);
     }
@@ -47,11 +47,11 @@ public class CertController extends CommController {
      * Response Data : 등록한 인증 데이터 반환
      */
     @PutMapping
-    public ResponseEntity modify(@Validated @RequestBody ModifyCertDTO dto) {
-        if (!Objects.equals(dto.getUserId(), certService.getCert(dto.getCertificationId()).getUserId()))
+    public ResponseEntity modify(@Validated @RequestBody ModifyCertRecord record) {
+        if (!Objects.equals(record.userId(), certService.getCert(record.certificationId()).getUserId()))
             return ErrorReturn(ApiCode.INVALID_USER_ERROR);
 
-        return SuccessReturn(certService.modify(dto));
+        return SuccessReturn(certService.modify(record));
     }
 
     /*

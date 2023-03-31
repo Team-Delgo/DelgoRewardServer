@@ -10,8 +10,8 @@ import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.achievements.Achievements;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.common.Location;
-import com.delgo.reward.dto.certification.CertDTO;
-import com.delgo.reward.dto.certification.ModifyCertDTO;
+import com.delgo.reward.record.certification.CertRecord;
+import com.delgo.reward.record.certification.ModifyCertRecord;
 import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.repository.JDBCTemplateRankingRepository;
 import com.google.api.client.util.ArrayMap;
@@ -64,22 +64,22 @@ public class CertService {
     }
 
     // Certification 등록
-    public Certification register(CertDTO dto, MultipartFile photo) {
+    public Certification register(CertRecord record, MultipartFile photo) {
         Certification certification = save(
-                (dto.getMungpleId() == 0) // 일반 인증의 경우 - (위도,경도)로 주소 가져와서 등록해야 함.
-                        ? dto.toEntity(reverseGeoService.getReverseGeoData(new Location(dto.getLatitude(), dto.getLongitude())))
-                        : dto.toEntity(mungpleService.getMungpleById(dto.getMungpleId())));
+                (record.mungpleId() == 0) // 일반 인증의 경우 - (위도,경도)로 주소 가져와서 등록해야 함.
+                        ? record.toEntity(reverseGeoService.getReverseGeoData(new Location(record.latitude(), record.longitude())))
+                        : record.toEntity(mungpleService.getMungpleById(record.mungpleId())));
 
         // 획득 가능한 업적 Check
-        List<Achievements> earnAchievements = achievementsService.checkEarnedAchievements(dto.getUserId(), dto.getMungpleId() != 0);
+        List<Achievements> earnAchievements = achievementsService.checkEarnedAchievements(record.userId(), record.mungpleId() != 0);
         if (!earnAchievements.isEmpty()) {
             archiveService.registerArchives(earnAchievements.stream()
-                    .map(achievement -> achievement.toArchive(dto.getUserId())).collect(Collectors.toList()));
+                    .map(achievement -> achievement.toArchive(record.userId())).collect(Collectors.toList()));
             certification.setAchievements(earnAchievements);
         }
 
         // Point 부여
-        pointService.givePoint(userService.getUserById(dto.getUserId()).getUserId(), CategoryCode.valueOf(dto.getCategoryCode()).getPoint());
+        pointService.givePoint(userService.getUserById(record.userId()).getUserId(), CategoryCode.valueOf(record.categoryCode()).getPoint());
         // 랭킹 실시간으로 집계
         rankingService.rankingByPoint();
         // 인증 사진 NCP Upload
@@ -92,8 +92,8 @@ public class CertService {
     }
 
     // Certification 수정
-    public Certification modify(ModifyCertDTO dto) {
-        return getCert(dto.getCertificationId()).modify(dto.getDescription());
+    public Certification modify(ModifyCertRecord record) {
+        return getCert(record.certificationId()).modify(record.description());
     }
 
     // Certification 삭제
