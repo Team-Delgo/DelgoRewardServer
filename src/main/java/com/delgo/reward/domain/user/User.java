@@ -52,6 +52,13 @@ public class User {
     @Column(nullable = false, name="is_notify")
     private boolean isNotify;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true, name="gender")
+    private Gender gender;
+
+    @Column(nullable = true, name="age")
+    private int age;
+
     private String profile;
 
     @OneToOne(fetch = FetchType.LAZY)
