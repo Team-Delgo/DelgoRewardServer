@@ -18,7 +18,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OAuthSignUpDTO {
-    @NotBlank private String email;
+    @NotNull private String email; // apple 로그인 시 email 빈 값으로 들어옴
     @NotBlank private String userName;
     @NotBlank private String phoneNo;
     @NotBlank private String geoCode;
