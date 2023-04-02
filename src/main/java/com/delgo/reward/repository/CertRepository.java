@@ -44,6 +44,9 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @Query(value = "select * from certification where user_id = ? and  regist_dt between ? and ? order by regist_dt desc", nativeQuery = true)
     List<Certification> findByDateAndUser(int userId, LocalDate startDate, LocalDate endDate);
 
+    @Query(value = "select * from certification where regist_dt between ? and ? order by regist_dt desc", nativeQuery = true)
+    List<Certification> findByDate(LocalDate startDate, LocalDate endDate);
+
     @Query(value = "select * from certification where user_id  not in (select ban_user_id from ban_list where user_id = ?) and is_correct_photo = true order by regist_dt desc limit ?", nativeQuery = true)
     List<Certification> findRecentCert(int userId, int count);
 

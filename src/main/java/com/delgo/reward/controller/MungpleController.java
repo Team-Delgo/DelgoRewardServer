@@ -47,11 +47,11 @@ public class MungpleController extends CommController {
         if (!mungpleService.isMungpleExisting(location)) ErrorReturn(ApiCode.MUNGPLE_DUPLICATE_ERROR);
 
         Mungple mungple = mungpleService.register(dto.toEntity(location));
-        photoService.uploadMungple(mungple.getMungpleId(), thumbnail);
-        photoService.uploadMungpleNote(mungple.getMungpleId(), mungpleNote);
+        mungple.setPhotoUrl(photoService.uploadMungple(mungple.getMungpleId(), thumbnail));
+        mungple.setDetailUrl(photoService.uploadMungpleNote(mungple.getMungpleId(), mungpleNote));
 
         log.info("등록한 Mungple : {}", mungple);
-        return SuccessReturn(mungple);
+        return SuccessReturn(mungpleService.register(mungple));
     }
 
     /*

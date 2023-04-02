@@ -123,7 +123,7 @@ public class PhotoService extends CommService {
         String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\."); // ex) png, jpg, jpeg
         String extension = type[type.length - 1];
 
-        String fileName = mungpleId + "_mungple.webp";
+        String fileName = type[0] + "_mungple.webp";
         String ncpLink = BucketName.MUNGPLE.getUrl() + fileName;
 
         try {
@@ -144,7 +144,8 @@ public class PhotoService extends CommService {
     }
 
     public String uploadMungpleNote(int mungpleId, MultipartFile photo) {
-        String fileName = mungpleId + "_mungplenote.webp";
+        String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\."); // ex) png, jpg, jpeg
+        String fileName = type[0] + "_mungplenote.webp";
         String ncpLink = BucketName.MUNGPLE_NOTE.getUrl() + fileName;
 
         try {

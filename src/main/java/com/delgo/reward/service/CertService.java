@@ -129,6 +129,10 @@ public class CertService {
         return certification;
     }
 
+    public List<Certification> getCertByDate(LocalDate localDate){
+        return certRepository.findByDate(localDate.minusDays(1), localDate);
+    }
+
     // 전체 Certification 리스트 조회
     public Slice<Certification> getCertAll(int userId, int currentPage, int pageSize, boolean isDesc) {
         PageRequest pageRequest = (isDesc)

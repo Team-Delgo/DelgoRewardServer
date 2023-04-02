@@ -1,5 +1,6 @@
 package com.delgo.reward.comm.quartz;
 
+import com.delgo.reward.comm.quartz.job.ClassificationCategory;
 import com.delgo.reward.comm.quartz.job.InitWeeklyPoint;
 import com.delgo.reward.comm.quartz.job.RefreshDailyRanking;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,17 @@ public class JobSetting {
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
+    }
+
+    @PostConstruct
+    public void start_classificationCategoryJob(){
+        JobDetail jobDetail = buildJobDetail(ClassificationCategory.class, new HashMap());
+        try {
+            scheduler.scheduleJob(jobDetail, buildJobTrigger("0 0 0 * * ?"));
+        } catch (SchedulerException e){
+            e.printStackTrace();
+        }
+
     }
 
     public Trigger buildJobTrigger(String scheduleExp){
