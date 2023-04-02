@@ -7,7 +7,7 @@ plugins {
 
 group = 'com.delgo.reward'
 version = '0.1-TEST'
-sourceCompatibility = '11'
+sourceCompatibility = '17'
 apply plugin:'war'
 
 repositories {

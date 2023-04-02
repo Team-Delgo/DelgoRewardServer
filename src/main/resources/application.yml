@@ -10,17 +10,15 @@ spring:
       connectionTimeout: 30000 #30000ms
       maxLifetime: 290000 #1800000ms(30?). maria db ??? 28800? (8??) -> ?? 1???? ??
                           #      maximumPoolSize: 20 #?? 10
-                          #      validationTimeout: 1000 #5000ms, connectionTimeout ?? ??? ?
-
-  # data - jpa ??
+                          #      validationTimeout: 1000 #5000ms, connectionTimeout ?? ???
   jpa:
     show-sql: false
     hibernate:
       ddl-auto: none
   servlet:
     multipart:
-      maxFileSize: 10MB
-      maxRequestSize: 12MB
+      maxFileSize: 50MB
+      maxRequestSize: 55MB
   kafka:
      consumer:
         bootstrap-servers: localhost:9092 # 컨슈머 서버 주소
