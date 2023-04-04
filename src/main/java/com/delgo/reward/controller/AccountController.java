@@ -1,9 +1,9 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.dto.user.ModifyPetDTO;
-import com.delgo.reward.dto.user.ModifyUserDTO;
-import com.delgo.reward.dto.user.ResetPasswordDTO;
+import com.delgo.reward.record.user.ModifyPetRecord;
+import com.delgo.reward.record.user.ModifyUserRecord;
+import com.delgo.reward.record.user.ResetPasswordRecord;
 import com.delgo.reward.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,12 +44,12 @@ public class AccountController extends CommController {
 
     /**
      * 유저 정보 수정
-     * @param modifyUserDTO
+     * @param modifyUserRecord
      * @return 성공 / 실패 여부
      */
     @PutMapping("/user")
-    public ResponseEntity<?> changeUserInfo(@Validated @RequestBody ModifyUserDTO modifyUserDTO) {
-        userService.changeUserInfo(modifyUserDTO);
+    public ResponseEntity<?> changeUserInfo(@Validated @RequestBody ModifyUserRecord modifyUserRecord) {
+        userService.changeUserInfo(modifyUserRecord);
         // 랭킹 실시간으로 집계
         rankingService.rankingByPoint();
         return SuccessReturn();
@@ -57,24 +57,24 @@ public class AccountController extends CommController {
 
     /**
      * 펫 정보 수정
-     * @param modifyPetDTO
+     * @param modifyPetRecord
      * @return 성공 / 실패 여부
      */
     @PutMapping("/pet")
-    public ResponseEntity<?> changePetInfo(@Validated @RequestBody ModifyPetDTO modifyPetDTO) {
-        petService.changePetInfo(modifyPetDTO);
+    public ResponseEntity<?> changePetInfo(@Validated @RequestBody ModifyPetRecord modifyPetRecord) {
+        petService.changePetInfo(modifyPetRecord);
         return SuccessReturn();
     }
 
     /**
      * 비밀번호 변경
-     * @param resetPassword
+     * @param resetPasswordRecord
      * @return 성공 / 실패 여부
      */
     @PutMapping("/password")
-    public ResponseEntity<?> changePassword(@Validated @RequestBody ResetPasswordDTO resetPassword) {
+    public ResponseEntity<?> changePassword(@Validated @RequestBody ResetPasswordRecord resetPasswordRecord) {
         // 사용자 확인 - 토큰 사용
-        userService.changePassword(resetPassword.getEmail(), resetPassword.getNewPassword());
+        userService.changePassword(resetPasswordRecord.email(), resetPasswordRecord.newPassword());
         return SuccessReturn();
     }
 
