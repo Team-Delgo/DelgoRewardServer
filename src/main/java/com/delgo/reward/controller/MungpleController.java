@@ -6,7 +6,7 @@ import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.ncp.GeoService;
 import com.delgo.reward.domain.Mungple;
 import com.delgo.reward.domain.common.Location;
-import com.delgo.reward.record.mungple.MungpleRecord;
+import com.delgo.reward.dto.MungpleDTO;
 import com.delgo.reward.service.MungpleService;
 import com.delgo.reward.service.PhotoService;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class MungpleController extends CommController {
 
     /*
      * 멍플 등록
-     * Request Data : MungpleRecord
+     * Request Data : MungpleDTO
      * - 주소로 위도, 경도 구할 수 있어야 함.
      * Response Data : 등록한 멍플 데이터 반환
      */
@@ -47,8 +47,8 @@ public class MungpleController extends CommController {
         if (!mungpleService.isMungpleExisting(location)) ErrorReturn(ApiCode.MUNGPLE_DUPLICATE_ERROR);
 
         Mungple mungple = mungpleService.register(record.toEntity(location));
-        photoService.uploadMungple(mungple.getMungpleId(), thumbnail);
-        photoService.uploadMungpleNote(mungple.getMungpleId(), mungpleNote);
+        mungple.setPhotoUrl(photoService.uploadMungple(mungple.getMungpleId(), thumbnail));
+        mungple.setDetailUrl(photoService.uploadMungpleNote(mungple.getMungpleId(), mungpleNote));
 
         log.info("등록한 Mungple : {}", mungple);
         return SuccessReturn(mungple);

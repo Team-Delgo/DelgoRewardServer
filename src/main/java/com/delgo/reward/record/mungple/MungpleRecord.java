@@ -24,6 +24,7 @@ public record MungpleRecord(
                 .jibunAddress(location.getJibunAddress())
                 .latitude(location.getLatitude())
                 .longitude(location.getLongitude())
+                .isActive(true)
                 .build();
     }
 }
