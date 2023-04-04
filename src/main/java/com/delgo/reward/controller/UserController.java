@@ -49,7 +49,11 @@ public class UserController extends CommController {
         return SuccessReturn(new UserResDTO(userService.getUserById(userId), petService.getPetByUserId(userId)));
     }
 
-    // 비밀번호 재설정
+    /**
+     * 비밀번호 재설정
+     * @param resetPasswordDTO
+     * @return 성공 / 실패 여부
+     */
     @PutMapping("/password")
     public ResponseEntity<?> resetPassword(@Validated @RequestBody ResetPasswordDTO resetPasswordDTO) {
         User user = userService.getUserByEmail(resetPasswordDTO.getEmail()); // 유저 조회

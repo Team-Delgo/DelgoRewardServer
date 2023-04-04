@@ -32,12 +32,21 @@ public class AccountController extends CommController {
 //        return SuccessReturn(userService.changeNotify(userId));
 //    }
 
+    /**
+     * 알림 정보 수정
+     * @param userId
+     * @return 수정된 데이터 반환
+     */
     @PutMapping(value = {"/notify/{userId}", "/notify"})
     public ResponseEntity<?> changeNotify(@PathVariable Integer userId){
         return SuccessReturn(userService.changeNotify(userId));
     }
 
-    // 유저 정보 수정
+    /**
+     * 유저 정보 수정
+     * @param modifyUserDTO
+     * @return 성공 / 실패 여부
+     */
     @PutMapping("/user")
     public ResponseEntity<?> changeUserInfo(@Validated @RequestBody ModifyUserDTO modifyUserDTO) {
         userService.changeUserInfo(modifyUserDTO);
@@ -46,14 +55,22 @@ public class AccountController extends CommController {
         return SuccessReturn();
     }
 
-    // 펫 정보 수정
+    /**
+     * 펫 정보 수정
+     * @param modifyPetDTO
+     * @return 성공 / 실패 여부
+     */
     @PutMapping("/pet")
     public ResponseEntity<?> changePetInfo(@Validated @RequestBody ModifyPetDTO modifyPetDTO) {
         petService.changePetInfo(modifyPetDTO);
         return SuccessReturn();
     }
 
-    // 비밀번호 변경 - Account Page
+    /**
+     * 비밀번호 변경
+     * @param resetPassword
+     * @return 성공 / 실패 여부
+     */
     @PutMapping("/password")
     public ResponseEntity<?> changePassword(@Validated @RequestBody ResetPasswordDTO resetPassword) {
         // 사용자 확인 - 토큰 사용
@@ -61,7 +78,12 @@ public class AccountController extends CommController {
         return SuccessReturn();
     }
 
-    // 회원탈퇴
+    /**
+     * 회원 탈퇴
+     * @param userId
+     * @return 성공 / 실패 여부
+     * @throws Exception
+     */
     @DeleteMapping("/user/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable Integer userId) throws Exception {
         userService.deleteUser(userId); // USER DELETE
@@ -70,6 +92,11 @@ public class AccountController extends CommController {
         return SuccessReturn();
     }
 
+    /**
+     * 유저 조회
+     * @param userId
+     * @return 유저 정보 반환
+     */
     @GetMapping
     public ResponseEntity<?> getAccount(@RequestParam Integer userId){
         return SuccessReturn(Map.of(
@@ -79,6 +106,11 @@ public class AccountController extends CommController {
         ));
     }
 
+    /**
+     * 로그아웃
+     * @param userId
+     * @return 성공 / 실패 여부
+     */
     @PostMapping(value = {"/logout/{userId}","/logout"})
     public ResponseEntity<?> logout(@PathVariable Integer userId){
         tokenService.deleteToken(userId);
