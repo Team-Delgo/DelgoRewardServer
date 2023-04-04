@@ -2,36 +2,32 @@ package com.delgo.reward.comm;
 
 
 import com.delgo.reward.comm.exception.ApiCode;
-import com.delgo.reward.dto.common.ResponseDTO;
+import com.delgo.reward.record.common.ResponseRecord;
 import org.springframework.http.ResponseEntity;
 
 public class CommController {
-
-    public ResponseEntity SuccessReturn(Object data) {
-        return ResponseEntity.ok().body(
-                ResponseDTO.builder().code(ApiCode.SUCCESS.getCode()).codeMsg(ApiCode.SUCCESS.getMsg()).data(data).build());
+    public ResponseEntity SuccessReturn() {
+        return ResponseEntity.ok().body(new ResponseRecord(ApiCode.SUCCESS.getCode(), ApiCode.SUCCESS.getMsg(), null));
     }
 
-    public ResponseEntity SuccessReturn() {
-        return ResponseEntity.ok().body(
-                ResponseDTO.builder().code(ApiCode.SUCCESS.getCode()).codeMsg(ApiCode.SUCCESS.getMsg()).build());
+    public ResponseEntity SuccessReturn(Object data) {
+        return ResponseEntity.ok().body(new ResponseRecord(ApiCode.SUCCESS.getCode(), ApiCode.SUCCESS.getMsg(), data));
     }
 
     public ResponseEntity ErrorReturn(ApiCode apiCode) {
-        return ResponseEntity.ok().body(
-                ResponseDTO.builder().code(apiCode.getCode()).codeMsg(apiCode.getMsg()).build());
+        return ResponseEntity.ok().body(new ResponseRecord(apiCode.getCode(), apiCode.getMsg(), null));
     }
 
     public ResponseEntity ErrorReturn(ApiCode apiCode, Object data) {
-        return ResponseEntity.ok().body(
-                ResponseDTO.builder().code(apiCode.getCode()).codeMsg(apiCode.getMsg()).data(data).build());
+        return ResponseEntity.ok().body(new ResponseRecord(apiCode.getCode(), apiCode.getMsg(), data));
     }
 
     public ResponseEntity ParamErrorReturn(String param) {
         return ResponseEntity.ok().body(
-                ResponseDTO.builder()
-                        .code(ApiCode.PARAM_ERROR.getCode())
-                        .codeMsg(ApiCode.PARAM_ERROR + " : [" + param + "]")
-                        .build());
+                new ResponseRecord(
+                        ApiCode.PARAM_ERROR.getCode(),
+                        ApiCode.PARAM_ERROR + " : [" + param + "]",
+                        null)
+        );
     }
 }

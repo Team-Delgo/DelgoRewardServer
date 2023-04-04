@@ -4,7 +4,7 @@ package com.delgo.reward.service;
 import com.delgo.reward.comm.CommService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
-import com.delgo.reward.dto.common.ResponseDTO;
+import com.delgo.reward.record.common.ResponseRecord;
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.webp.WebpWriter;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +45,7 @@ public class PhotoService extends CommService {
     public Boolean checkCorrectPhoto(String path){
         // Flask URL
         String url = "http://localhost:5000/check-photo?path=" + path;
-        ResponseEntity<ResponseDTO> result;
+        ResponseEntity<ResponseRecord> result;
 
         try {
             RestTemplate restTemplate = new RestTemplate();
@@ -54,13 +54,13 @@ public class PhotoService extends CommService {
             HttpEntity<?> entity = new HttpEntity<>(header);
 
             UriComponents uri = UriComponentsBuilder.fromHttpUrl(url).build();
-            result = restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, ResponseDTO.class);
-            ResponseDTO<HashMap> responseDTO = result.getBody();
+            result = restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, ResponseRecord.class);
+            ResponseRecord<HashMap> responseRecord = result.getBody();
 
             log.info("statusCode : {}", result.getStatusCodeValue()); //http status code를 확인
-            log.info("body : {}", responseDTO.getData()); //실제 데이터 정보 확인
+            log.info("body : {}", responseRecord.data()); //실제 데이터 정보 확인
 
-            return (Boolean) responseDTO.getData().get("result");
+            return (Boolean) responseRecord.data().get("result");
         } catch (Exception e) {
             e.printStackTrace();
             return false;
