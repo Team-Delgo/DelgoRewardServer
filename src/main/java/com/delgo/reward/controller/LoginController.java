@@ -8,7 +8,7 @@ import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
 import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.dto.user.UserResDTO;
+import com.delgo.reward.record.user.UserResRecord;
 import com.delgo.reward.service.PetService;
 import com.delgo.reward.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +49,7 @@ public class LoginController extends CommController {
         response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
         response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
 
-        return SuccessReturn(new UserResDTO(user,pet));
+        return SuccessReturn(new UserResRecord(user,pet));
     }
 
     /*

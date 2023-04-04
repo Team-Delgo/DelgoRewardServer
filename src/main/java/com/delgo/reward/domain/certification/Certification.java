@@ -3,7 +3,7 @@ package com.delgo.reward.domain.certification;
 
 import com.delgo.reward.domain.achievements.Achievements;
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.dto.user.WriterDTO;
+import com.delgo.reward.record.user.WriterRecord;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -42,7 +42,7 @@ public class Certification {
     private int commentCount; // 댓글 개수
     private Boolean isExpose; // Map에 노출 시키는 인증 구분. ( 초기엔 운영진이 직접 추가 예정 )
 
-    @Transient private WriterDTO user;
+    @Transient private WriterRecord writerRecord;
     @Transient private List<Achievements> achievements;
     @Transient private Boolean isLike; // 내가 좋아요를 눌렀는가?
     @Transient private int likeCount; // 좋아요 개수
@@ -81,7 +81,7 @@ public class Certification {
     }
 
     public Certification setUserAndLike(User user, Boolean isLike, Integer likeCount) {
-        this.user = user.toWriterDTO();
+        this.writerRecord = user.toWriterRecord();
         this.isLike = isLike;
         this.likeCount = likeCount;
 

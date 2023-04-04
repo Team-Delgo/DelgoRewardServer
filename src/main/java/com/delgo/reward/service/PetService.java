@@ -3,7 +3,7 @@ package com.delgo.reward.service;
 
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.dto.user.ModifyPetDTO;
+import com.delgo.reward.record.user.ModifyPetRecord;
 import com.delgo.reward.repository.PetRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,16 +28,19 @@ public class PetService {
     }
 
     @Transactional
-    public void changePetInfo(ModifyPetDTO modifyPetDTO){
-        User user = userService.getUserByEmail(modifyPetDTO.getEmail());
+    public void changePetInfo(ModifyPetRecord modifyPetRecord){
+        User user = userService.getUserByEmail(modifyPetRecord.email());
         int userId = user.getUserId();
         Pet originPet = getPetByUserId(userId);
 
-        if (modifyPetDTO.getName() != null)
-            originPet.setName(modifyPetDTO.getName());
+        if (modifyPetRecord.name() != null)
+            originPet.setName(modifyPetRecord.name());
 
-        if (modifyPetDTO.getBreed() != null)
-            originPet.setBreed(modifyPetDTO.getBreed());
+        if(modifyPetRecord.birthday() != null)
+            originPet.setBirthday(modifyPetRecord.birthday());
+
+        if (modifyPetRecord.breed() != null)
+            originPet.setBreed(modifyPetRecord.breed());
 
         petRepository.save(originPet);
     }
