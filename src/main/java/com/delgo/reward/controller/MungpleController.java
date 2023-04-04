@@ -6,7 +6,7 @@ import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.ncp.GeoService;
 import com.delgo.reward.domain.Mungple;
 import com.delgo.reward.domain.common.Location;
-import com.delgo.reward.dto.MungpleDTO;
+import com.delgo.reward.record.mungple.MungpleRecord;
 import com.delgo.reward.service.MungpleService;
 import com.delgo.reward.service.PhotoService;
 import lombok.RequiredArgsConstructor;
