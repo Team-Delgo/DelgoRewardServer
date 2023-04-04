@@ -7,7 +7,7 @@ import com.delgo.reward.comm.oauth.KakaoService;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.domain.user.UserSocial;
-import com.delgo.reward.dto.user.ModifyUserDTO;
+import com.delgo.reward.record.user.ModifyUserRecord;
 import com.delgo.reward.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -176,29 +176,29 @@ public class UserService {
 
     /**
      * 유저 정보 수정
-     * @param modifyUserDTO
+     * @param modifyUserRecord
      * @return 수정된 유저 정보 반환
      */
-    public User changeUserInfo(ModifyUserDTO modifyUserDTO) {
-        User user = getUserById(modifyUserDTO.getUserId());
+    public User changeUserInfo(ModifyUserRecord modifyUserRecord) {
+        User user = getUserById(modifyUserRecord.userId());
 
-        if (modifyUserDTO.getName() != null)
-            user.setName(modifyUserDTO.getName());
+        if (modifyUserRecord.name() != null)
+            user.setName(modifyUserRecord.name());
 
-        if (modifyUserDTO.getProfileUrl() != null)
-            user.setProfile(modifyUserDTO.getProfileUrl());
+        if (modifyUserRecord.profileUrl() != null)
+            user.setProfile(modifyUserRecord.profileUrl());
 
-        if (modifyUserDTO.getGeoCode() != null && modifyUserDTO.getPGeoCode() != null) {
-            user.setGeoCode(modifyUserDTO.getGeoCode());
-            user.setPGeoCode(modifyUserDTO.getPGeoCode());
+        if (modifyUserRecord.geoCode() != null && modifyUserRecord.pGeoCode() != null) {
+            user.setGeoCode(modifyUserRecord.geoCode());
+            user.setPGeoCode(modifyUserRecord.pGeoCode());
 
             // 주소 설정
-            String address = (modifyUserDTO.getGeoCode().equals("0"))  // 세종시는 구가 없음.
-                    ? codeService.getAddress(modifyUserDTO.getPGeoCode(), true)
-                    : codeService.getAddress(modifyUserDTO.getGeoCode(), false);
+            String address = (modifyUserRecord.geoCode().equals("0"))  // 세종시는 구가 없음.
+                    ? codeService.getAddress(modifyUserRecord.pGeoCode(), true)
+                    : codeService.getAddress(modifyUserRecord.geoCode(), false);
             user.setAddress(address);
 
-            jdbcTemplatePointRepository.changeGeoCode(user.getUserId(), modifyUserDTO.getGeoCode());
+            jdbcTemplatePointRepository.changeGeoCode(user.getUserId(), modifyUserRecord.geoCode());
         }
 
         return user;
