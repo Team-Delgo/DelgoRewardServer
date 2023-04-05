@@ -3,7 +3,7 @@ package com.delgo.reward.comm.interceptor;
 
 import com.delgo.reward.comm.log.APILog;
 import com.delgo.reward.comm.log.ERRLog;
-import com.delgo.reward.dto.common.ResponseDTO;
+import com.delgo.reward.record.common.ResponseRecord;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -20,30 +20,30 @@ public class LogInterceptor implements HandlerInterceptor {
 
     // Success Return은 postHandle에서 Log 처리
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView mv) throws Exception {
-        ResponseDTO responseDTO = getResponseBody(response);
-        if (responseDTO.getCode() == 200)
+        ResponseRecord responseRecord = getResponseBody(response);
+        if (responseRecord.code() == 200)
             if (request.getMethod().equals(POST)) {
-                log.info("{} || Result : code = {} msg = {} \n Parameter : {} ", request.getRequestURI(), responseDTO.getCode(), responseDTO.getCodeMsg(), request.getAttribute("requestBody"));
+                log.info("{} || Result : code = {} msg = {} \n Parameter : {} ", request.getRequestURI(), responseRecord.code(), responseRecord.codeMsg(), request.getAttribute("requestBody"));
             } else
-                APILog.info(request, responseDTO.getCode(), responseDTO.getCodeMsg());
+                APILog.info(request, responseRecord.code(), responseRecord.codeMsg());
     }
 
     // Error Return은 afterCompletion Log 처리
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        ResponseDTO responseDTO = getResponseBody(response);
+        ResponseRecord responseRecord = getResponseBody(response);
         // Exception이 발생하면 postHandle을 타지 않는다.
-        if (responseDTO.getCode() != 200)
+        if (responseRecord.code() != 200)
             if (request.getMethod().equals(POST)) {
-                log.info("{} || Result : code = {} msg = {} \n Parameter : {} ", request.getRequestURI(), responseDTO.getCode(), responseDTO.getCodeMsg(), request.getAttribute("requestBody"));
+                log.info("{} || Result : code = {} msg = {} \n Parameter : {} ", request.getRequestURI(), responseRecord.code(), responseRecord.codeMsg(), request.getAttribute("requestBody"));
             } else
-                ERRLog.info(request, responseDTO.getCode(), responseDTO.getCodeMsg());
+                ERRLog.info(request, responseRecord.code(), responseRecord.codeMsg());
     }
 
 
-    private ResponseDTO getResponseBody(HttpServletResponse response) throws IOException {
+    private ResponseRecord getResponseBody(HttpServletResponse response) throws IOException {
         ContentCachingResponseWrapper responseWrapper = getResponseWrapper(response);
         ObjectMapper om = new ObjectMapper();
-        return om.readValue(responseWrapper.getContentAsByteArray(), ResponseDTO.class);
+        return om.readValue(responseWrapper.getContentAsByteArray(), ResponseRecord.class);
     }
 
     private ContentCachingResponseWrapper getResponseWrapper(HttpServletResponse response) {

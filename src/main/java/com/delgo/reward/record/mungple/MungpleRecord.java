@@ -1,21 +1,17 @@
-package com.delgo.reward.dto;
+package com.delgo.reward.record.mungple;
 
 
 import com.delgo.reward.domain.Mungple;
 import com.delgo.reward.domain.common.Location;
-import lombok.*;
 
 import javax.validation.constraints.NotNull;
 
-@Getter
-@ToString
-@NoArgsConstructor
-@AllArgsConstructor
-public class MungpleDTO {
-    @NotNull private String address; // 입력 주소
-    @NotNull private String categoryCode; // 카테고리 코드 ( ex. 카페, 음식점 .. )
-    @NotNull private String placeName;
-    private String placeNameEn; // 영문 이름
+
+public record MungpleRecord(
+        @NotNull String address,
+        @NotNull String categoryCode,
+        @NotNull String placeName,
+        String placeNameEn) {
 
     public Mungple toEntity(Location location) {
         return Mungple.builder()

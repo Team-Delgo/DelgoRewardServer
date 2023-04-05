@@ -4,11 +4,13 @@ package com.delgo.reward.domain.code;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.*;
-import javax.swing.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @Entity
 @Builder
 @ToString
