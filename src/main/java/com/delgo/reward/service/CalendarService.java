@@ -2,7 +2,7 @@ package com.delgo.reward.service;
 
 
 import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.dto.CalendarDTO;
+import com.delgo.reward.record.calendar.CalendarRecord;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class CalendarService {
     private final CertService certService;
     private final LikeListService likeListService;
 
-    public List<CalendarDTO> getCalendar(int userId) {
+    public List<CalendarRecord> getCalendar(int userId) {
         List<Certification> certifications = certService.getCertByUserId(userId);
 
         return certifications.stream()
@@ -34,11 +34,10 @@ public class CalendarService {
                             .sorted(Comparator.comparing(Certification::getRegistDt).reversed())
                             .collect(Collectors.toList());
 
-                    return CalendarDTO.builder()
-                            .date(LocalDate.from(cert.getRegistDt()))
-                            .isAchievements(dateList.stream().anyMatch(Certification::getIsAchievements))
-                            .dateList(dateList)
-                            .build();
+                    return new CalendarRecord(
+                            LocalDate.from(cert.getRegistDt()),
+                            dateList.stream().anyMatch(Certification::getIsAchievements),
+                            dateList);
                 }).distinct().collect(Collectors.toList()); // 중복 제거
     }
 }

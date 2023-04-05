@@ -21,28 +21,28 @@ public class JobSetting {
     @Autowired
     private Scheduler scheduler;
 
-    @PostConstruct
-    public void start_refreshDailyRankingJob(){
-        JobDetail jobDetail = buildJobDetail(RefreshDailyRanking.class, new HashMap());
-        try{
-            scheduler.scheduleJob(jobDetail, buildJobTrigger("0 5 0 * * ?"));
-//            scheduler.scheduleJob(jobDetail, buildJobTrigger("0/10 * * * * ?"));
-        } catch (SchedulerException e) {
-            e.printStackTrace();
-        }
-    }
+//    @PostConstruct
+//    public void start_refreshDailyRankingJob(){
+//        JobDetail jobDetail = buildJobDetail(RefreshDailyRanking.class, new HashMap());
+//        try{
+//            scheduler.scheduleJob(jobDetail, buildJobTrigger("0 5 0 * * ?"));
+////            scheduler.scheduleJob(jobDetail, buildJobTrigger("0/10 * * * * ?"));
+//        } catch (SchedulerException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-    @PostConstruct
-    public void start_initWeeklyPointJob(){
-        JobDetail jobDetail = buildJobDetail(InitWeeklyPoint.class, new HashMap());
-        try{
-            scheduler.scheduleJob(jobDetail, buildJobTrigger("0 0 0 ? * MON *"));
-//            scheduler.scheduleJob(jobDetail, buildJobTrigger("0/10 * * * * ?"));
-
-        } catch (SchedulerException e) {
-            e.printStackTrace();
-        }
-    }
+//    @PostConstruct
+//    public void start_initWeeklyPointJob(){
+//        JobDetail jobDetail = buildJobDetail(InitWeeklyPoint.class, new HashMap());
+//        try{
+//            scheduler.scheduleJob(jobDetail, buildJobTrigger("0 0 0 ? * MON *"));
+////            scheduler.scheduleJob(jobDetail, buildJobTrigger("0/10 * * * * ?"));
+//
+//        } catch (SchedulerException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @PostConstruct
     public void start_classificationCategoryJob(){

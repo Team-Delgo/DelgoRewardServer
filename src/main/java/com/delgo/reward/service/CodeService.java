@@ -59,4 +59,9 @@ public class CodeService {
         Code p = getCode(c.getPCode()); // 부모 GeoCode
         return (isSejong) ? p.getCodeName() : p.getCodeName() + " " + c.getCodeName();
     }
+
+    // 품종 코드 중복 조회
+    public boolean checkDuplicateBreedCode(String name) {
+        return codeRepository.findByCodeName(name).isPresent();
+    }
 }

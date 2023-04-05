@@ -2,7 +2,7 @@ package com.delgo.reward.comm.security.jwt.filter;
 
 
 import com.delgo.reward.comm.security.services.PrincipalDetails;
-import com.delgo.reward.dto.user.LoginDTO;
+import com.delgo.reward.record.user.LoginRecord;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,9 +34,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 //        log.info("JwtAuthenticationFilter : 진입");
 
         ObjectMapper om = new ObjectMapper();
-        LoginDTO loginDTO = null;
+        LoginRecord loginRecord = null;
         try {
-            loginDTO = om.readValue(request.getInputStream(), LoginDTO.class);
+            loginRecord = om.readValue(request.getInputStream(), LoginRecord.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -44,7 +44,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 //        log.info("JwtAuthenticationFilter : " + loginDTO);
 
         // 유저네임패스워드 토큰 생성
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginRecord.email(), loginRecord.password());
 
 //        log.info("JwtAuthenticationFilter : 토큰생성완료");
 

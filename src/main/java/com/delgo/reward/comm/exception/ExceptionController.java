@@ -2,7 +2,7 @@ package com.delgo.reward.comm.exception;
 
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.dto.common.ResponseDTO;
+import com.delgo.reward.record.common.ResponseRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -50,10 +50,10 @@ public class ExceptionController extends CommController {
     public ResponseEntity NullPointerException(NullPointerException e) {
         if(e.getMessage().equals("PHOTO EXTENSION IS WRONG"))
             return ResponseEntity.ok().body(
-                    ResponseDTO.builder().code(ApiCode.PHOTO_EXTENSION_ERROR.getCode()).codeMsg(ApiCode.PHOTO_EXTENSION_ERROR.getMsg()).build());
+                    new ResponseRecord(ApiCode.PHOTO_EXTENSION_ERROR.getCode(), ApiCode.PHOTO_EXTENSION_ERROR.getMsg(), null));
 
         return ResponseEntity.ok().body(
-                ResponseDTO.builder().code(ApiCode.NOT_FOUND_DATA.getCode()).codeMsg(e.getMessage()).build());
+                new ResponseRecord(ApiCode.NOT_FOUND_DATA.getCode(), e.getMessage(), null));
     }
 
     // @PathVariable ERROR - 1
