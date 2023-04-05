@@ -79,7 +79,7 @@ public class LogAop {
 
         int startIndex = obj.toString().indexOf("(");
         int endIndex = obj.toString().indexOf(")");
-        String responseDTO = obj.toString().substring(startIndex + 1, endIndex);
+        String responseDTO = (startIndex == -1 || endIndex == -1) ? "" : obj.toString().substring(startIndex + 1, endIndex);
 
         Log log = logService.createLog(httpMethod, controllerName, methodName, args, responseDTO);
 

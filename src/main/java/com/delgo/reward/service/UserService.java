@@ -44,6 +44,8 @@ public class UserService {
     private final JDBCTemplatePointRepository jdbcTemplatePointRepository;
     private final JDBCTemplateRankingRepository jdbcTemplateRankingRepository;
 
+    private final String DEFAULT_PROFILE = "https://kr.object.ncloudstorage.com/reward-profile/%EA%B8%B0%EB%B3%B8%ED%94%84%EB%A1%9C%ED%95%84.webp";
+
     // DB 저장
     public User save(User user) {
        return userRepository.save(user);
@@ -59,6 +61,8 @@ public class UserService {
         User registeredUser = save(user);
         jdbcTemplatePointRepository.createUserPoint(registeredUser); // Point 생성
 
+        if(profile.isEmpty())
+            return registeredUser.setProfile(DEFAULT_PROFILE);
         return registeredUser.setProfile(photoService.uploadProfile(user.getUserId(), profile)); // User Profile 등록
     }
 
