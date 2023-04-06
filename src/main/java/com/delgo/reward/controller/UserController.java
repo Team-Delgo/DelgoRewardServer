@@ -35,7 +35,6 @@ public class UserController extends CommController {
     private final PasswordEncoder passwordEncoder;
 
     private final PetService petService;
-    private final PhotoService photoService;
     private final RankingService rankingService;
     private final UserService userService;
     private final CodeService codeService;
@@ -71,7 +70,7 @@ public class UserController extends CommController {
      * Response Data : 등록한 인증 데이터 반환
      */
     @PostMapping(value = "/oauth",consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<?> registerUserByOAuth(@Validated @RequestPart(value = "data") OAuthSignUpDTO oAuthSignUpDTO, @RequestPart MultipartFile profile, HttpServletResponse response) {
+    public ResponseEntity<?> registerUserByOAuth(@Validated @RequestPart(value = "data") OAuthSignUpDTO oAuthSignUpDTO, @RequestPart(required = false) MultipartFile profile, HttpServletResponse response) {
         // Apple 회원가입 시 appleUniqueNo 넣어주어야 함.
         if ((oAuthSignUpDTO.getAppleUniqueNo() == null || oAuthSignUpDTO.getAppleUniqueNo().isBlank())
                 && oAuthSignUpDTO.getUserSocial() == UserSocial.A)
@@ -103,7 +102,7 @@ public class UserController extends CommController {
      * Response Data : 등록한 인증 데이터 반환
      */
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<?> registerUser(@Validated @RequestPart(value = "data") SignUpRecord signUpRecord, @RequestPart MultipartFile profile, HttpServletResponse response) {
+    public ResponseEntity<?> registerUser(@Validated @RequestPart(value = "data") SignUpRecord signUpRecord, @RequestPart(required = false) MultipartFile profile, HttpServletResponse response) {
         if (userService.isEmailExisting(signUpRecord.email())) // Email 중복확인
             return ErrorReturn(ApiCode.EMAIL_DUPLICATE_ERROR);
 

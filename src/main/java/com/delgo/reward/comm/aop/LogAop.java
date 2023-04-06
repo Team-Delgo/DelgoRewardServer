@@ -62,7 +62,6 @@ public class LogAop {
 
     @AfterReturning(value = "cut()", returning = "obj")
     public void afterReturn(JoinPoint joinPoint, Object obj) {
-
         HttpServletRequest request =((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
         String httpMethod = request.getMethod();
@@ -73,13 +72,15 @@ public class LogAop {
         ArrayMap<String, Object> args = new ArrayMap<>();
         Object[] argsList = joinPoint.getArgs();
 
-        for (Object arg : argsList) {
-            args.put("type: " + arg.getClass().getSimpleName(), "value: " + arg);
+        if(argsList[0] != null) {
+            for (Object arg : argsList) {
+                args.put("type: " + arg.getClass().getSimpleName(), "value: " + arg);
+            }
         }
 
         int startIndex = obj.toString().indexOf("(");
         int endIndex = obj.toString().indexOf(")");
-        String responseDTO = obj.toString().substring(startIndex + 1, endIndex);
+        String responseDTO = (startIndex == -1 || endIndex == -1) ? "" : obj.toString().substring(startIndex + 1, endIndex);
 
         Log log = logService.createLog(httpMethod, controllerName, methodName, args, responseDTO);
 
