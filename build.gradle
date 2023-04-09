@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.delgo.reward'
-version = '1.0.1-TEST'
+version = '1.0.1-JENKINS-TEST'
 sourceCompatibility = '17'
 apply plugin:'war'
 
