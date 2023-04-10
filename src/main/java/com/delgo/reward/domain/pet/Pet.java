@@ -24,9 +24,14 @@ public class Pet {
     private int userId;
 
     @CreationTimestamp
-    @Column(name="regist_dt")
     private LocalDateTime registDt;
 
     @Transient
     private String breedName;
+
+    public Pet setBreedName(String breedName){
+        this.breedName = breedName;
+
+        return this;
+    }
 }
