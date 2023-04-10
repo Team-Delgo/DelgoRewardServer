@@ -24,7 +24,7 @@ public class PetService {
     private final PetRepository petRepository;
 
     public Pet register(Pet pet) {
-        return petRepository.save(pet);
+        return petRepository.save(pet).setBreedName(codeService.getCode(pet.getBreed()).getCodeName());
     }
 
     @Transactional
