@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.delgo.reward'
-version = '1.0.1-JENKINS-TEST-6'
+version = 'JENKINS-TEST-7'
 sourceCompatibility = '17'
 apply plugin:'war'
 
@@ -17,7 +17,6 @@ repositories {
 bootJar {
     mainClass = 'com.delgo.reward'
 }
-
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
