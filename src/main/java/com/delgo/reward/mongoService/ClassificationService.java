@@ -65,4 +65,6 @@ public class ClassificationService {
         return classificationRepository.save(new Classification().toEntity(user, pet, certification, outputCategory));
     }
 
+
+
 }
