@@ -36,7 +36,7 @@ public class ClassificationService {
     private final static String CATEGORY_CODE = "CA9999";
     private final static String CATEGORY_NAME = "기타";
 
-    public Classification runClassification(Certification certification) {
+    public void runClassification(Certification certification) {
         JSONParser jsonParser = new JSONParser();
         Reader reader = null;
         try {
@@ -68,7 +68,7 @@ public class ClassificationService {
             classificationCriteriaMap.put(categoryCode, (List<String>) jsonObject.get("classification"));
         }
 
-        return classificationRepository.save(classificationCert(certification, categoryCodeList, categoryMap, classificationCriteriaMap));
+        classificationRepository.save(classificationCert(certification, categoryCodeList, categoryMap, classificationCriteriaMap));
     }
 
 
@@ -97,7 +97,6 @@ public class ClassificationService {
             outputCategory.put(CATEGORY_CODE, CATEGORY_NAME);
         }
 
-//        return classificationRepository.save(new Classification().toEntity(user, pet, certification, outputCategory));
         return new Classification().toEntity(user, pet, certification, outputCategory);
     }
 
