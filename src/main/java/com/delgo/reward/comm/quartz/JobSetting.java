@@ -44,16 +44,16 @@ public class JobSetting {
 //        }
 //    }
 
-    @PostConstruct
-    public void start_classificationCategoryJob(){
-        JobDetail jobDetail = buildJobDetail(ClassificationCategory.class, new HashMap());
-        try {
-            scheduler.scheduleJob(jobDetail, buildJobTrigger("0 0 0 * * ?"));
-        } catch (SchedulerException e){
-            e.printStackTrace();
-        }
-
-    }
+//    @PostConstruct
+//    public void start_classificationCategoryJob(){
+//        JobDetail jobDetail = buildJobDetail(ClassificationCategory.class, new HashMap());
+//        try {
+//            scheduler.scheduleJob(jobDetail, buildJobTrigger("0 0 0 * * ?"));
+//        } catch (SchedulerException e){
+//            e.printStackTrace();
+//        }
+//
+//    }
 
     public Trigger buildJobTrigger(String scheduleExp){
         return TriggerBuilder.newTrigger()
