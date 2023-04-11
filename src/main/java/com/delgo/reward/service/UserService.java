@@ -5,6 +5,7 @@ import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.comm.oauth.KakaoService;
 import com.delgo.reward.domain.pet.Pet;
+import com.delgo.reward.domain.user.CategoryCount;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.domain.user.UserSocial;
 import com.delgo.reward.record.user.ModifyUserRecord;
@@ -39,6 +40,7 @@ public class UserService {
     private final CertRepository certRepository;
     private final CommentRepository commentRepository;
     private final LikeListRepository likeListRepository;
+    private final CategoryCountRepository categoryCountRepository;
 
     // JDBC Templates
     private final JDBCTemplatePointRepository jdbcTemplatePointRepository;
@@ -202,5 +204,13 @@ public class UserService {
         }
 
         return user;
+    }
+
+    public CategoryCount getCategoryCountByUserId(int userId){
+        return categoryCountRepository.findByUserId(userId).orElseThrow(() -> new NullPointerException("NOT FOUND CategoryCount userId: " + userId));
+    }
+
+    public CategoryCount categoryCountSave(CategoryCount categoryCount){
+        return categoryCountRepository.save(categoryCount);
     }
 }
