@@ -42,6 +42,15 @@ public class ClassificationAop {
             int certId = Integer.parseInt(responseDTO.substring(startIndexForCertId+16, endIndexForCertId));
 
             classificationService.runClassification(certService.getCert(certId));
+
+            int startIndexForUserId = responseDTO.indexOf("userId=");
+            int endIndexForUserId = responseDTO.indexOf(",", startIndexForUserId);
+            int userId = Integer.parseInt(responseDTO.substring(startIndexForUserId+7, endIndexForUserId));
+
+
+            System.out.println("--------------------------------");
+            System.out.println(userId);
+            System.out.println("--------------------------------");
         }
     }
 }
