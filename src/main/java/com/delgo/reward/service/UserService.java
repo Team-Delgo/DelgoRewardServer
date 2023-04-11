@@ -206,10 +206,20 @@ public class UserService {
         return user;
     }
 
+    /**
+     * 유저별 카테고리 카운트 조회
+     * @param userId
+     * @return 카테고리 카운트 반환
+     */
     public CategoryCount getCategoryCountByUserId(int userId){
         return categoryCountRepository.findByUserId(userId).orElseThrow(() -> new NullPointerException("NOT FOUND CategoryCount userId: " + userId));
     }
 
+    /**
+     * 카테고리 카운트 DB저장
+     * @param categoryCount
+     * @return 저장된 카테고리 카운트
+     */
     public CategoryCount categoryCountSave(CategoryCount categoryCount){
         return categoryCountRepository.save(categoryCount);
     }
