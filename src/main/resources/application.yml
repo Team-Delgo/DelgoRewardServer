@@ -42,8 +42,10 @@ spring:
 config:
   profiles: local
   driverLocation: C:\\chrome\\chromedriver.exe
-  photoDir: C:\\testPhoto\\
-#   photoDir: /Users/hs/Desktop/testPhoto
+  # 이동재(윈도우)
+#   photoDir: C:\\testPhoto\\
+  # 조현서(맥)
+  photoDir: /Users/hs/Desktop/testPhoto
   kakao:
     REDIRECT_URL: "https://www.test.delgo.pet/oauth/callback/kakao"
 
