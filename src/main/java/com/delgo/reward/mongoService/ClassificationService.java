@@ -36,8 +36,43 @@ public class ClassificationService {
     private final static String CATEGORY_CODE = "CA9999";
     private final static String CATEGORY_NAME = "기타";
 
+    public Classification runClassification(Certification certification) {
+        JSONParser jsonParser = new JSONParser();
+        Reader reader = null;
+        try {
+            reader = new FileReader("src/main/resources/classification_data_set/classification_category.json");
+        } catch (Exception e) {
+            throw new NullPointerException("NOT FOUND FILE");
+        }
 
-    public Classification classificationCert(Certification certification, List<String> categoryCodeList, Map<String, String> categoryMap, Map<String, List<String>> classificationCriteriaMap){
+        JSONArray jsonArray = null;
+        try {
+            jsonArray = (JSONArray) jsonParser.parse(reader);
+        } catch (Exception e) {
+            throw new NullPointerException("NOT FOUND DATA");
+        }
+
+        List<JSONObject> jsonObjectList = new ArrayList<>();
+        for (Object obj : jsonArray) {
+            jsonObjectList.add((JSONObject) obj);
+        }
+
+        List<String> categoryCodeList = new ArrayList<>();
+        Map<String, String> categoryMap = new HashMap<>();
+        Map<String, List<String>> classificationCriteriaMap = new HashMap<>();
+
+        for (JSONObject jsonObject : jsonObjectList) {
+            String categoryCode = (String) jsonObject.get("category_code");
+            categoryCodeList.add(categoryCode);
+            categoryMap.put(categoryCode, (String) jsonObject.get("category_name"));
+            classificationCriteriaMap.put(categoryCode, (List<String>) jsonObject.get("classification"));
+        }
+
+        return classificationRepository.save(classificationCert(certification, categoryCodeList, categoryMap, classificationCriteriaMap));
+    }
+
+
+    public Classification classificationCert(Certification certification, List<String> categoryCodeList, Map<String, String> categoryMap, Map<String, List<String>> classificationCriteriaMap) {
         User user = userService.getUserById(certification.getUserId());
         Pet pet = petService.getPetByUserId(user.getUserId());
         String text = certification.getDescription();
@@ -58,11 +93,12 @@ public class ClassificationService {
             outputCategory.put(outputCategoryCode, categoryMap.get(outputCategoryCode));
         }
 
-        if(outputCategory.isEmpty()){
+        if (outputCategory.isEmpty()) {
             outputCategory.put(CATEGORY_CODE, CATEGORY_NAME);
         }
 
-        return classificationRepository.save(new Classification().toEntity(user, pet, certification, outputCategory));
+        return new Classification().toEntity(user, pet, certification, outputCategory);
     }
+
 
 }
