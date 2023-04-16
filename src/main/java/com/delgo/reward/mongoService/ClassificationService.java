@@ -14,6 +14,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.FileReader;
@@ -33,6 +34,9 @@ public class ClassificationService {
     private final PetService petService;
     private final ClassificationRepository classificationRepository;
 
+    @Value("${config.classificationDir}")
+    String DIR;
+
     private final static String CATEGORY_CODE = "CA9999";
     private final static String CATEGORY_NAME = "기타";
 
@@ -40,7 +44,7 @@ public class ClassificationService {
         JSONParser jsonParser = new JSONParser();
         Reader reader = null;
         try {
-            reader = new FileReader("src/main/resources/classification_data_set/classification_category.json");
+            reader = new FileReader(DIR);
         } catch (Exception e) {
             throw new NullPointerException("NOT FOUND FILE");
         }
