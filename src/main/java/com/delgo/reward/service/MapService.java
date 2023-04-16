@@ -30,11 +30,11 @@ public class MapService {
 
         return (userId == 0)
                 ? Map.of(
-                "mungpleList", mungpleService.getMungpleAll(), // 멍플 리스트
+                "mungpleList", mungpleService.geMungpleByMap(), // 멍플 리스트
                 "exposedNormalCertList", exposedCertList.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList()), // 사용자들에게 노출시킬 인증 리스트
                 "exposedMungpleCertList", exposedCertList.stream().filter(c -> c.getMungpleId() != 0).collect(Collectors.toList())) // 사용자들에게 노출시킬 인증 리스트
                 : Map.of(
-                "mungpleList", mungpleService.getMungpleAll(), // 멍플 리스트
+                "mungpleList", mungpleService.geMungpleByMap(), // 멍플 리스트
                 "normalCertList", certifications.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList()), // 일반 인증 리스트
                 "mungpleCertList", certifications.stream().filter(c -> c.getMungpleId() != 0).collect(Collectors.toList()), // 멍플 인증 리스트
                 "exposedNormalCertList", exposedCertList.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList()), // 사용자들에게 노출시킬 인증 리스트

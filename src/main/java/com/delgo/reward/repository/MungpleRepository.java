@@ -17,6 +17,8 @@ public interface MungpleRepository extends JpaRepository<Mungple, Integer>, JpaS
 
     List<Mungple> findByCategoryCodeAndIsActive(String categoryCode, boolean isActive);
 
+    List<Mungple> findByCategoryCode(String categoryCode);
+
     List<Mungple> findAllByIsActive(boolean isActive);
 
     @Query(value = "select * from mungple where is_active = true and mungple_id in (select mungple_id from certification group by mungple_id order by count(*) desc) limit ?", nativeQuery = true)
