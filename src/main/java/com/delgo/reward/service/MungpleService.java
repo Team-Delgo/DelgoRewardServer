@@ -32,7 +32,7 @@ public class MungpleService {
 
     // 전체 Mungple 리스트 조회
     public List<Mungple> getMungpleAll() {
-        List<Mungple> mungpleList = mungpleRepository.findAllByIsActive(true);
+        List<Mungple> mungpleList = mungpleRepository.findAll();
 
         return mungpleList.stream().sorted(Comparator.comparing(Mungple::getCategoryCode)).collect(Collectors.toList());
     }
@@ -45,7 +45,14 @@ public class MungpleService {
 
     // categoryCode로 Mungple 조회
     public List<Mungple> getMungpleByCategoryCode(String categoryCode) {
-        List<Mungple> mungpleList = mungpleRepository.findByCategoryCodeAndIsActive(categoryCode, true);
+        List<Mungple> mungpleList = mungpleRepository.findByCategoryCode(categoryCode);
+
+        return mungpleList.stream().sorted(Comparator.comparing(Mungple::getPlaceName)).collect(Collectors.toList());
+    }
+
+    // categoryCode로 Mungple 조회
+    public List<Mungple> geMungpleByMap() {
+        List<Mungple> mungpleList = mungpleRepository.findAllByIsActive(true);
 
         return mungpleList.stream().sorted(Comparator.comparing(Mungple::getPlaceName)).collect(Collectors.toList());
     }
