@@ -72,9 +72,11 @@ public class LogAop {
         ArrayMap<String, Object> args = new ArrayMap<>();
         Object[] argsList = joinPoint.getArgs();
 
-        if(argsList[0] != null) {
+        if (argsList.length > 0) {
             for (Object arg : argsList) {
-                args.put("type: " + arg.getClass().getSimpleName(), "value: " + arg);
+                if (arg != null) {
+                    args.put("type: " + arg.getClass().getSimpleName(), "value: " + arg);
+                }
             }
         }
 
