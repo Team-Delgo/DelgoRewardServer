@@ -48,6 +48,7 @@ config:
 #   photoDir: /Users/hs/Desktop/testPhoto
   kakao:
     REDIRECT_URL: "https://www.test.delgo.pet/oauth/callback/kakao"
+  classificationDir: src/main/resources/classification_data_set/classification_category.json
 
 ---
 spring:
@@ -65,6 +66,7 @@ config:
   photoDir: /var/www/reward-backend/
   kakao:
     REDIRECT_URL: "https://www.test.delgo.pet/oauth/callback/kakao"
+  classificationDir: /var/www/reward-backend/WEB-INF/classes/classification_data_set/classification_category.json
 
 
 ---
@@ -83,3 +85,4 @@ config:
   photoDir: /var/www/reward-backend/
   kakao:
     REDIRECT_URL: "https://www.reward.delgo.pet/oauth/callback/kakao"
+  classificationDir: /var/www/reward-backend/WEB-INF/classes/classification_data_set/classification_category.json
