@@ -51,7 +51,7 @@ public class MungpleService {
     }
 
     // categoryCode로 Mungple 조회
-    public List<Mungple> geMungpleByMap() {
+    public List<Mungple> getMungpleByMap() {
         List<Mungple> mungpleList = mungpleRepository.findAllByIsActive(true);
 
         return mungpleList.stream().sorted(Comparator.comparing(Mungple::getPlaceName)).collect(Collectors.toList());
