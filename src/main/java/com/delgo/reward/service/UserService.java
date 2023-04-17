@@ -63,6 +63,7 @@ public class UserService {
     public User signup(User user, MultipartFile profile) {
         User registeredUser = save(user);
         jdbcTemplatePointRepository.createUserPoint(registeredUser); // Point 생성
+        categoryCountRepository.save(new CategoryCount().create(registeredUser.getUserId()));
 
         return registeredUser.setProfile( // User Profile 등록
                 profile.isEmpty()
@@ -88,6 +89,8 @@ public class UserService {
 
         jdbcTemplateRankingRepository.deleteAllByUserId(userId);
         jdbcTemplatePointRepository.deleteAllByUserId(userId);
+
+        categoryCountRepository.deleteByUserId(userId);
 
         petRepository.delete(pet);
         userRepository.delete(user);
