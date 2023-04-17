@@ -42,6 +42,12 @@ public class CategoryCount {
     @Column(name = "CA9999")
     private int CA9999;
 
+    public CategoryCount create(int userId){
+        return CategoryCount.builder()
+                .userId(userId)
+                .build();
+    }
+
     public CategoryCount addOne(String categoryCode){
         switch (categoryCode) {
             case "CA0001" -> {
