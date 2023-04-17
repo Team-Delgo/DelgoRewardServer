@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface CategoryCountRepository extends JpaRepository<CategoryCount, Integer> {
     Optional<CategoryCount> findByUserId(int userId);
+    void deleteByUserId(int userId);
 }
