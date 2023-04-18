@@ -1,7 +1,7 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.dto.survey.SurveyReqDTO;
+import com.delgo.reward.record.survey.SurveyRecord;
 import com.delgo.reward.service.SurveyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ public class SurveyController extends CommController {
      * Response Data : null
      */
     @PostMapping
-    public ResponseEntity register(@RequestBody SurveyReqDTO reqDTO) {
-        return SuccessReturn(surveyService.register(reqDTO.toEntity()));
+    public ResponseEntity register(@RequestBody SurveyRecord record) {
+        return SuccessReturn(surveyService.register(record.toEntity()));
     }
 }
