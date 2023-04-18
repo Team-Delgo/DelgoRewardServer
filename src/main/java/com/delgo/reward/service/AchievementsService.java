@@ -5,8 +5,8 @@ import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.achievements.Achievements;
 import com.delgo.reward.domain.achievements.AchievementsCondition;
 import com.delgo.reward.domain.achievements.Archive;
-import com.delgo.reward.dto.achievements.AchievementsDTO;
-import com.delgo.reward.dto.achievements.MainAchievementsDTO;
+import com.delgo.reward.record.achievements.AchievementsRecord;
+import com.delgo.reward.record.achievements.MainAchievementsRecord;
 import com.delgo.reward.repository.AchievementsRepository;
 import com.delgo.reward.repository.CertRepository;
 import lombok.RequiredArgsConstructor;
@@ -58,16 +58,16 @@ public class AchievementsService {
     }
 
     // Achievements Condition 등록
-    public Achievements registerWithCondition(AchievementsDTO dto, MultipartFile photo) {
+    public Achievements registerWithCondition(AchievementsRecord record, MultipartFile photo) {
         // 업적 등록
-        Achievements achievements =  achievementsRepository.save(dto.toEntity());
+        Achievements achievements =  achievementsRepository.save(record.toEntity());
         // 사진 등록
         String imgUrl = photoService.uploadAchievements(achievements.getAchievementsId(), photo);
         // 조건 등록
         achievementsConditionService.register(AchievementsCondition.builder()
                 .achievements(achievements)
-                .categoryCode(dto.getCategoryCode())
-                .count(dto.getCount())
+                .categoryCode(record.categoryCode())
+                .count(record.count())
                 .mungpleId(0)
                 .build()
         );
@@ -124,14 +124,14 @@ public class AchievementsService {
     }
 
     // Archive 수정
-    public void setMainAchievements(MainAchievementsDTO dto) {
+    public void setMainAchievements(MainAchievementsRecord record) {
         // 대표 업적 초기화
-        archiveService.resetMainArchive(dto.getUserId());
+        archiveService.resetMainArchive(record.userId());
 
         List<Archive> archives = new ArrayList<>();
-        if (dto.getFirst() != 0) archives.add(archiveService.getArchive(dto.getUserId(),dto.getFirst()).setMain(1));
-        if (dto.getSecond() != 0) archives.add(archiveService.getArchive(dto.getUserId(),dto.getSecond()).setMain(2));
-        if (dto.getThird() != 0) archives.add(archiveService.getArchive(dto.getUserId(),dto.getThird()).setMain(3));
+        if (record.first() != 0) archives.add(archiveService.getArchive(record.userId(),record.first()).setMain(1));
+        if (record.second() != 0) archives.add(archiveService.getArchive(record.userId(),record.second()).setMain(2));
+        if (record.third() != 0) archives.add(archiveService.getArchive(record.userId(),record.third()).setMain(3));
 
         // 사용자 지정 업적으로 대표업적 설정
         archiveService.registerArchives(archives);
