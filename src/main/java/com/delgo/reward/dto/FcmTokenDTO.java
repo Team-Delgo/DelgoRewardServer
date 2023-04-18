@@ -1,4 +1,4 @@
-package com.delgo.reward.dto.user;
+package com.delgo.reward.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
