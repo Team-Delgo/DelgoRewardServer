@@ -11,9 +11,9 @@ import com.delgo.reward.domain.SmsAuth;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.domain.user.UserSocial;
-import com.delgo.reward.dto.OAuthSignUpDTO;
+import com.delgo.reward.record.signup.OAuthSignUpRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
-import com.delgo.reward.record.user.SignUpRecord;
+import com.delgo.reward.record.signup.SignUpRecord;
 import com.delgo.reward.record.user.UserResRecord;
 import com.delgo.reward.service.*;
 import lombok.RequiredArgsConstructor;
@@ -70,19 +70,19 @@ public class UserController extends CommController {
      * Response Data : 등록한 인증 데이터 반환
      */
     @PostMapping(value = "/oauth",consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<?> registerUserByOAuth(@Validated @RequestPart(value = "data") OAuthSignUpDTO oAuthSignUpDTO, @RequestPart(required = false) MultipartFile profile, HttpServletResponse response) {
+    public ResponseEntity<?> registerUserByOAuth(@Validated @RequestPart(value = "data") OAuthSignUpRecord oAuthSignUpRecord, @RequestPart(required = false) MultipartFile profile, HttpServletResponse response) {
         // Apple 회원가입 시 appleUniqueNo 넣어주어야 함.
-        if ((oAuthSignUpDTO.getAppleUniqueNo() == null || oAuthSignUpDTO.getAppleUniqueNo().isBlank())
-                && oAuthSignUpDTO.getUserSocial() == UserSocial.A)
+        if ((oAuthSignUpRecord.appleUniqueNo() == null || oAuthSignUpRecord.appleUniqueNo().isBlank())
+                && oAuthSignUpRecord.userSocial() == UserSocial.A)
             return ErrorReturn(ApiCode.PARAM_ERROR);
 
         // 주소 설정
-        String address = (oAuthSignUpDTO.getGeoCode().equals("0"))  // 세종시는 구가 없음.
-                ? codeService.getAddress(oAuthSignUpDTO.getPGeoCode(), true)
-                : codeService.getAddress(oAuthSignUpDTO.getGeoCode(), false);
+        String address = (oAuthSignUpRecord.geoCode().equals("0"))  // 세종시는 구가 없음.
+                ? codeService.getAddress(oAuthSignUpRecord.pGeoCode(), true)
+                : codeService.getAddress(oAuthSignUpRecord.geoCode(), false);
 
-        User user = userService.signup(oAuthSignUpDTO.makeUserSocial(oAuthSignUpDTO.getUserSocial(), address), profile);
-        Pet pet = petService.register(oAuthSignUpDTO.makePet(user.getUserId()));
+        User user = userService.signup(oAuthSignUpRecord.makeUserSocial(oAuthSignUpRecord.userSocial(), address), profile);
+        Pet pet = petService.register(oAuthSignUpRecord.makePet(user.getUserId()));
 
         archiveService.registerWelcome(user.getUserId()); // WELCOME 업적 부여
         rankingService.rankingByPoint(); // 랭킹 업데이트

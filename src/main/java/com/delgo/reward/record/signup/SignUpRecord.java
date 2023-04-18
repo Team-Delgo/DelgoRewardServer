@@ -1,4 +1,4 @@
-package com.delgo.reward.record.user;
+package com.delgo.reward.record.signup;
 
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
