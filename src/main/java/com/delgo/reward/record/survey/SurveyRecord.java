@@ -1,13 +1,8 @@
-package com.delgo.reward.dto.survey;
+package com.delgo.reward.record.survey;
 
 import com.delgo.reward.domain.survey.Survey;
-import lombok.Getter;
 
-
-@Getter
-public class SurveyReqDTO {
-    private String email;
-
+public record SurveyRecord(String email) {
     public Survey toEntity(){
         return Survey.builder()
                 .email(email)
