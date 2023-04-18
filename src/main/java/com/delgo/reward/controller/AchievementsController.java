@@ -2,8 +2,8 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.domain.achievements.Achievements;
-import com.delgo.reward.dto.achievements.AchievementsDTO;
-import com.delgo.reward.dto.achievements.MainAchievementsDTO;
+import com.delgo.reward.record.achievements.AchievementsRecord;
+import com.delgo.reward.record.achievements.MainAchievementsRecord;
 import com.delgo.reward.service.AchievementsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +24,12 @@ public class AchievementsController extends CommController {
 
     /*
      * 업적 등록
-     * Request Data : AchievementsDTO, photo
+     * Request Data : AchievementsRecord, photo
      * Response Data : 등록한 업적 반환
      */
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity register(@Validated @RequestPart(value = "data") AchievementsDTO dto, @RequestPart MultipartFile photo) {
-        Achievements achievements = achievementsService.registerWithCondition(dto, photo);
+    public ResponseEntity register(@Validated @RequestPart(value = "data") AchievementsRecord record, @RequestPart MultipartFile photo) {
+        Achievements achievements = achievementsService.registerWithCondition(record, photo);
 
         log.info("registered achievements : {}", achievements);
         return SuccessReturn(achievements);
@@ -63,8 +63,8 @@ public class AchievementsController extends CommController {
      * Response Data : null
      */
     @PutMapping("/main")
-    public ResponseEntity setMainAchievements(@RequestBody MainAchievementsDTO mainAchievementsDTO) {
-        achievementsService.setMainAchievements(mainAchievementsDTO);
+    public ResponseEntity setMainAchievements(@RequestBody MainAchievementsRecord record) {
+        achievementsService.setMainAchievements(record);
         return SuccessReturn();
     }
 }
