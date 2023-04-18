@@ -1,7 +1,7 @@
 package com.delgo.reward.service;
 
 import com.delgo.reward.domain.user.Token;
-import com.delgo.reward.dto.user.FcmTokenDTO;
+import com.delgo.reward.dto.FcmTokenDTO;
 import com.delgo.reward.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

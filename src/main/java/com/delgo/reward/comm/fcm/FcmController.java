@@ -1,7 +1,7 @@
 package com.delgo.reward.comm.fcm;
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.dto.user.FcmTokenDTO;
+import com.delgo.reward.dto.FcmTokenDTO;
 import com.delgo.reward.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
