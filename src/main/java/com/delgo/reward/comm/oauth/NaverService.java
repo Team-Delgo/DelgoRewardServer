@@ -15,6 +15,9 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+import java.util.function.Function;
+
 
 @Slf4j
 @Service
@@ -73,17 +76,29 @@ public class NaverService {
         OAuthDTO oAuthDTO = new OAuthDTO();
         try {
             JsonNode jsonNode = objectMapper.readTree(responseEntity.getBody());
-            JsonNode phoneNo = jsonNode.get("response").get("mobile");
-            JsonNode email = jsonNode.get("response").get("email");
+            String phoneNo = jsonNode.get("response").get("mobile").toString().replace("\"","");
+            String email = jsonNode.get("response").get("email").toString().replace("\"","");
+            String gender = jsonNode.get("response").get("gender").toString().replace("\"","");
+            String birthyear = jsonNode.get("response").get("birthyear").toString().replace("\"","");
 
-            oAuthDTO.setPhoneNo(phoneNo.toString().replace("\"",""));
-            oAuthDTO.setEmail(email.toString().replace("\"",""));
+            Function<String, Integer> calculateAge = yearOfBirth -> {
+                int currentYear = LocalDate.now().getYear();
+                return currentYear - Integer.parseInt(yearOfBirth) + 1;
+            };
+
+            oAuthDTO.setPhoneNo(phoneNo);
+            oAuthDTO.setEmail(email);
+            oAuthDTO.setGender(gender);
+            oAuthDTO.setAge(calculateAge.apply(birthyear));
             oAuthDTO.setUserSocial(UserSocial.N);
 
             System.out.println("************************************************");
             System.out.println("jsonNode: " + jsonNode);
-//            System.out.println("phoneNo: " + phoneNo);
-//            System.out.println("email: " + email);
+            System.out.println("phoneNo: " + phoneNo);
+            System.out.println("email: " + email);
+            System.out.println("gender: " + gender);
+            System.out.println("birthyear: " + birthyear);
+            System.out.println("age: " + calculateAge.apply(birthyear));
             System.out.println("************************************************");
 
         } catch (JsonProcessingException e) {

@@ -8,5 +8,7 @@ public class OAuthDTO {
     private String socialId = "";
     private String email = "";
     private String phoneNo = "";
+    private String gender = "";
+    private Integer age;
     private UserSocial userSocial;
 }
