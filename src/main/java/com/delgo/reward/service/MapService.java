@@ -23,10 +23,11 @@ public class MapService {
 
     public Map<String, Object> getMap(int userId) {
         List<Certification> certifications = certService.getCertByUserId(userId);  // 인증 리스트 조회
-        if (userId != 0) certifications.forEach(c -> c.liked(likeListService.hasLiked(userId, c.getCertificationId()))); // 유저가 좋아요 누른
+        if (userId != 0) certifications.forEach(c -> certService.setUserAndLike(userId,c)); // 유저가 좋아요 누른
 
         List<Certification> exposedCertList = certService.getExposedCert(3);  // 노출시킬 인증 리스트 조회
         if (userId != 0) exposedCertList.forEach(c -> c.liked(likeListService.hasLiked(userId, c.getCertificationId())));
+        if (userId != 0) exposedCertList.forEach(c -> certService.setUserAndLike(userId,c));
 
         return (userId == 0)
                 ? Map.of(
