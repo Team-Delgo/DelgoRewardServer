@@ -20,7 +20,9 @@ public record OAuthSignUpRecord(
         @NotNull LocalDate birthday,
         @NotNull UserSocial userSocial,
         String appleUniqueNo,
-        String socialId
+        String socialId,
+        String gender,
+        Integer age
 ) {
 
     public User makeUserSocial(UserSocial userSocial, String address) {
@@ -55,6 +57,8 @@ public record OAuthSignUpRecord(
                     .address(address)
                     .geoCode(geoCode)
                     .pGeoCode(pGeoCode)
+                    .age(age)
+                    .gender(gender)
                     .isNotify(true)
                     .build();
         };
