@@ -48,6 +48,8 @@ public record OAuthSignUpRecord(
                     .pGeoCode(pGeoCode)
                     .isNotify(true)
                     .kakaoId(socialId)
+                    .age(age)
+                    .gender(gender)
                     .build();
             default -> User.builder()
                     .name(userName)
