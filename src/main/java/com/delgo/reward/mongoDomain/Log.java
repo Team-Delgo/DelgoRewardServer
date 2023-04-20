@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.persistence.Id;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Getter
 @Builder
@@ -27,20 +28,33 @@ public class Log {
     private String methodName;
     @Field("args")
     private ArrayMap<String, Object> args;
-    @Field("responseDTO")
-    private String responseDTO;
+    @Field("response_map")
+    private Map<String, String> responseMap;
+    @Field("response_string")
+    private String responseStr;
     @Field("created_at")
     private LocalDateTime createdAt;
 
-    public Log toEntity(String httpMethod, String controllerName, String methodName, ArrayMap<String, Object> args, String responseDTO){
+    public Log toEntity(String httpMethod, String controllerName, String methodName, ArrayMap<String, Object> args, Map<String, String> responseMap){
         return Log.builder()
                 .httpMethod(httpMethod)
                 .controllerName(controllerName)
                 .methodName(methodName)
                 .args(args)
-                .responseDTO(responseDTO)
+                .responseMap(responseMap)
                 .createdAt(LocalDateTime.now())
                 .build();
 
+    }
+
+    public Log toEntity(String httpMethod, String controllerName, String methodName, ArrayMap<String, Object> args, String responseStr){
+        return Log.builder()
+                .httpMethod(httpMethod)
+                .controllerName(controllerName)
+                .methodName(methodName)
+                .args(args)
+                .responseStr(responseStr)
+                .createdAt(LocalDateTime.now())
+                .build();
     }
 }

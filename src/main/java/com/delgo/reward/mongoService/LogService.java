@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 
 @Slf4j
 @Service
@@ -14,7 +16,11 @@ import org.springframework.stereotype.Service;
 public class LogService {
     private final LogRepository logRepository;
 
-    public Log createLog(String httpMethod, String controllerName, String methodName, ArrayMap<String, Object> args, String responseDTO) {
-        return logRepository.save(new Log().toEntity(httpMethod, controllerName, methodName, args, responseDTO));
+    public Log createLog(String httpMethod, String controllerName, String methodName, ArrayMap<String, Object> args, Map<String, String> responseMap) {
+        return logRepository.save(new Log().toEntity(httpMethod, controllerName, methodName, args, responseMap));
+    }
+
+    public Log createLog(String httpMethod, String controllerName, String methodName, ArrayMap<String, Object> args, String responseStr) {
+        return logRepository.save(new Log().toEntity(httpMethod, controllerName, methodName, args, responseStr));
     }
 }
