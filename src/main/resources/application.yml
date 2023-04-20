@@ -35,7 +35,7 @@ spring:
   data:
       mongodb:
         database: delgo_reward_develop
-        uri: mongodb://101.101.208.202:27017
+        uri: mongodb://delgo:Zlzl2022!@101.101.208.202:27017
   datasource:
     url: jdbc:mariadb://101.101.208.202:3306/delgo_reward_develop
 
@@ -56,7 +56,7 @@ spring:
   data:
         mongodb:
           database: delgo_reward_develop
-          uri: mongodb://101.101.208.202:27017
+          uri: mongodb://delgo:Zlzl2022!@101.101.208.202:27017
   datasource:
     url: jdbc:mariadb://101.101.208.202:3306/delgo_reward_develop
 
@@ -75,7 +75,7 @@ spring:
   data:
         mongodb:
           database: delgo_reward
-          uri: mongodb://101.101.208.202:27017
+          uri: mongodb://delgo:Zlzl2022!@101.101.208.202:27017
   datasource:
     url: jdbc:mariadb://101.101.208.202:3306/delgo_reward
 
