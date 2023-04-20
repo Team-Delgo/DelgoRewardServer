@@ -30,15 +30,24 @@ public class Classification {
     private Certification certification;
     @Field("category")
     private Map<String, String> category;
+    @Field("address_sido")
+    private String sido;
+    @Field("address_sigugun")
+    private String sigugun;
+    @Field("address_dong")
+    private String dong;
     @Field("created_at")
     private LocalDateTime createdAt;
 
-    public Classification toEntity(User user, Pet pet, Certification certification, Map<String, String> category){
+    public Classification toEntity(User user, Pet pet, Certification certification, Map<String, String> category, String SIDO, String SIGUGUN, String DONG){
         return Classification.builder()
                 .user(user)
                 .pet(pet)
                 .certification(certification)
                 .category(category)
+                .sido(SIDO)
+                .sigugun(SIGUGUN)
+                .dong(DONG)
                 .createdAt(LocalDateTime.now())
                 .build();
     }
