@@ -101,7 +101,21 @@ public class ClassificationService {
             outputCategory.put(CATEGORY_CODE, CATEGORY_NAME);
         }
 
-        return new Classification().toEntity(user, pet, certification, outputCategory);
+        String address[] = certification.getAddress().split(" ");
+        String sido = null;
+        String sigugun = null;
+        String dong = null;
+
+        if(address.length == 2){
+            sido = address[0];
+            sigugun = address[1];
+        } else {
+            sido = address[0];
+            sigugun = address[1];
+            dong = address[2];
+        }
+
+        return new Classification().toEntity(user, pet, certification, outputCategory, sido, sigugun, dong);
     }
 
 
