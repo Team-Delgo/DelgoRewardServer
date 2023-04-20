@@ -1,6 +1,8 @@
 package com.delgo.reward;
 
 import com.delgo.reward.domain.certification.Certification;
+import com.delgo.reward.mongoDomain.Classification;
+import com.delgo.reward.mongoRepository.ClassificationRepository;
 import com.delgo.reward.mongoService.ClassificationService;
 import com.delgo.reward.service.CertService;
 import org.json.simple.JSONArray;
@@ -27,6 +29,8 @@ public class ClassificationTest {
     private CertService certService;
     @Autowired
     private ClassificationService classificationService;
+    @Autowired
+    private ClassificationRepository classificationRepository;
 
     @Test
     public void classificationByCertificationTest() throws IOException, ParseException {
@@ -77,44 +81,54 @@ public class ClassificationTest {
         System.out.println("코드 실행 시간 (s): " + stopWatch.getTotalTimeSeconds());
     }
 
-   @Test
-   public void classificationTest(){
-       JSONParser jsonParser = new JSONParser();
-       Reader reader = null;
-       try {
-           reader = new FileReader("src/main/resources/classification_data_set/classification_category.json");
-       } catch (Exception e) {
-           throw new NullPointerException("NOT FOUND FILE");
-       }
+    @Test
+    public void classificationTest() {
+        final String DIR = "src/main/resources/classification_data_set/classification_category.json";
 
-       JSONArray jsonArray = null;
-       try {
-           jsonArray = (JSONArray) jsonParser.parse(reader);
-       } catch (Exception e) {
-           throw new NullPointerException("NOT FOUND DATA");
-       }
+        JSONParser jsonParser = new JSONParser();
+        Reader reader = null;
+        try {
+            reader = new FileReader(DIR);
+        } catch (Exception e) {
+            throw new NullPointerException("NOT FOUND FILE");
+        }
 
-       List<JSONObject> jsonObjectList = new ArrayList<>();
-       for (Object obj : jsonArray) {
-           jsonObjectList.add((JSONObject) obj);
-       }
+        JSONArray jsonArray = null;
+        try {
+            jsonArray = (JSONArray) jsonParser.parse(reader);
+        } catch (Exception e) {
+            throw new NullPointerException("NOT FOUND DATA");
+        }
 
-       List<String> categoryCodeList = new ArrayList<>();
-       Map<String, String> categoryMap = new HashMap<>();
-       Map<String, List<String>> classificationCriteriaMap = new HashMap<>();
+        List<JSONObject> jsonObjectList = new ArrayList<>();
+        for (Object obj : jsonArray) {
+            jsonObjectList.add((JSONObject) obj);
+        }
 
-       for (JSONObject jsonObject : jsonObjectList) {
-           String categoryCode = (String) jsonObject.get("category_code");
-           categoryCodeList.add(categoryCode);
-           categoryMap.put(categoryCode, (String) jsonObject.get("category_name"));
-           classificationCriteriaMap.put(categoryCode, (List<String>) jsonObject.get("classification"));
-       }
+        List<String> categoryCodeList = new ArrayList<>();
+        Map<String, String> categoryMap = new HashMap<>();
+        Map<String, List<String>> classificationCriteriaMap = new HashMap<>();
 
-       List<Certification> certificationList = certService.getCertByDate(LocalDate.of(2023, 2, 14));
+        for (JSONObject jsonObject : jsonObjectList) {
+            String categoryCode = (String) jsonObject.get("category_code");
+            categoryCodeList.add(categoryCode);
+            categoryMap.put(categoryCode, (String) jsonObject.get("category_name"));
+            classificationCriteriaMap.put(categoryCode, (List<String>) jsonObject.get("classification"));
+        }
 
-       for(Certification certification: certificationList){
-           System.out.println(classificationService.classificationCert(certification, categoryCodeList, categoryMap, classificationCriteriaMap).getId());;
-       }
+        List<Certification> certificationList = certService.getCertByDate(LocalDate.of(2023, 2, 14));
 
-   }
+        for (Certification certification : certificationList) {
+            Classification classification = classificationRepository.save(classificationService.classificationCert(certification, categoryCodeList, categoryMap, classificationCriteriaMap));
+
+            System.out.println(classification.getId());
+            System.out.println(classification.getCategory());
+            System.out.println(classification.getSido());
+            System.out.println(classification.getSigugun());
+            System.out.println(classification.getDong());
+
+            classificationRepository.deleteById(classification.getId());
+        }
+
+    }
 }
