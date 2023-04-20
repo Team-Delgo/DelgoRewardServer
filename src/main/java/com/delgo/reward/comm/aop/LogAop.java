@@ -15,6 +15,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @Slf4j
 @Aspect
@@ -80,18 +81,40 @@ public class LogAop {
             }
         }
 
-        int startIndex = obj.toString().indexOf("(");
-        int endIndex = obj.toString().indexOf(")");
-        String responseDTO = (startIndex == -1 || endIndex == -1) ? "" : obj.toString().substring(startIndex + 1, endIndex);
+//        int startIndex = obj.toString().indexOf("(");
+//        int endIndex = obj.toString().indexOf(")");
+//        String responseDTO = (startIndex == -1 || endIndex == -1) ? "" : obj.toString().substring(startIndex + 1, endIndex);
 
-        Log log = logService.createLog(httpMethod, controllerName, methodName, args, responseDTO);
+        int startIndex = obj.toString().indexOf("ResponseRecord[");
+        int endIndex = obj.toString().indexOf("]");
 
-        LogAop.log.info("\n[LogAop]" +
-                "\n\thttp method: " + log.getHttpMethod() +
-                "\n\tcontroller name: " + log.getControllerName() +
-                "\n\tmethod name: " + log.getMethodName() +
-                "\n\tresponseDTO: " + log.getResponseDTO());
+        String responseRecord = (startIndex == -1 || endIndex == -1) ? "" : obj.toString().substring(startIndex + 15, endIndex);
 
+        if(responseRecord.contains("code") && responseRecord.contains("codeMsg") && responseRecord.contains("data")){
+            String response[] = responseRecord.split(", ");
+            Map<String, String> responseMap = new ArrayMap<>();
+            responseMap.put("code", response[0].substring(5));
+            responseMap.put("codeMsg", response[1].substring(8));
+            responseMap.put("data", response[2].substring(5));
+
+            Log log = logService.createLog(httpMethod, controllerName, methodName, args, responseMap);
+
+            LogAop.log.info("\n[LogAop]" +
+                    "\n\thttp method: " + log.getHttpMethod() +
+                    "\n\tcontroller name: " + log.getControllerName() +
+                    "\n\tmethod name: " + log.getMethodName() +
+                    "\n\tresponse code: " + log.getResponseMap().get("code") +
+                    "\n\tresponse codeMsg: " + log.getResponseMap().get("codeMsg") +
+                    "\n\tresponse data: " + log.getResponseMap().get("data"));
+        } else {
+            Log log = logService.createLog(httpMethod, controllerName, methodName, args, responseRecord);
+
+            LogAop.log.info("\n[LogAop]" +
+                    "\n\thttp method: " + log.getHttpMethod() +
+                    "\n\tcontroller name: " + log.getControllerName() +
+                    "\n\tmethod name: " + log.getMethodName() +
+                    "\n\tresponse: " + log.getResponseStr());
+        }
     }
 
 }
