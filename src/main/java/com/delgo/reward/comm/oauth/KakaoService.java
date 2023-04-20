@@ -2,17 +2,22 @@ package com.delgo.reward.comm.oauth;
 
 
 import com.delgo.reward.comm.exception.ApiCode;
+import com.delgo.reward.domain.user.UserSocial;
 import com.delgo.reward.dto.OAuthDTO;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.LocalDate;
+import java.util.function.Function;
 
+@Slf4j
 @Service
 @NoArgsConstructor
 public class KakaoService {
@@ -116,11 +121,30 @@ public class KakaoService {
             String email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
             String phoneNo = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("phone_number").getAsString();
 
-            br.close();
-
             oAuthDTO.setSocialId(id);
             oAuthDTO.setEmail(email);
             oAuthDTO.setPhoneNo(phoneNo);
+            oAuthDTO.setUserSocial(UserSocial.K);
+
+            // 성별 : 유저가 허락 해야 가져올 수 있음.
+            boolean isGender = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("gender_needs_agreement").getAsBoolean();
+            if(!isGender){
+                String gender = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("gender").getAsString();
+                oAuthDTO.setGender(Character.toString(gender.charAt(0)).toUpperCase());
+            }
+
+            // 나이 : 유저가 허락 해야 가져올 수 있음.
+            boolean isBirthyear = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("birthyear_needs_agreement").getAsBoolean();
+            if(!isBirthyear){
+                String birthyear = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("birthyear").getAsString();
+                Function<String, Integer> calculateAge = yearOfBirth -> {
+                    int currentYear = LocalDate.now().getYear();
+                    return currentYear - Integer.parseInt(yearOfBirth) + 1;
+                };
+                oAuthDTO.setAge(calculateAge.apply(birthyear));
+            }
+
+            br.close();
 
             return oAuthDTO;
         } catch (IOException e) {
