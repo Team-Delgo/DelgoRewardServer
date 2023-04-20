@@ -24,7 +24,7 @@ public record CertRecord(
                 .mungpleId(mungpleId)
                 .placeName(placeName)
                 .description(description)
-                .address(location.getSIDO() + " " + location.getSIGUGUN())
+                .address(location.getSIDO() + " " + location.getSIGUGUN() + " " + location.getDONG())
                 .geoCode(location.getGeoCode())
                 .pGeoCode(location.getPGeoCode())
                 .latitude(latitude)
