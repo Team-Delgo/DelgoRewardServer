@@ -2,6 +2,7 @@ package com.delgo.reward.controller;
 
 
 import com.delgo.reward.comm.CommController;
+import com.delgo.reward.comm.async.CertAsyncService;
 import com.delgo.reward.comm.exception.ApiCode;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.record.certification.CertRecord;
@@ -26,6 +27,7 @@ import java.util.Objects;
 public class CertController extends CommController {
 
     private final CertService certService;
+    private final CertAsyncService asyncService;
 
     /*
      * 인증 등록
@@ -38,6 +40,9 @@ public class CertController extends CommController {
 
         Certification certification = certService.register(record, photo);
         log.info("{}", certification);
+
+        // 비동기적 실행
+        asyncService.doSomething(certification);
         return SuccessReturn(certification);
     }
 
