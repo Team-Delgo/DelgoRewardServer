@@ -29,7 +29,7 @@ public record CertRecord(
                 .pGeoCode(location.getPGeoCode())
                 .latitude(latitude)
                 .longitude(longitude)
-                .isCorrectPhoto(true)
+                .isCorrectPhoto(false)
                 .isAchievements(false)
                 .isExpose(false)
                 .build();
@@ -49,7 +49,7 @@ public record CertRecord(
                 .pGeoCode(mungple.getPGeoCode())
                 .latitude(mungple.getLatitude())
                 .longitude(mungple.getLongitude())
-                .isCorrectPhoto(true)
+                .isCorrectPhoto(false)
                 .isAchievements(false)
                 .isExpose(false)
                 .build();
