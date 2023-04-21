@@ -47,7 +47,6 @@ public class CertService {
     private final PhotoService photoService;
     private final ArchiveService archiveService;
     private final MungpleService mungpleService;
-    private final RankingService rankingService;
     private final LikeListService likeListService;
     private final ReverseGeoService reverseGeoService;
     private final AchievementsService achievementsService;
@@ -80,13 +79,9 @@ public class CertService {
 
         // Point 부여
         pointService.givePoint(userService.getUserById(record.userId()).getUserId(), CategoryCode.valueOf(record.categoryCode()).getPoint());
-        // 랭킹 실시간으로 집계
-        rankingService.rankingByPoint();
         // 인증 사진 NCP Upload
-        String ncpLink = photoService.uploadCertMultipart(certification.getCertificationId(), photo);
-        certification.setPhotoUrl(photoService.setCacheInvalidation(ncpLink));
-        // 인증 사진에 강아지가 있는지 여부 체크
-        certification.setIsCorrectPhoto(photoService.checkCorrectPhoto(ncpLink));
+        String ncpLink = photoService.uploadCertMultipartForJPG(certification.getCertificationId(), photo);
+        certification.setPhotoUrl(ncpLink);
 
         return certification;
     }
