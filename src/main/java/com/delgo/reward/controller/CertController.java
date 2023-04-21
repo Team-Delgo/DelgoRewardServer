@@ -27,7 +27,7 @@ import java.util.Objects;
 public class CertController extends CommController {
 
     private final CertService certService;
-    private final CertAsyncService asyncService;
+    private final CertAsyncService certAsyncService;
 
     /*
      * 인증 등록
@@ -42,7 +42,7 @@ public class CertController extends CommController {
         log.info("{}", certification);
 
         // 비동기적 실행
-        asyncService.doSomething(certification);
+        certAsyncService.doSomething(certification);
         return SuccessReturn(certification);
     }
 
