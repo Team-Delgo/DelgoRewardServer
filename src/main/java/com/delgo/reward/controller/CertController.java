@@ -3,6 +3,7 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.async.CertAsyncService;
+import com.delgo.reward.comm.async.ClassificationAsyncService;
 import com.delgo.reward.comm.exception.ApiCode;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.record.certification.CertRecord;
@@ -28,6 +29,7 @@ public class CertController extends CommController {
 
     private final CertService certService;
     private final CertAsyncService certAsyncService;
+    private final ClassificationAsyncService classificationAsyncService;
 
     /*
      * 인증 등록
@@ -43,6 +45,7 @@ public class CertController extends CommController {
 
         // 비동기적 실행
         certAsyncService.doSomething(certification);
+        classificationAsyncService.doClassification(certification);
         return SuccessReturn(certification);
     }
 
