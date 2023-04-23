@@ -13,12 +13,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.StopWatch;
 
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -128,6 +132,44 @@ public class ClassificationTest {
             System.out.println(classification.getDong());
 
             classificationRepository.deleteById(classification.getId());
+        }
+
+    }
+    @Test
+    public void TEST_RESOURCE(){
+        String CATEGORY_CLASSIFICATION_DATA_SET_DIR = "classification_data_set/category_test.json";
+
+        ClassPathResource classPathResource = new ClassPathResource(CATEGORY_CLASSIFICATION_DATA_SET_DIR);
+        JSONParser jsonParser = new JSONParser();
+        Reader reader = null;
+
+        try {
+            reader = new FileReader(classPathResource.getFile());
+        } catch (Exception e) {
+            throw new NullPointerException("NOT FOUND FILE");
+        }
+
+        JSONArray jsonArray = null;
+        try {
+            jsonArray = (JSONArray) jsonParser.parse(reader);
+        } catch (Exception e) {
+            throw new NullPointerException("NOT FOUND DATA");
+        }
+
+        List<JSONObject> jsonObjectList = new ArrayList<>();
+        for (Object obj : jsonArray) {
+            jsonObjectList.add((JSONObject) obj);
+        }
+
+        List<String> categoryCodeList = new ArrayList<>();
+        Map<String, String> categoryMap = new HashMap<>();
+        Map<String, List<String>> classificationCriteriaMap = new HashMap<>();
+
+        for (JSONObject jsonObject : jsonObjectList) {
+            String categoryCode = (String) jsonObject.get("category_code");
+            categoryCodeList.add(categoryCode);
+            categoryMap.put(categoryCode, (String) jsonObject.get("category_name"));
+            classificationCriteriaMap.put(categoryCode, (List<String>) jsonObject.get("classification"));
         }
 
     }
