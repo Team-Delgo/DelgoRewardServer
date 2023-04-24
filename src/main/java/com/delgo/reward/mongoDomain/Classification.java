@@ -48,7 +48,7 @@ public class Classification {
                 .sido(SIDO)
                 .sigugun(SIGUGUN)
                 .dong(DONG)
-                .createdAt(LocalDateTime.now())
+                .createdAt(LocalDateTime.now().plusHours(9))
                 .build();
     }
 }
