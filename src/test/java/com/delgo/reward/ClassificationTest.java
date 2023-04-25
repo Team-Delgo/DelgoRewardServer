@@ -173,4 +173,19 @@ public class ClassificationTest {
         }
 
     }
+
+    @Test
+    public void TEST_GET_CLASSIFICATION(){
+        List<Classification> classificationList = classificationRepository.findAll();
+        List<Certification> certificationList = new ArrayList<>();
+
+        for(Classification classification: classificationList){
+            certificationList.add(classification.getCertification());
+        }
+
+        for(Certification certification: certificationList){
+            System.out.println(classificationRepository.findClassificationByCertification_CertificationId(certification).get().getUser());
+        }
+
+    }
 }
