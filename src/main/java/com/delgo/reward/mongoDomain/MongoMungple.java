@@ -2,6 +2,7 @@ package com.delgo.reward.mongoDomain;
 
 
 import lombok.*;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -35,4 +36,7 @@ public class MongoMungple {
     private boolean isActive; // 활성화 여부
 
     @Field("created_at") private LocalDateTime createdAt;
+
+    // 위치 기반 조회 시 필요
+    @Field("location") private GeoJsonPoint location;
 }
