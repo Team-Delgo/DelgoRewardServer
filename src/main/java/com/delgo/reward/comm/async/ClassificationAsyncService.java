@@ -27,4 +27,5 @@ public class ClassificationAsyncService {
             userService.categoryCountSave(categoryCount.addOne(categoryCode));
         }
     }
+
 }
