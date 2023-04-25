@@ -1,8 +1,10 @@
 package com.delgo.reward.domain;
 
 
+import com.delgo.reward.mongoDomain.MongoMungple;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -52,5 +54,23 @@ public class Mungple {
         this.detailUrl = detailUrl;
 
         return this;
+    }
+
+    public MongoMungple toMongo(){
+        return MongoMungple.builder()
+                .categoryCode(categoryCode)
+                .placeName(placeName)
+                .placeNameEn(placeNameEn)
+                .jibunAddress(jibunAddress)
+                .roadAddress(roadAddress)
+                .geoCode(geoCode)
+                .pGeoCode(pGeoCode)
+                .longitude(longitude)
+                .latitude(latitude)
+                .photoUrl(photoUrl)
+                .detailUrl(detailUrl)
+                .createdAt(LocalDateTime.now())
+                .location(new GeoJsonPoint(Double.parseDouble(longitude), Double.parseDouble(latitude)))
+                .build();
     }
 }

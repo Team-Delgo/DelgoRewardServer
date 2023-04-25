@@ -1,6 +1,7 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
+import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.service.MapService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class MapController extends CommController {
 
     private final MapService mapService;
+    private final MongoMungpleService mongoMungpleService;
 
     /*
      * Map 멍플,인증 장소 리스트 조회
@@ -25,6 +27,11 @@ public class MapController extends CommController {
     @GetMapping("/{userId}")
     public ResponseEntity getMap(@PathVariable Integer userId) {
         return SuccessReturn(mapService.getMap(userId));
+    }
+
+    @GetMapping("/mungple")
+    public ResponseEntity getMap(@RequestParam String latitude, @RequestParam String longitude) {
+        return SuccessReturn(mongoMungpleService.findWithin3Km(latitude, longitude));
     }
 
     // 시, 도, 광역시 기준 6개 노출(서울특별시 기준 송파구 3개 외 지역 3개)
