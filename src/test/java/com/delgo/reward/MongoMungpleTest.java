@@ -22,8 +22,8 @@ public class MongoMungpleTest {
 
     @Test
     public void findWithin3KmTEST() {
-        double latitude = 37.4704204;
-        double longitude = 127.1412807;
+        String latitude = "37.4704204";
+        String longitude = "127.1412807";
 
         mongoMungpleService.findWithin3Km(latitude,longitude);
     }
