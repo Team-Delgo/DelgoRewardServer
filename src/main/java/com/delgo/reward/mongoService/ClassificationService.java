@@ -2,9 +2,11 @@ package com.delgo.reward.mongoService;
 
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.pet.Pet;
+import com.delgo.reward.domain.user.CategoryCount;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.mongoDomain.Classification;
 import com.delgo.reward.mongoRepository.ClassificationRepository;
+import com.delgo.reward.record.certification.ModifyCertRecord;
 import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.PetService;
 import com.delgo.reward.service.UserService;
@@ -13,15 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.Reader;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +31,7 @@ import java.util.Map;
 public class ClassificationService {
     private final UserService userService;
     private final PetService petService;
+    private final CertService certService;
     private final ClassificationRepository classificationRepository;
 
     private final static String CATEGORY_CLASSIFICATION_DATA_SET_DIR = "classification_data_set/classification_category.json";
@@ -76,7 +75,6 @@ public class ClassificationService {
         return classificationRepository.save(classificationCert(certification, categoryCodeList, categoryMap, classificationCriteriaMap));
     }
 
-
     public Classification classificationCert(Certification certification, List<String> categoryCodeList, Map<String, String> categoryMap, Map<String, List<String>> classificationCriteriaMap) {
         User user = userService.getUserById(certification.getUserId());
         Pet pet = petService.getPetByUserId(user.getUserId());
@@ -119,5 +117,16 @@ public class ClassificationService {
         return new Classification().toEntity(user, pet, certification, outputCategory, sido, sigugun, dong);
     }
 
+    public void deleteClassificationWhenModifyCert(ModifyCertRecord modifyCertRecord){
+        Certification certification = certService.getCert(modifyCertRecord.certificationId());
+        Classification classification = classificationRepository.findClassificationByCertification_CertificationId(modifyCertRecord.certificationId()).get();
 
+        CategoryCount categoryCount = userService.getCategoryCountByUserId(certification.getUserId());
+
+        for(String categoryCode: classification.getCategory().keySet()){
+            userService.categoryCountSave(categoryCount.minusOne(categoryCode));
+        }
+
+        classificationRepository.delete(classification);
+    }
 }

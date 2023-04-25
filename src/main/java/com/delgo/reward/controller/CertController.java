@@ -6,6 +6,7 @@ import com.delgo.reward.comm.async.CertAsyncService;
 import com.delgo.reward.comm.async.ClassificationAsyncService;
 import com.delgo.reward.comm.exception.ApiCode;
 import com.delgo.reward.domain.certification.Certification;
+import com.delgo.reward.mongoService.ClassificationService;
 import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
 import com.delgo.reward.service.CertService;
@@ -29,6 +30,7 @@ public class CertController extends CommController {
 
     private final CertService certService;
     private final CertAsyncService certAsyncService;
+    private final ClassificationService classificationService;
     private final ClassificationAsyncService classificationAsyncService;
 
     /*
@@ -59,7 +61,14 @@ public class CertController extends CommController {
         if (!Objects.equals(record.userId(), certService.getCert(record.certificationId()).getUserId()))
             return ErrorReturn(ApiCode.INVALID_USER_ERROR);
 
-        return SuccessReturn(certService.modify(record));
+        // 인증 분류 삭제
+        classificationService.deleteClassificationWhenModifyCert(record);
+
+        Certification certification = certService.modify(record);
+
+        // 비동기적 실행
+        classificationAsyncService.doClassification(certification);
+        return SuccessReturn(certification);
     }
 
     /*
