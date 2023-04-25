@@ -32,11 +32,11 @@ public class MongoMungpleService {
         }
     }
 
-    public List<MongoMungple> findWithin3Km(double latitude, double longitude) {
+    public List<MongoMungple> findWithin3Km(String latitude, String longitude) {
         double maxDistanceInRadians = 2 / 6371.01;
 
         Query query = new Query();
-        query.addCriteria(Criteria.where("location").withinSphere(new Circle(longitude, latitude, maxDistanceInRadians)));
+        query.addCriteria(Criteria.where("location").withinSphere(new Circle(Double.parseDouble(longitude), Double.parseDouble(latitude), maxDistanceInRadians)));
 
         return mongoTemplate.find(query, MongoMungple.class);
     }
