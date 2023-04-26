@@ -31,7 +31,7 @@ public record CertRecord(
                 .longitude(longitude)
                 .isCorrectPhoto(false)
                 .isAchievements(false)
-                .isExpose(false)
+                .isExpose(true)
                 .build();
     }
 
@@ -51,7 +51,7 @@ public record CertRecord(
                 .longitude(mungple.getLongitude())
                 .isCorrectPhoto(false)
                 .isAchievements(false)
-                .isExpose(false)
+                .isExpose(true)
                 .build();
     }
 

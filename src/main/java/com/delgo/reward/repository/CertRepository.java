@@ -19,7 +19,7 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     Slice<Certification> findByUserId(int userId, Pageable pageable);
     Slice<Certification> findByUserIdAndCategoryCode(int userId, String categoryCode, Pageable pageable);
 
-    @Query(value = "SELECT * FROM certification where is_expose = true order by RAND() limit ?",nativeQuery = true)
+    @Query(value = "SELECT * FROM certification where is_expose = true and is_correct_photo = true order by RAND() limit ?",nativeQuery = true)
     List<Certification> findByIsExpose(int count);
 
     @Query(value = "SELECT * FROM certification where p_geo_code = ? order by RAND() limit ?", nativeQuery = true)
