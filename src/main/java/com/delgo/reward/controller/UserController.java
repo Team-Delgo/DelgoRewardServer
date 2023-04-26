@@ -26,8 +26,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -46,12 +44,8 @@ public class UserController extends CommController {
 
     // User 전체 조회 [ Admin 사용 ]
     @GetMapping("/all")
-    public ResponseEntity<?> getUserAll() {
-        List<UserResRecord> resRecords = userService.getUserAll().stream()
-                .map(user -> new UserResRecord(user.setPassword(""), petService.getPetByUserId(user.getUserId())))
-                .collect(Collectors.toList());
-
-        return SuccessReturn(resRecords);
+    public ResponseEntity<?> getUserAll(@RequestParam Integer currentPage, @RequestParam Integer pageSize) {
+        return SuccessReturn(userService.getUserAll(currentPage, pageSize));
     }
 
     // User. Pet 조회
