@@ -62,7 +62,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.antMatchers("/api/auth/**").permitAll()
 				.antMatchers("/api/user/**").permitAll()
 				.antMatchers("/api/code/**").permitAll()
-				.antMatchers("/api/api/fcm/**").permitAll()
+				.antMatchers("/api/fcm/**").permitAll()
 				.antMatchers("/api/token/reissue").permitAll()
 				.antMatchers("/api/certification/all").permitAll()
 				.antMatchers("/api/account/logout/**").permitAll()
@@ -76,12 +76,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.antMatchers("/api/photo/mungple/*").permitAll()
 				.antMatchers("/api/photo/achievements/*").permitAll()
 				.antMatchers("/api/mungple").permitAll()
+				.antMatchers("/api/mungple/category/*").permitAll()
 				.antMatchers("/health-check").permitAll()
 				.antMatchers("/kafka/**").permitAll()
 
 				.antMatchers("/**").authenticated();
 
-				// TEST
+//				 TEST
 //				.antMatchers("/**").permitAll();
 	}
 }
