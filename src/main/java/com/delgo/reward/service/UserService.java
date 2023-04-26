@@ -12,13 +12,14 @@ import com.delgo.reward.record.user.ModifyUserRecord;
 import com.delgo.reward.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.Optional;
 
 
@@ -168,8 +169,10 @@ public class UserService {
                 .orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
     }
 
-    public List<User> getUserAll() {
-        return userRepository.findAll(Sort.by(Sort.Direction.DESC, "registDt"));
+    public Page<User> getUserAll(int currentPage, int pageSize) {
+        PageRequest pageRequest = PageRequest.of(currentPage, pageSize, Sort.by("registDt").descending()); // 내림차순 정렬
+
+        return userRepository.findAll(pageRequest);
     }
 
     public User getUserById(int userId) {
