@@ -12,8 +12,8 @@ import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.domain.user.UserSocial;
 import com.delgo.reward.record.signup.OAuthSignUpRecord;
-import com.delgo.reward.record.user.ResetPasswordRecord;
 import com.delgo.reward.record.signup.SignUpRecord;
+import com.delgo.reward.record.user.ResetPasswordRecord;
 import com.delgo.reward.record.user.UserResRecord;
 import com.delgo.reward.service.*;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -42,10 +44,20 @@ public class UserController extends CommController {
     private final SmsAuthService smsAuthService;
     private final ArchiveService archiveService;
 
-    // User. Pet 모두 조회
+    // User 전체 조회 [ Admin 사용 ]
+    @GetMapping("/all")
+    public ResponseEntity<?> getUserAll() {
+        List<UserResRecord> resRecords = userService.getUserAll().stream()
+                .map(user -> new UserResRecord(user.setPassword(""), petService.getPetByUserId(user.getUserId())))
+                .collect(Collectors.toList());
+
+        return SuccessReturn(resRecords);
+    }
+
+    // User. Pet 조회
     @GetMapping
     public ResponseEntity<?> getUser(@RequestParam Integer userId) {
-        return SuccessReturn(new UserResRecord(userService.getUserById(userId), petService.getPetByUserId(userId)));
+        return SuccessReturn(new UserResRecord(userService.getUserById(userId).setPassword(""), petService.getPetByUserId(userId)));
     }
 
     /**
