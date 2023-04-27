@@ -19,6 +19,7 @@ import java.util.Objects;
 public class LikeList {
     @Id private Integer userId; // 좋아요 누른 user Id
     @Id private Integer certificationId; // 게시글 Id
+    private boolean isLike; // True : like , False : unlike
 
     @Override
     public boolean equals(Object o) {

@@ -51,10 +51,10 @@ public class FcmService {
         return user.isNotify();
     }
 
-    public void likePush(int userId) throws IOException {
+    public void likePush(int userId, String likeMsg) throws IOException {
         Optional<String> ownerFcmToken = tokenService.getFcmToken(userId);
         if(checkNotify(userId) && ownerFcmToken.isPresent()){
-            sendMessageTo(ownerFcmToken.get(), likePushNotification);
+            sendMessageTo(ownerFcmToken.get(), likeMsg);
         }
         else
             return ;
