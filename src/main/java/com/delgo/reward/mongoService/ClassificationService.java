@@ -118,7 +118,7 @@ public class ClassificationService {
     }
 
     public void deleteClassificationWhenModifyCert(ModifyCertRecord modifyCertRecord){
-        Certification certification = certService.getCert(modifyCertRecord.certificationId());
+        Certification certification = certService.getCertById(modifyCertRecord.certificationId());
         Classification classification = classificationRepository.findClassificationByCertification_CertificationId(modifyCertRecord.certificationId()).get();
 
         CategoryCount categoryCount = userService.getCategoryCountByUserId(certification.getUserId());
