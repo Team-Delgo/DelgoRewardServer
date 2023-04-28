@@ -102,7 +102,7 @@ public class AccountController extends CommController {
         return SuccessReturn(Map.of(
                 "user",userService.getUserById(userId), // user
                 "totalCount",certService.getTotalCountByUser(userId), // totalCount
-                "mungpleCount",certService.getTotalCountOfMungpleByUser(userId), // mungpleCount
+                "mungpleCount",certService.getTotalCountOfCertByMungpleAndUser(userId), // mungpleCount
                 "categoryCount", userService.getCategoryCountByUserId(userId)
         ));
     }

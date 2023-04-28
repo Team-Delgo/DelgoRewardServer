@@ -58,7 +58,7 @@ public class CertController extends CommController {
      */
     @PutMapping
     public ResponseEntity modify(@Validated @RequestBody ModifyCertRecord record) {
-        if (!Objects.equals(record.userId(), certService.getCert(record.certificationId()).getUserId()))
+        if (!Objects.equals(record.userId(), certService.getCertById(record.certificationId()).getUserId()))
             return ErrorReturn(ApiCode.INVALID_USER_ERROR);
 
         // 인증 분류 삭제
@@ -88,7 +88,7 @@ public class CertController extends CommController {
      */
     @GetMapping("/date")
     public ResponseEntity getDataByDate(@RequestParam Integer userId, @RequestParam String date) {
-        return SuccessReturn(certService.getCertByDate(userId, LocalDate.parse(date)));
+        return SuccessReturn(certService.getCertByDateAndUser(userId, LocalDate.parse(date)));
     }
 
     /*
@@ -137,7 +137,7 @@ public class CertController extends CommController {
      */
     @PostMapping(value = {"/like/{userId}/{certificationId}", "/like/"})
     public ResponseEntity setLike(@PathVariable Integer userId, @PathVariable Integer certificationId) throws IOException {
-        certService.like(userId, certificationId, certService.getCert(certificationId).getUserId());
+        certService.like(userId, certificationId, certService.getCertById(certificationId).getUserId());
 
         return SuccessReturn();
     }
@@ -183,7 +183,7 @@ public class CertController extends CommController {
      */
     @DeleteMapping(value = {"/{userId}/{certificationId}"})
     public ResponseEntity delete(@PathVariable Integer userId, @PathVariable Integer certificationId) {
-        if (!Objects.equals(userId, certService.getCert(certificationId).getUserId()))
+        if (!Objects.equals(userId, certService.getCertById(certificationId).getUserId()))
             return ErrorReturn(ApiCode.INVALID_USER_ERROR);
 
         certService.delete(certificationId); // DB에서 삭제

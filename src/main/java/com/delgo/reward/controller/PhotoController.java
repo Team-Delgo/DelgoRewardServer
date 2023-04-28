@@ -49,7 +49,7 @@ public class PhotoController extends CommController {
     public ResponseEntity<?> uploadCertificationPhoto(@PathVariable Integer certificationId, @RequestPart MultipartFile photo) {
         if (photo.isEmpty()) ParamErrorReturn("photo");
 
-        Certification cert = certService.getCert(certificationId).setPhotoUrl(photoService.updateCertMultipart(certificationId, photo));
+        Certification cert = certService.getCertById(certificationId).setPhotoUrl(photoService.updateCertMultipart(certificationId, photo));
         return SuccessReturn(certService.save(cert));
     }
 
