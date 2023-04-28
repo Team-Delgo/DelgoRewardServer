@@ -80,6 +80,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.antMatchers("/health-check").permitAll()
 				.antMatchers("/kafka/**").permitAll()
 
+				// version
+				.antMatchers("/api/version").permitAll()
+
 				.antMatchers("/**").authenticated();
 
 //				 TEST
