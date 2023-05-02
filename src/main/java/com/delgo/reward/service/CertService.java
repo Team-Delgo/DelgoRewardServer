@@ -121,7 +121,7 @@ public class CertService {
 
     // 날짜, 유저 별 Certification 조회
     public List<Certification> getCertByDateAndUser(int userId, LocalDate date) {
-        List<Certification> certification = certRepository.findCertByDateAndUser(userId, date, date.plusDays(1));
+        List<Certification> certification = certRepository.findCertByDateAndUser(userId, date.atStartOfDay(), date.atTime(23, 59, 59));
         certification.forEach(cert-> setUserAndLike(userId, cert));
 
         return certification;
@@ -129,7 +129,7 @@ public class CertService {
 
     // 날짜 별 Certification 조회
     public List<Certification> getCertByDate(LocalDate localDate){
-        return certRepository.findCertByDate(localDate.minusDays(1), localDate);
+        return certRepository.findCertByDate(localDate.minusDays(1).atStartOfDay(), localDate.atStartOfDay());
     }
 
     // 전체 Certification 리스트 조회
