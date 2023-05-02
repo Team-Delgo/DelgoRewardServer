@@ -26,16 +26,16 @@ public class CalendarService {
         List<Certification> certifications = certService.getCertByUserId(userId);
 
         return certifications.stream()
-                .sorted(Comparator.comparing(Certification::getRegistDt)) // 등록 순으로 정렬
+                .sorted(Comparator.comparing(Certification::getCreatedDate)) // 등록 순으로 정렬
                 .map(cert -> {cert.liked(likeListService.hasLiked(userId, cert.getCertificationId())); // 유저가 좋아요 누른 인증 체크
                     List<Certification> dateList = certifications.stream()
-                            .filter(c -> c.getRegistDt().isAfter(LocalDate.from(cert.getRegistDt()).atTime(0, 0, 0).minusSeconds(1)) &&
-                                    c.getRegistDt().isBefore(LocalDate.from(cert.getRegistDt()).atTime(0, 0, 0).plusDays(1)))
-                            .sorted(Comparator.comparing(Certification::getRegistDt).reversed())
+                            .filter(c -> c.getCreatedDate().isAfter(LocalDate.from(cert.getCreatedDate()).atTime(0, 0, 0).minusSeconds(1)) &&
+                                    c.getCreatedDate().isBefore(LocalDate.from(cert.getCreatedDate()).atTime(0, 0, 0).plusDays(1)))
+                            .sorted(Comparator.comparing(Certification::getCreatedDate).reversed())
                             .collect(Collectors.toList());
 
                     return new CalendarRecord(
-                            LocalDate.from(cert.getRegistDt()),
+                            LocalDate.from(cert.getCreatedDate()),
                             dateList.stream().anyMatch(Certification::getIsAchievements),
                             dateList);
                 }).distinct().collect(Collectors.toList()); // 중복 제거

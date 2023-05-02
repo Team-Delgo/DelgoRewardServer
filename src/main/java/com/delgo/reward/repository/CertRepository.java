@@ -21,13 +21,12 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     Slice<Certification> findByUserIdAndCategoryCode(int userId, String categoryCode, Pageable pageable);
 
     // 자신 거 조회라 is_correct_photo 없어도 됨.
-    @Query(value = "select c from Certification c where c.userId = :userId and  c.registDt between :startDt and :endDt order by c.registDt desc")
+    @Query(value = "select c from Certification c where c.userId = :userId and  c.createdDate between :startDt and :endDt order by c.createdDate desc")
     List<Certification> findCertByDateAndUser(@Param("userId") int userId, @Param("startDt") LocalDateTime startDt, @Param("endDt") LocalDateTime endDate);
 
-    @Query(value = "select c from Certification c where c.registDt between :startDt and :endDt order by c.registDt desc")
+    @Query(value = "select c from Certification c where c.createdDate between :startDt and :endDt order by c.createdDate desc")
     List<Certification> findCertByDate(@Param("startDt") LocalDateTime startDt, @Param("endDt") LocalDateTime endDate);
 
-    // 전체 조회
     @Query(value = "select c from Certification c where c.userId  not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrectPhoto = true")
     Slice<Certification> findAllByPaging(@Param("userId") int userId, Pageable pageable);
 
@@ -37,7 +36,7 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @Query(value = "select count(c) from Certification c where c.userId = :userId and c.mungpleId != 0")
     Integer countOfCertByMungpleAndUser(@Param("userId") int userId);
 
-    @Query(value = "select c from Certification c where c.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrectPhoto = true order by c.registDt desc")
+    @Query(value = "select c from Certification c where c.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrectPhoto = true order by c.createdDate desc")
     List<Certification> findRecentCert(@Param("userId") int userId, Pageable pageable);
 
     @Query(value = "SELECT c FROM Certification c where c.isExpose = true and c.isCorrectPhoto = true order by RAND()")
