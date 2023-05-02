@@ -36,8 +36,6 @@ public class CertResDTO {
         address = certification.getAddress();
         photoUrl = certification.getPhotoUrl();
         commentCount = certification.getCommentCount();
-        isLike = certification.getIsLike();
-        likeCount = certification.getLikeCount();
         createdDate = certification.getCreatedDate();
     }
 

@@ -1,16 +1,10 @@
 package com.delgo.reward.domain.certification;
 
 
-import com.delgo.reward.domain.achievements.Achievements;
 import com.delgo.reward.domain.common.BaseTimeEntity;
-import com.delgo.reward.domain.user.User;
-import com.delgo.reward.record.user.WriterRecord;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Getter
 @Entity
@@ -42,48 +36,19 @@ public class Certification extends BaseTimeEntity {
     private int commentCount; // 댓글 개수
     private Boolean isExpose; // Map에 노출 시키는 인증 구분. ( 초기엔 운영진이 직접 추가 예정 )
 
-    @Transient private WriterRecord user;
-    @Transient private List<Achievements> achievements;
-    @Transient private Boolean isLike; // 내가 좋아요를 눌렀는가?
-    @Transient private int likeCount; // 좋아요 개수
-
-//    @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
-//    @CreationTimestamp
-//    private LocalDateTime registDt; // 등록 날짜
-
-    public void liked(boolean like) {
-        this.isLike = like;
-    }
-
     public Certification setPhotoUrl(String photoUrl){
         this.photoUrl = photoUrl;
 
         return this;
     }
 
-    public Certification setIsCorrectPhoto(boolean isCorrectPhoto){
+    public void setIsCorrectPhoto(boolean isCorrectPhoto){
         this.isCorrectPhoto = isCorrectPhoto;
 
-        return this;
     }
 
     public Certification modify(String description){
         this.description = description;
-
-        return this;
-    }
-
-    public Certification setAchievements(List<Achievements> achievements){
-        this.isAchievements = true;
-        this.achievements = achievements;
-
-        return this;
-    }
-
-    public Certification setUserAndLike(User user, Boolean isLike, Integer likeCount) {
-        this.user = user.toWriterRecord();
-        this.isLike = isLike;
-        this.likeCount = likeCount;
 
         return this;
     }

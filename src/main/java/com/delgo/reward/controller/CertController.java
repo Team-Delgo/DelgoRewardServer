@@ -48,14 +48,14 @@ public class CertController extends CommController {
     public ResponseEntity<?> register(@Validated @RequestPart(value = "data") CertRecord record, @RequestPart(required = false) MultipartFile photo) {
         if(photo.isEmpty()) ErrorReturn(ApiCode.PARAM_ERROR);
 
-        Certification certification = certService.register(record, photo);
-        log.info("{}", certification);
+        CertByAchvResDTO resDto = certService.register(record, photo);
+        log.info("{}", resDto.getCertificationId());
 
         // 비동기적 실행
-        certAsyncService.doSomething(certification);
-        classificationAsyncService.doClassification(certification);
+        certAsyncService.doSomething(resDto.getCertificationId());
+        classificationAsyncService.doClassification(resDto.getCertificationId());
 
-        return SuccessReturn(new CertByAchvResDTO(certification));
+        return SuccessReturn(resDto);
     }
 
     /*
@@ -74,7 +74,7 @@ public class CertController extends CommController {
         Certification certification = certService.modify(record);
 
         // 비동기적 실행
-        classificationAsyncService.doClassification(certification);
+        classificationAsyncService.doClassification(certification.getCertificationId());
         return SuccessReturn(certification);
     }
 
