@@ -2,7 +2,7 @@ package com.delgo.reward.service;
 
 
 import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.mongoService.MongoMungpleService;
+import com.delgo.reward.dto.cert.CertByMungpleResDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,12 +23,10 @@ public class MapService {
     private final LikeListService likeListService;
 
     public Map<String, Object> getMap(int userId) {
-        List<Certification> certifications = certService.getCertByUserId(userId);  // 인증 리스트 조회
+        List<CertByMungpleResDTO> certifications = certService.getCertByUserId(userId).stream().map(CertByMungpleResDTO::new).toList();  // 인증 리스트 조회
         if (userId != 0) certifications.forEach(c -> certService.setUserAndLike(userId, c)); // 유저가 좋아요 누른
 
-        List<Certification> exposedCertList = certService.getExposedCert(3);  // 노출시킬 인증 리스트 조회
-        if (userId != 0)
-            exposedCertList.forEach(c -> c.liked(likeListService.hasLiked(userId, c.getCertificationId())));
+        List<CertByMungpleResDTO> exposedCertList = certService.getExposedCert(3).stream().map(CertByMungpleResDTO::new).toList();  // 노출시킬 인증 리스트 조회
         if (userId != 0) exposedCertList.forEach(c -> certService.setUserAndLike(userId, c));
 
         return (userId == 0)
