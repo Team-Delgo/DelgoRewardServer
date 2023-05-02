@@ -10,6 +10,7 @@ import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.achievements.Achievements;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.common.Location;
+import com.delgo.reward.dto.cert.CertByAchvResDTO;
 import com.delgo.reward.dto.cert.CertResDTO;
 import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
@@ -82,27 +83,28 @@ public class CertService {
     }
 
     // Certification 등록
-    public Certification register(CertRecord record, MultipartFile photo) {
+    public CertByAchvResDTO register(CertRecord record, MultipartFile photo) {
         Certification certification = save(
                 (record.mungpleId() == 0) // 일반 인증의 경우 - (위도,경도)로 주소 가져와서 등록해야 함.
                         ? record.toEntity(reverseGeoService.getReverseGeoData(new Location(record.latitude(), record.longitude())))
                         : record.toEntity(mungpleService.getMungpleById(record.mungpleId())));
 
+        // 인증 사진 NCP Upload
+        String ncpLink = photoService.uploadCertMultipartForJPG(certification.getCertificationId(), photo);
+        certification.setPhotoUrl(ncpLink);
+        // Point 부여
+        pointService.givePoint(userService.getUserById(record.userId()).getUserId(), CategoryCode.valueOf(record.categoryCode()).getPoint());
+
+        CertByAchvResDTO resDto = new CertByAchvResDTO(certification);
         // 획득 가능한 업적 Check
         List<Achievements> earnAchievements = achievementsService.checkEarnedAchievements(record.userId(), record.mungpleId() != 0);
         if (!earnAchievements.isEmpty()) {
             archiveService.registerArchives(earnAchievements.stream()
                     .map(achievement -> achievement.toArchive(record.userId())).collect(Collectors.toList()));
-            certification.setAchievements(earnAchievements);
+            resDto.setAchievements(earnAchievements);
         }
 
-        // Point 부여
-        pointService.givePoint(userService.getUserById(record.userId()).getUserId(), CategoryCode.valueOf(record.categoryCode()).getPoint());
-        // 인증 사진 NCP Upload
-        String ncpLink = photoService.uploadCertMultipartForJPG(certification.getCertificationId(), photo);
-        certification.setPhotoUrl(ncpLink);
-
-        return certification;
+        return resDto;
     }
 
     // Certification 조회 및 좋아요 여부 설정 후 반환 // 프론트 편의를 위해 LIST로 반환

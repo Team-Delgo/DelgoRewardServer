@@ -16,10 +16,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ClassificationAsyncService {
     private final UserService userService;
+    private final CertService certService;
     private final ClassificationService classificationService;
 
     @Async
-    public void doClassification(Certification certification){
+    public void doClassification(int certificationId){
+        Certification certification = certService.getCertById(certificationId);
         Classification classification = classificationService.runClassification(certification);
         CategoryCount categoryCount = userService.getCategoryCountByUserId(certification.getUserId());
 
