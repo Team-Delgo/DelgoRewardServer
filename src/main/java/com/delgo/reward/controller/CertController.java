@@ -85,7 +85,7 @@ public class CertController extends CommController {
      */
     @GetMapping
     public ResponseEntity getData(@RequestParam Integer userId, @RequestParam Integer certificationId) {
-        return SuccessReturn(certService.getCert(userId, certificationId));
+        return SuccessReturn(certService.getCertByUserIdAndCertId(userId, certificationId));
     }
 
     /*
@@ -111,7 +111,7 @@ public class CertController extends CommController {
             @PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
         // Validate - Blank Check; [ String 만 해주면 됨 ]
         if (categoryCode.isBlank()) return ErrorReturn(ApiCode.PARAM_ERROR);
-        return SuccessReturn(certService.getCertByCategory(userId, categoryCode, pageable));
+        return SuccessReturn(certService.getCertListByCategory(userId, categoryCode, pageable));
     }
 
     /*
@@ -167,7 +167,7 @@ public class CertController extends CommController {
             @RequestParam Integer userId,
             @RequestParam Integer mungpleId,
             @PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
-        return SuccessReturn(certService.getCertByMungpleId(userId, mungpleId, pageable));
+        return SuccessReturn(certService.getCertListByMungpleId(userId, mungpleId, pageable));
     }
 
     /*

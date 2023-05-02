@@ -23,10 +23,10 @@ public class MapService {
     private final LikeListService likeListService;
 
     public Map<String, Object> getMap(int userId) {
-        List<CertByMungpleResDTO> certifications = certService.getCertByUserId(userId).stream().map(CertByMungpleResDTO::new).toList();  // 인증 리스트 조회
+        List<CertByMungpleResDTO> certifications = certService.getCertListByUserId(userId).stream().map(CertByMungpleResDTO::new).toList();  // 인증 리스트 조회
         if (userId != 0) certifications.forEach(c -> certService.setUserAndLike(userId, c)); // 유저가 좋아요 누른
 
-        List<CertByMungpleResDTO> exposedCertList = certService.getExposedCert(3).stream().map(CertByMungpleResDTO::new).toList();  // 노출시킬 인증 리스트 조회
+        List<CertByMungpleResDTO> exposedCertList = certService.getExposedCertList(3).stream().map(CertByMungpleResDTO::new).toList();  // 노출시킬 인증 리스트 조회
         if (userId != 0) exposedCertList.forEach(c -> certService.setUserAndLike(userId, c));
 
         return (userId == 0)

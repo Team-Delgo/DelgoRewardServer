@@ -22,7 +22,7 @@ public class CalendarService {
     private final CertService certService;
 
     public List<CalendarRecord> getCalendar(int userId) {
-        List<CertByAchvResDTO> certifications = certService.getCertByUserId(userId).stream().map(CertByAchvResDTO::new).toList();;
+        List<CertByAchvResDTO> certifications = certService.getCertListByUserId(userId).stream().map(CertByAchvResDTO::new).toList();;
 
         return certifications.stream()
                 .sorted(Comparator.comparing(CertByAchvResDTO::getCreatedDate)) // 등록 순으로 정렬
