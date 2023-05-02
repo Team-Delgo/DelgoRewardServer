@@ -11,7 +11,6 @@ import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.achievements.Achievements;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.common.Location;
-import com.delgo.reward.domain.notify.NotifyType;
 import com.delgo.reward.dto.cert.CertResDTO;
 import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
@@ -200,22 +199,6 @@ public class CertService {
                 userId != 0 && likeListService.hasLiked(userId, dto.getCertificationId()), // (조회)User is Liked?
                 likeListService.getLikeCount(dto.getCertificationId()) // Certification Like Count
         );
-    }
-
-    // 좋아요
-    public void like(int userId, int certificationId, int ownerId) throws IOException {
-        // 이미 기존의 좋아요 Data가 존재할 경우
-        if (likeListService.hasLiked(userId, certificationId)) {
-            likeListService.updateIsLike(userId, certificationId);
-        } else {// 첫 좋아요 눌렀을 경우
-            log.info("첫 좋아요 : userId :{} , ownerId : {}", userId, ownerId);
-            likeListService.firstLike(userId, certificationId);
-            if (userId != ownerId) { // 자신이 누른 좋아요 는 알람 보내지 않는다.
-                String notifyMsg = userService.getUserById(userId).getName() + "님이 회원님의 게시물을 좋아합니다.";
-                notifyService.saveNotify(ownerId, NotifyType.LIKE, notifyMsg);
-                fcmService.likePush(ownerId, notifyMsg);
-            }
-        }
     }
 
     public Certification changeCertPhotoUrl(Certification certification, String text) {

@@ -11,6 +11,7 @@ import com.delgo.reward.mongoService.ClassificationService;
 import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
 import com.delgo.reward.service.CertService;
+import com.delgo.reward.service.LikeListService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -30,6 +31,7 @@ import java.util.Objects;
 public class CertController extends CommController {
 
     private final CertService certService;
+    private final LikeListService likeListService;
     private final CertAsyncService certAsyncService;
     private final ClassificationService classificationService;
     private final ClassificationAsyncService classificationAsyncService;
@@ -139,7 +141,7 @@ public class CertController extends CommController {
      */
     @PostMapping(value = {"/like/{userId}/{certificationId}", "/like/"})
     public ResponseEntity setLike(@PathVariable Integer userId, @PathVariable Integer certificationId) throws IOException {
-        certService.like(userId, certificationId, certService.getCertById(certificationId).getUserId());
+        likeListService.like(userId, certificationId, certService.getCertById(certificationId).getUserId());
 
         return SuccessReturn();
     }
