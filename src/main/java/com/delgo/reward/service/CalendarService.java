@@ -1,7 +1,7 @@
 package com.delgo.reward.service;
 
 
-import com.delgo.reward.domain.certification.Certification;
+import com.delgo.reward.dto.cert.CertByAchvResDTO;
 import com.delgo.reward.record.calendar.CalendarRecord;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,23 +20,22 @@ import java.util.stream.Collectors;
 public class CalendarService {
 
     private final CertService certService;
-    private final LikeListService likeListService;
 
     public List<CalendarRecord> getCalendar(int userId) {
-        List<Certification> certifications = certService.getCertByUserId(userId);
+        List<CertByAchvResDTO> certifications = certService.getCertByUserId(userId).stream().map(CertByAchvResDTO::new).toList();;
 
         return certifications.stream()
-                .sorted(Comparator.comparing(Certification::getCreatedDate)) // 등록 순으로 정렬
-                .map(cert -> {cert.liked(likeListService.hasLiked(userId, cert.getCertificationId())); // 유저가 좋아요 누른 인증 체크
-                    List<Certification> dateList = certifications.stream()
-                            .filter(c -> c.getCreatedDate().isAfter(LocalDate.from(cert.getCreatedDate()).atTime(0, 0, 0).minusSeconds(1)) &&
-                                    c.getCreatedDate().isBefore(LocalDate.from(cert.getCreatedDate()).atTime(0, 0, 0).plusDays(1)))
-                            .sorted(Comparator.comparing(Certification::getCreatedDate).reversed())
+                .sorted(Comparator.comparing(CertByAchvResDTO::getCreatedDate)) // 등록 순으로 정렬
+                .map(cert -> {
+                    certService.setUserAndLike(userId,cert); // 유저가 좋아요 누른 인증 체크
+                    List<CertByAchvResDTO> dateList = certifications.stream()
+                            .filter(c -> c.getCreatedDate().isAfter(LocalDate.from(cert.getCreatedDate()).atTime(0, 0, 0).minusSeconds(1)) && c.getCreatedDate().isBefore(LocalDate.from(cert.getCreatedDate()).atTime(0, 0, 0).plusDays(1)))
+                            .sorted(Comparator.comparing(CertByAchvResDTO::getCreatedDate).reversed())
                             .collect(Collectors.toList());
 
                     return new CalendarRecord(
                             LocalDate.from(cert.getCreatedDate()),
-                            dateList.stream().anyMatch(Certification::getIsAchievements),
+                            dateList.stream().anyMatch(CertByAchvResDTO::getIsAchievements),
                             dateList);
                 }).distinct().collect(Collectors.toList()); // 중복 제거
     }

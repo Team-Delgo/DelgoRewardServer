@@ -6,6 +6,7 @@ import com.delgo.reward.comm.async.CertAsyncService;
 import com.delgo.reward.comm.async.ClassificationAsyncService;
 import com.delgo.reward.comm.exception.ApiCode;
 import com.delgo.reward.domain.certification.Certification;
+import com.delgo.reward.dto.cert.CertByAchvResDTO;
 import com.delgo.reward.mongoService.ClassificationService;
 import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
@@ -48,7 +49,8 @@ public class CertController extends CommController {
         // 비동기적 실행
         certAsyncService.doSomething(certification);
         classificationAsyncService.doClassification(certification);
-        return SuccessReturn(certification);
+
+        return SuccessReturn(new CertByAchvResDTO(certification));
     }
 
     /*

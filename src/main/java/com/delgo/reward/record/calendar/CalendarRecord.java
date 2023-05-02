@@ -1,6 +1,6 @@
 package com.delgo.reward.record.calendar;
 
-import com.delgo.reward.domain.certification.Certification;
+import com.delgo.reward.dto.cert.CertByAchvResDTO;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -8,5 +8,5 @@ import java.util.List;
 public record CalendarRecord(
         LocalDate date,
         Boolean isAchievements,
-        List<Certification> dateList) {
+        List<CertByAchvResDTO> dateList) {
 }
