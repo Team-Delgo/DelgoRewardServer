@@ -20,9 +20,6 @@ import org.springframework.util.StopWatch;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -120,7 +117,7 @@ public class ClassificationTest {
             classificationCriteriaMap.put(categoryCode, (List<String>) jsonObject.get("classification"));
         }
 
-        List<Certification> certificationList = certService.getCertByDate(LocalDate.of(2023, 2, 14));
+        List<Certification> certificationList = certService.getCertListByDate(LocalDate.of(2023, 2, 14));
 
         for (Certification certification : certificationList) {
             Classification classification = classificationRepository.save(classificationService.classificationCert(certification, categoryCodeList, categoryMap, classificationCriteriaMap));

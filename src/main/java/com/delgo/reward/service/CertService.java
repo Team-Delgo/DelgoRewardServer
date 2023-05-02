@@ -106,7 +106,7 @@ public class CertService {
     }
 
     // Certification 조회 및 좋아요 여부 설정 후 반환 // 프론트 편의를 위해 LIST로 반환
-    public List<CertResDTO> getCert(int userId, int certificationId) {
+    public List<CertResDTO> getCertByUserIdAndCertId(int userId, int certificationId) {
         return new ArrayList<>(Collections.singletonList(setUserAndLike(userId, new CertResDTO(getCertById(certificationId)))));
     }
 
@@ -130,12 +130,12 @@ public class CertService {
     }
 
     // mungpleId로 Certification 조회
-    public Slice<CertResDTO> getCertByMungpleId(int userId, int mungpleId, Pageable pageable) {
+    public Slice<CertResDTO> getCertListByMungpleId(int userId, int mungpleId, Pageable pageable) {
         return certRepository.findCertByMungple(mungpleId, pageable).map(cert -> setUserAndLike(userId, new CertResDTO(cert)));
     }
 
     // 카테고리 별 조회
-    public Slice<CertResDTO> getCertByCategory(int userId, String categoryCode, Pageable pageable) {
+    public Slice<CertResDTO> getCertListByCategory(int userId, String categoryCode, Pageable pageable) {
         Slice<Certification> certifications = (!categoryCode.equals(CategoryCode.TOTAL.getCode()))
                 ? certRepository.findByUserIdAndCategoryCode(userId, categoryCode, pageable)
                 : certRepository.findByUserId(userId, pageable);
@@ -145,7 +145,7 @@ public class CertService {
 
     // 카테고리 별 개수 조회
     public Map<String, Long> getCountByCategory(int userId) {
-        Map<String, Long> map = getCertByUserId(userId).stream().collect(groupingBy(cert -> CategoryCode.valueOf(cert.getCategoryCode()).getValue(),counting()));
+        Map<String, Long> map = getCertListByUserId(userId).stream().collect(groupingBy(cert -> CategoryCode.valueOf(cert.getCategoryCode()).getValue(),counting()));
         //*** putIfAbsent
         //- Key 값이 존재하는 경우 Map의 Value의 값을 반환하고, Key값이 존재하지 않는 경우 Key와 Value를 Map에 저장하고 Null을 반환합니다.
         for (CategoryCode categoryCode : CategoryCode.values())
@@ -194,12 +194,12 @@ public class CertService {
     // ---------------------------- Calendar, Map 사용 ----------------------------
 
     // userId로 Certification List 조회
-    public List<Certification> getCertByUserId(int userId) {
+    public List<Certification> getCertListByUserId(int userId) {
         return certRepository.findByUserId(userId);
     }
 
     // 노출 가능한 인증 조회 ( Map에서 사용 )
-    public List<Certification> getExposedCert(int count) {
+    public List<Certification> getExposedCertList(int count) {
         return certRepository.findByIsExpose(PageRequest.of(0, count));
     }
 
@@ -229,7 +229,7 @@ public class CertService {
     // ---------------------------- ClassificationCategory 사용 ----------------------------
 
     // 날짜 별 Certification 조회
-    public List<Certification> getCertByDate(LocalDate localDate){
+    public List<Certification> getCertListByDate(LocalDate localDate){
         return certRepository.findCertByDate(localDate.minusDays(1).atStartOfDay(), localDate.atStartOfDay());
     }
 }
