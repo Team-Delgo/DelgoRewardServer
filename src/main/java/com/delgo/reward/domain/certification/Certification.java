@@ -2,6 +2,7 @@ package com.delgo.reward.domain.certification;
 
 
 import com.delgo.reward.domain.achievements.Achievements;
+import com.delgo.reward.domain.common.BaseTimeEntity;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.record.user.WriterRecord;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -9,7 +10,6 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -18,7 +18,7 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Certification {
+public class Certification extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer certificationId;
@@ -47,9 +47,9 @@ public class Certification {
     @Transient private Boolean isLike; // 내가 좋아요를 눌렀는가?
     @Transient private int likeCount; // 좋아요 개수
 
-    @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
-    @CreationTimestamp
-    private LocalDateTime registDt; // 등록 날짜
+//    @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
+//    @CreationTimestamp
+//    private LocalDateTime registDt; // 등록 날짜
 
     public void liked(boolean like) {
         this.isLike = like;
