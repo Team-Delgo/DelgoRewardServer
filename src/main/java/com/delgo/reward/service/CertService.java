@@ -267,4 +267,8 @@ public class CertService {
 
         return certByPGeoCode;
     }
+
+    public Certification changeCertPhotoUrl(Certification certification, String text) {
+        return certification.setPhotoUrl(text);
+    }
 }
