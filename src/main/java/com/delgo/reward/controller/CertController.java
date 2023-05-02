@@ -14,6 +14,9 @@ import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.LikeListService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -105,12 +108,10 @@ public class CertController extends CommController {
     public ResponseEntity getCategory(
             @RequestParam Integer userId,
             @RequestParam String categoryCode,
-            @RequestParam Integer currentPage,
-            @RequestParam Integer pageSize,
-            @RequestParam Boolean isDesc) {
+            @PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
         // Validate - Blank Check; [ String 만 해주면 됨 ]
         if (categoryCode.isBlank()) return ErrorReturn(ApiCode.PARAM_ERROR);
-        return SuccessReturn(certService.getCertByCategory(userId, categoryCode, currentPage, pageSize, isDesc));
+        return SuccessReturn(certService.getCertByCategory(userId, categoryCode, pageable));
     }
 
     /*
@@ -162,8 +163,11 @@ public class CertController extends CommController {
      * Response Data : 특정 Mungple 관련 인증 반환
      */
     @GetMapping("/mungple")
-    public ResponseEntity getMungplePagingData(@RequestParam Integer userId, @RequestParam Integer mungpleId, @RequestParam Integer currentPage, @RequestParam Integer pageSize) {
-        return SuccessReturn(certService.getCertByMungpleId(userId, mungpleId, currentPage, pageSize, true));
+    public ResponseEntity getMungplePagingData(
+            @RequestParam Integer userId,
+            @RequestParam Integer mungpleId,
+            @PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        return SuccessReturn(certService.getCertByMungpleId(userId, mungpleId, pageable));
     }
 
     /*
@@ -173,10 +177,12 @@ public class CertController extends CommController {
      * Response Data : 인증 모두 조회 ( 페이징 처리 되어 있음 )
      */
     @GetMapping("/all")
-    public ResponseEntity getPagingData(@RequestParam Integer userId, @RequestParam Integer currentPage, @RequestParam Integer pageSize,
-                                        @RequestParam(required = false) Integer certificationId) {
-        return (certificationId == null) ? SuccessReturn(certService.getCertAll(userId, currentPage, pageSize, true))
-                : SuccessReturn(certService.getCertAllExcludeSpecificCert(userId, currentPage, pageSize, true, certificationId));
+    public ResponseEntity getPagingData(
+            @RequestParam Integer userId,
+            @RequestParam(required = false) Integer certificationId,
+            @PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        return (certificationId == null) ? SuccessReturn(certService.getCertAll(userId, pageable))
+                : SuccessReturn(certService.getCertAllExcludeSpecificCert(userId, certificationId,pageable));
     }
 
     /*

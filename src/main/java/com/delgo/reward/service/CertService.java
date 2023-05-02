@@ -4,7 +4,6 @@ package com.delgo.reward.service;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.GeoCode;
 import com.delgo.reward.comm.code.PGeoCode;
-import com.delgo.reward.comm.fcm.FcmService;
 import com.delgo.reward.comm.ncp.ReverseGeoService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
@@ -20,13 +19,12 @@ import com.google.api.client.util.ArrayMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,11 +43,9 @@ import static java.util.stream.Collectors.groupingBy;
 public class CertService {
 
     // Service
-    private final FcmService fcmService;
     private final UserService userService;
     private final PointService pointService;
     private final PhotoService photoService;
-    private final NotifyService notifyService;
     private final ArchiveService archiveService;
     private final MungpleService mungpleService;
     private final LikeListService likeListService;
@@ -109,14 +105,9 @@ public class CertService {
         return certification;
     }
 
-
-    // Certification 조회 및 좋아요 여부 설정 후 반환
+    // Certification 조회 및 좋아요 여부 설정 후 반환 // 프론트 편의를 위해 LIST로 반환
     public List<CertResDTO> getCert(int userId, int certificationId) {
-        CertResDTO resDto = new CertResDTO(getCertById(certificationId));
-        setUserAndLike(userId, resDto);
-
-        // 프론트 편의를 위해 LIST로 반환
-        return new ArrayList<>(Collections.singletonList(resDto));
+        return new ArrayList<>(Collections.singletonList(setUserAndLike(userId, new CertResDTO(getCertById(certificationId)))));
     }
 
     // 날짜, 유저 별 Certification 조회
@@ -129,40 +120,25 @@ public class CertService {
     }
 
     // 전체 Certification 리스트 조회
-    public Slice<CertResDTO> getCertAll(int userId, int currentPage, int pageSize, boolean isDesc) {
-        PageRequest pageRequest = PageRequest.of(currentPage, pageSize,
-                Sort.by(isDesc ? Sort.Direction.DESC : Sort.Direction.ASC, "createdDate"));
-
-        Slice<Certification> certifications = certRepository.findAllByPaging(userId, pageRequest);
-        return certifications.map(cert -> setUserAndLike(userId, new CertResDTO(cert)));
+    public Slice<CertResDTO> getCertAll(int userId, Pageable pageable) {
+        return certRepository.findAllByPaging(userId, pageable).map(cert -> setUserAndLike(userId, new CertResDTO(cert)));
     }
 
     // 전체 Certification 리스트 조회 ( 특정 인증 제외 )
-    public Slice<CertResDTO> getCertAllExcludeSpecificCert(int userId, int currentPage, int pageSize, boolean isDesc, int certificationId) {
-        PageRequest pageRequest = PageRequest.of(currentPage, pageSize,
-                Sort.by(isDesc ? Sort.Direction.DESC : Sort.Direction.ASC, "createdDate"));
-
-        Slice<Certification> certifications = certRepository.findAllByPaging(userId, pageRequest);
-        return certifications.map(cert -> setUserAndLike(userId, new CertResDTO(cert)));
+    public Slice<CertResDTO> getCertAllExcludeSpecificCert(int userId, int certificationId, Pageable pageable) {
+        return certRepository.findAllExcludeSpecificCert(userId,certificationId, pageable).map(cert -> setUserAndLike(userId, new CertResDTO(cert)));
     }
 
     // mungpleId로 Certification 조회
-    public Slice<CertResDTO> getCertByMungpleId(int userId, int mungpleId, int currentPage, int pageSize, boolean isDesc) {
-        PageRequest pageRequest = PageRequest.of(currentPage, pageSize,
-                Sort.by(isDesc ? Sort.Direction.DESC : Sort.Direction.ASC, "createdDate"));
-
-        Slice<Certification> certifications = certRepository.findCertByMungple(mungpleId, pageRequest);
-        return certifications.map(cert -> setUserAndLike(userId, new CertResDTO(cert)));
+    public Slice<CertResDTO> getCertByMungpleId(int userId, int mungpleId, Pageable pageable) {
+        return certRepository.findCertByMungple(mungpleId, pageable).map(cert -> setUserAndLike(userId, new CertResDTO(cert)));
     }
 
     // 카테고리 별 조회
-    public Slice<CertResDTO> getCertByCategory(int userId, String categoryCode, int currentPage, int pageSize, boolean isDesc) {
-        PageRequest pageRequest = PageRequest.of(currentPage, pageSize,
-                Sort.by(isDesc ? Sort.Direction.DESC : Sort.Direction.ASC, "createdDate"));
-
+    public Slice<CertResDTO> getCertByCategory(int userId, String categoryCode, Pageable pageable) {
         Slice<Certification> certifications = (!categoryCode.equals(CategoryCode.TOTAL.getCode()))
-                ? certRepository.findByUserIdAndCategoryCode(userId, categoryCode, pageRequest)
-                : certRepository.findByUserId(userId, pageRequest);
+                ? certRepository.findByUserIdAndCategoryCode(userId, categoryCode, pageable)
+                : certRepository.findByUserId(userId, pageable);
 
         return certifications.map(cert -> setUserAndLike(userId, new CertResDTO(cert)));
     }
