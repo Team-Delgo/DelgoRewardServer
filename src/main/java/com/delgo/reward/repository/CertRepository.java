@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface CertRepository extends JpaRepository<Certification, Integer>, JpaSpecificationExecutor<Certification> {
@@ -22,10 +22,10 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
 
     // 자신 거 조회라 is_correct_photo 없어도 됨.
     @Query(value = "select c from Certification c where c.userId = :userId and  c.registDt between :startDt and :endDt order by c.registDt desc")
-    List<Certification> findCertByDateAndUser(@Param("userId") int userId, @Param("startDt") LocalDate startDt, @Param("endDt") LocalDate endDate);
+    List<Certification> findCertByDateAndUser(@Param("userId") int userId, @Param("startDt") LocalDateTime startDt, @Param("endDt") LocalDateTime endDate);
 
     @Query(value = "select c from Certification c where c.registDt between :startDt and :endDt order by c.registDt desc")
-    List<Certification> findCertByDate(@Param("startDt") LocalDate startDt, @Param("endDt") LocalDate endDate);
+    List<Certification> findCertByDate(@Param("startDt") LocalDateTime startDt, @Param("endDt") LocalDateTime endDate);
 
     // 전체 조회
     @Query(value = "select c from Certification c where c.userId  not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrectPhoto = true")
