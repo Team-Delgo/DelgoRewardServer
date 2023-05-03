@@ -12,9 +12,11 @@ spring:
                           #      maximumPoolSize: 20 #?? 10
                           #      validationTimeout: 1000 #5000ms, connectionTimeout ?? ???
   jpa:
-    show-sql: false
-    hibernate:
-      ddl-auto: none
+    properties:
+      hibernate:
+        ddl-auto: none
+        show_sql: true # 쿼리 출력 여부
+        format_sql: true # 쿼리 포맷팅 여부
   servlet:
     multipart:
       maxFileSize: 50MB
