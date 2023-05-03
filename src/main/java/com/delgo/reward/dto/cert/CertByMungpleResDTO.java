@@ -10,8 +10,8 @@ import lombok.*;
 public class CertByMungpleResDTO extends CertResDTO {
     private final Integer mungpleId;
 
-    public CertByMungpleResDTO(Certification certification) {
-        super(certification);
+    public CertByMungpleResDTO(Certification certification, int userId) {
+        super(certification, userId);
         mungpleId = certification.getMungpleId();
     }
 }

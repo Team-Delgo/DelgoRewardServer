@@ -76,7 +76,7 @@ public class ClassificationService {
     }
 
     public Classification classificationCert(Certification certification, List<String> categoryCodeList, Map<String, String> categoryMap, Map<String, List<String>> classificationCriteriaMap) {
-        User user = userService.getUserById(certification.getUserId());
+        User user = userService.getUserById(certification.getUser().getUserId());
         Pet pet = petService.getPetByUserId(user.getUserId());
         String text = certification.getDescription();
 
@@ -121,7 +121,7 @@ public class ClassificationService {
         Certification certification = certService.getCertById(modifyCertRecord.certificationId());
         Classification classification = classificationRepository.findClassificationByCertification_CertificationId(modifyCertRecord.certificationId()).get();
 
-        CategoryCount categoryCount = userService.getCategoryCountByUserId(certification.getUserId());
+        CategoryCount categoryCount = userService.getCategoryCountByUserId(certification.getUser().getUserId());
 
         for(String categoryCode: classification.getCategory().keySet()){
             userService.categoryCountSave(categoryCount.minusOne(categoryCode));

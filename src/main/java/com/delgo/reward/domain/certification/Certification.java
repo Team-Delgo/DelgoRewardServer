@@ -2,9 +2,12 @@ package com.delgo.reward.domain.certification;
 
 
 import com.delgo.reward.domain.common.BaseTimeEntity;
+import com.delgo.reward.domain.like.LikeList;
+import com.delgo.reward.domain.user.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Entity
@@ -16,7 +19,6 @@ public class Certification extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer certificationId;
-    private Integer userId;
     private String categoryCode;
 
     private Integer mungpleId; // mungpleId == 0이면 mungple 장소 아님.
@@ -35,6 +37,14 @@ public class Certification extends BaseTimeEntity {
 
     private int commentCount; // 댓글 개수
     private Boolean isExpose; // Map에 노출 시키는 인증 구분. ( 초기엔 운영진이 직접 추가 예정 )
+
+    @ManyToOne
+    @JoinColumn(name = "userId", updatable = false)
+    private User user;
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "certificationId", fetch = FetchType.LAZY)
+    private List<LikeList> likeLists;
 
     public Certification setPhotoUrl(String photoUrl){
         this.photoUrl = photoUrl;

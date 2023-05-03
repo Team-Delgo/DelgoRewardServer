@@ -23,7 +23,7 @@ public class ClassificationAsyncService {
     public void doClassification(int certificationId){
         Certification certification = certService.getCertById(certificationId);
         Classification classification = classificationService.runClassification(certification);
-        CategoryCount categoryCount = userService.getCategoryCountByUserId(certification.getUserId());
+        CategoryCount categoryCount = userService.getCategoryCountByUserId(certification.getUser().getUserId());
 
         for(String categoryCode: classification.getCategory().keySet()){
             userService.categoryCountSave(categoryCount.addOne(categoryCode));
