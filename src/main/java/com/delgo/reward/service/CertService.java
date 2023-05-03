@@ -115,14 +115,9 @@ public class CertService {
 
     // 날짜, 유저 별 Certification 조회
     public List<CertResDTO> getCertByDateAndUser(int userId, LocalDate date) {
-        List<Certification> certs = certRepository.findCertByDateAndUser(userId, date.atStartOfDay(), date.atTime(23, 59, 59));
-
-
-//        return certs;
-        return certs
+        return certRepository.findCertByDateAndUser(userId, date.atStartOfDay(), date.atTime(23, 59, 59))
                 .stream()
                 .map(c -> new CertResDTO(c,userId)) // ResDTO로 변환
-//                .peek(cert -> setUserAndLike(userId, cert)) // 작성자, 좋아요 정보 SET
                 .collect(Collectors.toList());
     }
 

@@ -1,6 +1,5 @@
 package com.delgo.reward.domain.user;
 
-import com.delgo.reward.record.user.WriterRecord;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -117,9 +116,5 @@ public class User {
     public User setAppleUniqueNo(String appleUniqueNo){
         this.appleUniqueNo = appleUniqueNo;
         return this;
-    }
-
-    public WriterRecord toWriterRecord(){
-        return new WriterRecord(userId, name, profile);
     }
 }
