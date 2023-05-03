@@ -20,14 +20,10 @@ public class MapService {
 
     private final CertService certService;
     private final MungpleService mungpleService;
-    private final LikeListService likeListService;
 
     public Map<String, Object> getMap(int userId) {
-        List<CertByMungpleResDTO> certifications = certService.getCertListByUserId(userId).stream().map(CertByMungpleResDTO::new).toList();  // 인증 리스트 조회
-        if (userId != 0) certifications.forEach(c -> certService.setUserAndLike(userId, c)); // 유저가 좋아요 누른
-
-        List<CertByMungpleResDTO> exposedCertList = certService.getExposedCertList(3).stream().map(CertByMungpleResDTO::new).toList();  // 노출시킬 인증 리스트 조회
-        if (userId != 0) exposedCertList.forEach(c -> certService.setUserAndLike(userId, c));
+        List<CertByMungpleResDTO> certifications = certService.getCertListByUserId(userId).stream().map(c -> new CertByMungpleResDTO(c,userId)).toList();  // 인증 리스트 조회
+        List<CertByMungpleResDTO> exposedCertList = certService.getExposedCertList(3).stream().map(c -> new CertByMungpleResDTO(c,userId)).toList();  // 노출시킬 인증 리스트 조회
 
         return (userId == 0)
                 ? Map.of("mungpleList", mungpleService.getMungpleByMap(),

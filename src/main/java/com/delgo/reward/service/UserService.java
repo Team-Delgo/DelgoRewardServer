@@ -87,7 +87,7 @@ public class UserService {
             kakaoService.logout(user.getKakaoId()); // kakao 로그아웃
 
         commentRepository.deleteAllByUserId(userId);
-        certRepository.deleteAllByUserId(userId);
+        certRepository.deleteAllByUserUserId(userId);
         likeListRepository.deleteByUserId(userId);; // USER가 좋아요 누른 DATA 삭제
 
         jdbcTemplateRankingRepository.deleteAllByUserId(userId);

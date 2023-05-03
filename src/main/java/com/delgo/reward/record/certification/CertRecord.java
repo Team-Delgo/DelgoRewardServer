@@ -3,6 +3,7 @@ package com.delgo.reward.record.certification;
 import com.delgo.reward.domain.Mungple;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.common.Location;
+import com.delgo.reward.domain.user.User;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -17,9 +18,9 @@ public record CertRecord(
         String latitude,
         String longitude) {
 
-    public Certification toEntity(Location location) {
+    public Certification toEntity(Location location, User user) {
         return Certification.builder()
-                .userId(userId)
+                .user(user)
                 .categoryCode(categoryCode)
                 .mungpleId(mungpleId)
                 .placeName(placeName)
@@ -35,11 +36,11 @@ public record CertRecord(
                 .build();
     }
 
-    public Certification toEntity(Mungple mungple) {
+    public Certification toEntity(Mungple mungple, User user) {
         String[] arr = mungple.getJibunAddress().split(" ");
         String address = arr[0] + " " + arr[1];
         return Certification.builder()
-                .userId(userId)
+                .user(user)
                 .categoryCode(mungple.getCategoryCode())
                 .mungpleId(mungpleId)
                 .placeName(mungple.getPlaceName())

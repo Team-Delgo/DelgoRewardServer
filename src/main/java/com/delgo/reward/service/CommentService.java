@@ -40,7 +40,7 @@ public class CommentService {
     public Comment createComment(CommentDTO commentDTO) throws IOException {
         Comment comment = Comment.builder().isReply(false).certificationId(commentDTO.getCertificationId()).userId(commentDTO.getUserId()).content(commentDTO.getContent()).build();
 
-        int userId = certService.getCertById(commentDTO.getCertificationId()).getUserId();
+        int userId = certService.getCertById(commentDTO.getCertificationId()).getUser().getUserId();
         String notifyMsg = userService.getUserById(commentDTO.getUserId()).getName() + "님이 나의 게시글에 댓글을 남겼습니다.\n" + commentDTO.getContent();
 
         notifyService.saveNotify(userId, NotifyType.COMMENT, notifyMsg);
@@ -58,7 +58,7 @@ public class CommentService {
     public Comment createReply(ReplyDTO replyDTO) throws IOException {
         Comment comment = Comment.builder().isReply(true).certificationId(replyDTO.getCertificationId()).userId(replyDTO.getUserId()).content(replyDTO.getContent()).parentCommentId(replyDTO.getParentCommentId()).build();
 
-        int certUserId = certService.getCertById(replyDTO.getCertificationId()).getUserId();
+        int certUserId = certService.getCertById(replyDTO.getCertificationId()).getUser().getUserId();
         String certUserNotifyMsg = userService.getUserById(replyDTO.getUserId()).getName() + "님이 나의 게시글에 댓글을 남겼습니다.\n" + replyDTO.getContent();
 
         int commentUserId = getCommentByCommentId(replyDTO.getParentCommentId()).getUserId();
@@ -93,7 +93,7 @@ public class CommentService {
         Comment comment = getCommentByCommentId(commentId);
         Certification certification = certRepository.findById(comment.getCertificationId()).orElseThrow();
 
-        if(certification.getUserId() == userId)
+        if(certification.getUser().getUserId() == userId)
             return true;
         return false;
     }

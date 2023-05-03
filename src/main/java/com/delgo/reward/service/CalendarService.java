@@ -22,12 +22,11 @@ public class CalendarService {
     private final CertService certService;
 
     public List<CalendarRecord> getCalendar(int userId) {
-        List<CertByAchvResDTO> certifications = certService.getCertListByUserId(userId).stream().map(CertByAchvResDTO::new).toList();;
+        List<CertByAchvResDTO> certifications = certService.getCertListByUserId(userId).stream().map(c -> new CertByAchvResDTO(c, userId)).toList();
 
         return certifications.stream()
                 .sorted(Comparator.comparing(CertByAchvResDTO::getCreatedDate)) // 등록 순으로 정렬
                 .map(cert -> {
-                    certService.setUserAndLike(userId,cert); // 유저가 좋아요 누른 인증 체크
                     List<CertByAchvResDTO> dateList = certifications.stream()
                             .filter(c -> c.getCreatedDate().isAfter(LocalDate.from(cert.getCreatedDate()).atTime(0, 0, 0).minusSeconds(1)) && c.getCreatedDate().isBefore(LocalDate.from(cert.getCreatedDate()).atTime(0, 0, 0).plusDays(1)))
                             .sorted(Comparator.comparing(CertByAchvResDTO::getCreatedDate).reversed())

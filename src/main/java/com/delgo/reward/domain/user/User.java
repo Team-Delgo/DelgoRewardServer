@@ -1,6 +1,5 @@
 package com.delgo.reward.domain.user;
 
-import com.delgo.reward.domain.Point;
 import com.delgo.reward.record.user.WriterRecord;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -60,9 +59,9 @@ public class User {
 
     private String profile;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="userId")
-    private Point point;
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name="userId")
+//    private Point point;
 
     private String appleUniqueNo; // Apple 연동 시에만 필요.
     private String kakaoId; // Kakao 연동 시에만 필요.
