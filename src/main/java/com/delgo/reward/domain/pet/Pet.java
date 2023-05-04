@@ -2,6 +2,7 @@ package com.delgo.reward.domain.pet;
 
 import com.delgo.reward.domain.common.BaseTimeEntity;
 import com.delgo.reward.domain.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -22,6 +23,7 @@ public class Pet extends BaseTimeEntity {
     private String breedName;
     private LocalDate birthday;
 
+    @JsonIgnore
     @ToString.Exclude
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
