@@ -24,7 +24,7 @@ public class PetService {
     private final PetRepository petRepository;
 
     public Pet register(Pet pet) {
-        return petRepository.save(pet).setBreedName(codeService.getCode(pet.getBreed()).getCodeName());
+        return petRepository.save(pet).setBreedName(codeService.getCode(pet.getBreedCode()).getCodeName());
     }
 
     @Transactional
@@ -40,7 +40,7 @@ public class PetService {
             originPet.setBirthday(modifyPetRecord.birthday());
 
         if (modifyPetRecord.breed() != null)
-            originPet.setBreed(modifyPetRecord.breed());
+            originPet.setBreedCode(modifyPetRecord.breed());
 
         petRepository.save(originPet);
     }
@@ -48,7 +48,7 @@ public class PetService {
     public Pet getPetByUserId(int userId) {
         Pet pet = petRepository.findByUserId(userId)
                 .orElseThrow(() -> new NullPointerException("NOT FOUND PET"));
-        pet.setBreedName(codeService.getCode(pet.getBreed()).getCodeName()); // 견종 이름 추가
+        pet.setBreedName(codeService.getCode(pet.getBreedCode()).getCodeName()); // 견종 이름 추가
         return pet;
     }
 }

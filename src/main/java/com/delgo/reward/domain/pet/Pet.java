@@ -20,7 +20,7 @@ public class Pet extends BaseTimeEntity {
     private int userId;
 
     private String name;
-    private String breed;
+    private String breedCode;
     private LocalDate birthday;
     @Transient
     private String breedName;
