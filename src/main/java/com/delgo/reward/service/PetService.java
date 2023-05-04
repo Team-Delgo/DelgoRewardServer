@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -33,5 +34,13 @@ public class PetService {
         Optional.ofNullable(modifyPetRecord.name()).ifPresent(user.getPet()::setName);
         Optional.ofNullable(modifyPetRecord.birthday()).ifPresent(user.getPet()::setBirthday);
         Optional.ofNullable(modifyPetRecord.breed()).ifPresent(user.getPet()::setBreedCode);
+    }
+
+    // 단순 DB 데이터 적치용
+    public void fillBreedName(){
+        List<Pet> pets = petRepository.findAll();
+        for(Pet pet : pets){
+            pet.setBreedName(codeService.getCode(pet.getBreedCode()).getCodeName());
+        }
     }
 }
