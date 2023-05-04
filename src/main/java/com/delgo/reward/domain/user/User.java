@@ -1,82 +1,54 @@
 package com.delgo.reward.domain.user;
 
+import com.delgo.reward.domain.common.BaseTimeEntity;
+import com.delgo.reward.domain.pet.Pet;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Getter
 @Entity
-@Builder
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
     private int userId;
 
-    @Column(nullable = false, name = "name")
-    private String name;
-
-    @Column(nullable = false, unique = true, name = "email")
     private String email;
-
-    @Column(nullable = false, name = "password")
     private String password;
 
-    @Column(nullable = false, name = "age")
+    private String name;
     private Integer age;
-
-    @Column(nullable = false, name = "gender")
     private String gender;
-
-    @Column(nullable = false, name = "phone_no")
     private String phoneNo;
-
-    @Column(nullable = false, name = "address")
     private String address;
+    private String profile;
 
-    @Column(nullable = false, name = "geo_code")
     private String geoCode;
-
-    @Column(nullable = false, name = "p_geo_code")
     private String pGeoCode;
 
+    @Column(name = "social")
     @Enumerated(EnumType.STRING)
-    @Column(nullable = true, name = "social")
     private UserSocial userSocial;
 
-    @CreationTimestamp
-    @Column(name = "regist_dt")
-    private LocalDateTime registDt;
-
-    @Column(nullable = false, name="is_notify")
     private boolean isNotify;
+    private String appleUniqueNo; // Apple 연동 시에만 필요.
+    private String kakaoId; // Kakao 연동 시에만 필요.
+//
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId", updatable = false)
+    @ToString.Exclude
+    private Pet pet;
 
-    private String profile;
+    public void setPet(Pet pet) {
+        this.pet = pet;
+    }
 
 //    @OneToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name="userId")
 //    private Point point;
-
-    private String appleUniqueNo; // Apple 연동 시에만 필요.
-    private String kakaoId; // Kakao 연동 시에만 필요.
-
-//    // 권한
-//    @JsonIgnore
-//    private String roles;
-//
-//    // ENUM으로 안하고 ,로 해서 구분해서 ROLE을 입력된 -> 그걸 파싱!!
-//    @JsonIgnore
-//    public List<String> getRoleList() {
-//        if (this.roles.length() > 0) {
-//            return Arrays.asList(this.roles.split(","));
-//        }
-//        return new ArrayList<>();
-//    }
 
     public Boolean setNotify(){
         this.isNotify = !isNotify;
@@ -117,4 +89,17 @@ public class User {
         this.appleUniqueNo = appleUniqueNo;
         return this;
     }
+
+    //    // 권한
+//    @JsonIgnore
+//    private String roles;
+//
+//    // ENUM으로 안하고 ,로 해서 구분해서 ROLE을 입력된 -> 그걸 파싱!!
+//    @JsonIgnore
+//    public List<String> getRoleList() {
+//        if (this.roles.length() > 0) {
+//            return Arrays.asList(this.roles.split(","));
+//        }
+//        return new ArrayList<>();
+//    }
 }
