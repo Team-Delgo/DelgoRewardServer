@@ -181,8 +181,7 @@ public class ClassificationTest {
         }
 
         for(Certification certification: certificationList){
-            System.out.println(classificationRepository.findClassificationByCertification_CertificationId(certification).get().getUser());
+            System.out.println(classificationRepository.findClassificationByCertification_CertificationId(certification.getCertificationId()).get().getUser());
         }
-
     }
 }

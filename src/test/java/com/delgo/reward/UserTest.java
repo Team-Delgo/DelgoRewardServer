@@ -2,6 +2,7 @@ package com.delgo.reward;
 
 
 import com.delgo.reward.domain.user.User;
+import com.delgo.reward.service.PetService;
 import com.delgo.reward.service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +18,9 @@ public class UserTest {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private PetService petService;
+
     @Test
     public void getUserTest() {
         //given
@@ -28,6 +32,11 @@ public class UserTest {
         //then
         System.out.println("user : " + user.getUserId());
         System.out.println("pet : " + user.getPet());
+    }
+
+    @Test
+    public void fillPetBreedNameTest() {
+        petService.fillBreedName();
     }
 
 }
