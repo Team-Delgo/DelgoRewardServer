@@ -16,7 +16,7 @@ public record OAuthSignUpRecord(
         @NotBlank String geoCode,
         @NotBlank @JsonProperty("pGeoCode") String pGeoCode,
         @NotBlank String petName,
-        @NotNull String breed,
+        @NotNull String breedCode,
         @NotNull LocalDate birthday,
         @NotNull UserSocial userSocial,
         String appleUniqueNo,
@@ -69,7 +69,7 @@ public record OAuthSignUpRecord(
     public Pet makePet(int userId){
         return Pet.builder()
                 .name(petName)
-                .breed(breed)
+                .breedCode(breedCode)
                 .birthday(birthday)
                 .userId(userId)
                 .build();
