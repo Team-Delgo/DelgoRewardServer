@@ -1,11 +1,10 @@
 package com.delgo.reward.domain.pet;
 
+import com.delgo.reward.domain.common.BaseTimeEntity;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -14,18 +13,15 @@ import java.time.LocalDateTime;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Pet {
+public class Pet extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int petId;
+    private int userId;
+
     private String name;
     private String breed;
     private LocalDate birthday;
-    private int userId;
-
-    @CreationTimestamp
-    private LocalDateTime registDt;
-
     @Transient
     private String breedName;
 
