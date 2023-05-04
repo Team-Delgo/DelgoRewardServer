@@ -8,6 +8,7 @@ import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.CategoryCount;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.domain.user.UserSocial;
+import com.delgo.reward.dto.user.UserResDTO;
 import com.delgo.reward.record.signup.OAuthSignUpRecord;
 import com.delgo.reward.record.signup.SignUpRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
@@ -201,8 +202,9 @@ public class UserService {
                 .orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
     }
 
-    public Page<User> getUserAll(Pageable pageable) {
-        return userRepository.findAll(pageable);
+    public Page<UserResDTO> getUserAll(Pageable pageable) {
+        Page<User> users = userRepository.findAll(pageable);
+        return users.map(UserResDTO::new);
     }
 
     public User getUserById(int userId) {
