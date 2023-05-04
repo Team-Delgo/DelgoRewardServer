@@ -56,7 +56,7 @@ public class UserController extends CommController {
         User user = userService.getUserByEmail(resetPasswordRecord.email()); // 유저 조회
         SmsAuth smsAuth = smsAuthService.getSmsAuthByPhoneNo(user.getPhoneNo()); // SMS DATA 조회
         if (!smsAuthService.isAuth(smsAuth))
-            ErrorReturn(ApiCode.SMS_ERROR);
+            return ErrorReturn(ApiCode.SMS_ERROR);
 
         userService.changePassword(resetPasswordRecord.email(), resetPasswordRecord.newPassword());
         return SuccessReturn();
