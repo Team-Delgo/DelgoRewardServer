@@ -9,12 +9,10 @@ import com.delgo.reward.comm.security.jwt.JwtToken;
 import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
 import com.delgo.reward.comm.security.jwt.JwtService;
 import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
-import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.domain.user.UserSocial;
 import com.delgo.reward.dto.OAuthDTO;
-import com.delgo.reward.record.user.UserResRecord;
-import com.delgo.reward.service.PetService;
+import com.delgo.reward.dto.user.UserResDTO;
 import com.delgo.reward.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 public class OAuthController extends CommController {
 
     private final JwtService jwtService;
-    private final PetService petService;
     private final UserService userService;
     private final KakaoService kakaoService;
     private final NaverService naverService;
@@ -50,17 +47,16 @@ public class OAuthController extends CommController {
         // DB에 appleUniqueNo 존재 X
         if (!userService.isAppleUniqueNoExisting(appleUniqueNo))
             return ErrorReturn(ApiCode.APPLE_UNIQUE_NO_NOT_FOUND, appleUniqueNo);
-        
+
         // DB에 appleUniqueNo 존재 O -> 해당 User 반환
         User user = userService.getUserByAppleUniqueNo(appleUniqueNo);
-        Pet pet = petService.getPetByUserId(user.getUserId());
 
         // TOKEN 발행
         JwtToken jwt = jwtService.createToken(user.getUserId());
         response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
         response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
 
-        return SuccessReturn(new UserResRecord(user, pet));
+        return SuccessReturn(new UserResDTO(user));
     }
 
     // Kakao
@@ -99,7 +95,7 @@ public class OAuthController extends CommController {
         response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
         response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
 
-        return SuccessReturn(new UserResRecord(user, petService.getPetByUserId(user.getUserId()))); //200
+        return SuccessReturn(new UserResDTO(user)); //200
     }
 
     // Naver
@@ -137,6 +133,6 @@ public class OAuthController extends CommController {
         response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
         response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
 
-        return SuccessReturn(new UserResRecord(user, petService.getPetByUserId(user.getUserId()))); //200
+        return SuccessReturn(new UserResDTO(user)); //200
     }
 }

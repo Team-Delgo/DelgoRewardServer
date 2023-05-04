@@ -1,6 +1,7 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
+import com.delgo.reward.dto.user.UserResDTO;
 import com.delgo.reward.record.user.ModifyPetRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
@@ -23,14 +24,6 @@ public class AccountController extends CommController {
     private final CertService certService;
     private final UserService userService;
     private final TokenService tokenService;
-    private final RankingService rankingService;
-
-    // 알림 정보 수정
-//    @PutMapping(value = {"/notify/{userId}, /notify"})
-//    public ResponseEntity<?> changeNotify(@PathVariable Integer userId){
-//        log.info("test");
-//        return SuccessReturn(userService.changeNotify(userId));
-//    }
 
     /**
      * 알림 정보 수정
@@ -51,7 +44,7 @@ public class AccountController extends CommController {
     public ResponseEntity<?> changeUserInfo(@Validated @RequestBody ModifyUserRecord modifyUserRecord) {
         userService.changeUserInfo(modifyUserRecord);
         // 랭킹 실시간으로 집계
-        rankingService.rankingByPoint();
+//        rankingService.rankingByPoint();
         return SuccessReturn();
     }
 
@@ -87,7 +80,7 @@ public class AccountController extends CommController {
     @DeleteMapping("/user/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable Integer userId) throws Exception {
         userService.deleteUser(userId); // USER DELETE
-        rankingService.rankingByPoint(); // 랭킹 실시간으로 집계
+//        rankingService.rankingByPoint(); // 랭킹 실시간으로 집계
 
         return SuccessReturn();
     }
@@ -100,7 +93,7 @@ public class AccountController extends CommController {
     @GetMapping
     public ResponseEntity<?> getAccount(@RequestParam Integer userId){
         return SuccessReturn(Map.of(
-                "user",userService.getUserById(userId), // user
+                "user",new UserResDTO(userService.getUserById(userId)), // user
                 "totalCount",certService.getTotalCountByUser(userId), // totalCount
                 "mungpleCount",certService.getTotalCountOfCertByMungpleAndUser(userId), // mungpleCount
                 "categoryCount", userService.getCategoryCountByUserId(userId)

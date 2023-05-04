@@ -105,7 +105,7 @@ public class UserController extends CommController {
                 : codeService.getAddress(signUpRecord.geoCode(), false);
 
         User user = userService.signup(signUpRecord.makeUser(passwordEncoder.encode(signUpRecord.password()), address), profile);
-        Pet pet = petService.register(signUpRecord.makePet(user.getUserId()));
+        Pet pet = petService.register(signUpRecord.makePet(user));
 
         JwtToken jwt = jwtService.createToken(user.getUserId());
         response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());

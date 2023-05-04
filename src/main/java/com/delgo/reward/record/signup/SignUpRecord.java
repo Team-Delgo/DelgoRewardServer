@@ -33,12 +33,12 @@ public record SignUpRecord(
                 .build();
     }
 
-    public Pet makePet(int userId) {
+    public Pet makePet(User user){
         return Pet.builder()
                 .name(petName)
                 .breedCode(breedCode)
                 .birthday(birthday)
-                .userId(userId)
+                .user(user)
                 .build();
     }
 }

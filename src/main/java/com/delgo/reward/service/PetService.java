@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @Transactional
@@ -30,25 +32,15 @@ public class PetService {
     @Transactional
     public void changePetInfo(ModifyPetRecord modifyPetRecord){
         User user = userService.getUserByEmail(modifyPetRecord.email());
-        int userId = user.getUserId();
-        Pet originPet = getPetByUserId(userId);
-
-        if (modifyPetRecord.name() != null)
-            originPet.setName(modifyPetRecord.name());
-
-        if(modifyPetRecord.birthday() != null)
-            originPet.setBirthday(modifyPetRecord.birthday());
-
-        if (modifyPetRecord.breed() != null)
-            originPet.setBreedCode(modifyPetRecord.breed());
-
-        petRepository.save(originPet);
+        Optional.ofNullable(modifyPetRecord.name()).ifPresent(user.getPet()::setName);
+        Optional.ofNullable(modifyPetRecord.birthday()).ifPresent(user.getPet()::setBirthday);
+        Optional.ofNullable(modifyPetRecord.breed()).ifPresent(user.getPet()::setBreedCode);
     }
 
     public Pet getPetByUserId(int userId) {
-        Pet pet = petRepository.findByUserId(userId)
+        Pet pet = petRepository.findByUserUserId(userId)
                 .orElseThrow(() -> new NullPointerException("NOT FOUND PET"));
-        pet.setBreedName(codeService.getCode(pet.getBreedCode()).getCodeName()); // 견종 이름 추가
+//        pet.setBreedName(codeService.getCode(pet.getBreedCode()).getCodeName()); // 견종 이름 추가
         return pet;
     }
 }
