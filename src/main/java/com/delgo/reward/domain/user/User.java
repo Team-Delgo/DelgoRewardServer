@@ -8,6 +8,7 @@ import javax.persistence.*;
 
 @Getter
 @Entity
+@Builder
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,26 +30,24 @@ public class User extends BaseTimeEntity {
     private String geoCode;
     private String pGeoCode;
 
+    private boolean isNotify;
+    private String appleUniqueNo; // Apple 연동 시에만 필요.
+    private String kakaoId; // Kakao 연동 시에만 필요.
+
     @Column(name = "social")
     @Enumerated(EnumType.STRING)
     private UserSocial userSocial;
 
-    private boolean isNotify;
-    private String appleUniqueNo; // Apple 연동 시에만 필요.
-    private String kakaoId; // Kakao 연동 시에만 필요.
-//
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId", updatable = false)
-    @ToString.Exclude
+    @OneToOne(mappedBy = "user")
     private Pet pet;
-
-    public void setPet(Pet pet) {
-        this.pet = pet;
-    }
 
 //    @OneToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name="userId")
 //    private Point point;
+
+    public void setPet(Pet pet) {
+        this.pet = pet;
+    }
 
     public Boolean setNotify(){
         this.isNotify = !isNotify;
@@ -82,11 +81,6 @@ public class User extends BaseTimeEntity {
 
     public User setAddress(String address){
         this.address = address;
-        return this;
-    }
-
-    public User setAppleUniqueNo(String appleUniqueNo){
-        this.appleUniqueNo = appleUniqueNo;
         return this;
     }
 
