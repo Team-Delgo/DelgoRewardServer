@@ -77,7 +77,6 @@ public class ClassificationService {
 
     public Classification classificationCert(Certification certification, List<String> categoryCodeList, Map<String, String> categoryMap, Map<String, List<String>> classificationCriteriaMap) {
         User user = userService.getUserById(certification.getUser().getUserId());
-        Pet pet = petService.getPetByUserId(user.getUserId());
         String text = certification.getDescription();
 
         List<String> outputCategoryCodeList = new ArrayList<>();
@@ -114,7 +113,7 @@ public class ClassificationService {
             dong = address[2];
         }
 
-        return new Classification().toEntity(user, pet, certification, outputCategory, sido, sigugun, dong);
+        return new Classification().toEntity(user, user.getPet(), certification, outputCategory, sido, sigugun, dong);
     }
 
     public void deleteClassificationWhenModifyCert(ModifyCertRecord modifyCertRecord){
