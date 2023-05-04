@@ -51,7 +51,7 @@ public class UserController extends CommController {
     // User. Pet 조회
     @GetMapping
     public ResponseEntity<?> getUser(@RequestParam Integer userId) {
-        return SuccessReturn(new UserResRecord(userService.getUserById(userId).setPassword(""), petService.getPetByUserId(userId)));
+        return SuccessReturn(new UserResRecord(userService.getUserById(userId), petService.getPetByUserId(userId)));
     }
 
     /**
