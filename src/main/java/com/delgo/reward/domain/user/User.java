@@ -45,8 +45,9 @@ public class User extends BaseTimeEntity {
 //    @JoinColumn(name="userId")
 //    private Point point;
 
-    public void setPet(Pet pet) {
+    public User setPet(Pet pet) {
         this.pet = pet;
+        return this;
     }
 
     public Boolean setNotify(){

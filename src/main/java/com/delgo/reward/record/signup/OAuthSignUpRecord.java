@@ -25,7 +25,7 @@ public record OAuthSignUpRecord(
         Integer age
 ) {
 
-    public User makeUserSocial(UserSocial userSocial, String address) {
+    public User makeUser(UserSocial userSocial, String address) {
         return switch (userSocial) {
             case A -> User.builder()
                     .name(userName)

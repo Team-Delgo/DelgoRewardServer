@@ -4,9 +4,12 @@ package com.delgo.reward.service;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.comm.oauth.KakaoService;
+import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.CategoryCount;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.domain.user.UserSocial;
+import com.delgo.reward.record.signup.OAuthSignUpRecord;
+import com.delgo.reward.record.signup.SignUpRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
 import com.delgo.reward.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +33,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     // Service
+    private final PetService petService;
     private final CodeService codeService;
     private final KakaoService kakaoService;
     private final PhotoService photoService;
@@ -58,22 +62,57 @@ public class UserService {
 
     /**
      * 회원가입
-     * @param user
+     * @param signUpRecord
      * @param profile
      * @return 가입한 회원 정보 반환
      */
-    public User signup(User user, MultipartFile profile) {
-        User registeredUser = save(user);
+    @Transactional
+    public User signup(SignUpRecord signUpRecord, MultipartFile profile) {
+        // 주소 설정
+        String address = (signUpRecord.geoCode().equals("0"))  // 세종시는 구가 없음.
+                ? codeService.getAddress(signUpRecord.pGeoCode(), true)
+                : codeService.getAddress(signUpRecord.geoCode(), false);
+
+        // USER & PET 저장
+        User user = save(signUpRecord.makeUser(passwordEncoder.encode(signUpRecord.password()), address));
+        Pet pet = petService.register(signUpRecord.makePet(user));
 
         archiveService.registerWelcome(user.getUserId()); // WELCOME 업적 부여
-        jdbcTemplatePointRepository.createUserPoint(registeredUser); // Point 생성
-        categoryCountRepository.save(new CategoryCount().create(registeredUser.getUserId()));
+        jdbcTemplatePointRepository.createUserPoint(user); // Point 생성
+        categoryCountRepository.save(new CategoryCount().create(user.getUserId()));
 
 //        rankingService.rankingByPoint(); // 랭킹 업데이트
-        return registeredUser.setProfile( // User Profile 등록
+        return user.setPet(pet).setProfile( // User Profile 등록
                 profile.isEmpty()
                         ? DEFAULT_PROFILE
                         : photoService.uploadProfile(user.getUserId(), profile));
+    }
+
+    /**
+     * OAuth 회원가입
+     * @param oAuthSignUpRecord
+     * @param profile
+     * @return 가입한 회원 정보 반환
+     */
+    public User oAuthSignup(OAuthSignUpRecord oAuthSignUpRecord, MultipartFile profile) {
+        // 주소 설정
+        String address = (oAuthSignUpRecord.geoCode().equals("0"))  // 세종시는 구가 없음.
+                ? codeService.getAddress(oAuthSignUpRecord.pGeoCode(), true)
+                : codeService.getAddress(oAuthSignUpRecord.geoCode(), false);
+
+        // USER & PET 저장
+        User oAuthUser = save(oAuthSignUpRecord.makeUser(oAuthSignUpRecord.userSocial(), address));
+        Pet pet = petService.register(oAuthSignUpRecord.makePet(oAuthUser));
+
+        archiveService.registerWelcome(oAuthUser.getUserId()); // WELCOME 업적 부여
+        jdbcTemplatePointRepository.createUserPoint(oAuthUser); // Point 생성
+        categoryCountRepository.save(new CategoryCount().create(oAuthUser.getUserId()));
+
+//        rankingService.rankingByPoint(); // 랭킹 업데이트
+        return oAuthUser.setPet(pet).setProfile( // User Profile 등록
+                profile.isEmpty()
+                        ? DEFAULT_PROFILE
+                        : photoService.uploadProfile(oAuthUser.getUserId(), profile));
     }
 
     /**

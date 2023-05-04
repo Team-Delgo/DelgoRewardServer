@@ -19,28 +19,19 @@ import java.util.Optional;
 public class PetService {
 
     // Service
-    private final UserService userService;
     private final CodeService codeService;
 
     // Repository
     private final PetRepository petRepository;
 
     public Pet register(Pet pet) {
-        return petRepository.save(pet).setBreedName(codeService.getCode(pet.getBreedCode()).getCodeName());
+        return petRepository.save(pet.setBreedName(codeService.getCode(pet.getBreedCode()).getCodeName()));
     }
 
     @Transactional
-    public void changePetInfo(ModifyPetRecord modifyPetRecord){
-        User user = userService.getUserByEmail(modifyPetRecord.email());
+    public void changePetInfo(ModifyPetRecord modifyPetRecord,User user){
         Optional.ofNullable(modifyPetRecord.name()).ifPresent(user.getPet()::setName);
         Optional.ofNullable(modifyPetRecord.birthday()).ifPresent(user.getPet()::setBirthday);
         Optional.ofNullable(modifyPetRecord.breed()).ifPresent(user.getPet()::setBreedCode);
-    }
-
-    public Pet getPetByUserId(int userId) {
-        Pet pet = petRepository.findByUserUserId(userId)
-                .orElseThrow(() -> new NullPointerException("NOT FOUND PET"));
-//        pet.setBreedName(codeService.getCode(pet.getBreedCode()).getCodeName()); // 견종 이름 추가
-        return pet;
     }
 }

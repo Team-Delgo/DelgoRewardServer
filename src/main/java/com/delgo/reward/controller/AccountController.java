@@ -55,7 +55,7 @@ public class AccountController extends CommController {
      */
     @PutMapping("/pet")
     public ResponseEntity<?> changePetInfo(@Validated @RequestBody ModifyPetRecord modifyPetRecord) {
-        petService.changePetInfo(modifyPetRecord);
+        petService.changePetInfo(modifyPetRecord, userService.getUserByEmail(modifyPetRecord.email()));
         return SuccessReturn();
     }
 
