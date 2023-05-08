@@ -7,6 +7,7 @@ import com.delgo.reward.comm.async.ClassificationAsyncService;
 import com.delgo.reward.comm.exception.ApiCode;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.dto.cert.CertByAchvResDTO;
+import com.delgo.reward.dto.cert.CertResDTO;
 import com.delgo.reward.mongoService.ClassificationService;
 import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
@@ -65,17 +66,17 @@ public class CertController extends CommController {
      */
     @PutMapping
     public ResponseEntity modify(@Validated @RequestBody ModifyCertRecord record) {
-        if (record.userId() != certService.getCertById(record.certificationId()).getUser().getUserId())
+        Certification certification = certService.getCertById(record.certificationId());
+        if (record.userId() != certification.getUser().getUserId())
             return ErrorReturn(ApiCode.INVALID_USER_ERROR);
 
         // 인증 분류 삭제
-        classificationService.deleteClassificationWhenModifyCert(record);
-
-        Certification certification = certService.modify(record);
+        classificationService.deleteClassificationWhenModifyCert(certification);
+        Certification updatedCertification = certService.modify(certification, record.description());
 
         // 비동기적 실행
-        classificationAsyncService.doClassification(certification.getCertificationId());
-        return SuccessReturn(certification);
+        classificationAsyncService.doClassification(updatedCertification.getCertificationId());
+        return SuccessReturn(new CertResDTO(updatedCertification));
     }
 
     /*

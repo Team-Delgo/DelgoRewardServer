@@ -71,8 +71,8 @@ public class CertService {
     }
 
     // Certification 수정
-    public Certification modify(ModifyCertRecord record) {
-        return getCertById(record.certificationId()).modify(record.description());
+    public Certification modify(Certification certification, String newDescription) {
+        return certification.modify(newDescription);
     }
 
     // Certification 삭제

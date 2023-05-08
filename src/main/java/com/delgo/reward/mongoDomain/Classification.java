@@ -1,12 +1,9 @@
 package com.delgo.reward.mongoDomain;
 
 import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.domain.pet.Pet;
-import com.delgo.reward.domain.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.delgo.reward.dto.cert.CertResDTO;
+import com.delgo.reward.dto.user.UserResDTO;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -16,6 +13,7 @@ import java.util.Map;
 
 @Getter
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection="classification")
@@ -23,11 +21,9 @@ public class Classification {
     @Id
     private String id;
     @Field("user")
-    private User user;
-    @Field("pet")
-    private Pet pet;
+    private UserResDTO user;
     @Field("certification")
-    private Certification certification;
+    private CertResDTO certification;
     @Field("category")
     private Map<String, String> category;
     @Field("address_sido")
@@ -39,11 +35,10 @@ public class Classification {
     @Field("created_at")
     private LocalDateTime createdAt;
 
-    public Classification toEntity(User user, Pet pet, Certification certification, Map<String, String> category, String SIDO, String SIGUGUN, String DONG){
+    public Classification toEntity(Certification certification, Map<String, String> category, String SIDO, String SIGUGUN, String DONG){
         return Classification.builder()
-                .user(user)
-                .pet(pet)
-                .certification(certification)
+                .user(new UserResDTO(certification.getUser()))
+                .certification(new CertResDTO(certification))
                 .category(category)
                 .sido(SIDO)
                 .sigugun(SIGUGUN)
