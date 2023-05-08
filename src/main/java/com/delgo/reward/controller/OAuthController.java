@@ -68,7 +68,7 @@ public class OAuthController extends CommController {
 
         // 카카오 에러 : 1000
         if(kakaoPhoneNo.equals(""))
-            return ErrorReturn(ApiCode.OAUTH_PHONE_NO_NOT_EXIST);
+            return ErrorReturn(ApiCode.OAUTH_UNKNOWN_ERROR);
 
         // 카카오 전화번호 X
         if(kakaoPhoneNo.equals("PhoneNoNotExist"))
@@ -107,7 +107,7 @@ public class OAuthController extends CommController {
 
         // 네이버 에러 : 1000
         if(naverPhoneNo.equals(""))
-            return ErrorReturn(ApiCode.UNKNOWN_ERROR);
+            return ErrorReturn(ApiCode.OAUTH_UNKNOWN_ERROR);
 
         // 네이버 전화번호 X
         if(naverPhoneNo.equals("PhoneNoNotExist"))
