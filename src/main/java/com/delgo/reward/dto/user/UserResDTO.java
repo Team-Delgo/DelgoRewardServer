@@ -6,6 +6,7 @@ import com.delgo.reward.domain.user.UserSocial;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.LocalDate;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @ToString
+@NoArgsConstructor
 @AllArgsConstructor
 public class UserResDTO {
     // User Data
@@ -23,7 +25,7 @@ public class UserResDTO {
     private String address;
     private String profile;
     private UserSocial userSocial;
-    private boolean isNotify;
+    private Boolean isNotify;
 
     // Pet Data
     private int petId;
@@ -43,7 +45,7 @@ public class UserResDTO {
         address = user.getPhoneNo();
         profile = user.getProfile();
         userSocial = user.getUserSocial();
-        isNotify = user.isNotify();
+        isNotify = user.getIsNotify();
 
         // Pet
         petId = user.getPet().getPetId();
