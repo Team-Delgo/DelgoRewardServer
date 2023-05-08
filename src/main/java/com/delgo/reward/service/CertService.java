@@ -156,12 +156,12 @@ public class CertService {
     }
 
     // 유저별 전체 개수 조회
-    public int getTotalCountByUser(int userId) {
+    public int getTotalCertCountByUser(int userId) {
         return certRepository.countByUserUserId(userId);
     }
 
     // 유저별 전체 멍플 관련 인증 개수 조회
-    public int getTotalCountOfCertByMungpleAndUser(int userId) {
+    public int getTotalCertCountByMungpleAndUser(int userId) {
         return certRepository.countOfCertByMungpleAndUser(userId);
     }
 

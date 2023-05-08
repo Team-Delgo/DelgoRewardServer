@@ -30,7 +30,7 @@ public class User extends BaseTimeEntity {
     private String geoCode;
     private String pGeoCode;
 
-    private boolean isNotify;
+    private Boolean isNotify;
     private String appleUniqueNo; // Apple 연동 시에만 필요.
     private String kakaoId; // Kakao 연동 시에만 필요.
 

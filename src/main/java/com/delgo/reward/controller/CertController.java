@@ -131,7 +131,7 @@ public class CertController extends CommController {
      */
     @GetMapping(value = {"/count/{userId}", "/count/"})
     public ResponseEntity getTotalCount(@PathVariable Integer userId) {
-        return SuccessReturn(certService.getTotalCountByUser(userId));
+        return SuccessReturn(certService.getTotalCertCountByUser(userId));
     }
 
     /*

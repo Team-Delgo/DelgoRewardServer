@@ -1,7 +1,7 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.dto.user.UserResDTO;
+import com.delgo.reward.dto.user.UserByCertCountResDTO;
 import com.delgo.reward.record.user.ModifyPetRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -92,12 +91,11 @@ public class AccountController extends CommController {
      */
     @GetMapping
     public ResponseEntity<?> getAccount(@RequestParam Integer userId){
-        return SuccessReturn(Map.of(
-                "user",new UserResDTO(userService.getUserById(userId)), // user
-                "totalCount",certService.getTotalCountByUser(userId), // totalCount
-                "mungpleCount",certService.getTotalCountOfCertByMungpleAndUser(userId), // mungpleCount
-                "categoryCount", userService.getCategoryCountByUserId(userId)
-        ));
+        return SuccessReturn(new UserByCertCountResDTO(
+                userService.getUserById(userId),
+                certService.getTotalCertCountByUser(userId),
+                certService.getTotalCertCountByMungpleAndUser(userId),
+                userService.getCategoryCountByUserId(userId)));
     }
 
     /**
