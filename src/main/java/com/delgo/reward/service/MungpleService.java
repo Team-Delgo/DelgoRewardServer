@@ -79,4 +79,18 @@ public class MungpleService {
         objectStorageService.deleteObject(BucketName.MUNGPLE,mungpleId + "_mungple.webp"); // Thumbnail delete
         objectStorageService.deleteObject(BucketName.MUNGPLE_NOTE,mungpleId + "_mungplenote.webp"); // mungpleNote delete
     }
+
+    public void deleteDuplicateMungple() {
+        List<Mungple> mungples = mungpleRepository.findAll();
+        log.info("count :{} ", mungples.size());
+        int i = 1;
+        for(Mungple mungple :mungples){
+            List<Mungple> result = mungpleRepository.findByJibunAddress(mungple.getJibunAddress());
+            if(result.size() >= 2) {
+                log.info("{} 두개 이상 존재하는 result : {}", i++, result.get(1));
+                mungpleRepository.deleteById(result.get(1).getMungpleId());
+
+            }
+        }
+    }
 }
