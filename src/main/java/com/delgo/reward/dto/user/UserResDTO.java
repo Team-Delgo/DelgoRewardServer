@@ -42,7 +42,7 @@ public class UserResDTO {
         email = user.getEmail();
         userName = user.getName();
         phoneNo = user.getPhoneNo();
-        address = user.getPhoneNo();
+        address = user.getAddress();
         profile = user.getProfile();
         userSocial = user.getUserSocial();
         isNotify = user.getIsNotify();
