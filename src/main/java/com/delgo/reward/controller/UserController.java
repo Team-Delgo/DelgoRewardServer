@@ -8,19 +8,17 @@ import com.delgo.reward.comm.security.jwt.JwtToken;
 import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
 import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
 import com.delgo.reward.domain.SmsAuth;
-import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.domain.user.UserSocial;
+import com.delgo.reward.dto.user.UserResDTO;
 import com.delgo.reward.record.signup.OAuthSignUpRecord;
 import com.delgo.reward.record.signup.SignUpRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
-import com.delgo.reward.record.user.UserResRecord;
 import com.delgo.reward.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,26 +30,15 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
 public class UserController extends CommController {
-    private final PasswordEncoder passwordEncoder;
 
-    private final PetService petService;
-    private final RankingService rankingService;
-    private final UserService userService;
-    private final CodeService codeService;
     private final JwtService jwtService;
+    private final UserService userService;
     private final SmsAuthService smsAuthService;
-    private final ArchiveService archiveService;
 
-    // User 전체 조회 [ Admin 사용 ]
-    @GetMapping("/all")
-    public ResponseEntity<?> getUserAll(@RequestParam Integer currentPage, @RequestParam Integer pageSize) {
-        return SuccessReturn(userService.getUserAll(currentPage, pageSize));
-    }
-
-    // User. Pet 조회
+    // User 조회
     @GetMapping
     public ResponseEntity<?> getUser(@RequestParam Integer userId) {
-        return SuccessReturn(new UserResRecord(userService.getUserById(userId), petService.getPetByUserId(userId)));
+        return SuccessReturn(new UserResDTO(userService.getUserById(userId)));
     }
 
     /**
@@ -64,7 +51,7 @@ public class UserController extends CommController {
         User user = userService.getUserByEmail(resetPasswordRecord.email()); // 유저 조회
         SmsAuth smsAuth = smsAuthService.getSmsAuthByPhoneNo(user.getPhoneNo()); // SMS DATA 조회
         if (!smsAuthService.isAuth(smsAuth))
-            ErrorReturn(ApiCode.SMS_ERROR);
+            return ErrorReturn(ApiCode.SMS_ERROR);
 
         userService.changePassword(resetPasswordRecord.email(), resetPasswordRecord.newPassword());
         return SuccessReturn();
@@ -82,24 +69,12 @@ public class UserController extends CommController {
                 && oAuthSignUpRecord.userSocial() == UserSocial.A)
             return ErrorReturn(ApiCode.PARAM_ERROR);
 
-        // 주소 설정
-        String address = (oAuthSignUpRecord.geoCode().equals("0"))  // 세종시는 구가 없음.
-                ? codeService.getAddress(oAuthSignUpRecord.pGeoCode(), true)
-                : codeService.getAddress(oAuthSignUpRecord.geoCode(), false);
-
-        User user = userService.signup(oAuthSignUpRecord.makeUserSocial(oAuthSignUpRecord.userSocial(), address), profile);
-        Pet pet = petService.register(oAuthSignUpRecord.makePet(user.getUserId()));
-
-        archiveService.registerWelcome(user.getUserId()); // WELCOME 업적 부여
-        rankingService.rankingByPoint(); // 랭킹 업데이트
-
+        User user = userService.oAuthSignup(oAuthSignUpRecord, profile);
         JwtToken jwt = jwtService.createToken(user.getUserId());
         response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
         response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
 
-        UserResRecord returnRecord = new UserResRecord(user, pet);
-        log.info("user : {}", returnRecord);
-        return SuccessReturn(returnRecord);
+        return SuccessReturn(new UserResDTO(user));
     }
 
     /*
@@ -112,23 +87,11 @@ public class UserController extends CommController {
         if (userService.isEmailExisting(signUpRecord.email())) // Email 중복확인
             return ErrorReturn(ApiCode.EMAIL_DUPLICATE_ERROR);
 
-        // 주소 설정
-        String address = (signUpRecord.geoCode().equals("0"))  // 세종시는 구가 없음.
-                ? codeService.getAddress(signUpRecord.pGeoCode(), true)
-                : codeService.getAddress(signUpRecord.geoCode(), false);
-
-        User user = userService.signup(signUpRecord.makeUser(passwordEncoder.encode(signUpRecord.password()), address), profile);
-        Pet pet = petService.register(signUpRecord.makePet(user.getUserId()));
-
-        archiveService.registerWelcome(user.getUserId()); // WELCOME 업적 부여
-        rankingService.rankingByPoint(); // 랭킹 업데이트
-
+        User user = userService.signup(signUpRecord, profile);
         JwtToken jwt = jwtService.createToken(user.getUserId());
         response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
         response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
 
-        UserResRecord returnRecord = new UserResRecord(user, pet);
-        log.info("user : {}", returnRecord);
-        return SuccessReturn(returnRecord);
+        return SuccessReturn(new UserResDTO(user));
     }
 }

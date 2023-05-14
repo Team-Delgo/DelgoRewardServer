@@ -6,10 +6,7 @@ import com.delgo.reward.comm.security.jwt.JwtService;
 import com.delgo.reward.comm.security.jwt.JwtToken;
 import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
 import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
-import com.delgo.reward.domain.pet.Pet;
-import com.delgo.reward.domain.user.User;
-import com.delgo.reward.record.user.UserResRecord;
-import com.delgo.reward.service.PetService;
+import com.delgo.reward.dto.user.UserResDTO;
 import com.delgo.reward.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginController extends CommController {
 
     private final JwtService jwtService;
-    private final PetService petService;
     private final UserService userService;
 
     /*
@@ -42,14 +38,11 @@ public class LoginController extends CommController {
     public ResponseEntity<?> loginSuccess(HttpServletRequest request, HttpServletResponse response) {
         int userId = Integer.parseInt(request.getAttribute("userId").toString());
 
-        User user = userService.getUserById(userId);
-        Pet pet = petService.getPetByUserId(user.getUserId());
-
         JwtToken jwt = jwtService.createToken(userId);
         response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
         response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
 
-        return SuccessReturn(new UserResRecord(user,pet));
+        return SuccessReturn(new UserResDTO(userService.getUserById(userId)));
     }
 
     /*

@@ -10,6 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+
 @Slf4j
 @Service
 @Transactional
@@ -17,38 +20,27 @@ import org.springframework.transaction.annotation.Transactional;
 public class PetService {
 
     // Service
-    private final UserService userService;
     private final CodeService codeService;
 
     // Repository
     private final PetRepository petRepository;
 
     public Pet register(Pet pet) {
-        return petRepository.save(pet).setBreedName(codeService.getCode(pet.getBreed()).getCodeName());
+        return petRepository.save(pet.setBreedName(codeService.getCode(pet.getBreedCode()).getCodeName()));
     }
 
     @Transactional
-    public void changePetInfo(ModifyPetRecord modifyPetRecord){
-        User user = userService.getUserByEmail(modifyPetRecord.email());
-        int userId = user.getUserId();
-        Pet originPet = getPetByUserId(userId);
-
-        if (modifyPetRecord.name() != null)
-            originPet.setName(modifyPetRecord.name());
-
-        if(modifyPetRecord.birthday() != null)
-            originPet.setBirthday(modifyPetRecord.birthday());
-
-        if (modifyPetRecord.breed() != null)
-            originPet.setBreed(modifyPetRecord.breed());
-
-        petRepository.save(originPet);
+    public void changePetInfo(ModifyPetRecord modifyPetRecord,User user){
+        Optional.ofNullable(modifyPetRecord.name()).ifPresent(user.getPet()::setName);
+        Optional.ofNullable(modifyPetRecord.birthday()).ifPresent(user.getPet()::setBirthday);
+        Optional.ofNullable(modifyPetRecord.breed()).ifPresent(user.getPet()::setBreedCode);
     }
 
-    public Pet getPetByUserId(int userId) {
-        Pet pet = petRepository.findByUserId(userId)
-                .orElseThrow(() -> new NullPointerException("NOT FOUND PET"));
-        pet.setBreedName(codeService.getCode(pet.getBreed()).getCodeName()); // 견종 이름 추가
-        return pet;
+    // 단순 DB 데이터 적치용
+    public void fillBreedName(){
+        List<Pet> pets = petRepository.findAll();
+        for(Pet pet : pets){
+            pet.setBreedName(codeService.getCode(pet.getBreedCode()).getCodeName());
+        }
     }
 }

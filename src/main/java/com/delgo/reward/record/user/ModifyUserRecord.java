@@ -6,7 +6,6 @@ import javax.validation.constraints.NotNull;
 
 public record ModifyUserRecord(@NotNull Integer userId,
                                String name,
-                               String profileUrl,
                                String geoCode,
                                @JsonProperty("pGeoCode") String pGeoCode) {
 }

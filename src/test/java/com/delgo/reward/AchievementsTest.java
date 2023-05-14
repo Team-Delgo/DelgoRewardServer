@@ -44,22 +44,22 @@ public class AchievementsTest {
 //        assertNotNull(1);
 //    }
 
-//    @Test
-//    public void getAchievementsByUserTest() {
-//        //given
-//        int userId = 91;
-//        int isMungple = 0;
-//
-//        //when
+    @Test
+    public void getAchievementsByUserTest() {
+        //given
+        int userId = 91;
+        int isMungple = 0;
+
+        //when
 //        List<Achievements> list = achievementsService.getAchievementsByUser(userId);
-////
-////        for(Achievements achievements : list){
-////            System.out.println("achievements : " + achievements);
-////        }
 //
-////        rankingService.rankingByPoint();
-//
-//        //then
-//        assertNotNull(1);
-//    }
+//        for(Achievements achievements : list){
+//            System.out.println("achievements : " + achievements);
+//        }
+
+//        rankingService.rankingByPoint();
+
+        //then
+        assertNotNull(1);
+    }
 }

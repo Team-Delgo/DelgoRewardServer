@@ -51,8 +51,8 @@ public enum ApiCode {
     ANOTHER_OAUTH_CONNECT(API.CODE.ANOTHER_OAUTH_CONNECT, "이미 다른 OAuth와 연동 되어 있습니다."),
     APPLE_UNIQUE_NO_NOT_FOUND(API.CODE.APPLE_UNIQUE_NO_NOT_FOUND, "Apple Unique No를 찾지 못했습니다."),
 
+    OAUTH_UNKNOWN_ERROR(API.CODE.OAUTH_UNKNOWN_ERROR, "OAUTH 알수 없는 오류"),
     UNKNOWN_ERROR(API.CODE.UNKNOWN_ERROR, "알수 없는 오류");
-
 
     private int code;
     private String msg;
@@ -138,8 +138,7 @@ public enum ApiCode {
             public static final int APPLE_UNIQUE_NO_NOT_FOUND = 383;
 
             public static final int UNKNOWN_ERROR = 1000;
-            public static final int SERVER_TIMEOUT_ERROR = 1001;
-            public static final int SERVER_ERROR = 1003;
+            public static final int OAUTH_UNKNOWN_ERROR = 1001;
         }
     }
 }
