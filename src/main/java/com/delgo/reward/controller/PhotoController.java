@@ -3,7 +3,6 @@ package com.delgo.reward.controller;
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.domain.Mungple;
 import com.delgo.reward.domain.achievements.Achievements;
-import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,8 +48,9 @@ public class PhotoController extends CommController {
     public ResponseEntity<?> uploadCertificationPhoto(@PathVariable Integer certificationId, @RequestPart MultipartFile photo) {
         if (photo.isEmpty()) ParamErrorReturn("photo");
 
-        Certification cert = certService.getCert(certificationId).setPhotoUrl(photoService.updateCertMultipart(certificationId, photo));
-        return SuccessReturn(certService.save(cert));
+        return SuccessReturn(certService.changeCertPhotoUrl(
+                certService.getCertById(certificationId),
+                photoService.setCacheInvalidation(photoService.updateCertMultipart(certificationId, photo))));
     }
 
     /*

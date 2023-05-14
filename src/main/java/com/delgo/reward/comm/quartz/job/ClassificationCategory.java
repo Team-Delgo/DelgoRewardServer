@@ -1,12 +1,8 @@
 package com.delgo.reward.comm.quartz.job;
 
 import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.domain.pet.Pet;
-import com.delgo.reward.domain.user.User;
 import com.delgo.reward.mongoService.ClassificationService;
 import com.delgo.reward.service.CertService;
-import com.delgo.reward.service.PetService;
-import com.delgo.reward.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
@@ -65,7 +61,7 @@ public class ClassificationCategory extends QuartzJobBean {
             classificationCriteriaMap.put(categoryCode, (List<String>) jsonObject.get("classification"));
         }
 
-        List<Certification> certificationList = certService.getCertByDate(LocalDate.now());
+        List<Certification> certificationList = certService.getCertListByDate(LocalDate.now());
 
         for(Certification certification: certificationList){
             classificationService.classificationCert(certification, categoryCodeList, categoryMap, classificationCriteriaMap);

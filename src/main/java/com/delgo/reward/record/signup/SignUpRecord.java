@@ -16,7 +16,7 @@ public record SignUpRecord(
         @NotBlank String geoCode,
         @NotBlank String pGeoCode,
         @NotBlank String petName,
-        @NotBlank String breed,
+        @NotBlank String breedCode,
         @NotNull LocalDate birthday) {
 
     public User makeUser(String password, String address) {
@@ -33,12 +33,12 @@ public record SignUpRecord(
                 .build();
     }
 
-    public Pet makePet(int userId) {
+    public Pet makePet(User user){
         return Pet.builder()
                 .name(petName)
-                .breed(breed)
+                .breedCode(breedCode)
                 .birthday(birthday)
-                .userId(userId)
+                .user(user)
                 .build();
     }
 }

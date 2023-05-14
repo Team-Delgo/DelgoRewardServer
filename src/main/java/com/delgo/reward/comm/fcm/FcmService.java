@@ -48,7 +48,7 @@ public class FcmService {
 
     public boolean checkNotify(int userId){
         User user = userService.getUserById(userId);
-        return user.isNotify();
+        return user.getIsNotify();
     }
 
     public void likePush(int userId, String likeMsg) throws IOException {

@@ -24,7 +24,8 @@ public class CertAsyncService {
     private final RankingService rankingService;
 
     @Async
-    public void doSomething(Certification certification) {
+    public void doSomething(Integer certificationId) {
+        Certification certification = certService.getCertById(certificationId);
         String jpgUrl = certification.getPhotoUrl();
         String[] jpgPath = jpgUrl.split("/");
         String jpgName = jpgPath[jpgPath.length -1];

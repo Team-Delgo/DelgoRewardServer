@@ -8,13 +8,15 @@ import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.CategoryCount;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.domain.user.UserSocial;
+import com.delgo.reward.dto.user.UserResDTO;
+import com.delgo.reward.record.signup.OAuthSignUpRecord;
+import com.delgo.reward.record.signup.SignUpRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
 import com.delgo.reward.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,9 +34,11 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     // Service
+    private final PetService petService;
     private final CodeService codeService;
     private final KakaoService kakaoService;
     private final PhotoService photoService;
+    private final ArchiveService archiveService;
     private final ObjectStorageService objectStorageService;
 
     // Repository
@@ -59,19 +63,57 @@ public class UserService {
 
     /**
      * 회원가입
-     * @param user
+     * @param signUpRecord
      * @param profile
      * @return 가입한 회원 정보 반환
      */
-    public User signup(User user, MultipartFile profile) {
-        User registeredUser = save(user);
-        jdbcTemplatePointRepository.createUserPoint(registeredUser); // Point 생성
-        categoryCountRepository.save(new CategoryCount().create(registeredUser.getUserId()));
+    @Transactional
+    public User signup(SignUpRecord signUpRecord, MultipartFile profile) {
+        // 주소 설정
+        String address = (signUpRecord.geoCode().equals("0"))  // 세종시는 구가 없음.
+                ? codeService.getAddress(signUpRecord.pGeoCode(), true)
+                : codeService.getAddress(signUpRecord.geoCode(), false);
 
-        return registeredUser.setProfile( // User Profile 등록
+        // USER & PET 저장
+        User user = save(signUpRecord.makeUser(passwordEncoder.encode(signUpRecord.password()), address));
+        Pet pet = petService.register(signUpRecord.makePet(user));
+
+        archiveService.registerWelcome(user.getUserId()); // WELCOME 업적 부여
+        jdbcTemplatePointRepository.createUserPoint(user); // Point 생성
+        categoryCountRepository.save(new CategoryCount().create(user.getUserId()));
+
+//        rankingService.rankingByPoint(); // 랭킹 업데이트
+        return user.setPet(pet).setProfile( // User Profile 등록
                 profile.isEmpty()
                         ? DEFAULT_PROFILE
                         : photoService.uploadProfile(user.getUserId(), profile));
+    }
+
+    /**
+     * OAuth 회원가입
+     * @param oAuthSignUpRecord
+     * @param profile
+     * @return 가입한 회원 정보 반환
+     */
+    public User oAuthSignup(OAuthSignUpRecord oAuthSignUpRecord, MultipartFile profile) {
+        // 주소 설정
+        String address = (oAuthSignUpRecord.geoCode().equals("0"))  // 세종시는 구가 없음.
+                ? codeService.getAddress(oAuthSignUpRecord.pGeoCode(), true)
+                : codeService.getAddress(oAuthSignUpRecord.geoCode(), false);
+
+        // USER & PET 저장
+        User oAuthUser = save(oAuthSignUpRecord.makeUser(oAuthSignUpRecord.userSocial(), address));
+        Pet pet = petService.register(oAuthSignUpRecord.makePet(oAuthUser));
+
+        archiveService.registerWelcome(oAuthUser.getUserId()); // WELCOME 업적 부여
+        jdbcTemplatePointRepository.createUserPoint(oAuthUser); // Point 생성
+        categoryCountRepository.save(new CategoryCount().create(oAuthUser.getUserId()));
+
+//        rankingService.rankingByPoint(); // 랭킹 업데이트
+        return oAuthUser.setPet(pet).setProfile( // User Profile 등록
+                profile.isEmpty()
+                        ? DEFAULT_PROFILE
+                        : photoService.uploadProfile(oAuthUser.getUserId(), profile));
     }
 
     /**
@@ -80,22 +122,19 @@ public class UserService {
      * @throws Exception
      */
     public void deleteUser(int userId) throws Exception {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
-        Pet pet = petRepository.findByUserId(userId).orElseThrow(() -> new NullPointerException("NOT FOUND PET"));
-
+        User user = getUserById(userId);
         if (user.getUserSocial().equals(UserSocial.K))
             kakaoService.logout(user.getKakaoId()); // kakao 로그아웃
 
+        certRepository.deleteAllByUserUserId(userId);
         commentRepository.deleteAllByUserId(userId);
-        certRepository.deleteAllByUserId(userId);
-        likeListRepository.deleteByUserId(userId);; // USER가 좋아요 누른 DATA 삭제
-
-        jdbcTemplateRankingRepository.deleteAllByUserId(userId);
-        jdbcTemplatePointRepository.deleteAllByUserId(userId);
-
+        likeListRepository.deleteByUserId(userId); // USER가 좋아요 누른 DATA 삭제
         categoryCountRepository.deleteByUserId(userId);
 
-        petRepository.delete(pet);
+        jdbcTemplatePointRepository.deleteAllByUserId(userId);
+        jdbcTemplateRankingRepository.deleteAllByUserId(userId);
+
+        petRepository.delete(user.getPet());
         userRepository.delete(user);
 
         objectStorageService.deleteObject(BucketName.PROFILE, userId + "_profile.webp");
@@ -107,10 +146,8 @@ public class UserService {
      * @param newPassword
      */
     public void changePassword(String checkedEmail, String newPassword) {
-        User user = userRepository.findByEmail(checkedEmail).orElseThrow(() -> new IllegalArgumentException("The email does not exist"));
-        String encodedPassword = passwordEncoder.encode(newPassword);
-        user.setPassword(encodedPassword);
-        userRepository.save(user);
+        User user = getUserByEmail(checkedEmail);
+        user.setPassword(passwordEncoder.encode(newPassword));
     }
 
 
@@ -120,8 +157,7 @@ public class UserService {
      * @return 존재 여부 반환
      */
     public boolean isPhoneNoExisting(String phoneNo) {
-        Optional<User> findUser = userRepository.findByPhoneNo(phoneNo);
-        return findUser.isPresent();
+        return userRepository.findByPhoneNo(phoneNo).isPresent();
     }
 
     /**
@@ -130,8 +166,7 @@ public class UserService {
      * @return 존재 여부 반환
      */
     public boolean isEmailExisting(String email) {
-        Optional<User> findUser = userRepository.findByEmail(email);
-        return findUser.isPresent();
+        return userRepository.findByEmail(email).isPresent();
     }
 
     /**
@@ -140,8 +175,7 @@ public class UserService {
      * @return 존재 여부 반환
      */
     public boolean isNameExisting(String name) {
-        Optional<User> findUser = userRepository.findByName(name);
-        return findUser.isPresent();
+        return userRepository.findByName(name).isPresent();
     }
 
     /**
@@ -160,7 +194,6 @@ public class UserService {
      * @return 수정된 알람 동의 여부 반환
      */
     public boolean changeNotify(int userId){
-        userRepository.updateNotify(userId, !getUserById(userId).isNotify());
         return getUserById(userId).setNotify();
     }
 
@@ -169,14 +202,13 @@ public class UserService {
                 .orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
     }
 
-    public Page<User> getUserAll(int currentPage, int pageSize) {
-        PageRequest pageRequest = PageRequest.of(currentPage, pageSize, Sort.by("registDt").descending()); // 내림차순 정렬
-
-        return userRepository.findAll(pageRequest);
+    public Page<UserResDTO> getUserAll(Pageable pageable) {
+        Page<User> users = userRepository.findAll(pageable);
+        return users.map(UserResDTO::new);
     }
 
     public User getUserById(int userId) {
-        return userRepository.findById(userId)
+        return userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
     }
 
@@ -202,12 +234,6 @@ public class UserService {
     public User changeUserInfo(ModifyUserRecord modifyUserRecord) {
         User user = getUserById(modifyUserRecord.userId());
 
-        if (modifyUserRecord.name() != null)
-            user.setName(modifyUserRecord.name());
-
-        if (modifyUserRecord.profileUrl() != null)
-            user.setProfile(modifyUserRecord.profileUrl());
-
         if (modifyUserRecord.geoCode() != null && modifyUserRecord.pGeoCode() != null) {
             user.setGeoCode(modifyUserRecord.geoCode());
             user.setPGeoCode(modifyUserRecord.pGeoCode());
@@ -220,6 +246,8 @@ public class UserService {
 
             jdbcTemplatePointRepository.changeGeoCode(user.getUserId(), modifyUserRecord.geoCode());
         }
+
+        Optional.ofNullable(modifyUserRecord.name()).ifPresent(user::setName);
 
         return user;
     }
