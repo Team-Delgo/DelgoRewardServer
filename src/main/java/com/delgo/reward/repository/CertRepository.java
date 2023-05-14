@@ -33,7 +33,7 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
 
     // 자신 거 조회라 is_correct_photo 없어도 됨.
     @EntityGraph(attributePaths = {"user", "likeLists"})
-    @Query(value = "select c from Certification c where c.user.userId = :userId and  c.createdDate between :startDt and :endDt order by c.createdDate desc")
+    @Query(value = "select c from Certification c where c.user.userId = :userId and  c.registDt between :startDt and :endDt order by c.registDt desc")
     List<Certification> findCertByDateAndUser(@Param("userId") int userId, @Param("startDt") LocalDateTime startDt, @Param("endDt") LocalDateTime endDate);
 
     @EntityGraph(attributePaths = {"user", "likeLists"})
@@ -45,7 +45,7 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     Slice<Certification> findCertByMungple(@Param("mungpleId") int mungpleId, Pageable pageable);
 
     @EntityGraph(attributePaths = {"user", "likeLists"})
-    @Query(value = "select c from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrectPhoto = true order by c.createdDate desc")
+    @Query(value = "select c from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrectPhoto = true order by c.registDt desc")
     List<Certification> findRecentCert(@Param("userId") int userId, Pageable pageable);
 
     @EntityGraph(attributePaths = {"user", "likeLists"})
@@ -71,6 +71,6 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @Query(value = "select count(c) from Certification c where c.user.userId = :userId and c.categoryCode = :categoryCode and c.mungpleId = :mungpleId")
     Integer countCertByCategory(@Param("userId") int userId, @Param("categoryCode") String categoryCode, @Param("mungpleId") int mungpleId);
 
-    @Query(value = "select c from Certification c where c.createdDate between :startDt and :endDt order by c.createdDate desc")
+    @Query(value = "select c from Certification c where c.registDt between :startDt and :endDt order by c.registDt desc")
     List<Certification> findCertByDate(@Param("startDt") LocalDateTime startDt, @Param("endDt") LocalDateTime endDate);
 }

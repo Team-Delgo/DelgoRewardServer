@@ -34,7 +34,7 @@ public class UserResDTO {
     private LocalDate birthday;
 
     @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
-    private LocalDateTime createdDate;
+    private LocalDateTime registDt;
 
     public UserResDTO(User user){
         // User
@@ -52,6 +52,6 @@ public class UserResDTO {
         petName = user.getPet().getName();
         breedName = user.getPet().getBreedName();
         birthday = user.getPet().getBirthday();
-        createdDate = user.getCreatedDate();
+        registDt = user.getRegistDt();
     }
 }

@@ -109,7 +109,7 @@ public class CertController extends CommController {
     public ResponseEntity getCategory(
             @RequestParam Integer userId,
             @RequestParam String categoryCode,
-            @PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
         // Validate - Blank Check; [ String 만 해주면 됨 ]
         if (categoryCode.isBlank()) return ErrorReturn(ApiCode.PARAM_ERROR);
         return SuccessReturn(certService.getCertListByCategory(userId, categoryCode, pageable));
@@ -167,7 +167,7 @@ public class CertController extends CommController {
     public ResponseEntity getMungplePagingData(
             @RequestParam Integer userId,
             @RequestParam Integer mungpleId,
-            @PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
         return SuccessReturn(certService.getCertListByMungpleId(userId, mungpleId, pageable));
     }
 
@@ -181,7 +181,7 @@ public class CertController extends CommController {
     public ResponseEntity getPagingData(
             @RequestParam Integer userId,
             @RequestParam(required = false) Integer certificationId,
-            @PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
         return (certificationId == null)
                 ? SuccessReturn(certService.getCertAll(userId, pageable))
                 : SuccessReturn(certService.getCertAllExcludeSpecificCert(userId, certificationId,pageable));
