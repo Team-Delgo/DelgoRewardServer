@@ -29,7 +29,7 @@ public class CertResDTO {
     private int likeCount; // 좋아요 개수
 
     @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
-    private LocalDateTime createdDate;
+    private LocalDateTime registDt;
 
     public CertResDTO(Certification certification, Integer ownerId) {
         certificationId = certification.getCertificationId();
@@ -41,7 +41,7 @@ public class CertResDTO {
         address = certification.getAddress();
         photoUrl = certification.getPhotoUrl();
         commentCount = certification.getCommentCount();
-        createdDate = certification.getCreatedDate();
+        registDt = certification.getRegistDt();
         likeCount = (int) certification.getLikeLists().stream().filter(LikeList::isLike).count();
         isLike = certification.getLikeLists().stream().anyMatch(likeList -> likeList.getUserId().equals(ownerId) && likeList.isLike());
     }
@@ -56,6 +56,6 @@ public class CertResDTO {
         address = certification.getAddress();
         photoUrl = certification.getPhotoUrl();
         commentCount = certification.getCommentCount();
-        createdDate = certification.getCreatedDate();
+        registDt = certification.getRegistDt();
     }
 }
