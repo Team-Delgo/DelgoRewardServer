@@ -12,7 +12,7 @@ public record CertRecord(
         @NotNull Integer userId,
         @NotBlank String categoryCode,
         @NotNull Integer mungpleId,
-        @NotBlank String placeName,
+        @NotNull String placeName,
         @NotBlank String description,
         String latitude,
         String longitude) {
