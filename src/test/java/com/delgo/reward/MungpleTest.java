@@ -42,4 +42,14 @@ public class MungpleTest {
 
         //then
     }
+
+    @Test
+    public void deleteDuplicateMungpleTest() {
+        //given
+
+        //when
+        mungpleService.deleteDuplicateMungple();
+
+        //then
+    }
 }
