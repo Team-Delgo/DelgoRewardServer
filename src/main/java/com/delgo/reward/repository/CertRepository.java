@@ -37,10 +37,6 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     List<Certification> findCertByDateAndUser(@Param("userId") int userId, @Param("startDt") LocalDateTime startDt, @Param("endDt") LocalDateTime endDate);
 
     @EntityGraph(attributePaths = {"user", "likeLists"})
-    @Query(value = "select c from Certification c where c.user.userId  not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrectPhoto = true")
-    Slice<Certification> findAllByPaging(@Param("userId") int userId, Pageable pageable);
-
-    @EntityGraph(attributePaths = {"user", "likeLists"})
     @Query(value = "select c from Certification c where c.mungpleId = :mungpleId and c.isCorrectPhoto = true")
     Slice<Certification> findCertByMungple(@Param("mungpleId") int mungpleId, Pageable pageable);
 
@@ -51,10 +47,6 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @EntityGraph(attributePaths = {"user", "likeLists"})
     @Query(value = "SELECT c FROM Certification c where c.isExpose = true and c.isCorrectPhoto = true order by RAND()")
     List<Certification> findByIsExpose(Pageable pageable);
-
-    @EntityGraph(attributePaths = {"user", "likeLists"})
-    @Query(value = "select c from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.certificationId != :certificationId and c.isCorrectPhoto = true")
-    Slice<Certification> findAllExcludeSpecificCert(@Param("userId") int userId, @Param("certificationId") int certificationId, Pageable pageable);
 
     @Query(value = "select count(c) from Certification c where c.user.userId = :userId and c.mungpleId != 0")
     Integer countOfCertByMungpleAndUser(@Param("userId") int userId);
@@ -73,4 +65,16 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
 
     @Query(value = "select c from Certification c where c.registDt between :startDt and :endDt order by c.registDt desc")
     List<Certification> findCertByDate(@Param("startDt") LocalDateTime startDt, @Param("endDt") LocalDateTime endDate);
+
+
+
+    @EntityGraph(attributePaths = {"likeLists"})
+    @Query("SELECT DISTINCT c FROM Certification c JOIN FETCH c.user u JOIN FETCH u.pet WHERE c.certificationId IN :ids")
+    List<Certification> findCertByIds(@Param("ids") List<Integer> ids);
+
+    @Query(value = "select c.certificationId from Certification c where c.user.userId  not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrectPhoto = true")
+    Slice<Integer> findAllCertIdByPaging(@Param("userId") int userId, Pageable pageable);
+
+    @Query(value = "select c.certificationId from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.certificationId != :certificationId and c.isCorrectPhoto = true")
+    Slice<Integer> findAllExcludeSpecificCert(@Param("userId") int userId, @Param("certificationId") int certificationId, Pageable pageable);
 }
