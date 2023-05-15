@@ -178,7 +178,7 @@ public class CertController extends CommController {
      * Response Data : 인증 모두 조회 ( 페이징 처리 되어 있음 )
      */
     @GetMapping("/all")
-    public ResponseEntity getPagingData(
+    public ResponseEntity getAllData(
             @RequestParam Integer userId,
             @RequestParam(required = false) Integer certificationId,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
