@@ -25,25 +25,18 @@ public class CertResDTO {
     private String userName; // 작성자 이름
     private String userProfile; // 작성자 프로필
 
-    private Boolean isLike; // 내가 좋아요를 눌렀는가?
-    private int likeCount; // 좋아요 개수
+    private Boolean isLike = false; // 내가 좋아요를 눌렀는가?
+    private int likeCount = 0; // 좋아요 개수
 
     @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
     private LocalDateTime registDt;
 
     public CertResDTO(Certification certification, Integer ownerId) {
-        certificationId = certification.getCertificationId();
-        userId = certification.getUser().getUserId();
-        userName = certification.getUser().getName();
-        userProfile = certification.getUser().getProfile();
-        placeName = certification.getPlaceName();
-        description = certification.getDescription();
-        address = certification.getAddress();
-        photoUrl = certification.getPhotoUrl();
-        commentCount = certification.getCommentCount();
-        registDt = certification.getRegistDt();
-        likeCount = (int) certification.getLikeLists().stream().filter(LikeList::isLike).count();
-        isLike = certification.getLikeLists().stream().anyMatch(likeList -> likeList.getUserId().equals(ownerId) && likeList.isLike());
+        this(certification);
+        if(certification.getLikeLists() != null) {
+            likeCount = (int) certification.getLikeLists().stream().filter(LikeList::isLike).count();
+            isLike = certification.getLikeLists().stream().anyMatch(likeList -> likeList.getUserId().equals(ownerId) && likeList.isLike());
+        }
     }
 
     public CertResDTO(Certification certification) {
