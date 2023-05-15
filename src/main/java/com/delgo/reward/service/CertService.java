@@ -13,8 +13,8 @@ import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.cert.CertByAchvResDTO;
 import com.delgo.reward.dto.cert.CertResDTO;
+import com.delgo.reward.dto.comm.PageResDTO;
 import com.delgo.reward.record.certification.CertRecord;
-import com.delgo.reward.record.certification.ModifyCertRecord;
 import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.repository.JDBCTemplateRankingRepository;
 import com.google.api.client.util.ArrayMap;
@@ -121,14 +121,29 @@ public class CertService {
                 .collect(Collectors.toList());
     }
 
-    // 전체 Certification 리스트 조회
-    public Slice<CertResDTO> getCertAll(int userId, Pageable pageable) {
-        return certRepository.findAllByPaging(userId, pageable).map(cert -> new CertResDTO(cert, userId));
+    // Ids로 List<Certification> 조회
+    public List<Certification> getCertByIds(List<Integer> ids){
+        return certRepository.findCertByIds(ids);
+    }
+
+    /*
+     * 전체 Certification 리스트 조회 Pagaing, EntityGraph 같이 사용시 메모리 과부하..
+     * 1. 페이징으로 CertId 조회
+     * 2. CertId로 EntityGraph사용해서 실제 객체 조회해오기.
+     */
+    public PageResDTO<CertResDTO, Integer> getCertAll(int userId, Pageable pageable) {
+        Slice<Integer> slice = certRepository.findAllCertIdByPaging(userId, pageable);
+        List<CertResDTO> certs = getCertByIds(slice.getContent()).stream().map(CertResDTO::new).toList();
+
+        return new PageResDTO<>(certs, slice);
     }
 
     // 전체 Certification 리스트 조회 ( 특정 인증 제외 )
-    public Slice<CertResDTO> getCertAllExcludeSpecificCert(int userId, int certificationId, Pageable pageable) {
-        return certRepository.findAllExcludeSpecificCert(userId,certificationId, pageable).map(cert -> new CertResDTO(cert, userId));
+    public PageResDTO<CertResDTO, Integer> getCertAllExcludeSpecificCert(int userId, int certificationId, Pageable pageable) {
+        Slice<Integer> slice = certRepository.findAllExcludeSpecificCert(userId, certificationId, pageable);
+        List<CertResDTO> certs = getCertByIds(slice.getContent()).stream().map(CertResDTO::new).toList();
+
+        return new PageResDTO<>(certs, slice);
     }
 
     // mungpleId로 Certification 조회
