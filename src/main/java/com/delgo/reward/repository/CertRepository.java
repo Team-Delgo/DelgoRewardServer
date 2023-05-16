@@ -27,10 +27,6 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @Query(value = "select c from Certification c where c.user.userId = :userId and  c.registDt between :startDt and :endDt order by c.registDt desc")
     List<Certification> findCertByDateAndUser(@Param("userId") int userId, @Param("startDt") LocalDateTime startDt, @Param("endDt") LocalDateTime endDate);
 
-    @EntityGraph(attributePaths = {"user", "likeLists"})
-    @Query(value = "select c from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrectPhoto = true order by c.registDt desc")
-    List<Certification> findRecentCert(@Param("userId") int userId, Pageable pageable);
-
     @Query(value = "select count(c) from Certification c where c.user.userId = :userId and c.mungpleId != 0")
     Integer countOfCertByMungpleAndUser(@Param("userId") int userId);
 
@@ -76,4 +72,7 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
 
     @Query(value = "select c.certificationId from Certification c where c.mungpleId = :mungpleId and c.isCorrectPhoto = true")
     Slice<Integer> findCertByMungple(@Param("mungpleId") int mungpleId, Pageable pageable);
+
+    @Query(value = "select c.certificationId from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrectPhoto = true order by c.registDt desc")
+    List<Integer> findRecentCert(@Param("userId") int userId, Pageable pageable);
 }
