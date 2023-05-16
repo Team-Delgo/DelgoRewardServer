@@ -20,12 +20,6 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     void deleteAllByUserUserId(int userId);
 
     @EntityGraph(attributePaths = {"user", "likeLists"})
-    Slice<Certification> findByUserUserId(int userId, Pageable pageable);
-
-    @EntityGraph(attributePaths = {"user", "likeLists"})
-    Slice<Certification> findByUserUserIdAndCategoryCode(int userId, String categoryCode, Pageable pageable);
-
-    @EntityGraph(attributePaths = {"user", "likeLists"})
     Optional<Certification> findCertByCertificationId(Integer certId);
 
     // 자신 거 조회라 is_correct_photo 없어도 됨.
@@ -73,8 +67,14 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
 
     // 자기 자신 인증 조회
     @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId")
-    List<Integer> findCertIdByUserUserId(int userId);
+    List<Integer> findCertIdByUserUserId(@Param("userId") int userId);
 
     @Query(value = "SELECT c.certificationId FROM Certification c where c.isExpose = true and c.isCorrectPhoto = true order by RAND()")
     List<Integer> findCertIdByIsExpose(Pageable pageable);
+
+    @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId")
+    Slice<Integer> findByUserUserId(@Param("userId") int userId, Pageable pageable);
+
+    @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId and c.categoryCode = :categoryCode")
+    Slice<Integer> findByUserUserIdAndCategoryCode(@Param("userId")int userId, @Param("categoryCode") String categoryCode, Pageable pageable);
 }

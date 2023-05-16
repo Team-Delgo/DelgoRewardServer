@@ -152,12 +152,13 @@ public class CertService {
     }
 
     // 카테고리 별 조회
-    public Slice<CertResDTO> getCertListByCategory(int userId, String categoryCode, Pageable pageable) {
-        Slice<Certification> certifications = (!categoryCode.equals(CategoryCode.TOTAL.getCode()))
+    public PageResDTO<CertResDTO, Integer> getCertListByCategory(int userId, String categoryCode, Pageable pageable) {
+        Slice<Integer> slice = (!categoryCode.equals(CategoryCode.TOTAL.getCode()))
                 ? certRepository.findByUserUserIdAndCategoryCode(userId, categoryCode, pageable)
                 : certRepository.findByUserUserId(userId, pageable);
 
-        return certifications.map(cert -> new CertResDTO(cert,userId));
+        List<CertResDTO> certs = getCertByIds(slice.getContent()).stream().map(CertResDTO::new).toList();
+        return new PageResDTO<>(certs, slice);
     }
 
     // 카테고리 별 개수 조회
