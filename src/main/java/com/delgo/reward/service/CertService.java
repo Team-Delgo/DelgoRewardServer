@@ -157,7 +157,7 @@ public class CertService {
                 ? certRepository.findByUserUserIdAndCategoryCode(userId, categoryCode, pageable)
                 : certRepository.findByUserUserId(userId, pageable);
 
-        List<CertResDTO> certs = getCertByIds(slice.getContent()).stream().map(CertResDTO::new).toList();
+        List<CertResDTO> certs = getCertByIds(slice.getContent()).stream().map(cert -> new CertResDTO(cert, userId)).toList();
         return new PageResDTO<>(certs, slice);
     }
 
