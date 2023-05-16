@@ -202,11 +202,6 @@ public class UserService {
                 .orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
     }
 
-    public Page<UserResDTO> getUserAll(Pageable pageable) {
-        Page<User> users = userRepository.findAll(pageable);
-        return users.map(UserResDTO::new);
-    }
-
     public User getUserById(int userId) {
         return userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NullPointerException("NOT FOUND USER"));

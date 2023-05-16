@@ -16,7 +16,4 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByUserId(Integer userId);
     Optional<User> findByPhoneNo(String phoneNo);
     Optional<User> findByAppleUniqueNo(String appleUniqueNo);
-
-    @EntityGraph(attributePaths = "pet")
-    Page<User> findAll(Pageable pageable);
 }

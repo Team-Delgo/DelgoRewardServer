@@ -12,6 +12,7 @@ import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.cert.CertByAchvResDTO;
+import com.delgo.reward.dto.cert.CertByMungpleResDTO;
 import com.delgo.reward.dto.cert.CertResDTO;
 import com.delgo.reward.dto.comm.PageResDTO;
 import com.delgo.reward.record.certification.CertRecord;
@@ -147,17 +148,21 @@ public class CertService {
     }
 
     // mungpleId로 Certification 조회
-    public Slice<CertResDTO> getCertListByMungpleId(int userId, int mungpleId, Pageable pageable) {
-        return certRepository.findCertByMungple(mungpleId, pageable).map(cert -> new CertResDTO(cert, userId));
+    public PageResDTO<CertByMungpleResDTO, Integer> getCertListByMungpleId(int userId, int mungpleId, Pageable pageable) {
+        Slice<Integer> slice = certRepository.findCertByMungple(mungpleId, pageable);
+        List<CertByMungpleResDTO> certs = getCertByIds(slice.getContent()).stream().map(cert -> new CertByMungpleResDTO(cert, userId)).toList();
+
+        return new PageResDTO<>(certs, slice);
     }
 
     // 카테고리 별 조회
-    public Slice<CertResDTO> getCertListByCategory(int userId, String categoryCode, Pageable pageable) {
-        Slice<Certification> certifications = (!categoryCode.equals(CategoryCode.TOTAL.getCode()))
+    public PageResDTO<CertResDTO, Integer> getCertListByCategory(int userId, String categoryCode, Pageable pageable) {
+        Slice<Integer> slice = (!categoryCode.equals(CategoryCode.TOTAL.getCode()))
                 ? certRepository.findByUserUserIdAndCategoryCode(userId, categoryCode, pageable)
                 : certRepository.findByUserUserId(userId, pageable);
 
-        return certifications.map(cert -> new CertResDTO(cert,userId));
+        List<CertResDTO> certs = getCertByIds(slice.getContent()).stream().map(cert -> new CertResDTO(cert, userId)).toList();
+        return new PageResDTO<>(certs, slice);
     }
 
     // 카테고리 별 개수 조회
@@ -182,8 +187,8 @@ public class CertService {
 
     // 최근 인증 조회
     public List<CertResDTO> getRecentCert(int userId, int count) {
-        return certRepository.findRecentCert(userId, PageRequest.of(0, count)).stream()
-                .map(cert -> new CertResDTO(cert,userId)).collect(Collectors.toList());
+        List<Integer> certIds = certRepository.findRecentCert(userId, PageRequest.of(0, count));
+        return getCertByIds(certIds).stream().map(cert -> new CertResDTO(cert, userId)).toList();
     }
 
     public Certification changeCertPhotoUrl(Certification certification, String text) {
@@ -204,12 +209,14 @@ public class CertService {
 
     // userId로 Certification List 조회
     public List<Certification> getCertListByUserId(int userId) {
-        return certRepository.findByUserUserId(userId);
+        List<Integer> certIds = certRepository.findCertIdByUserUserId(userId);
+        return getCertByIds(certIds);
     }
 
     // 노출 가능한 인증 조회 ( Map에서 사용 )
     public List<Certification> getExposedCertList(int count) {
-        return certRepository.findByIsExpose(PageRequest.of(0, count));
+        List<Integer> certIds = certRepository.findCertIdByIsExpose(PageRequest.of(0, count));
+        return getCertByIds(certIds);
     }
 
     // Map TEST
