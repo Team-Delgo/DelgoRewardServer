@@ -12,6 +12,7 @@ import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.cert.CertByAchvResDTO;
+import com.delgo.reward.dto.cert.CertByMungpleResDTO;
 import com.delgo.reward.dto.cert.CertResDTO;
 import com.delgo.reward.dto.comm.PageResDTO;
 import com.delgo.reward.record.certification.CertRecord;
@@ -147,8 +148,11 @@ public class CertService {
     }
 
     // mungpleId로 Certification 조회
-    public Slice<CertResDTO> getCertListByMungpleId(int userId, int mungpleId, Pageable pageable) {
-        return certRepository.findCertByMungple(mungpleId, pageable).map(cert -> new CertResDTO(cert, userId));
+    public PageResDTO<CertByMungpleResDTO, Integer> getCertListByMungpleId(int userId, int mungpleId, Pageable pageable) {
+        Slice<Integer> slice = certRepository.findCertByMungple(mungpleId, pageable);
+        List<CertByMungpleResDTO> certs = getCertByIds(slice.getContent()).stream().map(cert -> new CertByMungpleResDTO(cert, userId)).toList();
+
+        return new PageResDTO<>(certs, slice);
     }
 
     // 카테고리 별 조회
