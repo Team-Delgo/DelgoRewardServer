@@ -28,10 +28,6 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     List<Certification> findCertByDateAndUser(@Param("userId") int userId, @Param("startDt") LocalDateTime startDt, @Param("endDt") LocalDateTime endDate);
 
     @EntityGraph(attributePaths = {"user", "likeLists"})
-    @Query(value = "select c from Certification c where c.mungpleId = :mungpleId and c.isCorrectPhoto = true")
-    Slice<Certification> findCertByMungple(@Param("mungpleId") int mungpleId, Pageable pageable);
-
-    @EntityGraph(attributePaths = {"user", "likeLists"})
     @Query(value = "select c from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrectPhoto = true order by c.registDt desc")
     List<Certification> findRecentCert(@Param("userId") int userId, Pageable pageable);
 
@@ -77,4 +73,7 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
 
     @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId and c.categoryCode = :categoryCode")
     Slice<Integer> findByUserUserIdAndCategoryCode(@Param("userId")int userId, @Param("categoryCode") String categoryCode, Pageable pageable);
+
+    @Query(value = "select c.certificationId from Certification c where c.mungpleId = :mungpleId and c.isCorrectPhoto = true")
+    Slice<Integer> findCertByMungple(@Param("mungpleId") int mungpleId, Pageable pageable);
 }
