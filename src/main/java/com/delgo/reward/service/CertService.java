@@ -187,8 +187,8 @@ public class CertService {
 
     // 최근 인증 조회
     public List<CertResDTO> getRecentCert(int userId, int count) {
-        return certRepository.findRecentCert(userId, PageRequest.of(0, count)).stream()
-                .map(cert -> new CertResDTO(cert,userId)).collect(Collectors.toList());
+        List<Integer> certIds = certRepository.findRecentCert(userId, PageRequest.of(0, count));
+        return getCertByIds(certIds).stream().map(cert -> new CertResDTO(cert, userId)).toList();
     }
 
     public Certification changeCertPhotoUrl(Certification certification, String text) {
