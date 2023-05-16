@@ -20,9 +20,6 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     void deleteAllByUserUserId(int userId);
 
     @EntityGraph(attributePaths = {"user", "likeLists"})
-    List<Certification> findByUserUserId(int userId);
-
-    @EntityGraph(attributePaths = {"user", "likeLists"})
     Slice<Certification> findByUserUserId(int userId, Pageable pageable);
 
     @EntityGraph(attributePaths = {"user", "likeLists"})
@@ -43,10 +40,6 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @EntityGraph(attributePaths = {"user", "likeLists"})
     @Query(value = "select c from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrectPhoto = true order by c.registDt desc")
     List<Certification> findRecentCert(@Param("userId") int userId, Pageable pageable);
-
-    @EntityGraph(attributePaths = {"user", "likeLists"})
-    @Query(value = "SELECT c FROM Certification c where c.isExpose = true and c.isCorrectPhoto = true order by RAND()")
-    List<Certification> findByIsExpose(Pageable pageable);
 
     @Query(value = "select count(c) from Certification c where c.user.userId = :userId and c.mungpleId != 0")
     Integer countOfCertByMungpleAndUser(@Param("userId") int userId);
@@ -77,4 +70,11 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
 
     @Query(value = "select c.certificationId from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.certificationId != :certificationId and c.isCorrectPhoto = true")
     Slice<Integer> findAllExcludeSpecificCert(@Param("userId") int userId, @Param("certificationId") int certificationId, Pageable pageable);
+
+    // 자기 자신 인증 조회
+    @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId")
+    List<Integer> findCertificationIdByUserUserId(int userId);
+
+    @Query(value = "SELECT c.certificationId FROM Certification c where c.isExpose = true and c.isCorrectPhoto = true order by RAND()")
+    List<Integer> findCertificationIdByIsExpose(Pageable pageable);
 }
