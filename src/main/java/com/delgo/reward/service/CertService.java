@@ -204,13 +204,13 @@ public class CertService {
 
     // userId로 Certification List 조회
     public List<Certification> getCertListByUserId(int userId) {
-        List<Integer> certIds = certRepository.findCertificationIdByUserUserId(userId);
+        List<Integer> certIds = certRepository.findCertIdByUserUserId(userId);
         return getCertByIds(certIds);
     }
 
     // 노출 가능한 인증 조회 ( Map에서 사용 )
     public List<Certification> getExposedCertList(int count) {
-        List<Integer> certIds = certRepository.findCertificationIdByIsExpose(PageRequest.of(0, count));
+        List<Integer> certIds = certRepository.findCertIdByIsExpose(PageRequest.of(0, count));
         return getCertByIds(certIds);
     }
 

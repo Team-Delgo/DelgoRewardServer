@@ -73,8 +73,8 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
 
     // 자기 자신 인증 조회
     @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId")
-    List<Integer> findCertificationIdByUserUserId(int userId);
+    List<Integer> findCertIdByUserUserId(int userId);
 
     @Query(value = "SELECT c.certificationId FROM Certification c where c.isExpose = true and c.isCorrectPhoto = true order by RAND()")
-    List<Integer> findCertificationIdByIsExpose(Pageable pageable);
+    List<Integer> findCertIdByIsExpose(Pageable pageable);
 }
