@@ -1,15 +1,10 @@
 package com.delgo.reward.comm.quartz;
 
-import com.delgo.reward.comm.quartz.job.ClassificationCategory;
-import com.delgo.reward.comm.quartz.job.InitWeeklyPoint;
-import com.delgo.reward.comm.quartz.job.RefreshDailyRanking;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.quartz.JobBuilder.newJob;

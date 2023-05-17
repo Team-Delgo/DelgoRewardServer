@@ -3,7 +3,6 @@ package com.delgo.reward.comm.async;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.PhotoService;
-import com.delgo.reward.service.RankingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +20,7 @@ public class CertAsyncService {
 
     private final CertService certService;
     private final PhotoService photoService;
-    private final RankingService rankingService;
+//    private final RankingService rankingService;
 
     @Async
     public void doSomething(Integer certificationId) {
@@ -41,6 +40,6 @@ public class CertAsyncService {
         // 안 쓰는 jpg 파일 삭제
         file.delete();
         // 랭킹 실시간으로 집계
-        rankingService.rankingByPoint();
+//        rankingService.rankingByPoint();
     }
 }
