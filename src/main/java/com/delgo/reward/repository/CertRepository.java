@@ -20,7 +20,7 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     void deleteAllByUserUserId(int userId);
 
     @EntityGraph(attributePaths = {"likeLists"})
-    @Query("SELECT DISTINCT c FROM Certification c JOIN FETCH c.user u JOIN FETCH u.pet WHERE c.certificationId IN :ids")
+    @Query("SELECT DISTINCT c FROM Certification c JOIN FETCH c.user u JOIN FETCH u.pet WHERE c.certificationId IN :ids order by c.registDt desc")
     List<Certification> findCertByIds(@Param("ids") List<Integer> ids);
 
     @EntityGraph(attributePaths = {"user", "likeLists"})

@@ -1,17 +1,12 @@
 package com.delgo.reward;
 
 
-import com.delgo.reward.domain.achievements.Achievements;
 import com.delgo.reward.service.AchievementsService;
-import com.delgo.reward.service.RankingService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-
-import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -22,8 +17,6 @@ public class AchievementsTest {
     @Autowired
     private AchievementsService achievementsService;
 
-    @Autowired
-    private RankingService rankingService;
 
 //    @Test
 //    public void checkEarnAchievementsTest() {

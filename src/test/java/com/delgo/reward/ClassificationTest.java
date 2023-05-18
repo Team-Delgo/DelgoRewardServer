@@ -1,9 +1,13 @@
 package com.delgo.reward;
 
 import com.delgo.reward.domain.certification.Certification;
+import com.delgo.reward.domain.user.CategoryCount;
+import com.delgo.reward.domain.user.User;
 import com.delgo.reward.mongoDomain.Classification;
 import com.delgo.reward.mongoRepository.ClassificationRepository;
 import com.delgo.reward.mongoService.ClassificationService;
+import com.delgo.reward.repository.CategoryCountRepository;
+import com.delgo.reward.repository.UserRepository;
 import com.delgo.reward.service.CertService;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -21,7 +25,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -32,6 +39,10 @@ public class ClassificationTest {
     private ClassificationService classificationService;
     @Autowired
     private ClassificationRepository classificationRepository;
+    @Autowired
+    private CategoryCountRepository categoryCountRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Test
     public void classificationByCertificationTest() throws IOException, ParseException {
@@ -172,16 +183,10 @@ public class ClassificationTest {
     }
 
     @Test
-    public void TEST_GET_CLASSIFICATION(){
-        List<Classification> classificationList = classificationRepository.findAll();
-        List<Certification> certificationList = new ArrayList<>();
-
-        for(Classification classification: classificationList){
-            certificationList.add(classification.getCertification());
-        }
-
-        for(Certification certification: certificationList){
-            System.out.println(classificationRepository.findClassificationByCertification_CertificationId(certification.getCertificationId()).get().getUser());
-        }
+    public void TEST_SET_CATEGORYCOUNT(){
+        List<User> users = userRepository.findAll();
+        users.forEach(user->{
+            categoryCountRepository.save(new CategoryCount().create(user.getUserId()));
+        });
     }
 }
