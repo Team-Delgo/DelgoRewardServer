@@ -24,6 +24,7 @@ public class LikeListService {
     private final NotifyService notifyService;
 
     // 좋아요
+    @Transactional
     public void like(int userId, int certificationId, int ownerId) throws IOException {
         if (hasLiked(userId, certificationId)) { // 이미 기존의 좋아요 Data가 존재할 경우
             updateIsLike(userId, certificationId);
