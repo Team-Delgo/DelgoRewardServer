@@ -6,8 +6,8 @@ import com.delgo.reward.domain.Comment;
 import com.delgo.reward.domain.notify.NotifyType;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.GetCommentDTO;
-import com.delgo.reward.dto.ReplyDTO;
 import com.delgo.reward.record.comment.CommentRecord;
+import com.delgo.reward.record.comment.ReplyRecord;
 import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.repository.CommentRepository;
 import com.delgo.reward.repository.JDBCTemplateCommentRepository;
@@ -43,7 +43,6 @@ public class CommentService {
      * @throws IOException
      */
     public Comment createComment(CommentRecord commentRecord) throws IOException {
-        User user = userService.getUserById(commentRecord.userId()); // 댓글 등록 User 조회
         Comment comment = commentRepository.save(commentRecord.toEntity()); // 댓글 저장
         Certification certification = certService.getCertById(commentRecord.certificationId()); // 댓글 저장한 인증글 조회
 
@@ -51,7 +50,7 @@ public class CommentService {
         int commentCount = commentRepository.countCommentByCertId(commentRecord.certificationId());
         certification.setCommentCount(commentCount);
 
-        String notifyMsg = user.getName() + "님이 나의 게시글에 댓글을 남겼습니다.\n" + commentRecord.content();
+        String notifyMsg = userService.getUserById(commentRecord.userId()).getName() + "님이 나의 게시글에 댓글을 남겼습니다.\n" + commentRecord.content();
         User owner = certification.getUser();
         notifyService.saveNotify(owner.getUserId(), NotifyType.COMMENT, notifyMsg);
         fcmService.commentPush(owner.getUserId(), notifyMsg);
@@ -61,25 +60,31 @@ public class CommentService {
 
     /**
      * 유저가 답글을 작성하면 알림을 저장하고 인증 주인과 댓글 주인에게 푸시 알림을 보냄
-     * @param replyDTO
+     * @param replyRecord
      * @return 저장된 답글 데이터 반환
      * @throws IOException
      */
-    public Comment createReply(ReplyDTO replyDTO) throws IOException {
-        Comment comment = Comment.builder().isReply(true).certificationId(replyDTO.getCertificationId()).userId(replyDTO.getUserId()).content(replyDTO.getContent()).parentCommentId(replyDTO.getParentCommentId()).build();
+    public Comment createReply(ReplyRecord replyRecord) throws IOException {
+        Comment reply = commentRepository.save(replyRecord.toEntity());
+        Certification certification = certService.getCertById(replyRecord.certificationId()); // 댓글 저장한 인증글 조회
 
-        int certUserId = certService.getCertById(replyDTO.getCertificationId()).getUser().getUserId();
-        String certUserNotifyMsg = userService.getUserById(replyDTO.getUserId()).getName() + "님이 나의 게시글에 댓글을 남겼습니다.\n" + replyDTO.getContent();
+        // commentCount 계산
+        int commentCount = commentRepository.countCommentByCertId(replyRecord.certificationId());
+        certification.setCommentCount(commentCount);
 
-        int commentUserId = getCommentByCommentId(replyDTO.getParentCommentId()).getUserId();
-        String commentUserNotifyMsg = userService.getUserById(replyDTO.getUserId()).getName() + "님이 나의 댓글에 답글을 남겼습니다.\n" + replyDTO.getContent();
+        // 인증 유저 알림
+        int certOwnerId = certification.getUser().getUserId();
+        String certOwnerNotifyMsg = userService.getUserById(replyRecord.userId()).getName() + "님이 나의 게시글에 댓글을 남겼습니다.\n" + replyRecord.content();
+        notifyService.saveNotify(certOwnerId, NotifyType.COMMENT, certOwnerNotifyMsg);
+        fcmService.commentPush(certOwnerId, certOwnerNotifyMsg);
 
-        notifyService.saveNotify(certUserId, NotifyType.COMMENT, certUserNotifyMsg);
-        fcmService.commentPush(certUserId, certUserNotifyMsg);
-        notifyService.saveNotify(commentUserId, NotifyType.REPLY, commentUserNotifyMsg);
-        fcmService.commentPush(commentUserId, commentUserNotifyMsg);
+        // 부모 댓글 유저 알림
+        int commentOwnerId = getCommentByCommentId(replyRecord.parentCommentId()).getUserId();
+        String commentOwnerNotifyMsg = userService.getUserById(replyRecord.userId()).getName() + "님이 나의 댓글에 답글을 남겼습니다.\n" + replyRecord.content();
+        notifyService.saveNotify(commentOwnerId, NotifyType.REPLY, commentOwnerNotifyMsg);
+        fcmService.commentPush(commentOwnerId, commentOwnerNotifyMsg);
 
-        return commentRepository.save(comment);
+        return reply;
     }
 
     public List<GetCommentDTO> getCommentByCertificationId(int certificationId){
