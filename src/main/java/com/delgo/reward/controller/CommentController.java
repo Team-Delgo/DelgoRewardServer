@@ -4,9 +4,9 @@ import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
 import com.delgo.reward.domain.Comment;
 import com.delgo.reward.dto.GetCommentDTO;
-import com.delgo.reward.dto.ReplyDTO;
 import com.delgo.reward.dto.UpdateCommentDTO;
 import com.delgo.reward.record.comment.CommentRecord;
+import com.delgo.reward.record.comment.ReplyRecord;
 import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -39,14 +39,13 @@ public class CommentController extends CommController {
 
     /**
      * 답글 생성
-     * @param replyDTO
+     * @param replyRecord
      * @return 생성된 답글 데이터
      * @throws IOException
      */
     @PostMapping("/reply")
-    public ResponseEntity createReply(@Validated @RequestBody ReplyDTO replyDTO) throws IOException{
-        Comment comment = commentService.createReply(replyDTO);
-        return SuccessReturn(comment);
+    public ResponseEntity createReply(@Validated @RequestBody ReplyRecord replyRecord) throws IOException{
+        return SuccessReturn(commentService.createReply(replyRecord));
     }
 
     /**
