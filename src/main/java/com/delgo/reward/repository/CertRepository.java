@@ -23,8 +23,9 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @Query("SELECT DISTINCT c FROM Certification c JOIN FETCH c.user u JOIN FETCH u.pet WHERE c.certificationId IN :ids order by c.registDt desc")
     List<Certification> findCertByIds(@Param("ids") List<Integer> ids);
 
-    @EntityGraph(attributePaths = {"user", "likeLists"})
-    Optional<Certification> findCertByCertificationId(Integer certId);
+    @EntityGraph(attributePaths = {"likeLists"})
+    @Query("SELECT c FROM Certification c JOIN FETCH c.user u JOIN FETCH u.pet WHERE c.certificationId = :certId")
+    Optional<Certification> findCertByCertificationId(@Param("certId") Integer certId);
 
     @Query(value = "select count(c) from Certification c where c.user.userId = :userId and c.mungpleId != 0")
     Integer countOfCertByMungpleAndUser(@Param("userId") int userId);
