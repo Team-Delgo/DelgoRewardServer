@@ -25,9 +25,6 @@ public class CommentTest {
 
     @Test
     public void makeCommentCountTEST() {
-        //given
-
-        //when
         List<Certification> certifications = certRepository.findAll();
         for(Certification cert : certifications){
             // commentCount 업데이트
@@ -38,7 +35,6 @@ public class CommentTest {
                 cert.setCommentCount(commentCount);
             }
         }
-
-        //then
+        certRepository.saveAll(certifications);
     }
 }
