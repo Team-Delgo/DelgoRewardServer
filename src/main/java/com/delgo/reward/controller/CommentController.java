@@ -2,12 +2,10 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
-import com.delgo.reward.domain.Comment;
-import com.delgo.reward.dto.GetCommentDTO;
-import com.delgo.reward.dto.UpdateCommentDTO;
 import com.delgo.reward.record.comment.CommentRecord;
+import com.delgo.reward.record.comment.DeleteCommentRecord;
+import com.delgo.reward.record.comment.ModifyCommentRecord;
 import com.delgo.reward.record.comment.ReplyRecord;
-import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,15 +14,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class CommentController extends CommController {
+
     private final CommentService commentService;
-    private final CertService certificationService;
 
     /**
      * 댓글 생성
@@ -35,6 +32,40 @@ public class CommentController extends CommController {
     @PostMapping("/comment")
     public ResponseEntity createComment(@Validated @RequestBody CommentRecord commentRecord) throws IOException {
         return SuccessReturn(commentService.createComment(commentRecord));
+    }
+
+    /**
+     * 인증에 대한 댓글 조회
+     * @param certificationId
+     * @return 댓글 데이터
+     */
+    @GetMapping("/comment")
+    public ResponseEntity getComment(@RequestParam int certificationId){
+        return SuccessReturn(commentService.getCommentsByCertId(certificationId));
+    }
+
+    /**
+     * 댓글 / 답글 수정
+     * @param modifyCommentRecord
+     * @return 수정된 댓글 데이터
+     */
+    @PutMapping("/comment")
+    public ResponseEntity updateComment(@Validated @RequestBody ModifyCommentRecord modifyCommentRecord){
+        return commentService.modifyComment(modifyCommentRecord)
+                ? SuccessReturn()
+                : ErrorReturn(ApiCode.INVALID_USER_ERROR);
+    }
+
+    /**
+     * 댓글 / 답글 삭제
+     * @param deleteCommentRecord
+     * @return 성공 / 실패 여부
+     */
+    @DeleteMapping("/comment")
+    public ResponseEntity deleteComment(@Validated @RequestBody DeleteCommentRecord deleteCommentRecord){
+        return commentService.deleteComment(deleteCommentRecord)
+                ? SuccessReturn()
+                : ErrorReturn(ApiCode.INVALID_USER_ERROR);
     }
 
     /**
@@ -49,58 +80,13 @@ public class CommentController extends CommController {
     }
 
     /**
-     * 인증에 대한 댓글 조회
-     * @param certificationId
-     * @return 댓글 데이터
-     */
-    @GetMapping("/comment")
-    public ResponseEntity getComment(@RequestParam int certificationId){
-        List<GetCommentDTO> commentList = commentService.getCommentByCertificationId(certificationId);
-        return SuccessReturn(commentList);
-    }
-
-    /**
      * 댓글에 대한 답글 조회
      * @param parentCommentId
      * @return 답글 데이터
      */
     @GetMapping("/reply")
     public ResponseEntity getReply(@RequestParam int parentCommentId){
-        List<Comment> replyList = commentService.getReplyByParentCommentId(parentCommentId);
-        return SuccessReturn(replyList);
+        return SuccessReturn(commentService.getReplyByParentCommentId(parentCommentId));
     }
 
-    /**
-     * 댓글 / 답글 수정
-     * @param commentId
-     * @param updateCommentDTO
-     * @return 수정된 댓글 데이터
-     */
-    @PutMapping(value = {"/comment/{commentId}", "/comment"})
-    public ResponseEntity updateComment(@PathVariable Integer commentId, @RequestBody UpdateCommentDTO updateCommentDTO){
-        if(commentService.isCommentOwner(commentId, updateCommentDTO.getUserId())){
-            String updateContent = updateCommentDTO.getContent();
-            commentService.updateCommentByCommentId(commentId, updateContent);
-        }
-        else
-            return ErrorReturn(ApiCode.INVALID_USER_ERROR);
-        return SuccessReturn();
-    }
-
-    /**
-     * 댓글 / 답글 삭제
-     * @param commentId
-     * @param userId
-     * @param certificationId
-     * @return 성공 / 실패 여부
-     */
-    @DeleteMapping(value = {"/comment/{commentId}/{userId}/{certificationId}", "/comment"})
-    public ResponseEntity deleteComment(@PathVariable Integer commentId, @PathVariable Integer userId, @PathVariable Integer certificationId){
-        if (commentService.isCommentOwner(commentId, userId) || commentService.isCertificationOwner(commentId, userId)) {
-            commentService.deleteCommentByCommentId(commentId);
-            certificationService.minusCommentCount(certificationId);
-        } else
-            return ErrorReturn(ApiCode.INVALID_USER_ERROR);
-        return SuccessReturn();
-    }
 }

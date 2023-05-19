@@ -71,12 +71,6 @@ public class CertService {
                 .orElseThrow(() -> new NullPointerException("NOT FOUND Certification id : " + certificationId));
     }
 
-    // Id로 Certification 조회 LazyLoading 무시
-    public Certification getCertByIdLazyLoading(int certificationId) {
-        return certRepository.findById(certificationId)
-                .orElseThrow(() -> new NullPointerException("NOT FOUND Certification id : " + certificationId));
-    }
-
     // Certification 수정
     public Certification modify(Certification certification, String newDescription) {
         return certification.modify(newDescription);
