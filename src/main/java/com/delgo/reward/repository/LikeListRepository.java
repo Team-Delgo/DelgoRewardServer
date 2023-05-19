@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 public interface LikeListRepository extends JpaRepository<LikeList, LikeListPK>, JpaSpecificationExecutor<LikeList> {
@@ -15,6 +16,7 @@ public interface LikeListRepository extends JpaRepository<LikeList, LikeListPK>,
     void deleteByUserId(int userId);
 
     @Modifying
+    @Transactional
     @Query(value = "UPDATE like_list SET is_like = NOT is_like WHERE user_id = ? AND certification_id = ?", nativeQuery = true)
     void updateIsLike(Integer userId, Integer certificationId);
 

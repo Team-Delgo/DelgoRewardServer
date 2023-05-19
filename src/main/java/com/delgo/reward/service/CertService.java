@@ -134,7 +134,7 @@ public class CertService {
      */
     public PageResDTO<CertResDTO, Integer> getCertAll(int userId, Pageable pageable) {
         Slice<Integer> slice = certRepository.findAllCertIdByPaging(userId, pageable);
-        List<CertResDTO> certs = getCertByIds(slice.getContent()).stream().map(CertResDTO::new).toList();
+        List<CertResDTO> certs = getCertByIds(slice.getContent()).stream().map(cert -> new CertResDTO(cert, userId)).toList();
 
         return new PageResDTO<>(certs, slice);
     }
@@ -142,7 +142,7 @@ public class CertService {
     // 전체 Certification 리스트 조회 ( 특정 인증 제외 )
     public PageResDTO<CertResDTO, Integer> getCertAllExcludeSpecificCert(int userId, int certificationId, Pageable pageable) {
         Slice<Integer> slice = certRepository.findAllExcludeSpecificCert(userId, certificationId, pageable);
-        List<CertResDTO> certs = getCertByIds(slice.getContent()).stream().map(CertResDTO::new).toList();
+        List<CertResDTO> certs = getCertByIds(slice.getContent()).stream().map(cert -> new CertResDTO(cert, userId)).toList();
 
         return new PageResDTO<>(certs, slice);
     }
