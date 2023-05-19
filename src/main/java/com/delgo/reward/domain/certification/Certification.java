@@ -57,6 +57,11 @@ public class Certification extends BaseTimeEntity {
 
     }
 
+    public void setCommentCount(Integer commentCount){
+        this.commentCount = commentCount;
+
+    }
+
     public Certification modify(String description){
         this.description = description;
 
