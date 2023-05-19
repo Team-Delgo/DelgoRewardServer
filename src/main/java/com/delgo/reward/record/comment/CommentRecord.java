@@ -1,6 +1,7 @@
 package com.delgo.reward.record.comment;
 
 import com.delgo.reward.domain.Comment;
+import com.delgo.reward.domain.user.User;
 
 import javax.validation.constraints.NotNull;
 
@@ -9,10 +10,10 @@ public record CommentRecord(
         @NotNull Integer certificationId,
         @NotNull String content
 ) {
-    public Comment toEntity() {
+    public Comment toEntity(User user) {
         return Comment.builder()
-                .userId(this.userId())
-                .certificationId(this.certificationId())
+                .user(user)
+                .certificationId(certificationId)
                 .content(this.content())
                 .isReply(false)
                 .build();

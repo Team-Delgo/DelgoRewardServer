@@ -127,7 +127,6 @@ public class UserService {
             kakaoService.logout(user.getKakaoId()); // kakao 로그아웃
 
         certRepository.deleteAllByUserUserId(userId);
-        commentRepository.deleteAllByUserId(userId);
         likeListRepository.deleteByUserId(userId); // USER가 좋아요 누른 DATA 삭제
         categoryCountRepository.deleteByUserId(userId);
 
