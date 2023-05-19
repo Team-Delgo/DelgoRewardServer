@@ -195,11 +195,6 @@ public class CertService {
         return certification.setPhotoUrl(text);
     }
 
-    // Comment Count + 1
-    public void plusCommentCount(int certificationId) {
-        jdbcTemplateRankingRepository.plusCommentCount(certificationId);
-    }
-
     // Comment Count - 1
     public void minusCommentCount(int certificationId) {
         jdbcTemplateRankingRepository.minusCommentCount(certificationId);
