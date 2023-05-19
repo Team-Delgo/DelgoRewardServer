@@ -6,6 +6,7 @@ import com.delgo.reward.domain.Comment;
 import com.delgo.reward.domain.notify.NotifyType;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.comment.CommentResDTO;
+import com.delgo.reward.dto.comment.ReplyResDTO;
 import com.delgo.reward.record.comment.CommentRecord;
 import com.delgo.reward.record.comment.DeleteCommentRecord;
 import com.delgo.reward.record.comment.ModifyCommentRecord;
@@ -40,7 +41,7 @@ public class CommentService {
      * @return 저장된 댓글 데이터 반환
      * @throws IOException
      */
-    public Comment createComment(CommentRecord commentRecord) throws IOException {
+    public CommentResDTO createComment(CommentRecord commentRecord) throws IOException {
         User user = userService.getUserById(commentRecord.userId()); // 댓글 작성 유저 조회
         Comment comment = commentRepository.save(commentRecord.toEntity(user)); // 댓글 저장
         Certification certification = certService.getCertById(commentRecord.certificationId()); // 댓글 저장한 인증글 조회
@@ -55,11 +56,12 @@ public class CommentService {
         notifyService.saveNotify(certOwner.getUserId(), NotifyType.COMMENT, notifyMsg);
         fcmService.commentPush(certOwner.getUserId(), notifyMsg);
 
-        return comment;
+        return new CommentResDTO(comment);
     }
 
-    public Comment getCommentByCommentId(int commentId){
-        return commentRepository.findById(commentId).orElseThrow();
+    public Comment getCommentById(int commentId){
+        return commentRepository.findCommentsById(commentId)
+                .orElseThrow(() -> new NullPointerException("NOT FOUND Comment ID : " + commentId));
     }
 
     public List<CommentResDTO> getCommentsByCertId(int certificationId){
@@ -68,7 +70,7 @@ public class CommentService {
     }
 
     public Boolean modifyComment(ModifyCommentRecord modifyCommentRecord) {
-        Comment comment = getCommentByCommentId(modifyCommentRecord.userId());
+        Comment comment = getCommentById(modifyCommentRecord.commentId());
         if (comment.getUser().getUserId() != modifyCommentRecord.userId())  // 유저 체크
             return false;
 
@@ -78,7 +80,7 @@ public class CommentService {
 
     public Boolean deleteComment(DeleteCommentRecord deleteCommentRecord) {
         // 댓글 OR 인증 작성자인지 CHECK.
-        Comment comment = getCommentByCommentId(deleteCommentRecord.commentId());
+        Comment comment = getCommentById(deleteCommentRecord.commentId());
         Certification certification = certService.getCertById(deleteCommentRecord.certificationId());
         if (comment.getUser().getUserId() != deleteCommentRecord.userId() && certification.getUser().getUserId() != deleteCommentRecord.userId())  // 유저 체크
             return false;
@@ -102,7 +104,7 @@ public class CommentService {
      * @return 저장된 답글 데이터 반환
      * @throws IOException
      */
-    public Comment createReply(ReplyRecord replyRecord) throws IOException {
+    public ReplyResDTO createReply(ReplyRecord replyRecord) throws IOException {
         User user = userService.getUserById(replyRecord.userId()); // 답글 작성 유저 조회
         Comment reply = commentRepository.save(replyRecord.toEntity(user));
         Certification certification = certService.getCertById(replyRecord.certificationId()); // 답글 저장한 인증글 조회
@@ -118,16 +120,16 @@ public class CommentService {
         fcmService.commentPush(certOwnerId, certOwnerNotifyMsg);
 
         // 부모 댓글 유저 알림
-        int commentOwnerId = getCommentByCommentId(replyRecord.parentCommentId()).getUser().getUserId();
+        int commentOwnerId = getCommentById(replyRecord.parentCommentId()).getUser().getUserId();
         String commentOwnerNotifyMsg = user.getName() + "님이 나의 댓글에 답글을 남겼습니다.\n" + replyRecord.content();
         notifyService.saveNotify(commentOwnerId, NotifyType.REPLY, commentOwnerNotifyMsg);
         fcmService.commentPush(commentOwnerId, commentOwnerNotifyMsg);
 
-        return reply;
+        return new ReplyResDTO(reply);
     }
 
-    public List<CommentResDTO> getReplyByParentCommentId(int parentCommentId){
+    public List<ReplyResDTO> getReplyByParentCommentId(int parentCommentId){
         return commentRepository.findCommentsByParentCommentId(parentCommentId)
-                .stream().map(CommentResDTO::new).toList();
+                .stream().map(ReplyResDTO::new).toList();
     }
 }
