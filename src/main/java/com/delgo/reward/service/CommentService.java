@@ -4,9 +4,10 @@ import com.delgo.reward.comm.fcm.FcmService;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.Comment;
 import com.delgo.reward.domain.notify.NotifyType;
-import com.delgo.reward.dto.CommentDTO;
+import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.GetCommentDTO;
 import com.delgo.reward.dto.ReplyDTO;
+import com.delgo.reward.record.comment.CommentRecord;
 import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.repository.CommentRepository;
 import com.delgo.reward.repository.JDBCTemplateCommentRepository;
@@ -23,30 +24,39 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class CommentService {
-    private final CommentRepository commentRepository;
-    private final CertRepository certRepository;
-    private final JDBCTemplateCommentRepository jdbcTemplateCommentRepository;
+
+    // Service
+    private final FcmService fcmService;
     private final CertService certService;
     private final UserService userService;
-    private final FcmService fcmService;
     private final NotifyService notifyService;
+
+    // Repository
+    private final CertRepository certRepository;
+    private final CommentRepository commentRepository;
+    private final JDBCTemplateCommentRepository jdbcTemplateCommentRepository;
 
     /**
      *  유저가 댓글을 작성하면 알림을 저장하고 인증 주인에게 푸시 알림을 보냄
-     * @param commentDTO
+     * @param commentRecord
      * @return 저장된 댓글 데이터 반환
      * @throws IOException
      */
-    public Comment createComment(CommentDTO commentDTO) throws IOException {
-        Comment comment = Comment.builder().isReply(false).certificationId(commentDTO.getCertificationId()).userId(commentDTO.getUserId()).content(commentDTO.getContent()).build();
+    public Comment createComment(CommentRecord commentRecord) throws IOException {
+        User user = userService.getUserById(commentRecord.userId()); // 댓글 등록 User 조회
+        Comment comment = commentRepository.save(commentRecord.toEntity()); // 댓글 저장
+        Certification certification = certService.getCertById(commentRecord.certificationId()); // 댓글 저장한 인증글 조회
 
-        int userId = certService.getCertById(commentDTO.getCertificationId()).getUser().getUserId();
-        String notifyMsg = userService.getUserById(commentDTO.getUserId()).getName() + "님이 나의 게시글에 댓글을 남겼습니다.\n" + commentDTO.getContent();
+        // commentCount 계산
+        int commentCount = commentRepository.countCommentByCertId(commentRecord.certificationId());
+        certification.setCommentCount(commentCount);
 
-        notifyService.saveNotify(userId, NotifyType.COMMENT, notifyMsg);
-        fcmService.commentPush(userId, notifyMsg);
+        String notifyMsg = user.getName() + "님이 나의 게시글에 댓글을 남겼습니다.\n" + commentRecord.content();
+        User owner = certification.getUser();
+        notifyService.saveNotify(owner.getUserId(), NotifyType.COMMENT, notifyMsg);
+        fcmService.commentPush(owner.getUserId(), notifyMsg);
 
-        return commentRepository.save(comment);
+        return comment;
     }
 
     /**

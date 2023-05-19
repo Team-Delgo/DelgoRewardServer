@@ -22,4 +22,7 @@ public interface CommentRepository extends JpaRepository<Comment, Integer>{
 
     @Query(value = "select * from comment where parent_comment_id = ? and is_reply = true", nativeQuery = true)
     List<Comment> findByParentCommentId(int parentCommentId);
+
+    @Query(value = "select count(*) from Comment c where c.certificationId = :certId")
+    Integer countCommentByCertId(@Param("certId") int certId);
 }
