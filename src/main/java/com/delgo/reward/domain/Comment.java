@@ -22,7 +22,7 @@ public class Comment extends BaseTimeEntity {
     private Boolean isReply;
 
     @ManyToOne
-    @JoinColumn(name = "userId", updatable = false, insertable = false)
+    @JoinColumn(name = "userId", updatable = false)
     private User user;
 
     public void setContent(String content){
