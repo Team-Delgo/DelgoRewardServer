@@ -75,7 +75,7 @@ public class PhotoController extends CommController {
     public ResponseEntity<?> uploadMungpleNote(@PathVariable Integer mungpleId, @RequestPart(required = false) MultipartFile photo) {
         if (photo.isEmpty()) ParamErrorReturn("photo");
 
-        Mungple mungple = mungpleService.getMungpleById(mungpleId).setDetailUrl(photoService.uploadMungpleNote(mungpleId, photo));
+        Mungple mungple = mungpleService.getMungpleById(mungpleId).setDetailUrl(photoService.uploadMungpleNote(photo));
         return SuccessReturn(mungpleService.register(mungple));
     }
 
