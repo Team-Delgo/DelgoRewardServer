@@ -48,7 +48,7 @@ public class MungpleController extends CommController {
 
         Mungple mungple = mungpleService.register(record.toEntity(location));
         mungple.setPhotoUrl(photoService.uploadMungple(mungple.getMungpleId(), thumbnail));
-        mungple.setDetailUrl(photoService.uploadMungpleNote(mungple.getMungpleId(), mungpleNote));
+        mungple.setDetailUrl(photoService.uploadMungpleNote(mungpleNote));
 
         log.info("등록한 Mungple : {}", mungple);
         return SuccessReturn(mungple);
