@@ -72,7 +72,7 @@ public class PhotoService extends CommService {
     }
 
     public String updateCertMultipart(int certificationId, MultipartFile photo) {
-        String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\."); // ex) png, jpg, jpeg
+        String[] type = Objects.requireNonNull(photo.getContentType()).split("/"); // ex) png, jpg, jpeg
         String extension = type[type.length - 1];
 
         String fileName = certificationId + "_cert.webp";
@@ -98,7 +98,7 @@ public class PhotoService extends CommService {
     }
 
     public String uploadCertMultipartForJPG(int certificationId, MultipartFile photo) {
-        String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\."); // ex) png, jpg, jpeg
+        String[] type = Objects.requireNonNull(photo.getContentType()).split("/"); // ex) png, jpg, jpeg
         String extension = type[type.length - 1];
 
         String fileName = certificationId + "_cert." + extension;
@@ -143,7 +143,7 @@ public class PhotoService extends CommService {
     }
 
     public String uploadMungple(int mungpleId, MultipartFile photo) {
-        String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\."); // ex) png, jpg, jpeg
+        String[] type = Objects.requireNonNull(photo.getContentType()).split("/"); // ex) png, jpg, jpeg
         String extension = type[type.length - 1];
 
         String fileName = type[0] + "_mungple.webp";
@@ -166,7 +166,7 @@ public class PhotoService extends CommService {
         }
     }
 
-    public String uploadMungpleNote(int mungpleId, MultipartFile photo) {
+    public String uploadMungpleNote(MultipartFile photo) {
         String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\."); // ex) png, jpg, jpeg
         String fileName = type[0] + "_mungplenote.webp";
         String ncpLink = BucketName.MUNGPLE_NOTE.getUrl() + fileName;
@@ -189,7 +189,7 @@ public class PhotoService extends CommService {
     }
 
     public String uploadProfile(int userId, MultipartFile photo) {
-        String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\."); // ex) png, jpg, jpeg
+        String[] type = Objects.requireNonNull(photo.getContentType()).split("/"); // ex) png, jpg, jpeg
         String extension = type[type.length - 1];
 
         String fileName = userId + "_profile.webp";
@@ -216,7 +216,7 @@ public class PhotoService extends CommService {
     }
 
     public String uploadAchievements(int achievementsId, MultipartFile photo) {
-        String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\."); // ex) png, jpg, jpeg
+        String[] type = Objects.requireNonNull(photo.getContentType()).split("/"); // ex) png, jpg, jpeg
         String extension = type[type.length - 1];
 
         String fileName = achievementsId + "_achievements.webp";
