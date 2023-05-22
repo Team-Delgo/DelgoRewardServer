@@ -22,6 +22,7 @@ public class UserResDTO {
     private String email;
     private String userName;
     private String phoneNo; // 보안 필요함.
+    private String geoCode; // 보안 필요함.
     private String address;
     private String profile;
     private UserSocial userSocial;
@@ -30,6 +31,7 @@ public class UserResDTO {
     // Pet Data
     private int petId;
     private String petName;
+    private String breed;
     private String breedName;
     private LocalDate birthday;
 
@@ -42,6 +44,7 @@ public class UserResDTO {
         email = user.getEmail();
         userName = user.getName();
         phoneNo = user.getPhoneNo();
+        geoCode = user.getGeoCode();
         address = user.getAddress();
         profile = user.getProfile();
         userSocial = user.getUserSocial();
@@ -50,6 +53,7 @@ public class UserResDTO {
         // Pet
         petId = user.getPet().getPetId();
         petName = user.getPet().getName();
+        breed = user.getPet().getBreedCode();
         breedName = user.getPet().getBreedName();
         birthday = user.getPet().getBirthday();
         registDt = user.getRegistDt();

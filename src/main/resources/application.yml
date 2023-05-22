@@ -1,7 +1,7 @@
 # spring MariaDB Connect
 spring:
   profiles:
-      active: dev
+      active: real
   datasource:
     username: delgo
     password: Zlzl2022!
@@ -15,8 +15,8 @@ spring:
     properties:
       hibernate:
         ddl-auto: none
-        show_sql: true # 쿼리 출력 여부
-        format_sql: true # 쿼리 포맷팅 여부
+       # show_sql: true # 쿼리 출력 여부
+       # format_sql: true # 쿼리 포맷팅 여부
   servlet:
     multipart:
       maxFileSize: 50MB

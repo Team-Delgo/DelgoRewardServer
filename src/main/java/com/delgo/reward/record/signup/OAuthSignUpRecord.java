@@ -16,7 +16,7 @@ public record OAuthSignUpRecord(
         @NotBlank String geoCode,
         @NotBlank @JsonProperty("pGeoCode") String pGeoCode,
         @NotBlank String petName,
-        @NotNull String breedCode,
+        @NotNull String breed, //breadCode로 변경필요
         @NotNull LocalDate birthday,
         @NotNull UserSocial userSocial,
         String appleUniqueNo,
@@ -69,7 +69,7 @@ public record OAuthSignUpRecord(
     public Pet makePet(User user){
         return Pet.builder()
                 .name(petName)
-                .breedCode(breedCode)
+                .breedCode(breed)
                 .birthday(birthday)
                 .user(user)
                 .build();
