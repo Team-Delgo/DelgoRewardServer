@@ -40,7 +40,7 @@ public class GeoService {
 
         String requestURL = API_URL + "?query=" + address;
 
-        HttpEntity entity = new HttpEntity<>(headers);
+        HttpEntity<Object> entity = new HttpEntity<>(headers);
         ResponseEntity<String> responseEntity = restTemplate.exchange(requestURL, HttpMethod.GET, entity, String.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
