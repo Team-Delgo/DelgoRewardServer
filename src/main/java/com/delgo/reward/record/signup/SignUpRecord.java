@@ -36,7 +36,7 @@ public record SignUpRecord(
     public Pet makePet(User user){
         return Pet.builder()
                 .name(petName)
-                .breedCode(breed)
+                .breed(breed)
                 .birthday(birthday)
                 .user(user)
                 .build();
