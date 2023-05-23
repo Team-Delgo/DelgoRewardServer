@@ -26,21 +26,21 @@ public class PetService {
     private final PetRepository petRepository;
 
     public Pet register(Pet pet) {
-        return petRepository.save(pet.setBreedName(codeService.getCode(pet.getBreedCode()).getCodeName()));
+        return petRepository.save(pet.setBreedName(codeService.getCode(pet.getBreed()).getCodeName()));
     }
 
     @Transactional
     public void changePetInfo(ModifyPetRecord modifyPetRecord,User user){
         Optional.ofNullable(modifyPetRecord.name()).ifPresent(user.getPet()::setName);
         Optional.ofNullable(modifyPetRecord.birthday()).ifPresent(user.getPet()::setBirthday);
-        Optional.ofNullable(modifyPetRecord.breed()).ifPresent(user.getPet()::setBreedCode);
+        Optional.ofNullable(modifyPetRecord.breed()).ifPresent(user.getPet()::setBreed);
     }
 
     // 단순 DB 데이터 적치용
     public void fillBreedName(){
         List<Pet> pets = petRepository.findAll();
         for(Pet pet : pets){
-            pet.setBreedName(codeService.getCode(pet.getBreedCode()).getCodeName());
+            pet.setBreedName(codeService.getCode(pet.getBreed()).getCodeName());
         }
     }
 }

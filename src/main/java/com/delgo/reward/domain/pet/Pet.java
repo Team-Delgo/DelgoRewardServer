@@ -19,7 +19,7 @@ public class Pet extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int petId;
     private String name;
-    private String breedCode;
+    private String breed; // breedCode
     private String breedName;
     private LocalDate birthday;
 
@@ -36,8 +36,8 @@ public class Pet extends BaseTimeEntity {
     }
 
 
-    public Pet setBreedCode(String breedCode) {
-        this.breedCode = breedCode;
+    public Pet setBreed(String breed) {
+        this.breed = breed;
 
         return this;
     }
