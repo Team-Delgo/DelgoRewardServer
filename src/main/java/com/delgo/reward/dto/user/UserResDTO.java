@@ -53,7 +53,7 @@ public class UserResDTO {
         // Pet
         petId = user.getPet().getPetId();
         petName = user.getPet().getName();
-        breed = user.getPet().getBreedCode();
+        breed = user.getPet().getBreed();
         breedName = user.getPet().getBreedName();
         birthday = user.getPet().getBirthday();
         registDt = user.getRegistDt();
