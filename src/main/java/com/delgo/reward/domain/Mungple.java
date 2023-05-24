@@ -1,9 +1,9 @@
 package com.delgo.reward.domain;
 
 
+import com.delgo.reward.domain.common.BaseTimeEntity;
 import com.delgo.reward.mongoDomain.MongoMungple;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 import javax.persistence.Entity;
@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Mungple {
+public class Mungple extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int mungpleId;
@@ -36,13 +36,9 @@ public class Mungple {
     private String longitude; // 경도
 
     private String photoUrl; // 사진 url
-    private String instaUrl; // Instagram url
     private String detailUrl; // 상세 페이지 url
 
     private boolean isActive; // 활성화 여부
-
-    @CreationTimestamp
-    private LocalDateTime registDt;
 
     public Mungple setPhotoUrl(String photoUrl){
         this.photoUrl = photoUrl;
