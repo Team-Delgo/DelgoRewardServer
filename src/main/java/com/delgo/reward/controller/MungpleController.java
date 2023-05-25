@@ -63,10 +63,7 @@ public class MungpleController extends CommController {
     @GetMapping(value={"/category/{categoryCode}","/category"})
     public ResponseEntity getCategory(@PathVariable String categoryCode) {
         if (categoryCode.isBlank()) return ParamErrorReturn("categoryCode"); // Validate - Blank Check
-
-        return SuccessReturn((!categoryCode.equals(CategoryCode.TOTAL.getCode()))
-                ? mungpleService.getMungpleByCategoryCode(categoryCode)
-                : mungpleService.getMungpleAll());
+        return SuccessReturn(mungpleService.getMungpleByCategoryCode(categoryCode));
     }
 
     /*

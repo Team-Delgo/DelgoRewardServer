@@ -1,10 +1,12 @@
 package com.delgo.reward.service;
 
 
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.Mungple;
 import com.delgo.reward.domain.common.Location;
+import com.delgo.reward.dto.mungple.MungpleResDTO;
 import com.delgo.reward.repository.MungpleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,10 +46,12 @@ public class MungpleService {
     }
 
     // categoryCode로 Mungple 조회
-    public List<Mungple> getMungpleByCategoryCode(String categoryCode) {
-        List<Mungple> mungpleList = mungpleRepository.findByCategoryCode(categoryCode);
+    public List<MungpleResDTO> getMungpleByCategoryCode(String categoryCode) {
+        List<Mungple> mungpleList = !categoryCode.equals(CategoryCode.TOTAL.getCode())
+                ? mungpleRepository.findByCategoryCode(categoryCode)
+                : mungpleRepository.findAll();
 
-        return mungpleList.stream().sorted(Comparator.comparing(Mungple::getPlaceName)).collect(Collectors.toList());
+        return mungpleList.stream().map(MungpleResDTO::new).collect(Collectors.toList());
     }
 
     // categoryCode로 Mungple 조회
