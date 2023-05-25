@@ -66,6 +66,10 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @Query(value = "select c.certificationId from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrectPhoto = true order by c.registDt desc")
     List<Integer> findRecentCert(@Param("userId") int userId, Pageable pageable);
 
+    @Query("SELECT c.mungpleId FROM Certification c where c.mungpleId != 0 GROUP BY c.mungpleId ORDER BY COUNT(c) DESC")
+    List<Integer>  findCertOrderByMungpleCount(Pageable pageable);
+
+
 
     // ---------------------------------------- Map TEST ----------------------------------------
 
