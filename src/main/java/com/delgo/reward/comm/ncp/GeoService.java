@@ -1,9 +1,9 @@
 package com.delgo.reward.comm.ncp;
 
 
+import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.service.CodeService;
-import com.delgo.reward.service.MungpleService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +17,8 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Optional;
+
 
 @Slf4j
 @Service
@@ -27,7 +29,6 @@ public class GeoService {
     private static final String CLIENT_SECRET = "P1WuQqH2d7rAnbWraxGwgDjPVvayuFwhV0RQAXtR";
 
     private final CodeService codeService;
-    private final MungpleService mungpleService;
 
     public Location getGeoData(String address) {
         HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
@@ -39,76 +40,30 @@ public class GeoService {
 
         String requestURL = API_URL + "?query=" + address;
 
-        HttpEntity entity = new HttpEntity<>(headers);
+        HttpEntity<Object> entity = new HttpEntity<>(headers);
         ResponseEntity<String> responseEntity = restTemplate.exchange(requestURL, HttpMethod.GET, entity, String.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
         Location location = new Location();
         try {
             JsonNode jsonNode = objectMapper.readTree(responseEntity.getBody());
-            JsonNode latitude = jsonNode.get("addresses").get(0).get("y");
-            JsonNode longitude = jsonNode.get("addresses").get(0).get("x");
-            JsonNode roadAddress = jsonNode.get("addresses").get(0).get("roadAddress");
-            JsonNode jibunAddress = jsonNode.get("addresses").get(0).get("jibunAddress");
-            JsonNode distance = jsonNode.get("addresses").get(0).get("distance");
-            JsonNode SIDO = jsonNode.get("addresses").get(0).get("addressElements").get(0).get("longName");
-            JsonNode SIGUGUN = jsonNode.get("addresses").get(0).get("addressElements").get(1).get("longName");
+            JsonNode addressesNode = jsonNode.get("addresses").get(0);
+            JsonNode addressElementsNode = addressesNode.get("addressElements");
 
-            location.setLatitude(latitude.toString().replace("\"",""));
-            location.setLongitude(longitude.toString().replace("\"",""));
-            location.setRoadAddress(roadAddress.toString().replace("\"",""));
-            location.setJibunAddress(jibunAddress.toString().replace("\"",""));
-            location.setSIGUGUN(SIGUGUN.toString().replace("\"",""));
-            location.setSIDO(SIDO.toString().replace("\"",""));
-
-//            System.out.println("************************************************");
-//            System.out.println("jsonNode: " + jsonNode);
-//            System.out.println("latitude: " + latitude);
-//            System.out.println("longitude: " + longitude);
-//            System.out.println("roadAddress: " + roadAddress);
-//            System.out.println("jibunAddress: " + jibunAddress);
-//            System.out.println("distance: " + distance);
-//            System.out.println("SIGUGUN: " + SIGUGUN);
-//            System.out.println("SIDO: " + SIDO);
-//            System.out.println("************************************************");
+            location.setLatitude(Optional.ofNullable(addressesNode.get("y")).map(JsonNode::asText).orElse(""));
+            location.setLongitude(Optional.ofNullable(addressesNode.get("x")).map(JsonNode::asText).orElse(""));
+            location.setRoadAddress(Optional.ofNullable(addressesNode.get("roadAddress")).map(JsonNode::asText).orElse(""));
+            location.setJibunAddress(Optional.ofNullable(addressesNode.get("jibunAddress")).map(JsonNode::asText).orElse(""));
+            location.setSIGUGUN(Optional.ofNullable(addressElementsNode.get(1)).map(node -> node.get("longName")).map(JsonNode::asText).orElse(""));
+            location.setSIDO(Optional.ofNullable(addressElementsNode.get(0)).map(node -> node.get("longName")).map(JsonNode::asText).orElse(""));
 
             // SET GEOCODE
-            location.setGeoCode(codeService.getGeoCodeByLocation(location));
+            Code code = codeService.getGeoCodeByLocation(location);
+            location.setGeoCode(code);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
         return location;
-    }
-
-    // 멍플과의 거리 계산
-    public double getDistance(int mungpleId, String longitude, String latitude) {
-        HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
-
-        RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("X-NCP-APIGW-API-KEY-ID", CLIENT_ID);
-        headers.set("X-NCP-APIGW-API-KEY", CLIENT_SECRET);
-
-        String requestURL = API_URL + "?query=" + mungpleService.getMungpleAddress(mungpleId) + "&coordinate=" + longitude +"," + latitude;
-
-        HttpEntity entity = new HttpEntity<>(headers);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(requestURL, HttpMethod.GET, entity, String.class);
-
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        double test = 0;
-        try {
-            JsonNode jsonNode = objectMapper.readTree(responseEntity.getBody());
-            JsonNode distance = jsonNode.get("addresses").get(0).get("distance");
-
-            test=  distance.asDouble();
-            System.out.println("distance: " + distance);
-
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-        return test;
     }
 }
