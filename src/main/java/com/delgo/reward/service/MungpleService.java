@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,21 +62,18 @@ public class MungpleService {
     }
 
     // categoryCode로 Mungple 조회
-    public List<Mungple> getMungpleByMap() {
-        List<Mungple> mungpleList = mungpleRepository.findAllByIsActive(true);
+    public List<MungpleResDTO> getMungpleByMap(String categoryCode) {
+        List<Mungple> mungpleList = !categoryCode.equals(CategoryCode.TOTAL.getCode())
+                ? mungpleRepository.findByCategoryCodeAndIsActive(categoryCode,true)
+                : mungpleRepository.findAllByIsActive(true);
 
-        return mungpleList.stream().sorted(Comparator.comparing(Mungple::getPlaceName)).collect(Collectors.toList());
+        return mungpleList.stream().map(MungpleResDTO::new).collect(Collectors.toList());
     }
 
     // 중복 체크
     public boolean isMungpleExisting(String address) {
         Location location = geoService.getGeoData(address); // 위도, 경도
         return mungpleRepository.existsByLatitudeAndLongitude(location.getLatitude(), location.getLongitude());
-    }
-
-    // 멍플 주소 반환
-    public String getMungpleAddress(int mungpleId){
-        return getMungpleById(mungpleId).getRoadAddress();
     }
 
     // 인증 개수 많은 멍플 조회

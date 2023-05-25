@@ -1,6 +1,7 @@
 package com.delgo.reward.service;
 
 
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.dto.cert.CertByMungpleResDTO;
 import lombok.RequiredArgsConstructor;
@@ -26,10 +27,10 @@ public class MapService {
         List<CertByMungpleResDTO> exposedCertList = certService.getExposedCertList(3).stream().map(c -> new CertByMungpleResDTO(c,userId)).toList();  // 노출시킬 인증 리스트 조회
 
         return (userId == 0)
-                ? Map.of("mungpleList", mungpleService.getMungpleByMap(),
+                ? Map.of("mungpleList", mungpleService.getMungpleByMap(CategoryCode.TOTAL.getCode()),
                 "exposedNormalCertList", exposedCertList.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList()),
                 "exposedMungpleCertList", exposedCertList.stream().filter(c -> c.getMungpleId() != 0).collect(Collectors.toList()))
-                : Map.of("mungpleList", mungpleService.getMungpleByMap(),
+                : Map.of("mungpleList", mungpleService.getMungpleByMap(CategoryCode.TOTAL.getCode()),
                 "normalCertList", certifications.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList()),
                 "mungpleCertList", certifications.stream().filter(c -> c.getMungpleId() != 0).collect(Collectors.toList()),
                 "exposedNormalCertList", exposedCertList.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList()),
