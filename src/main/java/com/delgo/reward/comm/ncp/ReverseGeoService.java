@@ -1,6 +1,7 @@
 package com.delgo.reward.comm.ncp;
 
 
+import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.service.CodeService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -15,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Optional;
 
 
 @Slf4j
@@ -41,26 +44,18 @@ public class ReverseGeoService {
         ResponseEntity<String> responseEntity = restTemplate.exchange(requestURL, HttpMethod.GET, entity, String.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
-
         try {
             JsonNode jsonNode = objectMapper.readTree(responseEntity.getBody());
-            JsonNode SIDO = jsonNode.get("results").get(0).get("region").get("area1").get("name");
-            JsonNode SIGUGUN = jsonNode.get("results").get(0).get("region").get("area2").get("name");
-            JsonNode DONG = jsonNode.get("results").get(0).get("region").get("area3").get("name");
+            JsonNode resultsNode = jsonNode.get("results").get(0);
+            JsonNode regionNode = resultsNode.get("region");
 
-            location.setSIDO(SIDO.toString().replace("\"", ""));
-            location.setSIGUGUN(SIGUGUN.toString().replace("\"", ""));
-            location.setDONG(DONG.toString().replace("\"", ""));
-
-//            System.out.println("************************************************");
-//            System.out.println("jsonNode: " + jsonNode);
-//            System.out.println("SIDO: " + SIDO);
-//            System.out.println("SIGUGUN: " + SIGUGUN);
-//            System.out.println("DONG: " + DONG);
-//            System.out.println("************************************************");
+            location.setSIDO(Optional.ofNullable(regionNode.get("area1")).map(node -> node.get("name")).map(JsonNode::asText).orElse(""));
+            location.setSIGUGUN(Optional.ofNullable(regionNode.get("area2")).map(node -> node.get("name")).map(JsonNode::asText).orElse(""));
+            location.setDONG(Optional.ofNullable(regionNode.get("area3")).map(node -> node.get("name")).map(JsonNode::asText).orElse(""));
 
             // SET GEOCODE
-            location.setGeoCode(codeService.getGeoCodeByLocation(location));
+            Code code = codeService.getGeoCodeByLocation(location);
+            location.setGeoCode(code);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
