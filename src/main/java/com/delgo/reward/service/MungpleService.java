@@ -7,9 +7,11 @@ import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.Mungple;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.dto.mungple.MungpleResDTO;
+import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.repository.MungpleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,19 +26,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MungpleService {
 
+    private final CertRepository certRepository;
     private final MungpleRepository mungpleRepository;
     private final ObjectStorageService objectStorageService;
 
     // Mungple 등록
     public Mungple register(Mungple mungple) {
         return  mungpleRepository.save(mungple);
-    }
-
-    // 전체 Mungple 리스트 조회
-    public List<Mungple> getMungpleAll() {
-        List<Mungple> mungpleList = mungpleRepository.findAll();
-
-        return mungpleList.stream().sorted(Comparator.comparing(Mungple::getCategoryCode)).collect(Collectors.toList());
     }
 
     // mungpleId로 Mungple 조회
@@ -74,7 +70,8 @@ public class MungpleService {
 
     // 인증 개수 많은 멍플 조회
     public List<Mungple> getMungpleOfMostCount(int count){
-        return mungpleRepository.findMungpleOfMostCount(count);
+       List<Integer> mungpleIds = certRepository.findCertOrderByMungpleCount(PageRequest.of(0, count));
+        return mungpleRepository.findMungpleByIds(mungpleIds);
     }
 
     // 멍플 삭제
