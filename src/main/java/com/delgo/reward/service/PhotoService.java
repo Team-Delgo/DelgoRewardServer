@@ -146,7 +146,8 @@ public class PhotoService extends CommService {
         String[] type = Objects.requireNonNull(photo.getContentType()).split("/"); // ex) png, jpg, jpeg
         String extension = type[type.length - 1];
 
-        String fileName = type[0] + "_mungple.webp";
+        String[] originalFilename = Objects.requireNonNull(photo.getOriginalFilename()).split("\\.");
+        String fileName = originalFilename[0] + "_mungple.webp";
         String ncpLink = BucketName.MUNGPLE.getUrl() + fileName;
 
         try {
