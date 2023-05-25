@@ -1,5 +1,6 @@
 package com.delgo.reward.mongoService;
 
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.Mungple;
 import com.delgo.reward.mongoDomain.MongoMungple;
 import com.delgo.reward.mongoRepository.MongoMungpleRepository;
@@ -22,15 +23,16 @@ public class MongoMungpleService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    private final MongoMungpleRepository mongoMungpleRepository;
     private final MungpleService mungpleService;
+    private final MongoMungpleRepository mongoMungpleRepository;
 
-    public void makeMungpletoMongo() {
-        List<Mungple> mungples = mungpleService.getMungpleByMap();
-        for(Mungple m : mungples){
-            mongoMungpleRepository.save(m.toMongo());
-        }
-    }
+
+//    public void makeMungpletoMongo() {
+//        List<Mungple> mungples = mungpleService.getMungpleByMap(CategoryCode.TOTAL.getCode());
+//        for(Mungple m : mungples){
+//            mongoMungpleRepository.save(m.toMongo());
+//        }
+//    }
 
     public List<MongoMungple> findWithin3Km(String latitude, String longitude) {
         double maxDistanceInRadians = 2 / 6371.01;
