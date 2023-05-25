@@ -1,7 +1,6 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.domain.Mungple;
 import com.delgo.reward.domain.achievements.Achievements;
 import com.delgo.reward.service.*;
 import lombok.RequiredArgsConstructor;
@@ -61,22 +60,7 @@ public class PhotoController extends CommController {
     @PostMapping(value={"/mungple/{mungpleId}","/upload/mungple"})
     public ResponseEntity<?> uploadMungplePhoto(@PathVariable Integer mungpleId, @RequestPart MultipartFile photo) {
         if (photo.isEmpty()) ParamErrorReturn("photo");
-
-        Mungple mungple = mungpleService.getMungpleById(mungpleId).setPhotoUrl(photoService.uploadMungple(mungpleId, photo));
-        return SuccessReturn(mungpleService.register(mungple));
-    }
-
-    /*
-     * 멍플 노트 등록
-     * Request Data : mungpleId, photo
-     * Response Data : 사진 저장된 URL
-     */
-    @PostMapping(value={"/mungplenote/{mungpleId}","/upload/mungplenote"})
-    public ResponseEntity<?> uploadMungpleNote(@PathVariable Integer mungpleId, @RequestPart(required = false) MultipartFile photo) {
-        if (photo.isEmpty()) ParamErrorReturn("photo");
-
-        Mungple mungple = mungpleService.getMungpleById(mungpleId).setDetailUrl(photoService.uploadMungpleNote(photo));
-        return SuccessReturn(mungpleService.register(mungple));
+        return SuccessReturn(mungpleService.changePhoto(mungpleId,photo));
     }
 
     /*
@@ -107,4 +91,17 @@ public class PhotoController extends CommController {
 
         return SuccessReturn();
     }
+
+    //    /*
+//     * 멍플 노트 등록 [ Deprecated ]
+//     * Request Data : mungpleId, photo
+//     * Response Data : 사진 저장된 URL
+//     */
+//    @PostMapping(value={"/mungplenote/{mungpleId}","/upload/mungplenote"})
+//    public ResponseEntity<?> uploadMungpleNote(@PathVariable Integer mungpleId, @RequestPart(required = false) MultipartFile photo) {
+//        if (photo.isEmpty()) ParamErrorReturn("photo");
+//
+//        Mungple mungple = mungpleService.getMungpleById(mungpleId).setDetailUrl(photoService.uploadMungpleNote(photo));
+//        return SuccessReturn(mungpleService.register(mungple));
+//    }
 }

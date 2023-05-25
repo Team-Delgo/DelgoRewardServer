@@ -51,13 +51,13 @@ public class NaverPlaceService {
         for(int i = 0; i< naverPlaces.size(); i++){
             NaverPlace np = naverPlaces.get(i);
             Location location = geoService.getGeoData(np.getAddress());
-            if (mungpleService.isMungpleExisting(location)) {
+            if (mungpleService.isMungpleExisting(np.getAddress())) {
                 log.info(" {} 이미 저장한 멍플입니다. : {}", i, np.getPlaceName());
                 continue;
             }
             CategoryCode categoryCode = determineCategoryCode(np.getCategory());
-            Mungple mungple = mungpleService.register(np.toMungple(location, categoryCode.getCode()));
-            log.info("{} mungple : {}", i, mungple);
+//            Mungple mungple = mungpleService.register(np.toMungple(location, categoryCode.getCode()));
+//            log.info("{} mungple : {}", i, mungple);
         }
     }
 

@@ -2,13 +2,8 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
-import com.delgo.reward.comm.code.CategoryCode;
-import com.delgo.reward.comm.ncp.GeoService;
-import com.delgo.reward.domain.Mungple;
-import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.record.mungple.MungpleRecord;
 import com.delgo.reward.service.MungpleService;
-import com.delgo.reward.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -24,8 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/mungple")
 public class MungpleController extends CommController {
 
-    private final GeoService geoService;
-    private final PhotoService photoService;
     private final MungpleService mungpleService;
 
     /*
@@ -35,23 +28,11 @@ public class MungpleController extends CommController {
      * Response Data : 등록한 멍플 데이터 반환
      */
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity register(
-            @Validated @RequestPart(value="data") MungpleRecord record,
-            @RequestPart MultipartFile mungpleNote,
-            @RequestPart MultipartFile thumbnail) {
-
-        if (thumbnail.isEmpty()) return ParamErrorReturn("thumbnail");
-        if (mungpleNote.isEmpty()) return ParamErrorReturn("mungpleNote");
-
-        Location location = geoService.getGeoData(record.address()); // 위도, 경도
-        if (!mungpleService.isMungpleExisting(location)) ErrorReturn(ApiCode.MUNGPLE_DUPLICATE_ERROR);
-
-        Mungple mungple = mungpleService.register(record.toEntity(location));
-        mungple.setPhotoUrl(photoService.uploadMungple(mungple.getMungpleId(), thumbnail));
-        mungple.setDetailUrl(photoService.uploadMungpleNote(mungpleNote));
-
-        log.info("등록한 Mungple : {}", mungple);
-        return SuccessReturn(mungple);
+    public ResponseEntity register(@Validated @RequestPart(value="data") MungpleRecord record, @RequestPart MultipartFile photo) {
+        if (photo.isEmpty()) return ParamErrorReturn("photo");
+        return mungpleService.isMungpleExisting(record.address())
+                ? SuccessReturn(mungpleService.register(record, photo))
+                : ErrorReturn(ApiCode.MUNGPLE_DUPLICATE_ERROR); // 중복 에러
     }
 
     /*
@@ -63,10 +44,7 @@ public class MungpleController extends CommController {
     @GetMapping(value={"/category/{categoryCode}","/category"})
     public ResponseEntity getCategory(@PathVariable String categoryCode) {
         if (categoryCode.isBlank()) return ParamErrorReturn("categoryCode"); // Validate - Blank Check
-
-        return SuccessReturn((!categoryCode.equals(CategoryCode.TOTAL.getCode()))
-                ? mungpleService.getMungpleByCategoryCode(categoryCode)
-                : mungpleService.getMungpleAll());
+        return SuccessReturn(mungpleService.getMungpleByCategoryCode(categoryCode));
     }
 
     /*
