@@ -2,12 +2,16 @@ package com.delgo.reward;
 
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
+import com.delgo.reward.domain.Mungple;
+import com.delgo.reward.repository.MungpleRepository;
 import com.delgo.reward.service.MungpleService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.List;
 
 
 @RunWith(SpringRunner.class)
@@ -16,6 +20,9 @@ public class MungpleTest {
 
     @Autowired
     private MungpleService mungpleService;
+
+    @Autowired
+    private MungpleRepository mungpleRepository;
 
     @Autowired
     private ObjectStorageService objectStorageService;
@@ -45,11 +52,16 @@ public class MungpleTest {
 
     @Test
     public void deleteDuplicateMungpleTest() {
-        //given
-
-        //when
-        mungpleService.deleteDuplicateMungple();
-
-        //then
+        List<Mungple> mungples = mungpleRepository.findAll();
+        System.out.println("count :{} " + mungples.size());
+        int i = 1;
+        for(Mungple mungple :mungples){
+            List<Mungple> result = mungpleRepository.findByJibunAddress(mungple.getJibunAddress());
+            if(result.size() >= 2) {
+                i++;
+                System.out.println(i + " 두개 이상 존재하는 result : " + result.get(1));
+                mungpleRepository.deleteById(result.get(1).getMungpleId());
+            }
+        }
     }
 }
