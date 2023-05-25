@@ -8,13 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 
 
 import java.util.List;
-import java.util.Optional;
 
 public interface MungpleRepository extends JpaRepository<Mungple, Integer>, JpaSpecificationExecutor<Mungple> {
 
     List<Mungple> findByCategoryCode(String categoryCode);
 
-    Optional<Mungple> findByLatitudeAndLongitude(String latitude, String longitude);
+    boolean existsByLatitudeAndLongitude(String latitude, String longitude);
 
     List<Mungple> findAllByIsActive(boolean isActive);
 
