@@ -27,7 +27,7 @@ public class MungpleDetailData {
     @Field("represent_site")
     private String representSite;
     @Field("represent_menu_title")
-    private Map<String, String> representMenuTitle;
+    private String representMenuTitle;
     @Field("accept_size")
     private Map<String, DetailCode> acceptSize;
     @Field("enter_desc")
