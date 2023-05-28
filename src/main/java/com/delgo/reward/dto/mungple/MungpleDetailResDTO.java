@@ -12,7 +12,6 @@ import java.util.Map;
 @Getter
 @ToString
 public class MungpleDetailResDTO extends MungpleResDTO {
-    private int mungpleId;
     private String address;
     private Map<String, LocalTime> businessHour;
     private String telNumber;
@@ -28,7 +27,6 @@ public class MungpleDetailResDTO extends MungpleResDTO {
     public MungpleDetailResDTO(Mungple mungple, MungpleDetailData mungpleDetailData){
         super(mungple);
 
-        mungpleId = mungple.getMungpleId();
         this.address = mungpleDetailData.getAddress();
         this.businessHour = mungpleDetailData.getBusinessHour();
         this.telNumber = mungpleDetailData.getTelNumber();
