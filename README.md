@@ -1,4 +1,4 @@
-# <b>🐕 Delgo Client Repository 🐕</b>
+# <b>🐕 Delgo Server Repository 🐕</b>
 <img width="40%" src="https://user-images.githubusercontent.com/54196723/203544712-8ad87cf3-23ef-408b-97d2-e1ccc21d9485.svg">
 
 <br/>
