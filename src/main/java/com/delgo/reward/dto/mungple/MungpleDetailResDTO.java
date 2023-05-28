@@ -18,7 +18,7 @@ public class MungpleDetailResDTO extends MungpleResDTO {
     private Map<String, String> businessHour;
     private String residentDogName;
     private String representSite;
-    private Map<String, String> representMenuTitle;
+    private String representMenuTitle;
     private Map<String, DetailCode> acceptSize;
     private String enterDesc;
     private List<String> representMenuPhotoUrl;
@@ -35,7 +35,7 @@ public class MungpleDetailResDTO extends MungpleResDTO {
         this.businessHour = mungpleDetailData.getBusinessHour();
         this.residentDogName = mungpleDetailData.getResidentDogName();
         this.representSite = mungpleDetailData.getRepresentSite();
-        this.representMenuTitle =mungpleDetailData.getRepresentMenuTitle();
+        this.representMenuTitle = mungpleDetailData.getRepresentMenuTitle();
         this.acceptSize = mungpleDetailData.getAcceptSize();
         this.enterDesc = mungpleDetailData.getEnterDesc();
         this.representMenuPhotoUrl = mungpleDetailData.getRepresentMenuPhotoUrl();
