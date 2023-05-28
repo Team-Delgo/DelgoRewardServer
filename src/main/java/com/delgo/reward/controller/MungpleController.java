@@ -2,6 +2,7 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
+import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.record.mungple.MungpleRecord;
 import com.delgo.reward.service.MungpleService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,17 @@ import org.springframework.web.multipart.MultipartFile;
 public class MungpleController extends CommController {
 
     private final MungpleService mungpleService;
+    private final MongoMungpleService mongoMungpleService;
+
+    /**
+     * 멍플 Id로 디테일 데이터 조회
+     * @param mungpleId
+     * @return 디테일 데이터
+     */
+    @GetMapping("/detail")
+    public ResponseEntity getDetailDataByMungpleId(@RequestParam int mungpleId){
+        return SuccessReturn(mongoMungpleService.getMungpleDetailDataByMungpleId(mungpleId));
+    }
 
     /*
      * 멍플 등록
