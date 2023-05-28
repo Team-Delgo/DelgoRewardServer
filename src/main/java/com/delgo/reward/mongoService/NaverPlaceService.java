@@ -2,7 +2,6 @@ package com.delgo.reward.mongoService;
 
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.ncp.GeoService;
-import com.delgo.reward.domain.Mungple;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.mongoDomain.NaverPlace;
 import com.delgo.reward.mongoRepository.NaverPlaceRepository;
