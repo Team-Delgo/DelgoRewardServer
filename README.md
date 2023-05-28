@@ -47,7 +47,7 @@
 </h2>
 
 -   ### <b> <a href="https://github.com/Team-Delgo"> 🔗 Delgo-Organization </a> </b>
--   ### <b> <a href="https://github.com/Team-Delgo/DelgoClient" > 🔗 Delgo-Frontend </a> </b>
+-   ### <b> <a href="https://github.com/Team-Delgo/DelgoMap" > 🔗 Delgo-Frontend </a> </b>
 -   ### <b> <a href="https://github.com/Team-Delgo/DelgoRewardServer" > 🔗 Delgo-Backend </a> </b>
 -   ### <b> <a href="https://github.com/Team-Delgo/DelgoAndroid" > 🔗 Delgo-Android </a> </b>
 
@@ -61,9 +61,8 @@
 
 `React`, `Redux Toolkit`, `React Query`, `SCSS`, `TypeScript`, `Eslint`, `Prettier`, `Naver Map`, `Firebase Analytics`, `FCM`, `Spring Boot`, `JPA`, `Maria DB`, `Nginx`, `Apache Tomcat`, `NCP`, `Object Storage`, `JWT`, `OAuth 2.0`, `REST API`
 
-### ⚙️ Architecture
-
-`MVC`
+### ⚙️ Server Architecture
+<img width="70%" src="https://user-images.githubusercontent.com/54196723/209088168-6ac91aee-63f2-4d78-9f8a-d71a0a12c0df.png">
 
 ### ⚙️ ERD
 <img width="70%" src="https://user-images.githubusercontent.com/54196723/209088168-6ac91aee-63f2-4d78-9f8a-d71a0a12c0df.png">
