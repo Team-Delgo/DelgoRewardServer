@@ -58,34 +58,34 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.addFilter(new JwtAuthenticationFilter(authenticationManager()))
 				.addFilter(new JwtAuthorizationFilter(authenticationManager(),userRepository))
 				.authorizeRequests()
-				.antMatchers("/api/oauth/**").permitAll()
-				.antMatchers("/api/auth/**").permitAll()
-				.antMatchers("/api/user/**").permitAll()
-				.antMatchers("/api/code/**").permitAll()
-				.antMatchers("/api/fcm/**").permitAll()
-				.antMatchers("/api/token/reissue").permitAll()
-				.antMatchers("/api/certification/all").permitAll()
-				.antMatchers("/api/account/logout/**").permitAll()
-
-				// delgo-map
-				.antMatchers("/api/map/**").permitAll()
-				.antMatchers("/api/map/mungple").permitAll()
-				.antMatchers("/api/survey/**").permitAll()
-				.antMatchers("/api/photo/webp").permitAll()
-				.antMatchers("/api/photo/mungplenote/*").permitAll()
-				.antMatchers("/api/photo/mungple/*").permitAll()
-				.antMatchers("/api/photo/achievements/*").permitAll()
-				.antMatchers("/api/mungple").permitAll()
-				.antMatchers("/api/mungple/category/*").permitAll()
-				.antMatchers("/health-check").permitAll()
-				.antMatchers("/kafka/**").permitAll()
-
-				// version
-				.antMatchers("/api/version").permitAll()
-
-				.antMatchers("/**").authenticated();
+//				.antMatchers("/api/oauth/**").permitAll()
+//				.antMatchers("/api/auth/**").permitAll()
+//				.antMatchers("/api/user/**").permitAll()
+//				.antMatchers("/api/code/**").permitAll()
+//				.antMatchers("/api/fcm/**").permitAll()
+//				.antMatchers("/api/token/reissue").permitAll()
+//				.antMatchers("/api/certification/all").permitAll()
+//				.antMatchers("/api/account/logout/**").permitAll()
+//
+//				// delgo-map
+//				.antMatchers("/api/map/**").permitAll()
+//				.antMatchers("/api/map/mungple").permitAll()
+//				.antMatchers("/api/survey/**").permitAll()
+//				.antMatchers("/api/photo/webp").permitAll()
+//				.antMatchers("/api/photo/mungplenote/*").permitAll()
+//				.antMatchers("/api/photo/mungple/*").permitAll()
+//				.antMatchers("/api/photo/achievements/*").permitAll()
+//				.antMatchers("/api/mungple").permitAll()
+//				.antMatchers("/api/mungple/category/*").permitAll()
+//				.antMatchers("/health-check").permitAll()
+//				.antMatchers("/kafka/**").permitAll()
+//
+//				// version
+//				.antMatchers("/api/version").permitAll()
+//
+//				.antMatchers("/**").authenticated();
 
 //				 TEST
-//				.antMatchers("/**").permitAll();
+				.antMatchers("/**").permitAll();
 	}
 }

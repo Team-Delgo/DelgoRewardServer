@@ -1,9 +1,11 @@
 package com.delgo.reward.mongoService;
 
-import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.Mungple;
+import com.delgo.reward.dto.mungple.MungpleDetailResDTO;
 import com.delgo.reward.mongoDomain.MongoMungple;
+import com.delgo.reward.mongoDomain.MungpleDetailData;
 import com.delgo.reward.mongoRepository.MongoMungpleRepository;
+import com.delgo.reward.mongoRepository.MungpleDetailDataRepository;
 import com.delgo.reward.service.MungpleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +27,12 @@ public class MongoMungpleService {
 
     private final MungpleService mungpleService;
     private final MongoMungpleRepository mongoMungpleRepository;
+    private final MungpleDetailDataRepository mungpleDetailDataRepository;
 
+    public MungpleDetailResDTO getMungpleDetailDataByMungpleId(int mungpleId) {
+        MungpleDetailData mungpleDetailData = mungpleDetailDataRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
+        return new MungpleDetailResDTO(mungpleService.getMungpleById(mungpleId), mungpleDetailData);
+    }
 
 //    public void makeMungpletoMongo() {
 //        List<Mungple> mungples = mungpleService.getMungpleByMap(CategoryCode.TOTAL.getCode());
