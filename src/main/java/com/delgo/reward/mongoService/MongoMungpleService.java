@@ -1,6 +1,5 @@
 package com.delgo.reward.mongoService;
 
-import com.delgo.reward.domain.Mungple;
 import com.delgo.reward.dto.mungple.MungpleDetailResDTO;
 import com.delgo.reward.mongoDomain.MongoMungple;
 import com.delgo.reward.mongoDomain.MungpleDetailData;
