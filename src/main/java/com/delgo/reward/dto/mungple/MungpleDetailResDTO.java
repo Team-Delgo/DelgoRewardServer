@@ -1,5 +1,6 @@
 package com.delgo.reward.dto.mungple;
 
+import com.delgo.reward.comm.code.DetailCode;
 import com.delgo.reward.domain.Mungple;
 import com.delgo.reward.mongoDomain.MungpleDetailData;
 import lombok.Getter;
@@ -7,35 +8,39 @@ import lombok.ToString;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Map;
 
 @Getter
 @ToString
 public class MungpleDetailResDTO extends MungpleResDTO {
-    private String address;
-    private Map<String, LocalTime> businessHour;
-    private String telNumber;
-    private boolean isResidentDog;
-    private Map<String, Boolean> restriction;
-    private Map<String, Boolean> acceptSize;
-    private Map<Integer, String> representMenuTitle;
-    private Map<Integer, String> representMenuPhotoUrl;
-    private boolean isParking;
-    private Map<String, String> parkingInfo;
+    private int mungpleId;
+    private Map<String, String> businessHour;
+    private String residentDogName;
+    private String representSite;
+    private String representMenuTitle;
+    private Map<String, DetailCode> acceptSize;
+    private String enterDesc;
+    private List<String> representMenuPhotoUrl;
+    private int parkingLimit;
+    private String editorNoteUrl;
+    private String copyLink;
+
 
 
     public MungpleDetailResDTO(Mungple mungple, MungpleDetailData mungpleDetailData){
         super(mungple);
 
-        this.address = mungpleDetailData.getAddress();
+        this.mungpleId = mungpleDetailData.getMungpleId();
         this.businessHour = mungpleDetailData.getBusinessHour();
-        this.telNumber = mungpleDetailData.getTelNumber();
-        this.isResidentDog = mungpleDetailData.isResidentDog();
-        this.restriction = mungpleDetailData.getRestriction();
-        this.acceptSize = mungpleDetailData.getAcceptSize();
+        this.residentDogName = mungpleDetailData.getResidentDogName();
+        this.representSite = mungpleDetailData.getRepresentSite();
         this.representMenuTitle = mungpleDetailData.getRepresentMenuTitle();
+        this.acceptSize = mungpleDetailData.getAcceptSize();
+        this.enterDesc = mungpleDetailData.getEnterDesc();
         this.representMenuPhotoUrl = mungpleDetailData.getRepresentMenuPhotoUrl();
-        this.isParking = mungpleDetailData.isParking();
-        this.parkingInfo = mungpleDetailData.getParkingInfo();
+        this.parkingLimit = mungpleDetailData.getParkingLimit();
+        this.editorNoteUrl = mungpleDetailData.getEditorNoteUrl();
+        this.copyLink = mungpleDetailData.getCopyLink();
     }
 }
