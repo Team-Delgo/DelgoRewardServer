@@ -1,9 +1,7 @@
 package com.delgo.reward;
 
 
-import com.delgo.reward.mongoService.NaverPlaceService;
-import com.delgo.reward.service.crawling.GetDogCodeCrawlingService;
-import com.delgo.reward.service.crawling.GetNaverMungpleCrawlingService;
+import com.delgo.reward.service.crawling.GetNaverMungplePhotoCrawlingService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,58 +13,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class CrawlingTest {
 
     @Autowired
-    private GetDogCodeCrawlingService crawlingService;
+    private GetNaverMungplePhotoCrawlingService naverCrawlingService;
 
     @Autowired
-    private GetNaverMungpleCrawlingService naverCrawlingService;
-
-    @Autowired
-    private NaverPlaceService naverService;
 
     @Test
-    public void getCrawlingTest() throws Exception {
-        String url = "https://map.naver.com/v5/search/경주터미널?c=15,0,0,0,dh&isCorrectAnswer=true";
+    public void getNaverMungpleDetailPhotoCrawlingTest() throws Exception {
+        String url = "https://map.naver.com/v5/search/%EB%B9%84%EC%8A%A4%ED%8A%B8%EB%A1%9C%EB%A7%88%EC%9D%B8/place/1047172387?c=15,0,0,0,dh&isCorrectAnswer=true";
 
         naverCrawlingService.crawlingProcess(url);
-    }
-
-    @Test
-    public void getCrawlingTest2() throws Exception {
-        String url = "https://map.naver.com/v5/search/가평역?c=15,0,0,0,dh&isCorrectAnswer=true";
-
-        naverCrawlingService.crawlingProcess(url);
-    }
-
-    @Test
-    public void getCrawlingTest3() throws Exception {
-        String url = "https://map.naver.com/v5/search/인천역?c=15,0,0,0,dh&isCorrectAnswer=true";
-
-        naverCrawlingService.crawlingProcess(url);
-    }
-
-    @Test
-    public void getCrawlingTest4() throws Exception {
-        String url = "https://map.naver.com/v5/search/동탄역?c=15,0,0,0,dh&isCorrectAnswer=true";
-
-        naverCrawlingService.crawlingProcess(url);
-    }
-
-    @Test
-    public void getCrawlingTest5() throws Exception {
-        String url = "https://map.naver.com/v5/search/대전역?c=15,0,0,0,dh&isCorrectAnswer=true";
-
-        naverCrawlingService.crawlingProcess(url);
-    }
-
-    @Test
-    public void getCrawlingTest6() throws Exception {
-        String url = "https://map.naver.com/v5/search/광주광역시청?c=15,0,0,0,dh&isCorrectAnswer=true";
-
-        naverCrawlingService.crawlingProcess(url);
-    }
-
-    @Test
-    public void getCrawlingTest7() throws Exception {
-        naverService.deleteDuplicate();
     }
 }

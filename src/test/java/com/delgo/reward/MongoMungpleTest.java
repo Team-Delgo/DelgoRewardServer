@@ -15,10 +15,10 @@ public class MongoMungpleTest {
     @Autowired
     private MongoMungpleService mongoMungpleService;
 
-    @Test
-    public void makeMungpletoMongoTEST() {
-        mongoMungpleService.makeMungpletoMongo();
-    }
+//    @Test
+//    public void makeMungpletoMongoTEST() {
+//        mongoMungpleService.makeMungpletoMongo();
+//    }
 
     @Test
     public void findWithin3KmTEST() {

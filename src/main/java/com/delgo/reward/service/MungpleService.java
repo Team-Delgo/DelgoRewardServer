@@ -61,6 +61,15 @@ public class MungpleService {
         return mungpleList.stream().map(MungpleResDTO::new).collect(Collectors.toList());
     }
 
+    // categoryCode로 Active Mungple 조회
+    public List<MungpleResDTO> getActiveMungpleByCategoryCode(String categoryCode) {
+        List<Mungple> mungpleList = !categoryCode.equals(CategoryCode.TOTAL.getCode())
+                ? mungpleRepository.findByCategoryCodeAndIsActive(categoryCode, true)
+                : mungpleRepository.findAllByIsActive(true);
+
+        return mungpleList.stream().map(MungpleResDTO::new).collect(Collectors.toList());
+    }
+
     // categoryCode로 Mungple 조회
     public List<MungpleResDTO> getMungpleByMap(String categoryCode) {
         List<Mungple> mungpleList = !categoryCode.equals(CategoryCode.TOTAL.getCode())
