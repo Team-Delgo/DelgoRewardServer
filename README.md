@@ -62,10 +62,12 @@
 `React`, `Redux Toolkit`, `React Query`, `SCSS`, `TypeScript`, `Eslint`, `Prettier`, `Naver Map`, `Firebase Analytics`, `FCM`, `Spring Boot`, `JPA`, `Maria DB`, `Nginx`, `Apache Tomcat`, `NCP`, `Object Storage`, `JWT`, `OAuth 2.0`, `REST API`
 
 ### ⚙️ Server Architecture
-<img width="70%" src="https://user-images.githubusercontent.com/54196723/209088168-6ac91aee-63f2-4d78-9f8a-d71a0a12c0df.png">
+<img width="70%" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/098853d1-efa0-44c5-b74d-c103bfcdaba5">
+
 
 ### ⚙️ ERD
-<img width="70%" src="https://user-images.githubusercontent.com/54196723/209088168-6ac91aee-63f2-4d78-9f8a-d71a0a12c0df.png">
+<img width="70%" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/d25007b6-30b3-4e07-8ef3-1277f27396cc">
+
 
 <br/>
 
