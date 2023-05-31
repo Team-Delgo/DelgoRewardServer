@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 
 public record MungpleRecord(
         @NotNull String address,
+        @NotNull String phoneNo,
         @NotNull String categoryCode,
         @NotNull String placeName,
         String placeNameEn) {
@@ -16,6 +17,7 @@ public record MungpleRecord(
     public Mungple toEntity(Location location) {
         return Mungple.builder()
                 .categoryCode(this.categoryCode)
+                .phoneNo(this.phoneNo)
                 .placeName(this.placeName)
                 .placeNameEn(this.placeNameEn)
                 .geoCode(location.getGeoCode())

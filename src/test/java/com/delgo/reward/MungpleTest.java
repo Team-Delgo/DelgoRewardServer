@@ -1,8 +1,10 @@
 package com.delgo.reward;
 
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.Mungple;
+import com.delgo.reward.dto.mungple.MungpleResDTO;
 import com.delgo.reward.repository.MungpleRepository;
 import com.delgo.reward.service.MungpleService;
 import org.junit.Test;
@@ -64,4 +66,14 @@ public class MungpleTest {
             }
         }
     }
+
+    @Test
+    public void getActiveMungple() {
+        List<MungpleResDTO> mungples = mungpleService.getActiveMungpleByCategoryCode(CategoryCode.TOTAL.getCode());
+        System.out.println("count :{} " + mungples.size());
+        for (MungpleResDTO mungple : mungples) {
+            System.out.println(" mungple : " + mungple);
+        }
+    }
+
 }

@@ -30,6 +30,9 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @Query(value = "select count(c) from Certification c where c.user.userId = :userId and c.mungpleId != 0")
     Integer countOfCertByMungpleAndUser(@Param("userId") int userId);
 
+    @Query(value = "select count(c) from Certification c where c.mungpleId = :mungpleId")
+    Integer countOfCertByMungple(@Param("mungpleId") int mungpleId);
+
     @Query(value = "select count(c) from Certification c where c.user.userId = :userId and c.categoryCode = :categoryCode and c.mungpleId = :mungpleId")
     Integer countCertByCategory(@Param("userId") int userId, @Param("categoryCode") String categoryCode, @Param("mungpleId") int mungpleId);
 
