@@ -10,12 +10,13 @@ import java.util.List;
 import java.util.Map;
 
 @Getter
+@Setter
 @Builder
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection="detail_data")
-public class MungpleDetailData {
+@Document(collection="mungple_detail")
+public class MungpleDetail {
     @Id
     private String id;
     @Field("mungple_id")

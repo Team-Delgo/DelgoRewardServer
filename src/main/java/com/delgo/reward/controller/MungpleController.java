@@ -3,6 +3,7 @@ package com.delgo.reward.controller;
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.exception.ApiCode;
 import com.delgo.reward.mongoService.MongoMungpleService;
+import com.delgo.reward.record.mungple.MungpleDetailRecord;
 import com.delgo.reward.record.mungple.MungpleRecord;
 import com.delgo.reward.service.MungpleService;
 import lombok.RequiredArgsConstructor;
@@ -22,16 +23,6 @@ public class MungpleController extends CommController {
 
     private final MungpleService mungpleService;
     private final MongoMungpleService mongoMungpleService;
-
-    /**
-     * 멍플 Id로 디테일 데이터 조회
-     * @param mungpleId
-     * @return 디테일 데이터
-     */
-    @GetMapping("/detail")
-    public ResponseEntity getDetailDataByMungpleId(@RequestParam int mungpleId){
-        return SuccessReturn(mongoMungpleService.getMungpleDetailDataByMungpleId(mungpleId));
-    }
 
     /*
      * 멍플 등록
@@ -78,5 +69,30 @@ public class MungpleController extends CommController {
     public ResponseEntity deleteMungple(@PathVariable Integer mungpleId) {
         mungpleService.delete(mungpleId);
         return SuccessReturn();
+    }
+
+    // -------------------------------------- DETAIL --------------------------------------
+
+    /**
+     * 멍플 Id로 디테일 데이터 조회
+     * @param mungpleId
+     * @return 디테일 데이터
+     */
+    @GetMapping("/detail")
+    public ResponseEntity getDetailDataByMungpleId(@RequestParam int mungpleId){
+        return SuccessReturn(mongoMungpleService.getMungpleDetailDataByMungpleId(mungpleId));
+    }
+
+    /*
+     * Mungple Detail 등록
+     * Request Data : mungpleId
+     * Response Data :
+     */
+    @PostMapping("/detail")
+    public ResponseEntity createDetailData(@RequestBody MungpleDetailRecord record){
+        if(mongoMungpleService.isExist(record.mungpleId()))
+            return ErrorReturn(ApiCode.MUNGPLE_DUPLICATE_ERROR);
+
+        return SuccessReturn(mongoMungpleService.createMungpleDetail(record));
     }
 }

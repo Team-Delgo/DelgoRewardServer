@@ -21,6 +21,11 @@ public class MongoMungpleTest {
 //    }
 
     @Test
+    public void modifyMungpleDetailTest() {
+        mongoMungpleService.modifyMungpleDetail(2,"똑똑이2");
+    }
+
+    @Test
     public void findWithin3KmTEST() {
         String latitude = "37.4704204";
         String longitude = "127.1412807";
