@@ -16,7 +16,7 @@ public class MungpleResDTO {
 
     private String placeName;
     private String placeNameEn;
-    private String jibunAddress; // 지번 주소
+    private String address; // 지번 주소
 
     private String latitude; // 위도
     private String longitude; // 경도
@@ -31,7 +31,7 @@ public class MungpleResDTO {
 
         placeName = mungple.getPlaceName();
         placeNameEn = mungple.getPlaceNameEn();
-        jibunAddress = mungple.getJibunAddress();
+        address = mungple.getJibunAddress();
 
         latitude = mungple.getLatitude();
         longitude = mungple.getLongitude();

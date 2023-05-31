@@ -5,6 +5,7 @@ import com.delgo.reward.mongoDomain.MongoMungple;
 import com.delgo.reward.mongoDomain.MungpleDetailData;
 import com.delgo.reward.mongoRepository.MongoMungpleRepository;
 import com.delgo.reward.mongoRepository.MungpleDetailDataRepository;
+import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.service.MungpleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,11 +27,14 @@ public class MongoMungpleService {
 
     private final MungpleService mungpleService;
     private final MongoMungpleRepository mongoMungpleRepository;
+    private final CertRepository certRepository;
     private final MungpleDetailDataRepository mungpleDetailDataRepository;
 
     public MungpleDetailResDTO getMungpleDetailDataByMungpleId(int mungpleId) {
         MungpleDetailData mungpleDetailData = mungpleDetailDataRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
-        return new MungpleDetailResDTO(mungpleService.getMungpleById(mungpleId), mungpleDetailData);
+        int certCount = certRepository.countOfCertByMungple(mungpleId);
+
+        return new MungpleDetailResDTO(mungpleService.getMungpleById(mungpleId), mungpleDetailData, certCount);
     }
 
 //    public void makeMungpletoMongo() {
