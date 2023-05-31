@@ -2,9 +2,9 @@ package com.delgo.reward.mongoService;
 
 import com.delgo.reward.dto.mungple.MungpleDetailResDTO;
 import com.delgo.reward.mongoDomain.MongoMungple;
-import com.delgo.reward.mongoDomain.MungpleDetailData;
-import com.delgo.reward.mongoRepository.MongoMungpleRepository;
+import com.delgo.reward.mongoDomain.MungpleDetail;
 import com.delgo.reward.mongoRepository.MungpleDetailDataRepository;
+import com.delgo.reward.record.mungple.MungpleDetailRecord;
 import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.service.MungpleService;
 import lombok.RequiredArgsConstructor;
@@ -16,26 +16,48 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class MongoMungpleService {
+
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    // Service
     private final MungpleService mungpleService;
-    private final MongoMungpleRepository mongoMungpleRepository;
+
+    // Repository
     private final CertRepository certRepository;
     private final MungpleDetailDataRepository mungpleDetailDataRepository;
 
+    public Boolean isExist(int mungpleId){
+        return mungpleDetailDataRepository.existsByMungpleId(mungpleId);
+    }
+
+    public MungpleDetail createMungpleDetail(MungpleDetailRecord record){
+        return mungpleDetailDataRepository.save(record.makeDetailData());
+    }
+
+    public void modifyMungpleDetail(int mungpleId, String dogName){
+        MungpleDetail mungpleDetail = mungpleDetailDataRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
+        mungpleDetail.setResidentDogName(dogName);
+
+        mungpleDetailDataRepository.save(mungpleDetail);
+    }
+
     public MungpleDetailResDTO getMungpleDetailDataByMungpleId(int mungpleId) {
-        MungpleDetailData mungpleDetailData = mungpleDetailDataRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
+        MungpleDetail mungpleDetail = mungpleDetailDataRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
         int certCount = certRepository.countOfCertByMungple(mungpleId);
 
-        return new MungpleDetailResDTO(mungpleService.getMungpleById(mungpleId), mungpleDetailData, certCount);
+        return new MungpleDetailResDTO(mungpleService.getMungpleById(mungpleId), mungpleDetail, certCount);
     }
+
+//    private final MongoMungpleRepository mongoMungpleRepository;
 
 //    public void makeMungpletoMongo() {
 //        List<Mungple> mungples = mungpleService.getMungpleByMap(CategoryCode.TOTAL.getCode());
