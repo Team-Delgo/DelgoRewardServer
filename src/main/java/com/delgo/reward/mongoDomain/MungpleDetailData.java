@@ -21,24 +21,28 @@ public class MungpleDetailData {
     @Field("mungple_id")
     private int mungpleId;
 
+    @Field("photo_urls")
+    private List<String> photoUrls; // 매장 사진 URL List
+
     @Field("enter_desc")
     private String enterDesc; // 강아지 동반 안내 매장 설명문
-    @Field("resident_dog_name")
-    private String residentDogName; // 상주견 이름
     @Field("business_hour")
     private Map<String, String> businessHour; // 운영 시간 ( 요일별로 표시 )
     @Field("accept_size")
     private Map<String, DetailCode> acceptSize;  // 허용 크기 ( S, M , L )
 
-    @Field("insta_id")
-    private String instaId; // 인스타 ID
+    @Field("resident_dog_name")
+    private String residentDogName; // 상주견 이름
+    @Field("resident_dog_photo")
+    private String residentDogPhoto; // 상주견 사진
 
     @Field("represent_menu_title")
     private String representMenuTitle; // 대표 메뉴 제목
     @Field("represent_menu_photo_urls")
     private List<String> representMenuPhotoUrls; // 대표 메뉴 URL List // ※무조건 3개 이상이어야 함.
-    @Field("photo_urls")
-    private List<String> photoUrls; // 매장 사진 URL List
+
+    @Field("insta_id")
+    private String instaId; // 인스타 ID
 
     @Field("is_parking")
     private Boolean isParking; // 주차 가능 여부

@@ -20,9 +20,11 @@ public class MungpleDetailResDTO {
     private String address; // 주소
 
     private String enterDesc; // 강아지 동반 안내 매장 설명문
-    private String residentDogName; // 상주견 이름
     private Map<String, String> businessHour; // 운영 시간 ( 요일별로 표시 )
     private Map<String, DetailCode> acceptSize; // 허용 크기 ( S, M , L )
+
+    private String residentDogName; // 상주견 이름
+    private String residentDogPhoto; // 상주견 프로필
 
     private String instaId; // 인스타 ID
 
@@ -50,9 +52,11 @@ public class MungpleDetailResDTO {
         address = mungple.getJibunAddress();
 
         enterDesc = mungpleDetailData.getEnterDesc();
-        residentDogName = mungpleDetailData.getResidentDogName();
         businessHour = mungpleDetailData.getBusinessHour();
         acceptSize = mungpleDetailData.getAcceptSize();
+
+        residentDogName = mungpleDetailData.getResidentDogName();
+        residentDogPhoto = mungpleDetailData.getResidentDogPhoto();
 
         photoUrls = mungpleDetailData.getPhotoUrls();
         instaId = mungpleDetailData.getInstaId();
