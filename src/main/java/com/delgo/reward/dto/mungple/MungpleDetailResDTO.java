@@ -17,7 +17,7 @@ public class MungpleDetailResDTO {
     private String categoryCode; // 카테고리 코드 ( ex. 카페, 음식점 .. )
     private String placeName;
     private String placeNameEn;
-    private String jibunAddress; // 주소
+    private String address; // 주소
 
     private String enterDesc; // 강아지 동반 안내 매장 설명문
     private String residentDogName; // 상주견 이름
@@ -37,19 +37,24 @@ public class MungpleDetailResDTO {
     private String editorNoteUrl; //
     private String copyLink;
 
-    public MungpleDetailResDTO(Mungple mungple, MungpleDetailData mungpleDetailData){
+    private Integer certCount; // 인증 개수
+    private Integer recommendCount = 0; // 추천 개수
+
+
+    public MungpleDetailResDTO(Mungple mungple, MungpleDetailData mungpleDetailData, int certCount){
         mungpleId = mungple.getMungpleId();
         phoneNo = mungple.getPhoneNo();
         categoryCode = mungple.getCategoryCode();
         placeName = mungple.getPlaceName();
         placeNameEn = mungple.getPlaceNameEn();
-        jibunAddress = mungple.getJibunAddress();
+        address = mungple.getJibunAddress();
 
         enterDesc = mungpleDetailData.getEnterDesc();
         residentDogName = mungpleDetailData.getResidentDogName();
         businessHour = mungpleDetailData.getBusinessHour();
         acceptSize = mungpleDetailData.getAcceptSize();
 
+        photoUrls = mungpleDetailData.getPhotoUrls();
         instaId = mungpleDetailData.getInstaId();
 
         representMenuTitle = mungpleDetailData.getRepresentMenuTitle();
@@ -60,5 +65,7 @@ public class MungpleDetailResDTO {
 
         editorNoteUrl = mungple.getDetailUrl();
         copyLink = mungpleDetailData.getCopyLink();
+
+        this.certCount = certCount;
     }
 }
