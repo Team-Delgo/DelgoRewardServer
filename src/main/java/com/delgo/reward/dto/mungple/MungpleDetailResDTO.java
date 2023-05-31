@@ -2,7 +2,7 @@ package com.delgo.reward.dto.mungple;
 
 import com.delgo.reward.comm.code.DetailCode;
 import com.delgo.reward.domain.Mungple;
-import com.delgo.reward.mongoDomain.MungpleDetailData;
+import com.delgo.reward.mongoDomain.MungpleDetail;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -43,7 +43,7 @@ public class MungpleDetailResDTO {
     private Integer recommendCount = 0; // 추천 개수
 
 
-    public MungpleDetailResDTO(Mungple mungple, MungpleDetailData mungpleDetailData, int certCount){
+    public MungpleDetailResDTO(Mungple mungple, MungpleDetail mungpleDetail, int certCount){
         mungpleId = mungple.getMungpleId();
         phoneNo = mungple.getPhoneNo();
         categoryCode = mungple.getCategoryCode();
@@ -51,24 +51,24 @@ public class MungpleDetailResDTO {
         placeNameEn = mungple.getPlaceNameEn();
         address = mungple.getJibunAddress();
 
-        enterDesc = mungpleDetailData.getEnterDesc();
-        businessHour = mungpleDetailData.getBusinessHour();
-        acceptSize = mungpleDetailData.getAcceptSize();
+        enterDesc = mungpleDetail.getEnterDesc();
+        businessHour = mungpleDetail.getBusinessHour();
+        acceptSize = mungpleDetail.getAcceptSize();
 
-        residentDogName = mungpleDetailData.getResidentDogName();
-        residentDogPhoto = mungpleDetailData.getResidentDogPhoto();
+        residentDogName = mungpleDetail.getResidentDogName();
+        residentDogPhoto = mungpleDetail.getResidentDogPhoto();
 
-        photoUrls = mungpleDetailData.getPhotoUrls();
-        instaId = mungpleDetailData.getInstaId();
+        photoUrls = mungpleDetail.getPhotoUrls();
+        instaId = mungpleDetail.getInstaId();
 
-        representMenuTitle = mungpleDetailData.getRepresentMenuTitle();
-        representMenuPhotoUrls = mungpleDetailData.getRepresentMenuPhotoUrls();
+        representMenuTitle = mungpleDetail.getRepresentMenuTitle();
+        representMenuPhotoUrls = mungpleDetail.getRepresentMenuPhotoUrls();
 
-        isParking = mungpleDetailData.getIsParking();
-        parkingInfo = mungpleDetailData.getParkingInfo();
+        isParking = mungpleDetail.getIsParking();
+        parkingInfo = mungpleDetail.getParkingInfo();
 
         editorNoteUrl = mungple.getDetailUrl();
-        copyLink = mungpleDetailData.getCopyLink();
+        copyLink = mungpleDetail.getCopyLink();
 
         this.certCount = certCount;
     }
