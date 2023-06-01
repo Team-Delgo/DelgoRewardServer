@@ -1,5 +1,6 @@
 package com.delgo.reward.mongoDomain;
 
+import com.delgo.reward.comm.code.BusinessHourCode;
 import com.delgo.reward.comm.code.DetailCode;
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -28,7 +29,7 @@ public class MungpleDetail {
     @Field("enter_desc")
     private String enterDesc; // 강아지 동반 안내 매장 설명문
     @Field("business_hour")
-    private Map<String, String> businessHour; // 운영 시간 ( 요일별로 표시 )
+    private Map<BusinessHourCode, String> businessHour; // 운영 시간 ( 요일별로 표시 )
     @Field("accept_size")
     private Map<String, DetailCode> acceptSize;  // 허용 크기 ( S, M , L )
 
@@ -45,8 +46,8 @@ public class MungpleDetail {
     @Field("insta_id")
     private String instaId; // 인스타 ID
 
-    @Field("is_parking")
-    private Boolean isParking; // 주차 가능 여부
+    @Field("parking_limit")
+    private String parkingLimit; // 주차 가능 대수
     @Field("parking_info")
     private String parkingInfo; // 주차 정보
 
