@@ -40,7 +40,7 @@ public class MungpleController extends CommController {
 
     /*
      * 멍플 카테고리 별 조회
-     * Request Data : categoryCode
+     * Request Data : categoryCodeF
      * - CA0000 = 전체 조회
      * Response Data : 카테고리별 멍플 리스트 반환
      */
