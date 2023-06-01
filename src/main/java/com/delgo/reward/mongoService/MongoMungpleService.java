@@ -3,7 +3,7 @@ package com.delgo.reward.mongoService;
 import com.delgo.reward.dto.mungple.MungpleDetailResDTO;
 import com.delgo.reward.mongoDomain.MongoMungple;
 import com.delgo.reward.mongoDomain.MungpleDetail;
-import com.delgo.reward.mongoRepository.MungpleDetailDataRepository;
+import com.delgo.reward.mongoRepository.MungpleDetailRepository;
 import com.delgo.reward.record.mungple.MungpleDetailRecord;
 import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.service.MungpleService;
@@ -33,25 +33,25 @@ public class MongoMungpleService {
 
     // Repository
     private final CertRepository certRepository;
-    private final MungpleDetailDataRepository mungpleDetailDataRepository;
+    private final MungpleDetailRepository mungpleDetailRepository;
 
     public Boolean isExist(int mungpleId){
-        return mungpleDetailDataRepository.existsByMungpleId(mungpleId);
+        return mungpleDetailRepository.existsByMungpleId(mungpleId);
     }
 
     public MungpleDetail createMungpleDetail(MungpleDetailRecord record){
-        return mungpleDetailDataRepository.save(record.makeDetailData());
+        return mungpleDetailRepository.save(record.makeDetailData());
     }
 
     public void modifyMungpleDetail(int mungpleId, String dogName){
-        MungpleDetail mungpleDetail = mungpleDetailDataRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
+        MungpleDetail mungpleDetail = mungpleDetailRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
         mungpleDetail.setResidentDogName(dogName);
 
-        mungpleDetailDataRepository.save(mungpleDetail);
+        mungpleDetailRepository.save(mungpleDetail);
     }
 
     public MungpleDetailResDTO getMungpleDetailDataByMungpleId(int mungpleId) {
-        MungpleDetail mungpleDetail = mungpleDetailDataRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
+        MungpleDetail mungpleDetail = mungpleDetailRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
         int certCount = certRepository.countOfCertByMungple(mungpleId);
 
         return new MungpleDetailResDTO(mungpleService.getMungpleById(mungpleId), mungpleDetail, certCount);

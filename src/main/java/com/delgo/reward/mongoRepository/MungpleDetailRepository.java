@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface MungpleDetailDataRepository extends MongoRepository<MungpleDetail, String> {
+public interface MungpleDetailRepository extends MongoRepository<MungpleDetail, String> {
     Optional<MungpleDetail> findByMungpleId(int mungpleId);
 
     Boolean existsByMungpleId(int mungpleId);
