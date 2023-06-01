@@ -31,11 +31,10 @@ public class MungpleController extends CommController {
      * Response Data : 등록한 멍플 데이터 반환
      */
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity register(@Validated @RequestPart(value="data") MungpleRecord record, @RequestPart MultipartFile photo) {
-        if (photo.isEmpty()) return ParamErrorReturn("photo");
+    public ResponseEntity register(@Validated @RequestPart(value = "data") MungpleRecord record, @RequestPart(required = false) MultipartFile photo) {
         return mungpleService.isMungpleExisting(record.address())
-                ? SuccessReturn(mungpleService.register(record, photo))
-                : ErrorReturn(ApiCode.MUNGPLE_DUPLICATE_ERROR); // 중복 에러
+                ? ErrorReturn(ApiCode.MUNGPLE_DUPLICATE_ERROR) // 중복 에러
+                : SuccessReturn(mungpleService.register(record, photo));
     }
 
     /*
