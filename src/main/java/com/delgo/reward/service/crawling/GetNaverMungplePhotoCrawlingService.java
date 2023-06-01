@@ -1,13 +1,8 @@
 package com.delgo.reward.service.crawling;
 
-import com.delgo.reward.mongoDomain.NaverPlace;
-import com.delgo.reward.mongoService.NaverPlaceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -28,7 +22,6 @@ public class GetNaverMungplePhotoCrawlingService {
     JavascriptExecutor js;
     private WebDriver driver;
 
-    private final NaverPlaceService naverPlaceService;
 
     public void crawlingProcess(String url) {
         System.setProperty("webdriver.chrome.whitelistedIps", "");
@@ -59,19 +52,47 @@ public class GetNaverMungplePhotoCrawlingService {
 
     private void getDataList(String url) throws InterruptedException {
         driver.get(url);    //브라우저에서 url로 이동한다.
-        Thread.sleep(10000); //브라우저 로딩될때까지 잠시 기다린다.
+        Thread.sleep(5000); //브라우저 로딩될때까지 잠시 기다린다.
 
         // 애견동반카페 버튼 클릭
-//        WebElement searchBox = driver.findElement(By.xpath("/html/body/app/layout/div[3]/div[2]/shrinkable-layout/div/app-base/search-input-box/div/div/div/input"));
-//        searchBox.sendKeys("비스트로 마인");
-//        Thread.sleep(2000);
+        WebElement searchBox = driver.findElement(By.xpath("/html/body/app/layout/div[3]/div[2]/shrinkable-layout/div/app-base/search-input-box/div/div[1]/div/input"));
+        searchBox.sendKeys("올티드 커피");
+        searchBox.sendKeys(Keys.ENTER);
+        Thread.sleep(3000);
+
+
         driver.switchTo().parentFrame();Thread.sleep(100); // 기존 IFRAME으로 이동
         driver.switchTo().frame(driver.findElement(By.cssSelector("#entryIframe")));
 
-        WebElement searchBtn = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[5]/div/div/div/div/a[6]/span"));
-        js.executeScript("arguments[0].click();", searchBtn);
+        // [사진] 버튼
+        WebElement photoBtn = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[5]/div/div/div/div/a[5]/span"));
+        js.executeScript("arguments[0].click();", photoBtn);
         Thread.sleep(2000);
 
+        WebElement photo_store_Btn = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[7]/div[3]/div/div/div/div/span[1]/a/span[1]"));
+        js.executeScript("arguments[0].click();", photo_store_Btn);
+        Thread.sleep(2000);
+
+        List<WebElement> photoUrls = driver.findElements(By.cssSelector(".wzrbN a img")); // 주소 Class
+        List<String> photos = photoUrls.stream().map(photo -> photo.getAttribute("src")).toList();
+        for(String photo : photos)
+             log.info("photo : {}", photos);
+
+//        WebElement sideMoveBtn = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[7]/div[3]/div/div/div/a[2]/span/svg"));
+//        js.executeScript("arguments[0].click();", sideMoveBtn);
+//        Thread.sleep(2000);
+
+
+        WebElement photo_menu_Btn = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[7]/div[3]/div/div/div/div/span[6]/a/span[1]"));
+        js.executeScript("arguments[0].click();", photo_menu_Btn);
+        Thread.sleep(2000);
+
+
+
+        List<WebElement> menuPhotoUrls = driver.findElements(By.cssSelector(".wzrbN a img")); // 주소 Class
+        List<String> menuPhotos = menuPhotoUrls.stream().map(photo -> photo.getAttribute("src")).toList();
+        for(String photo : menuPhotos)
+            log.info("menu photo : {}", photo);
     }
 //
 //        // SCROLL IFRAME 이동
