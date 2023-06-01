@@ -13,12 +13,14 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ExcelParserService {
 
@@ -32,7 +34,6 @@ public class ExcelParserService {
         Workbook workbook = new XSSFWorkbook(file);
         Sheet sheet = workbook.getSheetAt(0); // 첫 번째 시트를 선택
 
-        List<MungpleDetail> mungpleDetails = new ArrayList<>();
         for(int i = 5 ; i < 29 ; i++) {
             Cell cell = sheet.getRow(i).getCell(0);
             log.info("{}", cell.getNumericCellValue());
@@ -62,6 +63,16 @@ public class ExcelParserService {
                 continue;
             }
 
+            String phoneNo = Optional.ofNullable(sheet.getRow(i).getCell(9))
+                    .map(Cell::getStringCellValue)
+                    .filter(str -> !str.isEmpty())
+                    .orElse(null);
+
+            if(phoneNo != null) {
+                mungple.setPhoneNo(phoneNo);
+                log.info("phoneNo: {}", phoneNo);
+            }
+
             Boolean isExist = mungpleDetailRepository.existsByMungpleId(mungple.getMungpleId());
             if(isExist){
                 log.info("디테일 데이터가 이미 존재합니다.");
@@ -86,16 +97,17 @@ public class ExcelParserService {
             String enterDesc = Optional.ofNullable(sheet.getRow(i).getCell(18))
                     .map(Cell::getStringCellValue)
                     .filter(str -> !str.isEmpty())
+                    .map(str -> str.replace("\"",""))
                     .orElse(null);
 
             if(enterDesc != null) {
-//                log.info("enterDesc: {}", enterDesc);
                 mungpleDetail.setEnterDesc(enterDesc);
             }
 
             String residentDogName = Optional.ofNullable(sheet.getRow(i).getCell(13))
                     .map(Cell::getStringCellValue)
                     .filter(str -> !str.isEmpty())
+                    .map(s -> s.replaceAll("\"", ""))
                     .orElse(null);
 
             if (residentDogName != null) {
@@ -142,6 +154,7 @@ public class ExcelParserService {
             String instaId = Optional.ofNullable(sheet.getRow(i).getCell(14))
                     .map(Cell::getStringCellValue)
                     .filter(str -> !str.isEmpty())
+                    .map(str -> str.replace("\"",""))
                     .orElse(null);
 
             if (instaId != null) {
@@ -182,7 +195,7 @@ public class ExcelParserService {
             if (businessHour != null) {
                 Map<BusinessHourCode, String> map = parseBusinessHourString(businessHour);
 
-                map.forEach((key, value) -> log.info("{} : {}", key, value));
+//                map.forEach((key, value) -> log.info("{} : {}", key, value));
                 mungpleDetail.setBusinessHour(map);
             }
 
@@ -199,8 +212,8 @@ public class ExcelParserService {
             }
 
 
-
-//            log.info("mungple detail : {}", mungpleDetail);
+            mungpleDetailRepository.save(mungpleDetail);
+            log.info("mungple detail : {}", mungpleDetail);
             log.info("--------------------------------------------------------------------------------------");
         }
 
