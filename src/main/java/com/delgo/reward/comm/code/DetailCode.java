@@ -11,9 +11,9 @@ public enum DetailCode {
     private final String code;
     private final String desc;
 
-    DetailCode(String code, String value) {
+    DetailCode(String code, String desc) {
         this.code = code;
-        this.desc = value;
+        this.desc = desc;
     }
 
     public String getCode(){

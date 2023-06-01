@@ -1,5 +1,6 @@
 package com.delgo.reward.dto.mungple;
 
+import com.delgo.reward.comm.code.BusinessHourCode;
 import com.delgo.reward.comm.code.DetailCode;
 import com.delgo.reward.domain.Mungple;
 import com.delgo.reward.mongoDomain.MungpleDetail;
@@ -20,7 +21,7 @@ public class MungpleDetailResDTO {
     private String address; // 주소
 
     private String enterDesc; // 강아지 동반 안내 매장 설명문
-    private Map<String, String> businessHour; // 운영 시간 ( 요일별로 표시 )
+    private Map<BusinessHourCode, String> businessHour; // 운영 시간 ( 요일별로 표시 )
     private Map<String, DetailCode> acceptSize; // 허용 크기 ( S, M , L )
 
     private String residentDogName; // 상주견 이름
@@ -33,7 +34,7 @@ public class MungpleDetailResDTO {
     private String representMenuTitle; // 대표 메뉴 제목
     private List<String> representMenuPhotoUrls; // 대표 메뉴 사진 URL // ※무조건 3개 이상이어야 함.
 
-    private Boolean isParking; // 주차 가능 여부
+    private String parkingLimit; // 주차 가능 대수
     private String parkingInfo; // 주차 정보
 
     private String editorNoteUrl; //
@@ -64,7 +65,7 @@ public class MungpleDetailResDTO {
         representMenuTitle = mungpleDetail.getRepresentMenuTitle();
         representMenuPhotoUrls = mungpleDetail.getRepresentMenuPhotoUrls();
 
-        isParking = mungpleDetail.getIsParking();
+        parkingLimit = mungpleDetail.getParkingLimit();
         parkingInfo = mungpleDetail.getParkingInfo();
 
         editorNoteUrl = mungple.getDetailUrl();
