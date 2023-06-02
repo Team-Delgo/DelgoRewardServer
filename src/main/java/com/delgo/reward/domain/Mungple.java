@@ -53,6 +53,12 @@ public class Mungple extends BaseTimeEntity {
         return this;
     }
 
+    public Mungple setPhoneNo(String phoneNo){
+        this.phoneNo = phoneNo.replace("-","");
+
+        return this;
+    }
+
     public MongoMungple toMongo(){
         return MongoMungple.builder()
                 .categoryCode(categoryCode)

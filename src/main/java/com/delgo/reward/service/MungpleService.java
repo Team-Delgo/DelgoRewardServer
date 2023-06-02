@@ -41,7 +41,7 @@ public class MungpleService {
         Location location = geoService.getGeoData(record.address()); // 위도, 경도
 
         Mungple mungple = mungpleRepository.save(record.toEntity(location));
-        mungple.setPhotoUrl(photoService.uploadMungple(mungple.getMungpleId(), photo));
+//        mungple.setPhotoUrl(photoService.uploadMungple(mungple.getMungpleId(), photo));
 
         return new MungpleResDTO(mungple);
     }
@@ -82,6 +82,8 @@ public class MungpleService {
     // 중복 체크
     public boolean isMungpleExisting(String address) {
         Location location = geoService.getGeoData(address); // 위도, 경도
+        log.info("Location : {}", location);
+
         return mungpleRepository.existsByLatitudeAndLongitude(location.getLatitude(), location.getLongitude());
     }
 
