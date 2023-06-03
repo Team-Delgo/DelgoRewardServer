@@ -43,9 +43,25 @@ public class MongoMungpleService {
         return mungpleDetailRepository.save(record.makeDetailData());
     }
 
-    public void modifyMungpleDetail(int mungpleId, String dogName){
+    public void modifyPhotoUrls(int mungpleId, List<String> photoUrls){
         MungpleDetail mungpleDetail = mungpleDetailRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
-        mungpleDetail.setResidentDogName(dogName);
+        mungpleDetail.setPhotoUrls(photoUrls);
+
+        mungpleDetailRepository.save(mungpleDetail);
+    }
+
+    public void modifyMenuPhotoUrl(int mungpleId, String menuPhoto){
+        MungpleDetail mungpleDetail = mungpleDetailRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
+        List<String> menuPhotos = mungpleDetail.getRepresentMenuPhotoUrls();
+        menuPhotos.add(0,menuPhoto);
+        mungpleDetail.setRepresentMenuPhotoUrls(menuPhotos);
+
+        mungpleDetailRepository.save(mungpleDetail);
+    }
+
+    public void modifyEnterDesc(int mungpleId, String desc){
+        MungpleDetail mungpleDetail = mungpleDetailRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
+        mungpleDetail.setEnterDesc(desc);
 
         mungpleDetailRepository.save(mungpleDetail);
     }

@@ -1,5 +1,9 @@
 package com.delgo.reward.service.crawling;
 
+import com.delgo.reward.domain.Mungple;
+import com.delgo.reward.mongoRepository.MungpleDetailRepository;
+import com.delgo.reward.mongoService.MongoMungpleService;
+import com.delgo.reward.repository.MungpleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.*;
@@ -22,6 +26,10 @@ public class GetNaverMungplePhotoCrawlingService {
     JavascriptExecutor js;
     private WebDriver driver;
 
+    private final MungpleDetailRepository mungpleDetailRepository;
+    private final MongoMungpleService mongoMungpleService;
+    private final MungpleRepository mungpleRepository;
+
 
     public void crawlingProcess(String url) {
         System.setProperty("webdriver.chrome.whitelistedIps", "");
@@ -40,7 +48,8 @@ public class GetNaverMungplePhotoCrawlingService {
         js = (JavascriptExecutor) driver;
 
         try {
-            getDataList(url);
+//            getPhoto(url);
+            getPhotoByMorePlaces(url);
         } catch (InterruptedException e) {
             System.out.println("**************************에러 발생 *************************");
             e.printStackTrace();
@@ -50,136 +59,164 @@ public class GetNaverMungplePhotoCrawlingService {
 
     }
 
-    private void getDataList(String url) throws InterruptedException {
+    private void getPhoto(String url) throws InterruptedException {
         driver.get(url);    //브라우저에서 url로 이동한다.
-        Thread.sleep(5000); //브라우저 로딩될때까지 잠시 기다린다.
+        Thread.sleep(3000); //브라우저 로딩될때까지 잠시 기다린다.
 
+        List<Mungple> mungples = mungpleRepository.findAllByIsActive(true);
+        for(int m = 1 ; m < mungples.size(); m++) {
+            log.info("{} mungple name : {}", m, mungples.get(m).getPlaceName());
+
+            // 애견동반카페 버튼 클릭
+            WebElement searchBox = driver.findElement(By.xpath("/html/body/app/layout/div[3]/div[2]/shrinkable-layout/div/app-base/search-input-box/div/div[1]/div/input"));
+            searchBox.clear();
+            searchBox.sendKeys(mungples.get(m).getPlaceName());
+            searchBox.sendKeys(Keys.ENTER);
+            Thread.sleep(2000);
+
+            try {
+                driver.switchTo().frame(driver.findElement(By.cssSelector("#entryIframe")));
+                Thread.sleep(500);
+
+                // [사진] 버튼
+                List<WebElement> btn_bar = driver.findElements(By.xpath("/html/body/div[3]/div/div/div/div[5]/div/div/div/div/a"));
+                int photoOrder = 0;
+                for (int i = 0; i < btn_bar.size(); i++) {
+                    if (btn_bar.get(i).getText().equals("사진"))
+                        photoOrder = i + 1;
+                }
+                WebElement photoBtn = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[5]/div/div/div/div/a[" + photoOrder + "]/span"));
+                js.executeScript("arguments[0].click();", photoBtn);
+                Thread.sleep(2000);
+
+                WebElement photo_store_Btn = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[7]/div[3]/div/div/div/div/span[1]/a/span[1]"));
+                js.executeScript("arguments[0].click();", photo_store_Btn);
+                Thread.sleep(2000);
+
+                List<WebElement> photoUrls = driver.findElements(By.cssSelector(".wzrbN a img")); // 주소 Class
+                List<String> photos = photoUrls.stream().map(photo -> photo.getAttribute("src")).toList();
+                if (photos.size() >= 4) {
+                    photos = photos.subList(0, 4);
+                }
+                for (String photo : photos)
+                    log.info("photo : {}", photo);
+
+                mongoMungpleService.modifyPhotoUrls(mungples.get(m).getMungpleId(),photos);
+
+                try {
+                    WebElement photo_menu_Btn = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[7]/div[3]/div/div/div/div/span[6]/a/span[1]"));
+                    js.executeScript("arguments[0].click();", photo_menu_Btn);
+                    Thread.sleep(2000);
+
+                    List<WebElement> menuPhotoUrls = driver.findElements(By.cssSelector(".wzrbN a img")); // 주소 Class
+
+                    List<String> menuPhotos = menuPhotoUrls.stream().map(photo -> photo.getAttribute("src")).toList();
+                    log.info("menu photo : {}", menuPhotos.get(0));
+
+                    mongoMungpleService.modifyMenuPhotoUrl(mungples.get(m).getMungpleId(), menuPhotos.get(0));
+                } catch (NoSuchElementException e) {
+                    log.info("menu photo 존재치 않음.");
+                    // 대체 동작 또는 예외 처리 로직을 작성
+                }
+
+
+            } catch (Exception ignored) {
+                log.info("같은 이름의 장소가 여러개 존재함.");
+            }
+
+            log.info("--------------------------------------------------------------------------------------");
+
+            driver.switchTo().parentFrame();
+            Thread.sleep(100); // 기존 IFRAME으로 이동
+        }
+    }
+
+    // 검색 시 두개 이상의 장소가 나오는 멍플은 이걸로 크롤링
+    private void getPhotoByMorePlaces(String url) throws InterruptedException {
+        driver.get(url);    //브라우저에서 url로 이동한다.
+        Thread.sleep(3000); //브라우저 로딩될때까지 잠시 기다린다.
+
+        List<Mungple> mungples = mungpleRepository.findAllByIsActive(true);
+        for (int m = 1; m < mungples.size(); m++) {
+
+        log.info("{} mungple name : {}", m, mungples.get(m).getPlaceName());
         // 애견동반카페 버튼 클릭
         WebElement searchBox = driver.findElement(By.xpath("/html/body/app/layout/div[3]/div[2]/shrinkable-layout/div/app-base/search-input-box/div/div[1]/div/input"));
-        searchBox.sendKeys("올티드 커피");
+        searchBox.clear();
+            searchBox.sendKeys(mungples.get(m).getPlaceName());
+//        searchBox.sendKeys("브라운칩");
         searchBox.sendKeys(Keys.ENTER);
-        Thread.sleep(3000);
-
-
-        driver.switchTo().parentFrame();Thread.sleep(100); // 기존 IFRAME으로 이동
-        driver.switchTo().frame(driver.findElement(By.cssSelector("#entryIframe")));
-
-        // [사진] 버튼
-        WebElement photoBtn = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[5]/div/div/div/div/a[5]/span"));
-        js.executeScript("arguments[0].click();", photoBtn);
         Thread.sleep(2000);
 
-        WebElement photo_store_Btn = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[7]/div[3]/div/div/div/div/span[1]/a/span[1]"));
-        js.executeScript("arguments[0].click();", photo_store_Btn);
-        Thread.sleep(2000);
+        driver.switchTo().frame(driver.findElement(By.cssSelector("#searchIframe")));
+        Thread.sleep(500);
 
-        List<WebElement> photoUrls = driver.findElements(By.cssSelector(".wzrbN a img")); // 주소 Class
-        List<String> photos = photoUrls.stream().map(photo -> photo.getAttribute("src")).toList();
-        for(String photo : photos)
-             log.info("photo : {}", photos);
+        List<WebElement> place_list = driver.findElements(By.xpath("//*[@id=\"_pcmap_list_scroll_container\"]/ul/li/div[1]/div[2]/div/div/span/a/span[1]"));
+        if (place_list.size() >= 2) {
+            for (int i = 0; i < place_list.size(); i++) {
+                log.info("place : {}", place_list.get(i).getText());
+            }
+            WebElement place = driver.findElement(By.xpath("/html/body/div[3]/div/div[2]/div[1]/ul/li[1]/div[1]/div[1]/a"));
+            js.executeScript("arguments[0].click();", place);
+            Thread.sleep(2000);
 
-//        WebElement sideMoveBtn = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[7]/div[3]/div/div/div/a[2]/span/svg"));
-//        js.executeScript("arguments[0].click();", sideMoveBtn);
-//        Thread.sleep(2000);
+            driver.switchTo().parentFrame();
+            Thread.sleep(100); // 기존 IFRAME으로 이동
 
+            try {
+                driver.switchTo().frame(driver.findElement(By.cssSelector("#entryIframe")));
+                Thread.sleep(100);
 
-        WebElement photo_menu_Btn = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[7]/div[3]/div/div/div/div/span[6]/a/span[1]"));
-        js.executeScript("arguments[0].click();", photo_menu_Btn);
-        Thread.sleep(2000);
+                // [사진] 버튼
+                List<WebElement> btn_bar = driver.findElements(By.xpath("/html/body/div[3]/div/div/div/div[5]/div/div/div/div/a"));
+                int photoOrder = 0;
+                for (int i = 0; i < btn_bar.size(); i++) {
+                    if (btn_bar.get(i).getText().equals("사진"))
+                        photoOrder = i + 1;
+                }
+                WebElement photoBtn = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[5]/div/div/div/div/a[" + photoOrder + "]/span"));
+                js.executeScript("arguments[0].click();", photoBtn);
+                Thread.sleep(2000);
 
+                WebElement photo_store_Btn = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[7]/div[3]/div/div/div/div/span[1]/a/span[1]"));
+                js.executeScript("arguments[0].click();", photo_store_Btn);
+                Thread.sleep(2000);
 
+                List<WebElement> photoUrls = driver.findElements(By.cssSelector(".wzrbN a img")); // 주소 Class
+                List<String> photos = photoUrls.stream().map(photo -> photo.getAttribute("src")).toList();
+                if (photos.size() >= 4) {
+                    photos = photos.subList(0, 4);
+                }
+                for (String photo : photos)
+                    log.info("photo : {}", photo);
 
-        List<WebElement> menuPhotoUrls = driver.findElements(By.cssSelector(".wzrbN a img")); // 주소 Class
-        List<String> menuPhotos = menuPhotoUrls.stream().map(photo -> photo.getAttribute("src")).toList();
-        for(String photo : menuPhotos)
-            log.info("menu photo : {}", photo);
+                mongoMungpleService.modifyPhotoUrls(mungples.get(m).getMungpleId(),photos);
+
+                try {
+                    WebElement photo_menu_Btn = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[7]/div[3]/div/div/div/div/span[6]/a/span[1]"));
+                    js.executeScript("arguments[0].click();", photo_menu_Btn);
+                    Thread.sleep(2000);
+
+                    List<WebElement> menuPhotoUrls = driver.findElements(By.cssSelector(".wzrbN a img")); // 주소 Class
+
+                    List<String> menuPhotos = menuPhotoUrls.stream().map(photo -> photo.getAttribute("src")).toList();
+                    log.info("menu photo : {}", menuPhotos.get(0));
+
+                    mongoMungpleService.modifyMenuPhotoUrl(mungples.get(m).getMungpleId(), menuPhotos.get(0));
+                } catch (NoSuchElementException e) {
+                    log.info("menu photo 존재치 않음.");
+                    // 대체 동작 또는 예외 처리 로직을 작성
+                }
+            } catch (Exception ignored) {
+                ignored.printStackTrace();
+//                log.info("같은 이름의 장소가 여러개 존재함.");
+            }
+        }
+
+            log.info("--------------------------------------------------------------------------------------");
+
+            driver.switchTo().parentFrame();
+            Thread.sleep(100); // 기존 IFRAME으로 이동
+        }
     }
-//
-//        // SCROLL IFRAME 이동
-//        driver.switchTo().frame(driver.findElement(By.cssSelector("#searchIframe")));
-//        Thread.sleep(2000);
-//
-//        int num = 1;
-//        int page = 0;
-//        while (true) {
-//            page++;
-//            log.info("page :{}", page);
-//
-//            // 스크롤 맨 하단으로 이동
-//            for (int i = 0; i < 10; i++) {
-//                WebElement scroll = driver.findElement(By.cssSelector("#_pcmap_list_scroll_container"));
-//                js.executeScript("arguments[0].scrollTop = arguments[0].scrollHeight", scroll);
-//
-//                Thread.sleep(500);
-//            }
-//
-//            List<WebElement> elements = driver.findElements(By.cssSelector(".place_bluelink"));
-//            for (WebElement element : elements) {
-//                NaverPlace np = new NaverPlace();
-//                log.info("{} 번째 장소 , place Name : {}", num++ , element.getText());
-//                np.setPlaceName(element.getText());
-//                // 상세 페이지 이동을 위해 PLACE NAME 클릭
-//                js.executeScript("arguments[0].click();", element);Thread.sleep(2000);
-//
-//                // 상세 페이지 IFRAME으로 이동
-
-//
-//                WebElement address = driver.findElement(By.cssSelector(".LDgIH")); // 주소 Class
-//                np.setAddress(address.getText());
-//
-//                // 장소 중복 시 넘어감
-//                if(naverPlaceService.checkDuplicate(np)) {
-//                    // SCROLL IFRAME 이동
-//                    driver.switchTo().parentFrame();Thread.sleep(100);  // 기존 아이프레임으로 이동
-//                    driver.switchTo().frame(driver.findElement(By.cssSelector("#searchIframe")));Thread.sleep(500);
-//
-//                    continue;
-//                }
-//
-//                WebElement category = driver.findElement(By.cssSelector(".DJJvD")); // 주소 Class
-//                np.setCategory(category.getText());
-//
-//                // 사진 버튼
-//                List<WebElement> photoButtonList = driver.findElements(By.cssSelector(".veBoZ")); // Class
-//                for (WebElement photoButton : photoButtonList)
-//                    if (photoButton.getText().equals("사진")) {
-//                        js.executeScript("arguments[0].click();", photoButton);
-//                        break;
-//                    }
-//                Thread.sleep(2000);
-//
-//                // 업체 사진 버튼
-//                List<WebElement> photoButton2List = driver.findElements(By.cssSelector(".BSSHM")); // Class
-//                for (WebElement photoButton : photoButton2List)
-//                    if (photoButton.getText().equals("업체사진")) {
-//                        js.executeScript("arguments[0].click();", photoButton);
-//                        break;
-//                    }
-//
-//                Thread.sleep(2000);
-//
-//                List<WebElement> photoUrls = driver.findElements(By.cssSelector(".wzrbN a.place_thumb img"));
-//                List<String> photos = photoUrls.stream().map(photo -> photo.getAttribute("src")).collect(Collectors.toList());
-//                np.setPhotos(photos);
-//                log.info("Naver Place : {}", np);
-//
-//                naverPlaceService.register(np);
-//
-//                // SCROLL IFRAME 이동
-//                driver.switchTo().parentFrame();Thread.sleep(100);  // 기존 아이프레임으로 이동
-//                driver.switchTo().frame(driver.findElement(By.cssSelector("#searchIframe")));Thread.sleep(500);
-//            }
-//
-//            List<WebElement> isUnusedBtn = driver.findElements(By.cssSelector(".Y89AQ"));
-//            if (page > 1 && isUnusedBtn.size() == 1) break; // 마지막 페이지
-//
-//            // 다음 페이지 이동
-//            List<WebElement> nextBtn = driver.findElements(By.cssSelector(".eUTV2"));
-//            js.executeScript("arguments[0].click();", nextBtn.get(1));
-//
-//            Thread.sleep(2000);
-//        }
-//
-//            return null;
-//        }
 }
