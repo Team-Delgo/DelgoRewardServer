@@ -101,7 +101,7 @@ public class GetNaverMungplePhotoCrawlingService {
                 for (String photo : photos)
                     log.info("photo : {}", photo);
 
-                mongoMungpleService.modifyPhotoUrls(mungples.get(m).getMungpleId(),photos);
+//                mongoMungpleService.modifyPhotoUrls(mungples.get(m).getMungpleId(),photos);
 
                 try {
                     WebElement photo_menu_Btn = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[7]/div[3]/div/div/div/div/span[6]/a/span[1]"));
@@ -113,7 +113,7 @@ public class GetNaverMungplePhotoCrawlingService {
                     List<String> menuPhotos = menuPhotoUrls.stream().map(photo -> photo.getAttribute("src")).toList();
                     log.info("menu photo : {}", menuPhotos.get(0));
 
-                    mongoMungpleService.modifyMenuPhotoUrl(mungples.get(m).getMungpleId(), menuPhotos.get(0));
+//                    mongoMungpleService.modifyMenuPhotoUrl(mungples.get(m).getMungpleId(), menuPhotos.get(0));
                 } catch (NoSuchElementException e) {
                     log.info("menu photo 존재치 않음.");
                     // 대체 동작 또는 예외 처리 로직을 작성
@@ -190,7 +190,7 @@ public class GetNaverMungplePhotoCrawlingService {
                 for (String photo : photos)
                     log.info("photo : {}", photo);
 
-                mongoMungpleService.modifyPhotoUrls(mungples.get(m).getMungpleId(),photos);
+//                mongoMungpleService.modifyPhotoUrls(mungples.get(m).getMungpleId(),photos);
 
                 try {
                     WebElement photo_menu_Btn = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[7]/div[3]/div/div/div/div/span[6]/a/span[1]"));
@@ -202,7 +202,7 @@ public class GetNaverMungplePhotoCrawlingService {
                     List<String> menuPhotos = menuPhotoUrls.stream().map(photo -> photo.getAttribute("src")).toList();
                     log.info("menu photo : {}", menuPhotos.get(0));
 
-                    mongoMungpleService.modifyMenuPhotoUrl(mungples.get(m).getMungpleId(), menuPhotos.get(0));
+//                    mongoMungpleService.modifyMenuPhotoUrl(mungples.get(m).getMungpleId(), menuPhotos.get(0));
                 } catch (NoSuchElementException e) {
                     log.info("menu photo 존재치 않음.");
                     // 대체 동작 또는 예외 처리 로직을 작성

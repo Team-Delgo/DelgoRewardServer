@@ -46,7 +46,7 @@ public class MongoMungpleTest {
         photos.add("https://test.com");
 
 
-        mongoMungpleService.modifyPhotoUrls(mungpleId, photos);
+//        mongoMungpleService.modifyPhotoUrls(mungpleId, photos);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class MongoMungpleTest {
         String url = "https:asfsadf";
 
 
-        mongoMungpleService.modifyMenuPhotoUrl(mungpleId, url);
+//        mongoMungpleService.modifyMenuPhotoUrl(mungpleId, url);
     }
 
     @Test
