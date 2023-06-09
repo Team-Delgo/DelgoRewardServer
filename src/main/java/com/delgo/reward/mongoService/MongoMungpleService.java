@@ -43,17 +43,22 @@ public class MongoMungpleService {
         return mungpleDetailRepository.save(record.makeDetailData());
     }
 
-    public void modifyPhotoUrls(int mungpleId, List<String> photoUrls){
+    public void addPhotoUrls(int mungpleId, List<String> photoUrls){
         MungpleDetail mungpleDetail = mungpleDetailRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
+        if(mungpleDetail.getPhotoUrls() != null)
+            mungpleDetail.getPhotoUrls().clear(); // 초기화
+
         mungpleDetail.setPhotoUrls(photoUrls);
 
         mungpleDetailRepository.save(mungpleDetail);
     }
 
-    public void modifyMenuPhotoUrl(int mungpleId, String menuPhoto){
+    public void addMenuPhotoUrl(int mungpleId, List<String> menuPhotos){
         MungpleDetail mungpleDetail = mungpleDetailRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
-        List<String> menuPhotos = mungpleDetail.getRepresentMenuPhotoUrls();
-        menuPhotos.add(0,menuPhoto);
+        if(mungpleDetail.getRepresentMenuPhotoUrls() != null)
+            mungpleDetail.getRepresentMenuPhotoUrls().clear();
+        //        List<String> menuPhotos = mungpleDetail.getRepresentMenuPhotoUrls();
+//        menuPhotos.add(0,menuPhoto);
         mungpleDetail.setRepresentMenuPhotoUrls(menuPhotos);
 
         mungpleDetailRepository.save(mungpleDetail);

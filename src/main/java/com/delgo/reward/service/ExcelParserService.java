@@ -2,9 +2,11 @@ package com.delgo.reward.service;
 
 import com.delgo.reward.comm.code.BusinessHourCode;
 import com.delgo.reward.comm.code.DetailCode;
+import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.Mungple;
 import com.delgo.reward.mongoDomain.MungpleDetail;
 import com.delgo.reward.mongoRepository.MungpleDetailRepository;
+import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.repository.MungpleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +29,9 @@ public class ExcelParserService {
     private final MungpleRepository mungpleRepository;
     private final MungpleDetailRepository mungpleDetailRepository;
 
+    private final ObjectStorageService objectStorageService;
+    private final MongoMungpleService mongoMungpleService;
+
     String COPY_URL = "https://www.test.delgo.pet/detail/";
 
     public void parseExcelFile(String filePath) throws IOException {
@@ -34,7 +39,7 @@ public class ExcelParserService {
         Workbook workbook = new XSSFWorkbook(file);
         Sheet sheet = workbook.getSheetAt(0); // 첫 번째 시트를 선택
 
-        for(int i = 5 ; i < 29 ; i++) {
+        for(int i = 26 ; i < 50 ; i++) {
             Cell cell = sheet.getRow(i).getCell(0);
             log.info("{}", cell.getNumericCellValue());
             CellStyle cellStyle = cell.getCellStyle();
@@ -57,6 +62,9 @@ public class ExcelParserService {
             String mungpleName = sheet.getRow(i).getCell(3).getStringCellValue();
             log.info("mungpleName :{}", mungpleName);
 
+            if(mungpleName.equals("에게"))
+                break;
+
             Mungple mungple = mungpleRepository.findByPlaceName(mungpleName);
             if(mungple == null){
                 log.info("--------------------------------------------------------------------------------------");
@@ -70,15 +78,15 @@ public class ExcelParserService {
 
             if(phoneNo != null) {
                 mungple.setPhoneNo(phoneNo);
-                log.info("phoneNo: {}", phoneNo);
+//                log.info("phoneNo: {}", phoneNo);
             }
 
-            Boolean isExist = mungpleDetailRepository.existsByMungpleId(mungple.getMungpleId());
-            if(isExist){
-                log.info("디테일 데이터가 이미 존재합니다.");
-                log.info("--------------------------------------------------------------------------------------");
-                continue;
-            }
+//            Boolean isExist = mungpleDetailRepository.existsByMungpleId(mungple.getMungpleId());
+//            if(isExist){
+//                log.info("디테일 데이터가 이미 존재합니다.");
+//                log.info("--------------------------------------------------------------------------------------");
+//                continue;
+//            }
 
             MungpleDetail mungpleDetail = new MungpleDetail();
 
@@ -212,8 +220,47 @@ public class ExcelParserService {
             }
 
 
-            mungpleDetailRepository.save(mungpleDetail);
-            log.info("mungple detail : {}", mungpleDetail);
+            String thumbnailsText = Optional.ofNullable(sheet.getRow(i).getCell(8))
+                    .map(Cell::getStringCellValue)
+                    .orElse(null);
+
+            if (thumbnailsText != null && !thumbnailsText.isEmpty()) {
+                List<String> thumbnails = Arrays.stream(thumbnailsText.split("\n"))
+                        .filter(s -> !s.isEmpty())
+                        .toList();
+
+//                for(String thumbnail : thumbnails) {
+//                    log.info("thumbnail :{}", thumbnail);
+//                }
+            }
+
+            // 메뉴판 사진
+            String menuText = Optional.ofNullable(sheet.getRow(i).getCell(25))
+                    .map(Cell::getStringCellValue)
+                    .orElse(null);
+
+            if (menuText != null && !menuText.isEmpty()) {
+                List<String> menus = Arrays.stream(menuText.split("\n"))
+                        .filter(s -> !s.isEmpty())
+                        .toList();
+                mongoMungpleService.addMenuPhotoUrl(mungple.getMungpleId(), menus);
+
+//                for(String menu : menus) {
+//                    log.info("menu :{}", menu);
+//                }
+            }
+
+
+            List<String> thumbnails = objectStorageService.selectMungpleDetailObjects("reward-detail-thumbnail",mungple.getPlaceName());
+            String ncpUrl = "https://kr.object.ncloudstorage.com/reward-detail-thumbnail/";
+            List<String> test  = thumbnails.stream().map(t -> {return ncpUrl + t;}).toList();
+            test.forEach(t -> log.info("thumb : {}", t));
+
+            mongoMungpleService.addPhotoUrls(mungple.getMungpleId(), test);
+
+
+//            mungpleDetailRepository.save(mungpleDetail);
+//            log.info("mungple detail : {}", mungpleDetail);
             log.info("--------------------------------------------------------------------------------------");
         }
 
