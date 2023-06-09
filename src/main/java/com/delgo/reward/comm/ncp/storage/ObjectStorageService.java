@@ -133,10 +133,11 @@ public class ObjectStorageService {
         }
     }
 
-    public void selectObjects(String bucketName) {
+    public List<String> selectObjects(String bucketName) {
 //        String bucketName = "delgo-storage";
 
         // list all in the bucket
+        List<String> returns = new ArrayList<String>();
         try {
             ListObjectsRequest listObjectsRequest = new ListObjectsRequest()
                     .withBucketName(bucketName)
@@ -148,6 +149,7 @@ public class ObjectStorageService {
             while (true) {
                 for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
                     System.out.println("    name=" + objectSummary.getKey() + ", size=" + objectSummary.getSize() + ", owner=" + objectSummary.getOwner().getId());
+                    returns.add(objectSummary.getKey());
                 }
 
                 if (objectListing.isTruncated()) {
@@ -182,6 +184,43 @@ public class ObjectStorageService {
         } catch (SdkClientException e) {
             e.printStackTrace();
         }
+
+        return returns;
+    }
+
+    public List<String> selectMungpleDetailObjects(String bucketName, String mungpleName) {
+//        String bucketName = "delgo-storage";
+
+        String prefix = "notwebp/" + mungpleName;
+        // list all in the bucket
+        List<String> returns = new ArrayList<String>();
+        try {
+            ListObjectsRequest listObjectsRequest = new ListObjectsRequest()
+                    .withBucketName(bucketName)
+                    .withPrefix(prefix)
+                    .withMaxKeys(300);
+
+            ObjectListing objectListing = s3.listObjects(listObjectsRequest);
+
+            System.out.println("Object List:");
+            while (true) {
+                for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
+//                    System.out.println("    name=" + objectSummary.getKey() + ", size=" + objectSummary.getSize() + ", owner=" + objectSummary.getOwner().getId());
+                    returns.add(objectSummary.getKey());
+                }
+
+                if (objectListing.isTruncated()) {
+                    objectListing = s3.listNextBatchOfObjects(objectListing);
+                } else {
+                    break;
+                }
+            }
+        } catch (AmazonS3Exception e) {
+            System.err.println(e.getErrorMessage());
+            System.exit(1);
+        }
+
+        return returns;
     }
 
     public void uploadMultipart() {
