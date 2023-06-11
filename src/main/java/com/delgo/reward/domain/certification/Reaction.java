@@ -19,4 +19,5 @@ public class Reaction {
     @Enumerated(EnumType.STRING)
     private ReactionCode reactionCode;
     private Integer userId;
+
 }
