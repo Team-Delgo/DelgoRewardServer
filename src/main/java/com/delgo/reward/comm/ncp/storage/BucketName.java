@@ -29,7 +29,12 @@ public enum BucketName {
             "reward-profile",
             "test-profile",
             "https://kr.object.ncloudstorage.com/reward-profile/",
-            "https://kr.object.ncloudstorage.com/test-profile/");
+            "https://kr.object.ncloudstorage.com/test-profile/"),
+    DETAIL_MENU(
+            "reward-detail-menu",
+            "reward-detail-menu",
+            "https://kr.object.ncloudstorage.com/reward-detail-menu/",
+            "https://kr.object.ncloudstorage.com/reward-detail-menu/");
 
     private final String name;
     private final String testName;
