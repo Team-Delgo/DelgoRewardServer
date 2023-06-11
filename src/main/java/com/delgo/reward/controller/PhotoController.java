@@ -85,12 +85,12 @@ public class PhotoController extends CommController {
      * Request Data : photo
      * Response Data : null
      */
-    @PutMapping("/webp")
-    public ResponseEntity<?> convertWebp(@RequestPart MultipartFile photo) {
-        photoService.convertWebp(photo);
+//    @PutMapping("/webp")
+//    public ResponseEntity<?> convertWebp(@RequestPart MultipartFile photo) {
+//        photoService.convertWebp(photo);
 
-        return SuccessReturn();
-    }
+//        return SuccessReturn();
+//    }
 
     //    /*
 //     * 멍플 노트 등록 [ Deprecated ]

@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.assertNotNull;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class PhotoTest {
@@ -28,4 +26,15 @@ public class PhotoTest {
 //        //then
 //        assertNotNull(url);
 //    }
+
+    @Test
+    public void instaUrlImgDownloadTest() {
+        //given
+        String photo = "https://scontent-ssn1-1.cdninstagram.com/v/t51.2885-15/243653584_603943504072411_154160306953814747_n.webp?stp=dst-jpg_e35_s1080x1080&_nc_ht=scontent-ssn1-1.cdninstagram.com&_nc_cat=107&_nc_ohc=ktyjVeqC9zEAX9OgH5l&edm=ALdeuSgBAAAA&ccb=7-5&ig_cache_key=MjY3NDg2ODA4NzUxMTQwNjkyNA%3D%3D.2-ccb7-5&oh=00_AfDJz7jThTYmBYzl7VFka-eEDcwYDa9L1a1oMrYHsvnEAA&oe=647CD559&_nc_sid=29c473";
+
+        //when
+        photoService.convertWebpFromUrl("Tset",photo);
+
+        //then
+    }
 }
