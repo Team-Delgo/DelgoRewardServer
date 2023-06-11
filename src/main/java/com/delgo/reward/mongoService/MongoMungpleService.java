@@ -53,6 +53,22 @@ public class MongoMungpleService {
         return mungpleDetailRepository.save(record.makeDetailData());
     }
 
+    public void addMenuByNCP(int mungpleId) {
+        Mungple mungple = mungpleService.getMungpleById(mungpleId);
+
+        List<String> thumbnails = objectStorageService.selectMungpleDetailObjects("reward-detail-thumbnail", mungple.getPlaceName());
+        String ncp = "https://kr.object.ncloudstorage.com/reward-detail-thumbnail/";
+        List<String> url = thumbnails.stream().map(u -> ncp + u).toList();
+
+        MungpleDetail mungpleDetail = mungpleDetailRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
+        if (mungpleDetail.getPhotoUrls() != null)
+            mungpleDetail.getPhotoUrls().clear(); // 초기화
+
+        mungpleDetail.setPhotoUrls(url);
+
+        mungpleDetailRepository.save(mungpleDetail);
+    }
+
     public void addPhotoUrlsByNCP(int mungpleId) {
         Mungple mungple = mungpleService.getMungpleById(mungpleId);
 
@@ -79,7 +95,7 @@ public class MongoMungpleService {
         mungpleDetailRepository.save(mungpleDetail);
     }
 
-    public void addMenuPhotoUrl(int mungpleId, List<String> menuPhotos) {
+    public void addMenuBoardPhotoUrl(int mungpleId, List<String> menuPhotos) {
         MungpleDetail mungpleDetail = mungpleDetailRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
         if (mungpleDetail.getRepresentMenuPhotoUrls() != null)
             mungpleDetail.getRepresentMenuPhotoUrls().clear();
