@@ -22,7 +22,10 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermission;
@@ -241,22 +244,47 @@ public class PhotoService extends CommService {
         }
     }
 
-    // jpg -> webp 변경
-    public void convertWebp(MultipartFile photo) {
-        String[] photoName = photo.getOriginalFilename().split("\\.");
-        String fileName = photoName[0] + ".webp";
-
-        log.info("fileName : {}", fileName);
+    public InputStream downloadImage(String sourceUrl) {
+        InputStream in;
         try {
-            File file = new File(DIR + "fileName" + ".jpg"); // 서버에 저장
-            photo.transferTo(file);
+            URL url = new URL(sourceUrl);
+            in = url.openStream();
+        } catch (IOException e) {
+            throw new RuntimeException("Error while downloading image");
+        }
+        return in;
+    }
+
+    public String convertWebpFromUrl(String name, String imageUrl) {
+        String[] photoName = imageUrl.split("\\.");
+        String fileName = name + ".webp";
+
+        try {
+            InputStream in = downloadImage(imageUrl);
+            File file = new File(DIR + name + ".jpg"); // 서버에 저장
+
+            try(FileOutputStream out = new FileOutputStream(file)) {
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                }
+            }
 
             File webpFile = convertWebp(fileName, file);  // filePath에서 File 불러온 뒤 webp로 변환 후 저장.
+            log.info("fileName : {} webpFile 생성 성공", fileName);
+            file.delete();
+
+            // Upload NCP
+            objectStorageService.uploadObjects(BucketName.DETAIL_MENU, fileName, DIR + fileName);
+
+            return BucketName.DETAIL_MENU.getUrl() + webpFile;
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new NullPointerException("Convert Webp ERROR");
+            log.error("menu_photo: {} webpFile 생성 실패",name);
+            return "";
         }
     }
+
 
     public File convertWebp(String fileName, File file) throws IOException {
         return ImmutableImage.loader().fromFile(file)
