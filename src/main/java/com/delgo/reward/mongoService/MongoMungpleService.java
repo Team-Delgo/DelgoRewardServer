@@ -1,5 +1,7 @@
 package com.delgo.reward.mongoService;
 
+import com.delgo.reward.domain.Mungple;
+import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.dto.mungple.MungpleDetailResDTO;
 import com.delgo.reward.mongoDomain.MongoMungple;
 import com.delgo.reward.mongoDomain.MungpleDetail;
@@ -30,46 +32,11 @@ public class MongoMungpleService {
 
     // Service
     private final MungpleService mungpleService;
+    private final ObjectStorageService objectStorageService;
 
     // Repository
     private final CertRepository certRepository;
     private final MungpleDetailRepository mungpleDetailRepository;
-
-    public Boolean isExist(int mungpleId){
-        return mungpleDetailRepository.existsByMungpleId(mungpleId);
-    }
-
-    public MungpleDetail createMungpleDetail(MungpleDetailRecord record){
-        return mungpleDetailRepository.save(record.makeDetailData());
-    }
-
-    public void addPhotoUrls(int mungpleId, List<String> photoUrls){
-        MungpleDetail mungpleDetail = mungpleDetailRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
-        if(mungpleDetail.getPhotoUrls() != null)
-            mungpleDetail.getPhotoUrls().clear(); // 초기화
-
-        mungpleDetail.setPhotoUrls(photoUrls);
-
-        mungpleDetailRepository.save(mungpleDetail);
-    }
-
-    public void addMenuPhotoUrl(int mungpleId, List<String> menuPhotos){
-        MungpleDetail mungpleDetail = mungpleDetailRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
-        if(mungpleDetail.getRepresentMenuPhotoUrls() != null)
-            mungpleDetail.getRepresentMenuPhotoUrls().clear();
-        //        List<String> menuPhotos = mungpleDetail.getRepresentMenuPhotoUrls();
-//        menuPhotos.add(0,menuPhoto);
-        mungpleDetail.setRepresentMenuPhotoUrls(menuPhotos);
-
-        mungpleDetailRepository.save(mungpleDetail);
-    }
-
-    public void modifyEnterDesc(int mungpleId, String desc){
-        MungpleDetail mungpleDetail = mungpleDetailRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
-        mungpleDetail.setEnterDesc(desc);
-
-        mungpleDetailRepository.save(mungpleDetail);
-    }
 
     public MungpleDetailResDTO getMungpleDetailDataByMungpleId(int mungpleId) {
         MungpleDetail mungpleDetail = mungpleDetailRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
@@ -78,14 +45,55 @@ public class MongoMungpleService {
         return new MungpleDetailResDTO(mungpleService.getMungpleById(mungpleId), mungpleDetail, certCount);
     }
 
-//    private final MongoMungpleRepository mongoMungpleRepository;
+    public Boolean isExist(int mungpleId) {
+        return mungpleDetailRepository.existsByMungpleId(mungpleId);
+    }
 
-//    public void makeMungpletoMongo() {
-//        List<Mungple> mungples = mungpleService.getMungpleByMap(CategoryCode.TOTAL.getCode());
-//        for(Mungple m : mungples){
-//            mongoMungpleRepository.save(m.toMongo());
-//        }
-//    }
+    public MungpleDetail createMungpleDetail(MungpleDetailRecord record) {
+        return mungpleDetailRepository.save(record.makeDetailData());
+    }
+
+    public void addPhotoUrlsByNCP(int mungpleId) {
+        Mungple mungple = mungpleService.getMungpleById(mungpleId);
+
+        List<String> thumbnails = objectStorageService.selectMungpleDetailObjects("reward-detail-thumbnail", mungple.getPlaceName());
+        String ncp = "https://kr.object.ncloudstorage.com/reward-detail-thumbnail/";
+        List<String> url = thumbnails.stream().map(u -> ncp + u).toList();
+
+        MungpleDetail mungpleDetail = mungpleDetailRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
+        if (mungpleDetail.getPhotoUrls() != null)
+            mungpleDetail.getPhotoUrls().clear(); // 초기화
+
+        mungpleDetail.setPhotoUrls(url);
+
+        mungpleDetailRepository.save(mungpleDetail);
+    }
+
+    public void addPhotoUrls(int mungpleId, List<String> photoUrls) {
+        MungpleDetail mungpleDetail = mungpleDetailRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
+        if (mungpleDetail.getPhotoUrls() != null)
+            mungpleDetail.getPhotoUrls().clear(); // 초기화
+
+        mungpleDetail.setPhotoUrls(photoUrls);
+
+        mungpleDetailRepository.save(mungpleDetail);
+    }
+
+    public void addMenuPhotoUrl(int mungpleId, List<String> menuPhotos) {
+        MungpleDetail mungpleDetail = mungpleDetailRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
+        if (mungpleDetail.getRepresentMenuPhotoUrls() != null)
+            mungpleDetail.getRepresentMenuPhotoUrls().clear();
+
+        mungpleDetail.setRepresentMenuPhotoUrls(menuPhotos);
+        mungpleDetailRepository.save(mungpleDetail);
+    }
+
+    public void modifyEnterDesc(int mungpleId, String desc) {
+        MungpleDetail mungpleDetail = mungpleDetailRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
+        mungpleDetail.setEnterDesc(desc);
+
+        mungpleDetailRepository.save(mungpleDetail);
+    }
 
     public List<MongoMungple> findWithin3Km(String latitude, String longitude) {
         double maxDistanceInRadians = 2 / 6371.01;
