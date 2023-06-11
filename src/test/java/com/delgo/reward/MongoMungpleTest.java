@@ -67,8 +67,8 @@ public class MongoMungpleTest {
     }
 
     @Test
-    public void excelParseTest() throws IOException {
+    public void excelParseOfCafeTest() throws IOException {
         String filePath = "C:\\testPhoto\\delgo.xlsx";
-        excelParserService.parseExcelFile(filePath);
+        excelParserService.parseExcelFileOfCafe(filePath);
     }
 }

@@ -10,7 +10,10 @@ import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.repository.MungpleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
@@ -34,36 +37,30 @@ public class ExcelParserService {
 
     String COPY_URL = "https://www.test.delgo.pet/detail/";
 
-    public void parseExcelFile(String filePath) throws IOException {
+    public void parseExcelFileOfCafe(String filePath) throws IOException {
         FileInputStream file = new FileInputStream(filePath);
         Workbook workbook = new XSSFWorkbook(file);
         Sheet sheet = workbook.getSheetAt(0); // 첫 번째 시트를 선택
 
         for(int i = 26 ; i < 50 ; i++) {
-            Cell cell = sheet.getRow(i).getCell(0);
-            log.info("{}", cell.getNumericCellValue());
-            CellStyle cellStyle = cell.getCellStyle();
+            CellStyle cellStyle = sheet.getRow(i).getCell(0).getCellStyle();
             XSSFColor backgroundColor = (XSSFColor) cellStyle.getFillForegroundColorColor();
 
-            String color = null;
-            if (backgroundColor != null) {
-                byte[] rgb = backgroundColor.getRGB();
-                int red = (rgb[0] >= 0) ? rgb[0] : (256 + rgb[0]);
-                int green = (rgb[1] >= 0) ? rgb[1] : (256 + rgb[1]);
-                int blue = (rgb[2] >= 0) ? rgb[2] : (256 + rgb[2]);
+            String color = (backgroundColor != null) ? String.format("#%02X%02X%02X",
+                    (backgroundColor.getRGB()[0] >= 0) ? backgroundColor.getRGB()[0] : (256 + backgroundColor.getRGB()[0]),
+                    (backgroundColor.getRGB()[1] >= 0) ? backgroundColor.getRGB()[1] : (256 + backgroundColor.getRGB()[1]),
+                    (backgroundColor.getRGB()[2] >= 0) ? backgroundColor.getRGB()[2] : (256 + backgroundColor.getRGB()[2])
+            ) : null;
 
-                color = String.format("#%02X%02X%02X", red, green, blue);
-            }
-
-            if (color == null ||color.equals("#FF00FF")) {
+            if (color == null || color.equals("#FF00FF")) {
                 log.info("--------------------------------------------------------------------------------------");
                 continue;
             }
+
             String mungpleName = sheet.getRow(i).getCell(3).getStringCellValue();
             log.info("mungpleName :{}", mungpleName);
 
-            if(mungpleName.equals("에게"))
-                break;
+            if(mungpleName.equals("에게")) break;
 
             Mungple mungple = mungpleRepository.findByPlaceName(mungpleName);
             if(mungple == null){
@@ -71,196 +68,140 @@ public class ExcelParserService {
                 continue;
             }
 
-            String phoneNo = Optional.ofNullable(sheet.getRow(i).getCell(9))
-                    .map(Cell::getStringCellValue)
-                    .filter(str -> !str.isEmpty())
-                    .orElse(null);
-
-            if(phoneNo != null) {
-                mungple.setPhoneNo(phoneNo);
-//                log.info("phoneNo: {}", phoneNo);
-            }
-
 //            Boolean isExist = mungpleDetailRepository.existsByMungpleId(mungple.getMungpleId());
-//            if(isExist){
+//            if (isExist) {
 //                log.info("디테일 데이터가 이미 존재합니다.");
 //                log.info("--------------------------------------------------------------------------------------");
 //                continue;
 //            }
 
+            String phoneNo = Optional.ofNullable(sheet.getRow(i).getCell(9))
+                    .map(Cell::getStringCellValue)
+                    .filter(str -> !str.isEmpty())
+                    .orElse("");
+            mungple.setPhoneNo(phoneNo);
+
             MungpleDetail mungpleDetail = new MungpleDetail();
 
-            int mungpleId = mungple.getMungpleId();
-
-            mungpleDetail.setMungpleId(mungpleId);
-
-            String editorNoteUrl = mungple.getDetailUrl();
-//            log.info("editorNoteUrl :{}", editorNoteUrl);
-            mungpleDetail.setEditorNoteUrl(editorNoteUrl);
-
-            String copyLink = COPY_URL + mungpleId;
-//            log.info("copyLink :{}", copyLink);
-            mungpleDetail.setCopyLink(copyLink);
 
             String enterDesc = Optional.ofNullable(sheet.getRow(i).getCell(18))
                     .map(Cell::getStringCellValue)
                     .filter(str -> !str.isEmpty())
                     .map(str -> str.replace("\"",""))
-                    .orElse(null);
-
-            if(enterDesc != null) {
-                mungpleDetail.setEnterDesc(enterDesc);
-            }
+                    .orElse("");
 
             String residentDogName = Optional.ofNullable(sheet.getRow(i).getCell(13))
                     .map(Cell::getStringCellValue)
                     .filter(str -> !str.isEmpty())
                     .map(s -> s.replaceAll("\"", ""))
-                    .orElse(null);
-
-            if (residentDogName != null) {
-//                log.info("residentDogName: {}", residentDogName);
-                mungpleDetail.setResidentDogName(residentDogName);
-            }
+                    .orElse("");
 
             String residentDogPhoto = Optional.ofNullable(sheet.getRow(i).getCell(12))
                     .map(Cell::getStringCellValue)
                     .filter(str -> !str.isEmpty())
-                    .orElse(null);
-
-            if (residentDogPhoto != null) {
-//                log.info("residentDogPhoto: {}", residentDogPhoto);
-                mungpleDetail.setResidentDogPhoto(residentDogPhoto);
-            }
-
+                    .orElse("");
 
             String representMenuTitle = Optional.ofNullable(sheet.getRow(i).getCell(15))
                     .map(Cell::getStringCellValue)
                     .filter(str -> !str.isEmpty())
-                    .orElse(null);
-
-            if (representMenuTitle != null) {
-//                log.info("representMenuTitle: {}", representMenuTitle);
-                mungpleDetail.setRepresentMenuTitle(representMenuTitle);
-            }
-
-
-            String representMenuPhotoText = Optional.ofNullable(sheet.getRow(i).getCell(16))
-                    .map(Cell::getStringCellValue)
-                    .orElse(null);
-
-            if (representMenuPhotoText != null && !representMenuPhotoText.isEmpty()) {
-                List<String> representMenuPhotos = Arrays.stream(representMenuPhotoText.split("\n"))
-                        .filter(s -> !s.isEmpty())
-                        .toList();
-
-//                representMenuPhotos.forEach(menu_photo -> log.info("menu_photo: {}", menu_photo));
-                mungpleDetail.setRepresentMenuPhotoUrls(representMenuPhotos);
-            }
-
+                    .orElse("");
 
             String instaId = Optional.ofNullable(sheet.getRow(i).getCell(14))
                     .map(Cell::getStringCellValue)
                     .filter(str -> !str.isEmpty())
                     .map(str -> str.replace("\"",""))
-                    .orElse(null);
-
-            if (instaId != null) {
-//                log.info("instaId: {}", instaId);
-                mungpleDetail.setInstaId(instaId);
-            }
-
+                    .orElse("");
 
             String parkingLimit = Optional.ofNullable(sheet.getRow(i).getCell(20))
                     .map(Cell::getStringCellValue)
                     .map(s -> s.replaceAll("\"", ""))
                     .filter(str -> !str.isEmpty())
-                    .orElse(null);
-
-            if (parkingLimit != null) {
-//                log.info("parkingLimit: {}", parkingLimit);
-                mungpleDetail.setParkingLimit(parkingLimit);
-            }
-
+                    .orElse("");
 
             String parkingInfo = Optional.ofNullable(sheet.getRow(i).getCell(19))
                     .map(Cell::getStringCellValue)
                     .map(s -> s.replaceAll("\"", ""))
                     .filter(str -> !str.isEmpty())
-                    .orElse(null);
+                    .orElse("");
 
-            if (parkingInfo != null) {
-//                log.info("parkingInfo: {}", parkingInfo);
-                mungpleDetail.setParkingInfo(parkingInfo);
+
+            String representMenuPhotoText = Optional.ofNullable(sheet.getRow(i).getCell(16))
+                    .map(Cell::getStringCellValue)
+                    .orElse("");
+
+            if (!representMenuPhotoText.isEmpty()) {
+                List<String> representMenuPhotos = Arrays.stream(representMenuPhotoText.split("\n"))
+                        .filter(s -> !s.isEmpty())
+                        .toList();
+                mungpleDetail.setRepresentMenuPhotoUrls(representMenuPhotos);
+//                representMenuPhotos.forEach(menu_photo -> log.info("menu_photo: {}", menu_photo));
             }
 
             String businessHour = Optional.ofNullable(sheet.getRow(i).getCell(11))
                     .map(Cell::getStringCellValue)
                     .map(s -> s.replaceAll("\"", ""))
                     .filter(str -> !str.isEmpty())
-                    .orElse(null);
+                    .orElse("");
 
-            if (businessHour != null) {
+            if (!businessHour.equals("")) {
                 Map<BusinessHourCode, String> map = parseBusinessHourString(businessHour);
-
-//                map.forEach((key, value) -> log.info("{} : {}", key, value));
                 mungpleDetail.setBusinessHour(map);
+//                map.forEach((key, value) -> log.info("{} : {}", key, value));
             }
 
             String acceptSize = Optional.ofNullable(sheet.getRow(i).getCell(17))
                     .map(Cell::getStringCellValue)
                     .map(s -> s.replaceAll("\"", ""))
                     .filter(str -> !str.isEmpty())
-                    .orElse(null);
+                    .orElse("");
 
-            if (acceptSize != null) {
+            if (!acceptSize.equals("")) {
                 Map<String, DetailCode> map = parseAcceptSize(acceptSize);
-//                map.forEach((key, value) -> log.info("{} : {}", key, value.getCode()));
                 mungpleDetail.setAcceptSize(map);
-            }
-
-
-            String thumbnailsText = Optional.ofNullable(sheet.getRow(i).getCell(8))
-                    .map(Cell::getStringCellValue)
-                    .orElse(null);
-
-            if (thumbnailsText != null && !thumbnailsText.isEmpty()) {
-                List<String> thumbnails = Arrays.stream(thumbnailsText.split("\n"))
-                        .filter(s -> !s.isEmpty())
-                        .toList();
-
-//                for(String thumbnail : thumbnails) {
-//                    log.info("thumbnail :{}", thumbnail);
-//                }
+//                map.forEach((key, value) -> log.info("{} : {}", key, value.getCode()));
             }
 
             // 메뉴판 사진
             String menuText = Optional.ofNullable(sheet.getRow(i).getCell(25))
                     .map(Cell::getStringCellValue)
-                    .orElse(null);
+                    .orElse("");
 
-            if (menuText != null && !menuText.isEmpty()) {
+            if (!menuText.isEmpty()) {
                 List<String> menus = Arrays.stream(menuText.split("\n"))
                         .filter(s -> !s.isEmpty())
                         .toList();
-                mongoMungpleService.addMenuPhotoUrl(mungple.getMungpleId(), menus);
+//                mongoMungpleService.addMenuPhotoUrl(mungple.getMungpleId(), menus);
 
 //                for(String menu : menus) {
 //                    log.info("menu :{}", menu);
 //                }
             }
 
+            log.info("phoneNo: {}", phoneNo);
+            log.info("editorNoteUrl :{}", mungple.getDetailUrl());
+            log.info("copyLink :{}", COPY_URL + mungple.getMungpleId());
+            log.info("enterDesc :{}", enterDesc);
+            log.info("residentDogName: {}", residentDogName);
+            log.info("residentDogPhoto: {}", residentDogPhoto);
+            log.info("representMenuTitle: {}", representMenuTitle);
+            log.info("instaId: {}", instaId);
+            log.info("parkingLimit: {}", parkingLimit);
+            log.info("parkingInfo: {}", parkingInfo);
 
-            List<String> thumbnails = objectStorageService.selectMungpleDetailObjects("reward-detail-thumbnail",mungple.getPlaceName());
-            String ncpUrl = "https://kr.object.ncloudstorage.com/reward-detail-thumbnail/";
-            List<String> test  = thumbnails.stream().map(t -> {return ncpUrl + t;}).toList();
-            test.forEach(t -> log.info("thumb : {}", t));
+            mungpleDetail.setMungpleId(mungple.getMungpleId());
+            mungpleDetail.setEditorNoteUrl(mungple.getDetailUrl());
+            mungpleDetail.setCopyLink(COPY_URL + mungple.getMungpleId());
+            mungpleDetail.setEnterDesc(enterDesc);
+            mungpleDetail.setResidentDogName(residentDogName);
+            mungpleDetail.setResidentDogPhoto(residentDogPhoto);
+            mungpleDetail.setRepresentMenuTitle(representMenuTitle);
+            mungpleDetail.setInstaId(instaId);
+            mungpleDetail.setParkingLimit(parkingLimit);
+            mungpleDetail.setParkingInfo(parkingInfo);
 
-            mongoMungpleService.addPhotoUrls(mungple.getMungpleId(), test);
+            // 저장
+            mungpleDetailRepository.save(mungpleDetail);
 
-
-//            mungpleDetailRepository.save(mungpleDetail);
-//            log.info("mungple detail : {}", mungpleDetail);
             log.info("--------------------------------------------------------------------------------------");
         }
 
