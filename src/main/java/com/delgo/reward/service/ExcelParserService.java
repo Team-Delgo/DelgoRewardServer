@@ -162,19 +162,15 @@ public class ExcelParserService {
             }
 
             // 메뉴판 사진
-            String menuText = Optional.ofNullable(sheet.getRow(i).getCell(25))
+            String menuBoardText = Optional.ofNullable(sheet.getRow(i).getCell(25))
                     .map(Cell::getStringCellValue)
                     .orElse("");
 
-            if (!menuText.isEmpty()) {
-                List<String> menus = Arrays.stream(menuText.split("\n"))
+            if (!menuBoardText.isEmpty()) {
+                List<String> menuBoards = Arrays.stream(menuBoardText.split("\n"))
                         .filter(s -> !s.isEmpty())
                         .toList();
-//                mongoMungpleService.addMenuPhotoUrl(mungple.getMungpleId(), menus);
-
-//                for(String menu : menus) {
-//                    log.info("menu :{}", menu);
-//                }
+                mongoMungpleService.addMenuBoardPhotoUrl(mungple.getMungpleId(), menuBoards);
             }
 
             log.info("phoneNo: {}", phoneNo);
