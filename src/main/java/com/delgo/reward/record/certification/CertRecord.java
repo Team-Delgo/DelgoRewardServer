@@ -16,7 +16,8 @@ public record CertRecord(
         @NotNull String placeName,
         @NotBlank String description,
         String latitude,
-        String longitude) {
+        String longitude,
+        Boolean isHideAddress) {
 
     public Certification toEntity(Location location, User user) {
         return Certification.builder()
@@ -33,6 +34,7 @@ public record CertRecord(
                 .isCorrectPhoto(false)
                 .isAchievements(false)
                 .isExpose(true)
+                .isHideAddress(isHideAddress != null ? isHideAddress : false)
                 .build();
     }
 
@@ -53,6 +55,7 @@ public record CertRecord(
                 .isCorrectPhoto(false)
                 .isAchievements(false)
                 .isExpose(true)
+                .isHideAddress(false)
                 .build();
     }
 

@@ -26,6 +26,7 @@ public class Certification extends BaseTimeEntity {
     private String description; // 내용
 
     private String address; // 주소
+    private Boolean isHideAddress; // 주소 숨기기 여부 (true: 숨김 , false: 노출) 기본값 : false
     private String geoCode; // 지역 코드
     private String pGeoCode; // 부모 지역 코드
     private String latitude; // 위도
