@@ -34,19 +34,20 @@ public class ReactionService {
     }
 
     public Boolean hasReaction(int userId, int certId, ReactionCode reactionCode) {
-        // 처음 리액션일 때
-        if (reactionRepository.findByCertificationId(certId).isEmpty()) {
-            return false;
-        }
-        List<Reaction> userReactionList = reactionRepository.findByCertificationId(certId)
-                .stream()
-                .filter(reaction -> reaction.getUserId() == userId)
-                .collect(Collectors.toList());
-        for (Reaction reaction: userReactionList){
-            if(reaction.getReactionCode().equals(reactionCode)){
-                return true;
+        List<Reaction> userReactionList = reactionRepository.findByCertificationId(certId);
+
+        if (userReactionList.size() > 0){
+            userReactionList.stream()
+                    .filter(reaction -> reaction.getUserId() == userId)
+                    .collect(Collectors.toList());
+
+            for (Reaction reaction: userReactionList){
+                if(reaction.getReactionCode().equals(reactionCode)){
+                    return true;
+                }
             }
         }
+
         return false;
     }
 }
