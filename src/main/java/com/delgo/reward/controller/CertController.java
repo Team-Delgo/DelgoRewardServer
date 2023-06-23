@@ -4,7 +4,7 @@ package com.delgo.reward.controller;
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.async.CertAsyncService;
 import com.delgo.reward.comm.async.ClassificationAsyncService;
-import com.delgo.reward.comm.exception.ApiCode;
+import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.dto.cert.CertByAchvResDTO;
 import com.delgo.reward.dto.cert.CertResDTO;
@@ -13,6 +13,11 @@ import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
 import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.LikeListService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -47,7 +52,7 @@ public class CertController extends CommController {
      */
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> register(@Validated @RequestPart(value = "data") CertRecord record, @RequestPart(required = false) MultipartFile photo) {
-        if(photo.isEmpty()) ErrorReturn(ApiCode.PARAM_ERROR);
+        if(photo.isEmpty()) ErrorReturn(APICode.PARAM_ERROR);
 
         CertByAchvResDTO resDto = certService.register(record, photo);
         log.info("{}", resDto.getCertificationId());
@@ -68,7 +73,7 @@ public class CertController extends CommController {
     public ResponseEntity modify(@Validated @RequestBody ModifyCertRecord record) {
         Certification certification = certService.getCertById(record.certificationId());
         if (record.userId() != certification.getUser().getUserId())
-            return ErrorReturn(ApiCode.INVALID_USER_ERROR);
+            return ErrorReturn(APICode.INVALID_USER_ERROR);
 
         // 인증 분류 삭제
         classificationService.deleteClassificationWhenModifyCert(certification);
@@ -79,13 +84,18 @@ public class CertController extends CommController {
         return SuccessReturn(new CertResDTO(updatedCertification));
     }
 
+
     /*
-     * CertificationId로 조회
-     * Request Data : CertificationId로
-     * Response Data : Certification
+     * CertificationId로 Certification 조회
      */
+    @Operation(summary = "Id로 인증 조회", description = "certificationId로 인증을 조회합니다.", tags = { "Certification" })
+    @ApiResponses({
+            @ApiResponse(responseCode = APICode.CODE.SUCCESS, description = APICode.MSG.SUCCESS, content = @Content(schema = @Schema(implementation = CertResDTO.class))),
+            @ApiResponse(responseCode = APICode.CODE.PARAM_ERROR, description = APICode.MSG.PARAM_ERROR),
+            @ApiResponse(responseCode = APICode.CODE.SERVER_ERROR, description = APICode.MSG.SERVER_ERROR)
+    })
     @GetMapping
-    public ResponseEntity getData(@RequestParam Integer userId, @RequestParam Integer certificationId) {
+    public ResponseEntity getCertification(@RequestParam Integer userId, @RequestParam Integer certificationId) {
         return SuccessReturn(certService.getCertByUserIdAndCertId(userId, certificationId));
     }
 
@@ -111,7 +121,7 @@ public class CertController extends CommController {
             @RequestParam String categoryCode,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
         // Validate - Blank Check; [ String 만 해주면 됨 ]
-        if (categoryCode.isBlank()) return ErrorReturn(ApiCode.PARAM_ERROR);
+        if (categoryCode.isBlank()) return ErrorReturn(APICode.PARAM_ERROR);
         return SuccessReturn(certService.getCertListByCategory(userId, categoryCode, pageable));
     }
 
@@ -196,7 +206,7 @@ public class CertController extends CommController {
     @DeleteMapping(value = {"/{userId}/{certificationId}"})
     public ResponseEntity delete(@PathVariable Integer userId, @PathVariable Integer certificationId) {
         if (!Objects.equals(userId, certService.getCertById(certificationId).getUser().getUserId()))
-            return ErrorReturn(ApiCode.INVALID_USER_ERROR);
+            return ErrorReturn(APICode.INVALID_USER_ERROR);
 
         certService.delete(certificationId); // DB에서 삭제
         return SuccessReturn();
