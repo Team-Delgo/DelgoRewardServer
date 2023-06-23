@@ -2,7 +2,7 @@ package com.delgo.reward.controller;
 
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.comm.exception.ApiCode;
+import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.dto.SmsAuthDTO;
 import com.delgo.reward.service.SmsAuthService;
 import com.delgo.reward.service.UserService;
@@ -27,25 +27,25 @@ public class AuthController extends CommController {
     @GetMapping("/email")
     public ResponseEntity<?> emailAuth(@RequestParam String email) {
         if (email.isBlank()) {
-            return ErrorReturn(ApiCode.PARAM_ERROR);
+            return ErrorReturn(APICode.PARAM_ERROR);
         }
 
         if (userService.isEmailExisting(email)) {
             return SuccessReturn(userService.getUserByEmail(email).getPhoneNo());
         }
-        return ErrorReturn(ApiCode.NOT_FOUND_DATA);
+        return ErrorReturn(APICode.NOT_FOUND_DATA);
     }
 
     // 이메일 중복 확인
     @GetMapping("/email/check")
     public ResponseEntity<?> emailCheck(@RequestParam String email) {
         if (email.isBlank()) {
-            return ErrorReturn(ApiCode.PARAM_ERROR);
+            return ErrorReturn(APICode.PARAM_ERROR);
         }
         if (!userService.isEmailExisting(email)) {
             return SuccessReturn();
         } else {
-            return ErrorReturn(ApiCode.UNKNOWN_ERROR);
+            return ErrorReturn(APICode.SERVER_ERROR);
         }
     }
 
@@ -53,12 +53,12 @@ public class AuthController extends CommController {
     @GetMapping("/name/check")
     public ResponseEntity<?> nameCheck(@RequestParam String name) {
         if (name.isBlank()) {
-            return ErrorReturn(ApiCode.PARAM_ERROR);
+            return ErrorReturn(APICode.PARAM_ERROR);
         }
         if (!userService.isNameExisting(name))
             return SuccessReturn();
         else
-            return ErrorReturn(ApiCode.UNKNOWN_ERROR);
+            return ErrorReturn(APICode.SERVER_ERROR);
     }
 
     // 인증번호 생성
@@ -66,8 +66,8 @@ public class AuthController extends CommController {
     public ResponseEntity<?> phoneNoAuth(@RequestBody @Validated SmsAuthDTO smsAuthDTO) {
         smsAuthDTO.setPhoneNo(smsAuthDTO.getPhoneNo().replaceAll("[^0-9]", ""));
 
-        if (smsAuthDTO.getIsJoin() && !userService.isPhoneNoExisting(smsAuthDTO.getPhoneNo())) return ErrorReturn(ApiCode.PHONE_NO_NOT_EXIST);
-        if (!smsAuthDTO.getIsJoin() && userService.isPhoneNoExisting(smsAuthDTO.getPhoneNo())) return ErrorReturn(ApiCode.PHONE_NO_DUPLICATE_ERROR);
+        if (smsAuthDTO.getIsJoin() && !userService.isPhoneNoExisting(smsAuthDTO.getPhoneNo())) return ErrorReturn(APICode.PHONE_NO_NOT_EXIST);
+        if (!smsAuthDTO.getIsJoin() && userService.isPhoneNoExisting(smsAuthDTO.getPhoneNo())) return ErrorReturn(APICode.PHONE_NO_DUPLICATE_ERROR);
 
         return SuccessReturn(smsAuthService.makeAuth(smsAuthDTO.getPhoneNo()));
     }
@@ -79,9 +79,9 @@ public class AuthController extends CommController {
                 return SuccessReturn();
 
         if (enterNum.isBlank()) {
-            return ErrorReturn(ApiCode.PARAM_ERROR);
+            return ErrorReturn(APICode.PARAM_ERROR);
         }
-        Optional<ApiCode> apiCode = smsAuthService.checkSMS(smsId, enterNum);
+        Optional<APICode> apiCode = smsAuthService.checkSMS(smsId, enterNum);
         if (apiCode.isPresent())
             return ErrorReturn(apiCode.get());
 

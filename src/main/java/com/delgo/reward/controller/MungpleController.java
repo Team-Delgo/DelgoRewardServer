@@ -1,7 +1,7 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.comm.exception.ApiCode;
+import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.record.mungple.MungpleDetailRecord;
 import com.delgo.reward.record.mungple.MungpleRecord;
@@ -33,7 +33,7 @@ public class MungpleController extends CommController {
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity register(@Validated @RequestPart(value = "data") MungpleRecord record, @RequestPart(required = false) MultipartFile photo) {
         return mungpleService.isMungpleExisting(record.address())
-                ? ErrorReturn(ApiCode.MUNGPLE_DUPLICATE_ERROR) // 중복 에러
+                ? ErrorReturn(APICode.MUNGPLE_DUPLICATE_ERROR) // 중복 에러
                 : SuccessReturn(mungpleService.register(record, photo));
     }
 
@@ -90,7 +90,7 @@ public class MungpleController extends CommController {
     @PostMapping("/detail")
     public ResponseEntity createDetailData(@RequestBody MungpleDetailRecord record){
         if(mongoMungpleService.isExist(record.mungpleId()))
-            return ErrorReturn(ApiCode.MUNGPLE_DUPLICATE_ERROR);
+            return ErrorReturn(APICode.MUNGPLE_DUPLICATE_ERROR);
 
         return SuccessReturn(mongoMungpleService.createMungpleDetail(record));
     }
