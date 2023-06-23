@@ -1,7 +1,7 @@
 package com.delgo.reward.comm.oauth;
 
 
-import com.delgo.reward.comm.exception.ApiCode;
+import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.domain.user.UserSocial;
 import com.delgo.reward.dto.OAuthDTO;
 import com.google.gson.JsonElement;
@@ -95,7 +95,7 @@ public class KakaoService {
             System.out.println("create kakao user responseCode : " + responseCode);
 
             if (responseCode != 200)
-                throw new Exception(ApiCode.UNKNOWN_ERROR.getMsg());
+                throw new Exception(APICode.SERVER_ERROR.getMsg());
 
             //요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -179,7 +179,7 @@ public class KakaoService {
             System.out.println("logout kakao user responseCode : " + responseCode);
 
             if (responseCode != 200)
-                throw new Exception(ApiCode.UNKNOWN_ERROR.getMsg());
+                throw new Exception(APICode.SERVER_ERROR.getMsg());
 
             //요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));

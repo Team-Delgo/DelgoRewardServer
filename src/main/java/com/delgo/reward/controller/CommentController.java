@@ -1,7 +1,7 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.comm.exception.ApiCode;
+import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.record.comment.CommentRecord;
 import com.delgo.reward.record.comment.DeleteCommentRecord;
 import com.delgo.reward.record.comment.ModifyCommentRecord;
@@ -53,7 +53,7 @@ public class CommentController extends CommController {
     public ResponseEntity updateComment(@Validated @RequestBody ModifyCommentRecord modifyCommentRecord){
         return commentService.modifyComment(modifyCommentRecord)
                 ? SuccessReturn()
-                : ErrorReturn(ApiCode.INVALID_USER_ERROR);
+                : ErrorReturn(APICode.INVALID_USER_ERROR);
     }
 
     /**
@@ -65,7 +65,7 @@ public class CommentController extends CommController {
     public ResponseEntity deleteComment(@Validated @RequestBody DeleteCommentRecord deleteCommentRecord){
         return commentService.deleteComment(deleteCommentRecord)
                 ? SuccessReturn()
-                : ErrorReturn(ApiCode.INVALID_USER_ERROR);
+                : ErrorReturn(APICode.INVALID_USER_ERROR);
     }
 
     /**

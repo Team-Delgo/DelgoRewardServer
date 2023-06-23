@@ -2,7 +2,7 @@ package com.delgo.reward.controller;
 
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.comm.exception.ApiCode;
+import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.security.jwt.JwtService;
 import com.delgo.reward.comm.security.jwt.JwtToken;
 import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
@@ -51,7 +51,7 @@ public class UserController extends CommController {
         User user = userService.getUserByEmail(resetPasswordRecord.email()); // 유저 조회
         SmsAuth smsAuth = smsAuthService.getSmsAuthByPhoneNo(user.getPhoneNo()); // SMS DATA 조회
         if (!smsAuthService.isAuth(smsAuth))
-            return ErrorReturn(ApiCode.SMS_ERROR);
+            return ErrorReturn(APICode.SMS_ERROR);
 
         userService.changePassword(resetPasswordRecord.email(), resetPasswordRecord.newPassword());
         return SuccessReturn();
@@ -67,7 +67,7 @@ public class UserController extends CommController {
         // Apple 회원가입 시 appleUniqueNo 넣어주어야 함.
         if ((oAuthSignUpRecord.appleUniqueNo() == null || oAuthSignUpRecord.appleUniqueNo().isBlank())
                 && oAuthSignUpRecord.userSocial() == UserSocial.A)
-            return ErrorReturn(ApiCode.PARAM_ERROR);
+            return ErrorReturn(APICode.PARAM_ERROR);
 
         User user = userService.oAuthSignup(oAuthSignUpRecord, profile);
         JwtToken jwt = jwtService.createToken(user.getUserId());
@@ -85,7 +85,7 @@ public class UserController extends CommController {
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> registerUser(@Validated @RequestPart(value = "data") SignUpRecord signUpRecord, @RequestPart(required = false) MultipartFile profile, HttpServletResponse response) {
         if (userService.isEmailExisting(signUpRecord.email())) // Email 중복확인
-            return ErrorReturn(ApiCode.EMAIL_DUPLICATE_ERROR);
+            return ErrorReturn(APICode.EMAIL_DUPLICATE_ERROR);
 
         User user = userService.signup(signUpRecord, profile);
         JwtToken jwt = jwtService.createToken(user.getUserId());
