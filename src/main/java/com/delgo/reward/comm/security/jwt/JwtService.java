@@ -3,7 +3,7 @@ package com.delgo.reward.comm.security.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.delgo.reward.comm.exception.ApiCode;
+import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.exception.JwtException;
 import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
 import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
@@ -75,14 +75,14 @@ public class JwtService {
     public Integer getUserIdByAccessToken() throws JwtException {
         String accessToken = getAccessToken();
         if (accessToken == null || accessToken.length() == 0)
-            throw new JwtException(ApiCode.TOKEN_ERROR);
+            throw new JwtException(APICode.TOKEN_ERROR);
 
         return Integer.parseInt(String.valueOf(JWT.require(Algorithm.HMAC512(AccessTokenProperties.SECRET)).build().verify(accessToken).getClaim("userId")));
     }
 
     public Integer getUserIdByRefreshToken() throws JwtException {
         String refreshToken = getRefreshToken();
-        if (refreshToken == null || refreshToken.length() == 0) throw new JwtException(ApiCode.TOKEN_ERROR);
+        if (refreshToken == null || refreshToken.length() == 0) throw new JwtException(APICode.TOKEN_ERROR);
 
         return Integer.parseInt(String.valueOf(JWT.require(Algorithm.HMAC512(RefreshTokenProperties.SECRET)).build().verify(refreshToken).getClaim("userId")));
     }

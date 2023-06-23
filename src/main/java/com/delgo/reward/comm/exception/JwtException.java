@@ -1,5 +1,6 @@
 package com.delgo.reward.comm.exception;
 
+import com.delgo.reward.comm.code.APICode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,5 +9,5 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class JwtException extends Exception{
-    private ApiCode status;
+    private APICode status;
 }

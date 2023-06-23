@@ -2,7 +2,7 @@ package com.delgo.reward.service;
 
 
 import com.delgo.reward.comm.CommService;
-import com.delgo.reward.comm.exception.ApiCode;
+import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.ncp.sms.SmsService;
 import com.delgo.reward.domain.SmsAuth;
 import com.delgo.reward.repository.SmsAuthRepository;
@@ -44,15 +44,15 @@ public class SmsAuthService extends CommService {
     }
 
     // 인증번호 확인
-    public Optional<ApiCode> checkSMS(int smsId, String enterNum) {
+    public Optional<APICode> checkSMS(int smsId, String enterNum) {
         SmsAuth findSmsAuth = getSmsAuthBySmsId(smsId);
         if (!findSmsAuth.getRandNum().equals(enterNum)) {
             log.warn("The authentication numbers do not match");
-            return Optional.of(ApiCode.AUTH_DO_NOT_MATCHING);
+            return Optional.of(APICode.AUTH_DO_NOT_MATCHING);
         }
 
         if (ChronoUnit.MINUTES.between(findSmsAuth.getAuthTime(), LocalDateTime.now()) > 3)
-            return Optional.of(ApiCode.AUTH_DO_NOT_MATCHING);
+            return Optional.of(APICode.AUTH_DO_NOT_MATCHING);
 
         return Optional.empty();
     }

@@ -2,6 +2,7 @@ package com.delgo.reward.comm.exception;
 
 
 import com.delgo.reward.comm.CommController;
+import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.record.common.ResponseRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class ExceptionController extends CommController {
     @ExceptionHandler
     public ResponseEntity exception(Exception e) {
         e.printStackTrace();
-        return ErrorReturn(ApiCode.UNKNOWN_ERROR);
+        return ErrorReturn(APICode.SERVER_ERROR);
     }
 
     // @RequestParam Param Error Check
@@ -50,10 +51,10 @@ public class ExceptionController extends CommController {
     public ResponseEntity NullPointerException(NullPointerException e) {
         if(e.getMessage().equals("PHOTO EXTENSION IS WRONG"))
             return ResponseEntity.ok().body(
-                    new ResponseRecord(ApiCode.PHOTO_EXTENSION_ERROR.getCode(), ApiCode.PHOTO_EXTENSION_ERROR.getMsg(), null));
+                    new ResponseRecord(APICode.PHOTO_EXTENSION_ERROR.getCode(), APICode.PHOTO_EXTENSION_ERROR.getMsg(), null));
 
         return ResponseEntity.ok().body(
-                new ResponseRecord(ApiCode.NOT_FOUND_DATA.getCode(), e.getMessage(), null));
+                new ResponseRecord(APICode.NOT_FOUND_DATA.getCode(), e.getMessage(), null));
     }
 
     // @PathVariable ERROR - 1

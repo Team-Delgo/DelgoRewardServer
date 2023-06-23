@@ -1,7 +1,7 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.comm.exception.ApiCode;
+import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.security.jwt.JwtService;
 import com.delgo.reward.comm.security.jwt.JwtToken;
 import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
@@ -52,7 +52,7 @@ public class LoginController extends CommController {
 
     @PostMapping("/login/fail")
     public ResponseEntity<?> loginFail() {
-        return ErrorReturn(ApiCode.LOGIN_ERROR);
+        return ErrorReturn(APICode.LOGIN_ERROR);
     }
 
     /*
@@ -70,7 +70,7 @@ public class LoginController extends CommController {
             return SuccessReturn();
         } catch (Exception e) { // Refresh_Toekn 인증 실패 ( 로그인 화면으로 이동 필요 )
             e.printStackTrace();
-            return ErrorReturn(ApiCode.TOKEN_ERROR);
+            return ErrorReturn(APICode.TOKEN_ERROR);
         }
     }
 
@@ -80,6 +80,6 @@ public class LoginController extends CommController {
      */
     @RequestMapping("/token/error")
     public ResponseEntity<?> tokenError() {
-        return ErrorReturn(ApiCode.TOKEN_ERROR);
+        return ErrorReturn(APICode.TOKEN_ERROR);
     }
 }
