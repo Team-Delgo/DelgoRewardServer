@@ -1,7 +1,7 @@
 # spring MariaDB Connect
 spring:
   profiles:
-      active: dev
+      active: local
   datasource:
     username: delgo
     password: Zlzl2022!
