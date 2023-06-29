@@ -90,9 +90,8 @@ public class ExcelParserService {
             }
 
             String businessHour = getStringExcelData(row.getCell(11));
-
             if (!businessHour.equals("")) {
-                Map<BusinessHourCode, String> map = parseBusinessHourString(businessHour);
+                Map<BusinessHourCode, String> map = parseBusinessHour(businessHour);
                 mungpleDetail.setBusinessHour(map);
 //                map.forEach((key, value) -> log.info("{} : {}", key, value));
             }
@@ -147,38 +146,31 @@ public class ExcelParserService {
         file.close();
     }
 
-    public Map<BusinessHourCode, String> parseBusinessHourString(String businessHour) {
-        Map<BusinessHourCode, String> map = new HashMap<>();
+    public Map<BusinessHourCode, String> parseBusinessHour(String input) {
+        Map<BusinessHourCode, String> businessHour = new HashMap<>();
 
-        String[] scheduleEntries = businessHour.replace("\n","").split(",");
-        for (String entry : scheduleEntries) {
-            String[] keyValue = entry.split(": ");
-            BusinessHourCode key = BusinessHourCode.valueOf(keyValue[0].replace("\"", ""));
-            String value = keyValue[1].replace("\"", "");
-            map.put(key, value);
+        String[] arr = input.replaceAll("[\n\"]","").split(",");
+        for (String s : arr) {
+            String[] keyValue = s.split(": ");
+            businessHour.put(BusinessHourCode.valueOf(keyValue[0]), keyValue[1]);
         }
 
+        // Default 값 세팅
         for (BusinessHourCode code : BusinessHourCode.values()) {
-            if (!map.containsKey(code))
-                map.put(code, code.getDefaultValue());
+            if (!businessHour.containsKey(code))
+                businessHour.put(code, code.getDefaultValue());
         }
 
-        return map;
+        return businessHour;
     }
 
     public Map<String, DetailCode> parseAcceptSize(String input) {
         Map<String, DetailCode> acceptSize = new HashMap<>();
 
-        input = input.replaceAll("[\n\"]", ""); // 엔터와 쌍따옴표 제거
-
-        String[] pairs = input.split(",");
-        for (String pair : pairs) {
-            String[] keyValue = pair.split(": ");
-            String key = keyValue[0];
-            String value = keyValue[1];
-
-            DetailCode detailCode = DetailCode.from(value);
-            acceptSize.put(key, detailCode);
+        String[] str_arr = input.replaceAll("[\n\"]", "").split(",");
+        for (String s : str_arr) {
+            String[] keyValue = s.split(": ");
+            acceptSize.put(keyValue[0], DetailCode.valueOf(keyValue[1]));
         }
 
         return acceptSize;
