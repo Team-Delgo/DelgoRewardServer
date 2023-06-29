@@ -10,10 +10,7 @@ import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.repository.MungpleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
@@ -43,24 +40,17 @@ public class ExcelParserService {
         Sheet sheet = workbook.getSheetAt(0); // 첫 번째 시트를 선택
 
         for(int i = 26 ; i < 50 ; i++) {
-            CellStyle cellStyle = sheet.getRow(i).getCell(0).getCellStyle();
-            XSSFColor backgroundColor = (XSSFColor) cellStyle.getFillForegroundColorColor();
+            Row row = sheet.getRow(i);
 
-            String color = (backgroundColor != null) ? String.format("#%02X%02X%02X",
-                    (backgroundColor.getRGB()[0] >= 0) ? backgroundColor.getRGB()[0] : (256 + backgroundColor.getRGB()[0]),
-                    (backgroundColor.getRGB()[1] >= 0) ? backgroundColor.getRGB()[1] : (256 + backgroundColor.getRGB()[1]),
-                    (backgroundColor.getRGB()[2] >= 0) ? backgroundColor.getRGB()[2] : (256 + backgroundColor.getRGB()[2])
-            ) : null;
-
-            if (color == null || color.equals("#FF00FF")) {
+            // 흰색일 때만 파싱을 동작시킨다.
+            if (!checkColor(row)) {
                 log.info("--------------------------------------------------------------------------------------");
                 continue;
             }
 
-            String mungpleName = sheet.getRow(i).getCell(3).getStringCellValue();
+            String mungpleName = row.getCell(3).getStringCellValue();
             log.info("mungpleName :{}", mungpleName);
 
-            if(mungpleName.equals("에게")) break;
 
             Mungple mungple = mungpleRepository.findByPlaceName(mungpleName);
             if(mungple == null){
@@ -224,7 +214,7 @@ public class ExcelParserService {
         return map;
     }
 
-    public static Map<String, DetailCode> parseAcceptSize(String input) {
+    public Map<String, DetailCode> parseAcceptSize(String input) {
         Map<String, DetailCode> acceptSize = new HashMap<>();
 
         input = input.replaceAll("[\n\"]", ""); // 엔터와 쌍따옴표 제거
@@ -240,5 +230,20 @@ public class ExcelParserService {
         }
 
         return acceptSize;
+    }
+
+    public boolean checkColor(Row row) {
+        CellStyle cellStyle = row.getCell(0).getCellStyle();
+        XSSFColor bgColor = (XSSFColor) cellStyle.getFillForegroundColorColor();
+
+        if (bgColor == null)
+            return false;
+
+        // RGB 컬러 값을 16진수 (HEX) 문자열로 변환
+        byte[] rgb = bgColor.getRGB();
+        String color = String.format("#%02X%02X%02X", rgb[0] & 0xFF, rgb[1] & 0xFF, rgb[2] & 0xFF);
+
+        // 흰색인 경우에만 정상동작 시킨다.
+        return !color.equals("#FF00FF");
     }
 }
