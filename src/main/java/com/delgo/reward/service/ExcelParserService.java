@@ -48,7 +48,8 @@ public class ExcelParserService {
                 continue;
             }
 
-            String mungpleName = row.getCell(3).getStringCellValue();
+            String mungpleName = getStringExcelData(row.getCell(3));
+
             log.info("mungpleName :{}", mungpleName);
 
 
@@ -65,60 +66,21 @@ public class ExcelParserService {
 //                continue;
 //            }
 
-            String phoneNo = Optional.ofNullable(sheet.getRow(i).getCell(9))
-                    .map(Cell::getStringCellValue)
-                    .filter(str -> !str.isEmpty())
-                    .orElse("");
+            String phoneNo = getStringExcelData(row.getCell(9));
             mungple.setPhoneNo(phoneNo);
 
             MungpleDetail mungpleDetail = new MungpleDetail();
 
-
-            String enterDesc = Optional.ofNullable(sheet.getRow(i).getCell(18))
-                    .map(Cell::getStringCellValue)
-                    .filter(str -> !str.isEmpty())
-                    .map(str -> str.replace("\"",""))
-                    .orElse("");
-
-            String residentDogName = Optional.ofNullable(sheet.getRow(i).getCell(13))
-                    .map(Cell::getStringCellValue)
-                    .filter(str -> !str.isEmpty())
-                    .map(s -> s.replaceAll("\"", ""))
-                    .orElse("");
-
-            String residentDogPhoto = Optional.ofNullable(sheet.getRow(i).getCell(12))
-                    .map(Cell::getStringCellValue)
-                    .filter(str -> !str.isEmpty())
-                    .orElse("");
-
-            String representMenuTitle = Optional.ofNullable(sheet.getRow(i).getCell(15))
-                    .map(Cell::getStringCellValue)
-                    .filter(str -> !str.isEmpty())
-                    .orElse("");
-
-            String instaId = Optional.ofNullable(sheet.getRow(i).getCell(14))
-                    .map(Cell::getStringCellValue)
-                    .filter(str -> !str.isEmpty())
-                    .map(str -> str.replace("\"",""))
-                    .orElse("");
-
-            String parkingLimit = Optional.ofNullable(sheet.getRow(i).getCell(20))
-                    .map(Cell::getStringCellValue)
-                    .map(s -> s.replaceAll("\"", ""))
-                    .filter(str -> !str.isEmpty())
-                    .orElse("");
-
-            String parkingInfo = Optional.ofNullable(sheet.getRow(i).getCell(19))
-                    .map(Cell::getStringCellValue)
-                    .map(s -> s.replaceAll("\"", ""))
-                    .filter(str -> !str.isEmpty())
-                    .orElse("");
+            String enterDesc = getStringExcelData(row.getCell(18));
+            String residentDogName =  getStringExcelData(row.getCell(13));
+            String residentDogPhoto =  getStringExcelData(row.getCell(12));
+            String representMenuTitle =  getStringExcelData(row.getCell(15));
+            String instaId =  getStringExcelData(row.getCell(14));
+            String parkingLimit =  getStringExcelData(row.getCell(20));
+            String parkingInfo =  getStringExcelData(row.getCell(19));
 
 
-            String representMenuPhotoText = Optional.ofNullable(sheet.getRow(i).getCell(16))
-                    .map(Cell::getStringCellValue)
-                    .orElse("");
-
+            String representMenuPhotoText =  getStringExcelData(row.getCell(16));
             if (!representMenuPhotoText.isEmpty()) {
                 List<String> representMenuPhotos = Arrays.stream(representMenuPhotoText.split("\n"))
                         .filter(s -> !s.isEmpty())
@@ -127,11 +89,7 @@ public class ExcelParserService {
 //                representMenuPhotos.forEach(menu_photo -> log.info("menu_photo: {}", menu_photo));
             }
 
-            String businessHour = Optional.ofNullable(sheet.getRow(i).getCell(11))
-                    .map(Cell::getStringCellValue)
-                    .map(s -> s.replaceAll("\"", ""))
-                    .filter(str -> !str.isEmpty())
-                    .orElse("");
+            String businessHour = getStringExcelData(row.getCell(11));
 
             if (!businessHour.equals("")) {
                 Map<BusinessHourCode, String> map = parseBusinessHourString(businessHour);
@@ -139,11 +97,7 @@ public class ExcelParserService {
 //                map.forEach((key, value) -> log.info("{} : {}", key, value));
             }
 
-            String acceptSize = Optional.ofNullable(sheet.getRow(i).getCell(17))
-                    .map(Cell::getStringCellValue)
-                    .map(s -> s.replaceAll("\"", ""))
-                    .filter(str -> !str.isEmpty())
-                    .orElse("");
+            String acceptSize = getStringExcelData(row.getCell(17));
 
             if (!acceptSize.equals("")) {
                 Map<String, DetailCode> map = parseAcceptSize(acceptSize);
@@ -152,9 +106,7 @@ public class ExcelParserService {
             }
 
             // 메뉴판 사진
-            String menuBoardText = Optional.ofNullable(sheet.getRow(i).getCell(25))
-                    .map(Cell::getStringCellValue)
-                    .orElse("");
+            String menuBoardText = getStringExcelData(row.getCell(25));
 
             if (!menuBoardText.isEmpty()) {
                 List<String> menuBoards = Arrays.stream(menuBoardText.split("\n"))
@@ -245,5 +197,13 @@ public class ExcelParserService {
 
         // 흰색인 경우에만 정상동작 시킨다.
         return !color.equals("#FF00FF");
+    }
+
+    public String getStringExcelData(Cell cell){
+        return Optional.ofNullable(cell)
+                .map(Cell::getStringCellValue)
+                .filter(str -> !str.isEmpty())
+                .map(str -> str.replace("\"",""))
+                .orElse("");
     }
 }
