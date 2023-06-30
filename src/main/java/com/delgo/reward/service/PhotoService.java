@@ -26,6 +26,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermission;
@@ -244,19 +247,32 @@ public class PhotoService extends CommService {
         }
     }
 
-    public InputStream downloadImage(String sourceUrl) {
+    private InputStream downloadImage(String sourceUrl) {
         InputStream in;
         try {
             URL url = new URL(sourceUrl);
-            in = url.openStream();
+            String protocol = url.getProtocol();
+            String authority = url.getAuthority();
+            String[] segments = url.getPath().split("/");
+            for (int i = 0; i < segments.length; i++) {
+                if (segments[i].matches(".*\\p{IsHangul}.*")) {
+                    segments[i] = URLEncoder.encode(segments[i], StandardCharsets.UTF_8).replace("+", "%20");
+                }
+            }
+            String encodedPath = String.join("/", segments);
+            String query = url.getQuery() != null ? "?" + url.getQuery() : "";
+            String fragment = url.getRef() != null ? "#" + url.getRef() : "";
+
+            URL encodedUrl = new URL(protocol + "://" + authority + encodedPath + query + fragment);
+            in = encodedUrl.openStream();
         } catch (IOException e) {
             throw new RuntimeException("Error while downloading image");
         }
         return in;
     }
 
+
     public String convertWebpFromUrl(String name, String imageUrl) {
-        String[] photoName = imageUrl.split("\\.");
         String fileName = name + ".webp";
 
         try {
@@ -272,13 +288,9 @@ public class PhotoService extends CommService {
             }
 
             File webpFile = convertWebp(fileName, file);  // filePath에서 File 불러온 뒤 webp로 변환 후 저장.
-            log.info("fileName : {} webpFile 생성 성공", fileName);
             file.delete();
 
-            // Upload NCP
-            objectStorageService.uploadObjects(BucketName.DETAIL_MENU, fileName, DIR + fileName);
-
-            return BucketName.DETAIL_MENU.getUrl() + webpFile;
+            return fileName;
         } catch (Exception e) {
             log.error("menu_photo: {} webpFile 생성 실패",name);
             return "";
