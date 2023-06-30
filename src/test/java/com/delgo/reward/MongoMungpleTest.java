@@ -65,10 +65,4 @@ public class MongoMungpleTest {
 
         mongoMungpleService.findWithin3Km(latitude,longitude);
     }
-
-    @Test
-    public void excelParseOfCafeTest() throws IOException {
-        String filePath = "C:\\testPhoto\\delgo.xlsx";
-        excelParserService.parseExcelFileOfCafe(filePath);
-    }
 }
