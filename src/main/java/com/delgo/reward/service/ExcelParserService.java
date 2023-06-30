@@ -101,6 +101,18 @@ public class ExcelParserService {
 //                map.forEach((key, value) -> log.info("{} : {}", key, value.getCode()));
             }
 
+            // 썸네일 사진
+            String ThumbnailsText = getStringExcelData(row.getCell(8));
+            if (!ThumbnailsText.isEmpty()) {
+                List<String> thumbnails = Arrays.stream(ThumbnailsText.split("\n"))
+                        .filter(s -> !s.isEmpty())
+                        .toList();
+
+                thumbnails.forEach(thumbnail -> log.info("thumbnails: {}", thumbnail));
+                List<String> ncpUrls = thumbnailNCPUpload(mungpleName, thumbnails);
+                mungpleDetail.setPhotoUrls(ncpUrls);
+            }
+
             // 메뉴판 사진
             String menuBoardText = getStringExcelData(row.getCell(25));
             if (!menuBoardText.isEmpty()) {
@@ -108,7 +120,8 @@ public class ExcelParserService {
                         .filter(s -> !s.isEmpty())
                         .toList();
 
-                menuBoardNCPUpload(mungpleName,menuBoards);
+                List<String> ncpUrls = menuBoardNCPUpload(mungpleName,menuBoards);
+                mungpleDetail.setRepresentMenuPhotoUrls(ncpUrls);
 //                menuBoards.forEach(menu_board -> log.info("menu_board: {}", menu_board));
             }
 
@@ -119,19 +132,11 @@ public class ExcelParserService {
                         .filter(s -> !s.isEmpty())
                         .toList();
 
-                menuNCPUpload(mungpleName, representMenuPhotos);
+                List<String> ncpUrls = menuNCPUpload(mungpleName, representMenuPhotos);
+                // 메뉴판 사진 -> 메뉴 저장.
+                mungpleDetail.getRepresentMenuPhotoUrls().addAll(ncpUrls);
+                mungpleDetail.setRepresentMenuPhotoUrls(mungpleDetail.getRepresentMenuPhotoUrls());
 //                representMenuPhotos.forEach(menu_photo -> log.info("menu_photo: {}", menu_photo));
-            }
-
-            // 썸네일 사진
-            String ThumbnailsText = getStringExcelData(row.getCell(8));
-            if (!ThumbnailsText.isEmpty()) {
-                List<String> thumbnails = Arrays.stream(ThumbnailsText.split("\n"))
-                        .filter(s -> !s.isEmpty())
-                        .toList();
-
-                thumbnailNCPUpload(mungpleName, thumbnails);
-//                thumbnails.forEach(thumbnail -> log.info("thumbnails: {}", thumbnail));
             }
 
 
@@ -220,24 +225,39 @@ public class ExcelParserService {
                 .orElse("");
     }
 
-    public void thumbnailNCPUpload(String mungpleName, List<String> urls) {
+    public List<String> thumbnailNCPUpload(String mungpleName, List<String> urls) {
+        List<String> ncpUrls = new ArrayList<>();
         for (int i = 0; i < urls.size(); i++) {
             String fileName = photoService.convertWebpFromUrl(mungpleName + "_" + (i + 1), urls.get(i));
             objectStorageService.uploadObjects(BucketName.DETAIL_THUMBNAIL, fileName, DIR + fileName);
+            ncpUrls.add(BucketName.DETAIL_THUMBNAIL.getUrl() + fileName);
         }
+
+        return ncpUrls;
     }
 
-    public void menuNCPUpload(String mungpleName, List<String> urls) {
-        for (int i = 0; i < urls.size(); i++) {
-            String fileName = photoService.convertWebpFromUrl(mungpleName + "_menu_" + (i + 1), urls.get(i));
-            objectStorageService.uploadObjects(BucketName.DETAIL_MENU, fileName, DIR + fileName);
-        }
-    }
-
-    public void menuBoardNCPUpload(String mungpleName, List<String> urls) {
+    // menu랑 menuBoard는 동일한 Map에 저장하기 때문에 menuBoard먼저 저장 해야 함.
+    public List<String> menuBoardNCPUpload(String mungpleName, List<String> urls) {
+        List<String> ncpUrls = new ArrayList<>();
         for (int i = 0; i < urls.size(); i++) {
             String fileName = photoService.convertWebpFromUrl(mungpleName + "_menu_board_" + (i + 1), urls.get(i));
             objectStorageService.uploadObjects(BucketName.DETAIL_MENU_BOARD, fileName, DIR + fileName);
+            ncpUrls.add(BucketName.DETAIL_MENU_BOARD.getUrl() + fileName);
         }
+
+        return ncpUrls;
     }
+
+    public List<String> menuNCPUpload(String mungpleName, List<String> urls) {
+        List<String> ncpUrls = new ArrayList<>();
+        for (int i = 0; i < urls.size(); i++) {
+            String fileName = photoService.convertWebpFromUrl(mungpleName + "_menu_" + (i + 1), urls.get(i));
+            objectStorageService.uploadObjects(BucketName.DETAIL_MENU, fileName, DIR + fileName);
+            ncpUrls.add(BucketName.DETAIL_MENU.getUrl() + fileName);
+        }
+
+        return ncpUrls;
+    }
+
+
 }

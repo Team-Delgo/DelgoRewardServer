@@ -34,7 +34,17 @@ public enum BucketName {
             "reward-detail-menu",
             "reward-detail-menu",
             "https://kr.object.ncloudstorage.com/reward-detail-menu/",
-            "https://kr.object.ncloudstorage.com/reward-detail-menu/");
+            "https://kr.object.ncloudstorage.com/reward-detail-menu/"),
+    DETAIL_MENU_BOARD(
+            "reward-detail-menu-board",
+            "reward-detail-menu-board",
+            "https://kr.object.ncloudstorage.com/reward-detail-menu-board/",
+            "https://kr.object.ncloudstorage.com/reward-detail-menu-board/"),
+    DETAIL_THUMBNAIL(
+            "reward-detail-thumbnail",
+            "reward-detail-thumbnail",
+            "https://kr.object.ncloudstorage.com/reward-detail-thumbnail/",
+            "https://kr.object.ncloudstorage.com/reward-detail-thumbnail/");
 
     private final String name;
     private final String testName;

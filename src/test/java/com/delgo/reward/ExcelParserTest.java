@@ -20,14 +20,14 @@ public class ExcelParserTest {
     private ExcelParserService excelParserService;
 
     @Test
-    public void excelParseOfCafeTest() throws IOException {
+    public void excelParseOfCafeTest() throws IOException, InterruptedException {
         String filePath = "C:\\testPhoto\\delgo.xlsx";
 
         excelParserService.parseExcelFileOfCafe(filePath);
     }
 
     @Test
-    public void thumbnailImgConvertAndUploadTest() throws IOException {
+    public void thumbnailImgConvertAndUploadTest() throws IOException, InterruptedException {
         // given
         String menuUrl = "https://kr.object.ncloudstorage.com/reward-detail-thumbnail/notwebp/올티드 커피_1.png";
         List<String> urls = new ArrayList<>();
@@ -37,7 +37,7 @@ public class ExcelParserTest {
     }
 
     @Test
-    public void menuImgConvertAndUploadTest() throws IOException {
+    public void menuImgConvertAndUploadTest() throws IOException, InterruptedException {
         // given
         String menuUrl = "https://kr.object.ncloudstorage.com/reward-detail-thumbnail/notwebp/올티드 커피_1.png";
         List<String> urls = new ArrayList<>();
@@ -47,7 +47,7 @@ public class ExcelParserTest {
     }
 
     @Test
-    public void menuBoardImgConvertAndUploadTest() throws IOException {
+    public void menuBoardImgConvertAndUploadTest() throws IOException, InterruptedException {
         // given
         String menuUrl = "https://kr.object.ncloudstorage.com/reward-detail-thumbnail/notwebp/올티드 커피_1.png";
         List<String> urls = new ArrayList<>();
