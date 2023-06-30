@@ -2,6 +2,7 @@ package com.delgo.reward.service;
 
 import com.delgo.reward.comm.code.BusinessHourCode;
 import com.delgo.reward.comm.code.DetailCode;
+import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.Mungple;
 import com.delgo.reward.mongoDomain.MungpleDetail;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -26,12 +28,16 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ExcelParserService {
 
+
     private final MungpleRepository mungpleRepository;
     private final MungpleDetailRepository mungpleDetailRepository;
 
+    private final PhotoService photoService;
     private final ObjectStorageService objectStorageService;
     private final MongoMungpleService mongoMungpleService;
 
+    @Value("${config.photoDir}")
+    String DIR;
     String COPY_URL = "https://www.test.delgo.pet/detail/";
 
     public void parseExcelFileOfCafe(String filePath) throws IOException {
@@ -80,15 +86,6 @@ public class ExcelParserService {
             String parkingInfo =  getStringExcelData(row.getCell(19));
 
 
-            String representMenuPhotoText =  getStringExcelData(row.getCell(16));
-            if (!representMenuPhotoText.isEmpty()) {
-                List<String> representMenuPhotos = Arrays.stream(representMenuPhotoText.split("\n"))
-                        .filter(s -> !s.isEmpty())
-                        .toList();
-                mungpleDetail.setRepresentMenuPhotoUrls(representMenuPhotos);
-//                representMenuPhotos.forEach(menu_photo -> log.info("menu_photo: {}", menu_photo));
-            }
-
             String businessHour = getStringExcelData(row.getCell(11));
             if (!businessHour.equals("")) {
                 Map<BusinessHourCode, String> map = parseBusinessHour(businessHour);
@@ -106,13 +103,37 @@ public class ExcelParserService {
 
             // 메뉴판 사진
             String menuBoardText = getStringExcelData(row.getCell(25));
-
             if (!menuBoardText.isEmpty()) {
                 List<String> menuBoards = Arrays.stream(menuBoardText.split("\n"))
                         .filter(s -> !s.isEmpty())
                         .toList();
-                mongoMungpleService.addMenuBoardPhotoUrl(mungple.getMungpleId(), menuBoards);
+
+                menuBoardNCPUpload(mungpleName,menuBoards);
+//                menuBoards.forEach(menu_board -> log.info("menu_board: {}", menu_board));
             }
+
+            // 메뉴 사진
+            String representMenuPhotoText =  getStringExcelData(row.getCell(16));
+            if (!representMenuPhotoText.isEmpty()) {
+                List<String> representMenuPhotos = Arrays.stream(representMenuPhotoText.split("\n"))
+                        .filter(s -> !s.isEmpty())
+                        .toList();
+
+                menuNCPUpload(mungpleName, representMenuPhotos);
+//                representMenuPhotos.forEach(menu_photo -> log.info("menu_photo: {}", menu_photo));
+            }
+
+            // 썸네일 사진
+            String ThumbnailsText = getStringExcelData(row.getCell(8));
+            if (!ThumbnailsText.isEmpty()) {
+                List<String> thumbnails = Arrays.stream(ThumbnailsText.split("\n"))
+                        .filter(s -> !s.isEmpty())
+                        .toList();
+
+                thumbnailNCPUpload(mungpleName, thumbnails);
+//                thumbnails.forEach(thumbnail -> log.info("thumbnails: {}", thumbnail));
+            }
+
 
             log.info("phoneNo: {}", phoneNo);
             log.info("editorNoteUrl :{}", mungple.getDetailUrl());
@@ -197,5 +218,26 @@ public class ExcelParserService {
                 .filter(str -> !str.isEmpty())
                 .map(str -> str.replace("\"",""))
                 .orElse("");
+    }
+
+    public void thumbnailNCPUpload(String mungpleName, List<String> urls) {
+        for (int i = 0; i < urls.size(); i++) {
+            String fileName = photoService.convertWebpFromUrl(mungpleName + "_" + (i + 1), urls.get(i));
+            objectStorageService.uploadObjects(BucketName.DETAIL_THUMBNAIL, fileName, DIR + fileName);
+        }
+    }
+
+    public void menuNCPUpload(String mungpleName, List<String> urls) {
+        for (int i = 0; i < urls.size(); i++) {
+            String fileName = photoService.convertWebpFromUrl(mungpleName + "_menu_" + (i + 1), urls.get(i));
+            objectStorageService.uploadObjects(BucketName.DETAIL_MENU, fileName, DIR + fileName);
+        }
+    }
+
+    public void menuBoardNCPUpload(String mungpleName, List<String> urls) {
+        for (int i = 0; i < urls.size(); i++) {
+            String fileName = photoService.convertWebpFromUrl(mungpleName + "_menu_board_" + (i + 1), urls.get(i));
+            objectStorageService.uploadObjects(BucketName.DETAIL_MENU_BOARD, fileName, DIR + fileName);
+        }
     }
 }
