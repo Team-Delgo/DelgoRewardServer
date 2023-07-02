@@ -19,7 +19,7 @@ public record MungpleDetailRecord(
         List<String> photoUrls, // 매장 사진들
         String representMenuTitle, // 대표 메뉴 제목
         List<String> representMenuPhotoUrls, // 대표 메뉴 사진 URL // ※무조건 3개 이상이어야 함.
-        String parkingLimit, // 주차 가능 대수
+        Boolean isParking, // 주차 가능 여부
         String parkingInfo, // 주차 정보
         String copyLink
 ) {
@@ -35,7 +35,7 @@ public record MungpleDetailRecord(
                 .photoUrls(photoUrls)
                 .representMenuTitle(representMenuTitle)
                 .representMenuPhotoUrls(representMenuPhotoUrls)
-                .parkingLimit(parkingLimit)
+                .isParking(isParking)
                 .parkingInfo(parkingInfo)
                 .copyLink(copyLink)
                 .build();

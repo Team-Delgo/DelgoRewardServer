@@ -18,6 +18,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Document(collection="mungple_detail")
 public class MungpleDetail {
+    // Common
     @Id
     private String id;
     @Field("mungple_id")
@@ -28,11 +29,25 @@ public class MungpleDetail {
 
     @Field("enter_desc")
     private String enterDesc; // 강아지 동반 안내 매장 설명문
-    @Field("business_hour")
-    private Map<BusinessHourCode, String> businessHour; // 운영 시간 ( 요일별로 표시 )
     @Field("accept_size")
     private Map<String, DetailCode> acceptSize;  // 허용 크기 ( S, M , L )
+    @Field("business_hour")
+    private Map<BusinessHourCode, String> businessHour; // 운영 시간 ( 요일별로 표시 )
 
+    @Field("insta_id")
+    private String instaId; // 인스타 ID
+
+    @Field("is_parking")
+    private Boolean isParking; // 주차 가능 대수
+    @Field("parking_info")
+    private String parkingInfo; // 주차 정보
+
+    @Field("editor_note_url")
+    private String editorNoteUrl; // 에디터 노트 URL
+    @Field("copy_link")
+    private String copyLink;
+
+    // CA0002, CA0003
     @Field("resident_dog_name")
     private String residentDogName; // 상주견 이름
     @Field("resident_dog_photo")
@@ -43,16 +58,9 @@ public class MungpleDetail {
     @Field("represent_menu_photo_urls")
     private List<String> representMenuPhotoUrls; // 대표 메뉴 URL List // ※무조건 3개 이상이어야 함.
 
-    @Field("insta_id")
-    private String instaId; // 인스타 ID
-
-    @Field("parking_limit")
-    private String parkingLimit; // 주차 가능 대수
-    @Field("parking_info")
-    private String parkingInfo; // 주차 정보
-
-    @Field("editor_note_url")
-    private String editorNoteUrl; // 에디터 노트 URL
-    @Field("copy_link")
-    private String copyLink;
+    // CA0001, CA0005, CA0006, CA0007
+    @Field("is_price_tag")
+    private Boolean isPriceTag; // 가격표 존재 여부
+    @Field("price_tag_photo_urls")
+    private List<String> priceTagPhotoUrls; // 가격표 사진
 }
