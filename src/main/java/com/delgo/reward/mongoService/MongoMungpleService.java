@@ -1,8 +1,11 @@
 package com.delgo.reward.mongoService;
 
-import com.delgo.reward.domain.Mungple;
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
+import com.delgo.reward.domain.Mungple;
+import com.delgo.reward.dto.mungple.CafeDetailResDTO;
 import com.delgo.reward.dto.mungple.MungpleDetailResDTO;
+import com.delgo.reward.dto.mungple.PriceTagDetailResDTO;
 import com.delgo.reward.mongoDomain.MongoMungple;
 import com.delgo.reward.mongoDomain.MungpleDetail;
 import com.delgo.reward.mongoRepository.MungpleDetailRepository;
@@ -39,10 +42,19 @@ public class MongoMungpleService {
     private final MungpleDetailRepository mungpleDetailRepository;
 
     public MungpleDetailResDTO getMungpleDetailDataByMungpleId(int mungpleId) {
+        Mungple mungple = mungpleService.getMungpleById(mungpleId);
         MungpleDetail mungpleDetail = mungpleDetailRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
         int certCount = certRepository.countOfCertByMungple(mungpleId);
 
-        return new MungpleDetailResDTO(mungpleService.getMungpleById(mungpleId), mungpleDetail, certCount);
+        CategoryCode categoryCode = CategoryCode.valueOf(mungple.getCategoryCode());
+        switch (categoryCode){
+            case CA0002, CA0003 -> {
+                return new CafeDetailResDTO(mungple, mungpleDetail, certCount);
+            }
+            default -> {
+                return new PriceTagDetailResDTO(mungple, mungpleDetail, certCount);
+            }
+        }
     }
 
     public Boolean isExist(int mungpleId) {
