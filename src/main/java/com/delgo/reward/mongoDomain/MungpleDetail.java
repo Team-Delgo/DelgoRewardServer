@@ -46,8 +46,8 @@ public class MungpleDetail {
     @Field("insta_id")
     private String instaId; // 인스타 ID
 
-    @Field("parking_limit")
-    private String parkingLimit; // 주차 가능 대수
+    @Field("is_parking")
+    private Boolean isParking; // 주차 가능 대수
     @Field("parking_info")
     private String parkingInfo; // 주차 정보
 
