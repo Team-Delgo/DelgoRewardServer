@@ -27,6 +27,13 @@ public class ExcelParserTest {
     }
 
     @Test
+    public void excelParseOfHospitalTest() throws IOException, InterruptedException {
+        String filePath = "C:\\testPhoto\\delgo.xlsx";
+
+        excelParserService.parseExcelFileOfHospital(filePath);
+    }
+
+    @Test
     public void thumbnailImgConvertAndUploadTest() throws IOException, InterruptedException {
         // given
         String menuUrl = "https://kr.object.ncloudstorage.com/reward-detail-thumbnail/notwebp/올티드 커피_1.png";
