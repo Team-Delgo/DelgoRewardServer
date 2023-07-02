@@ -30,6 +30,11 @@ public enum BucketName {
             "test-profile",
             "https://kr.object.ncloudstorage.com/reward-profile/",
             "https://kr.object.ncloudstorage.com/test-profile/"),
+    DETAIL_PRICE_TAG(
+            "reward-detail-price-tag",
+            "reward-detail-price-tag",
+            "https://kr.object.ncloudstorage.com/reward-detail-price-tag/",
+            "https://kr.object.ncloudstorage.com/reward-detail-price_tag/"),
     DETAIL_MENU(
             "reward-detail-menu",
             "reward-detail-menu",
