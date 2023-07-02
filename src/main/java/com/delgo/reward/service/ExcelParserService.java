@@ -55,9 +55,7 @@ public class ExcelParserService {
             }
 
             String mungpleName = getStringExcelData(row.getCell(3));
-
             log.info("mungpleName :{}", mungpleName);
-
 
             Mungple mungple = mungpleRepository.findByPlaceName(mungpleName);
             if(mungple == null){
@@ -82,7 +80,7 @@ public class ExcelParserService {
             String residentDogPhoto =  getStringExcelData(row.getCell(12));
             String representMenuTitle =  getStringExcelData(row.getCell(15));
             String instaId =  getStringExcelData(row.getCell(14));
-            String parkingLimit =  getStringExcelData(row.getCell(20));
+            Boolean isParking =  row.getCell(20).getBooleanCellValue();
             String parkingInfo =  getStringExcelData(row.getCell(19));
 
 
@@ -94,7 +92,6 @@ public class ExcelParserService {
             }
 
             String acceptSize = getStringExcelData(row.getCell(17));
-
             if (!acceptSize.equals("")) {
                 Map<String, DetailCode> map = parseAcceptSize(acceptSize);
                 mungpleDetail.setAcceptSize(map);
@@ -139,7 +136,6 @@ public class ExcelParserService {
 //                representMenuPhotos.forEach(menu_photo -> log.info("menu_photo: {}", menu_photo));
             }
 
-
             log.info("phoneNo: {}", phoneNo);
             log.info("editorNoteUrl :{}", mungple.getDetailUrl());
             log.info("copyLink :{}", COPY_URL + mungple.getMungpleId());
@@ -148,7 +144,7 @@ public class ExcelParserService {
             log.info("residentDogPhoto: {}", residentDogPhoto);
             log.info("representMenuTitle: {}", representMenuTitle);
             log.info("instaId: {}", instaId);
-            log.info("parkingLimit: {}", parkingLimit);
+            log.info("isParking: {}", isParking);
             log.info("parkingInfo: {}", parkingInfo);
 
             mungpleDetail.setMungpleId(mungple.getMungpleId());
@@ -159,8 +155,108 @@ public class ExcelParserService {
             mungpleDetail.setResidentDogPhoto(residentDogPhoto);
             mungpleDetail.setRepresentMenuTitle(representMenuTitle);
             mungpleDetail.setInstaId(instaId);
-            mungpleDetail.setParkingLimit(parkingLimit);
+            mungpleDetail.setIsParking(isParking);
             mungpleDetail.setParkingInfo(parkingInfo);
+
+            // 저장
+            mungpleDetailRepository.save(mungpleDetail);
+
+            log.info("--------------------------------------------------------------------------------------");
+        }
+
+        workbook.close();
+        file.close();
+    }
+
+    public void parseExcelFileOfHospital(String filePath) throws IOException {
+        FileInputStream file = new FileInputStream(filePath);
+        Workbook workbook = new XSSFWorkbook(file);
+        Sheet sheet = workbook.getSheetAt(0); // 첫 번째 시트를 선택
+
+        for(int i = 123 ; i < 126 ; i++) {
+            Row row = sheet.getRow(i);
+
+            // 흰색일 때만 파싱을 동작시킨다.
+            if (!checkColor(row)) {
+                log.info("--------------------------------------------------------------------------------------");
+                continue;
+            }
+
+            String mungpleName = getStringExcelData(row.getCell(3));
+            log.info("mungpleName :{}", mungpleName);
+
+            Mungple mungple = mungpleRepository.findByPlaceName(mungpleName);
+            if(mungple == null){
+                log.info("--------------------------------------------------------------------------------------");
+                continue;
+            }
+
+            String phoneNo = getStringExcelData(row.getCell(9));
+            mungple.setPhoneNo(phoneNo);
+
+            MungpleDetail mungpleDetail = new MungpleDetail();
+
+            String enterDesc = getStringExcelData(row.getCell(18));
+            String instaId =  getStringExcelData(row.getCell(14));
+            Boolean isParking =  row.getCell(20).getBooleanCellValue();
+            String parkingInfo =  getStringExcelData(row.getCell(19));
+
+            String businessHour = getStringExcelData(row.getCell(11));
+            if (!businessHour.equals("")) {
+                Map<BusinessHourCode, String> map = parseBusinessHour(businessHour);
+                mungpleDetail.setBusinessHour(map);
+                map.forEach((key, value) -> log.info("{} : {}", key, value));
+            }
+
+            String acceptSize = getStringExcelData(row.getCell(17));
+            if (!acceptSize.equals("")) {
+                Map<String, DetailCode> map = parseAcceptSize(acceptSize);
+                mungpleDetail.setAcceptSize(map);
+                map.forEach((key, value) -> log.info("{} : {}", key, value.getCode()));
+            }
+
+            // 썸네일 사진
+            String ThumbnailsText = getStringExcelData(row.getCell(8));
+            if (!ThumbnailsText.isEmpty()) {
+                List<String> thumbnails = Arrays.stream(ThumbnailsText.split("\n"))
+                        .filter(s -> !s.isEmpty())
+                        .toList();
+
+                thumbnails.forEach(thumbnail -> log.info("thumbnails: {}", thumbnail));
+                List<String> ncpUrls = thumbnailNCPUpload(mungpleName, thumbnails);
+                mungpleDetail.setPhotoUrls(ncpUrls);
+            }
+
+            // 가격표 사진
+            String priceTagPhotosText = getStringExcelData(row.getCell(26));
+            if (!priceTagPhotosText.isEmpty()) {
+                List<String> priceTags = Arrays.stream(priceTagPhotosText.split("\n"))
+                        .filter(s -> !s.isEmpty())
+                        .toList();
+
+                priceTags.forEach(menu_board -> log.info("priceTags: {}", menu_board));
+                List<String> ncpUrls = priceTagNCPUpload(mungpleName, priceTags);
+                mungpleDetail.setPriceTagPhotoUrls(ncpUrls);
+            }
+            Boolean isPriceTag = !priceTagPhotosText.isEmpty();
+
+            log.info("phoneNo: {}", phoneNo);
+            log.info("editorNoteUrl :{}", mungple.getDetailUrl());
+            log.info("copyLink :{}", COPY_URL + mungple.getMungpleId());
+            log.info("enterDesc :{}", enterDesc);
+            log.info("instaId: {}", instaId);
+            log.info("isParking: {}", isParking);
+            log.info("parkingInfo: {}", parkingInfo);
+            log.info("isPriceTag: {}", isPriceTag);
+
+            mungpleDetail.setMungpleId(mungple.getMungpleId());
+            mungpleDetail.setEditorNoteUrl(mungple.getDetailUrl());
+            mungpleDetail.setCopyLink(COPY_URL + mungple.getMungpleId());
+            mungpleDetail.setEnterDesc(enterDesc);
+            mungpleDetail.setInstaId(instaId);
+            mungpleDetail.setIsParking(isParking);
+            mungpleDetail.setParkingInfo(parkingInfo);
+            mungpleDetail.setIsPriceTag(!priceTagPhotosText.isEmpty());
 
             // 저장
             mungpleDetailRepository.save(mungpleDetail);
@@ -254,6 +350,17 @@ public class ExcelParserService {
             String fileName = photoService.convertWebpFromUrl(mungpleName + "_menu_" + (i + 1), urls.get(i));
             objectStorageService.uploadObjects(BucketName.DETAIL_MENU, fileName, DIR + fileName);
             ncpUrls.add(BucketName.DETAIL_MENU.getUrl() + fileName);
+        }
+
+        return ncpUrls;
+    }
+
+    public List<String> priceTagNCPUpload(String mungpleName, List<String> urls) {
+        List<String> ncpUrls = new ArrayList<>();
+        for (int i = 0; i < urls.size(); i++) {
+            String fileName = photoService.convertWebpFromUrl(mungpleName + "_price_tag_" + (i + 1), urls.get(i));
+            objectStorageService.uploadObjects(BucketName.DETAIL_PRICE_TAG, fileName, DIR + fileName);
+            ncpUrls.add(BucketName.DETAIL_PRICE_TAG.getUrl() + fileName);
         }
 
         return ncpUrls;
