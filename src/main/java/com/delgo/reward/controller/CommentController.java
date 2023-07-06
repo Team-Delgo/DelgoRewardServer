@@ -3,7 +3,6 @@ package com.delgo.reward.controller;
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.record.comment.CommentRecord;
-import com.delgo.reward.record.comment.DeleteCommentRecord;
 import com.delgo.reward.record.comment.ModifyCommentRecord;
 import com.delgo.reward.record.comment.ReplyRecord;
 import com.delgo.reward.service.CommentService;
@@ -58,12 +57,11 @@ public class CommentController extends CommController {
 
     /**
      * 댓글 / 답글 삭제
-     * @param deleteCommentRecord
      * @return 성공 / 실패 여부
      */
-    @DeleteMapping("/comment")
-    public ResponseEntity deleteComment(@Validated @RequestBody DeleteCommentRecord deleteCommentRecord){
-        return commentService.deleteComment(deleteCommentRecord)
+    @DeleteMapping("/comment/{commentId}/{userId}/{certificationId}")
+    public ResponseEntity deleteComment(@PathVariable Integer commentId, @PathVariable Integer userId, @PathVariable Integer certificationId) {
+        return commentService.deleteComment(commentId, userId, certificationId)
                 ? SuccessReturn()
                 : ErrorReturn(APICode.INVALID_USER_ERROR);
     }
