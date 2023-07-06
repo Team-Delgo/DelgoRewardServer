@@ -8,7 +8,6 @@ import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.comment.CommentResDTO;
 import com.delgo.reward.dto.comment.ReplyResDTO;
 import com.delgo.reward.record.comment.CommentRecord;
-import com.delgo.reward.record.comment.DeleteCommentRecord;
 import com.delgo.reward.record.comment.ModifyCommentRecord;
 import com.delgo.reward.record.comment.ReplyRecord;
 import com.delgo.reward.repository.CommentRepository;
@@ -78,18 +77,18 @@ public class CommentService {
         return true;
     }
 
-    public Boolean deleteComment(DeleteCommentRecord deleteCommentRecord) {
+    public Boolean deleteComment(int commentId, int userId, int certificationId) {
         // 댓글 OR 인증 작성자인지 CHECK.
-        Comment comment = getCommentById(deleteCommentRecord.commentId());
-        Certification certification = certService.getCertById(deleteCommentRecord.certificationId());
-        if (comment.getUser().getUserId() != deleteCommentRecord.userId() && certification.getUser().getUserId() != deleteCommentRecord.userId())  // 유저 체크
+        Comment comment = getCommentById(commentId);
+        Certification certification = certService.getCertById(certificationId);
+        if (comment.getUser().getUserId() != userId && certification.getUser().getUserId() != userId)  // 유저 체크
             return false;
 
         // Comment 삭제
-        commentRepository.deleteById(deleteCommentRecord.commentId());
+        commentRepository.deleteById(commentId);
 
         // commentCount 업데이트
-        int commentCount = commentRepository.countCommentByCertId(deleteCommentRecord.certificationId());
+        int commentCount = commentRepository.countCommentByCertId(certificationId);
         certification.setCommentCount(commentCount);
 
         return true;
