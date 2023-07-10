@@ -17,7 +17,7 @@ public record CertRecord(
         @NotBlank String description,
         String latitude,
         String longitude,
-        Boolean isHideAddress) {
+        @NotNull Boolean isHideAddress) {
 
     public Certification toEntity(Location location, User user) {
         return Certification.builder()
@@ -34,10 +34,12 @@ public record CertRecord(
                 .isCorrectPhoto(false)
                 .isAchievements(false)
                 .isExpose(true)
-                .isHideAddress(isHideAddress != null ? isHideAddress : false)
+                .isHideAddress(isHideAddress)
+                .commentCount(0)
                 .build();
     }
 
+    // 멍플 인증 일 때는 주소 숨기기 불가능.
     public Certification toEntity(Mungple mungple, User user) {
         String[] arr = mungple.getJibunAddress().split(" ");
         String address = arr[0] + " " + arr[1];
@@ -56,6 +58,7 @@ public record CertRecord(
                 .isAchievements(false)
                 .isExpose(true)
                 .isHideAddress(false)
+                .commentCount(0)
                 .build();
     }
 
