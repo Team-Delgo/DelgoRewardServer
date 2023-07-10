@@ -23,8 +23,8 @@ public class MapService {
     private final MungpleService mungpleService;
 
     public Map<String, Object> getMap(int userId) {
-        List<CertByMungpleResDTO> certifications = certService.getCertListByUserId(userId).stream().map(c -> new CertByMungpleResDTO(c,userId)).toList();  // 인증 리스트 조회
-        List<CertByMungpleResDTO> exposedCertList = certService.getExposedCertList(3).stream().map(c -> new CertByMungpleResDTO(c,userId)).toList();  // 노출시킬 인증 리스트 조회
+        List<CertByMungpleResDTO> certifications = certService.getCertsByUserId(userId).stream().map(c -> new CertByMungpleResDTO(c,userId)).toList();  // 인증 리스트 조회
+        List<CertByMungpleResDTO> exposedCertList = certService.getExposedCerts(3).stream().map(c -> new CertByMungpleResDTO(c,userId)).toList();  // 노출시킬 인증 리스트 조회
 
         return (userId == 0)
                 ? Map.of("mungpleList", mungpleService.getMungpleByMap(CategoryCode.TOTAL.getCode()),
