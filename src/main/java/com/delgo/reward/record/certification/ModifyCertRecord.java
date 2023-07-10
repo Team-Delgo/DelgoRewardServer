@@ -7,5 +7,6 @@ import javax.validation.constraints.NotNull;
 public record ModifyCertRecord(
         @NotNull Integer userId,
         @NotNull Integer certificationId,
-        @NotBlank String description) {
+        @NotBlank String description,
+        @NotNull Boolean isHideAddress) {
 }

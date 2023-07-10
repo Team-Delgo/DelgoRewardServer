@@ -16,6 +16,7 @@ import com.delgo.reward.dto.cert.CertByMungpleResDTO;
 import com.delgo.reward.dto.cert.CertResDTO;
 import com.delgo.reward.dto.comm.PageResDTO;
 import com.delgo.reward.record.certification.CertRecord;
+import com.delgo.reward.record.certification.ModifyCertRecord;
 import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.repository.JDBCTemplateRankingRepository;
 import com.google.api.client.util.ArrayMap;
@@ -72,8 +73,8 @@ public class CertService {
     }
 
     // Certification 수정
-    public Certification modify(Certification certification, String newDescription) {
-        return certification.modify(newDescription);
+    public Certification modify(Certification certification, ModifyCertRecord record) {
+        return certification.modify(record);
     }
 
     // Certification 삭제
