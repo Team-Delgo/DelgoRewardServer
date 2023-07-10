@@ -45,13 +45,13 @@ public class CertController extends CommController {
     private final ClassificationService classificationService;
     private final ClassificationAsyncService classificationAsyncService;
 
-    /*
-     * 인증 등록
-     * Request Data : PastCertificationDTO
-     * Response Data : 등록한 인증 데이터 반환
+    /**
+     * 인증 생성
+     * @param record, photo
+     * @return CertByAchvResDTO
      */
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<?> register(@Validated @RequestPart(value = "data") CertRecord record, @RequestPart(required = false) MultipartFile photo) {
+    public ResponseEntity<?> createCert(@Validated @RequestPart(value = "data") CertRecord record, @RequestPart(required = false) MultipartFile photo) {
         if(photo.isEmpty()) ErrorReturn(APICode.PARAM_ERROR);
 
         CertByAchvResDTO resDto = certService.register(record, photo);
@@ -64,13 +64,112 @@ public class CertController extends CommController {
         return SuccessReturn(resDto);
     }
 
-    /*
+    /**
+     * [certId] 인증 조회
+     * @param userId, certificationId
+     * @return List<CertResDTO>
+     */
+    @Operation(summary = "Id로 인증 조회", description = "certificationId로 인증을 조회합니다.", tags = { "Certification" })
+    @ApiResponses({
+            @ApiResponse(responseCode = APICode.CODE.SUCCESS, description = APICode.MSG.SUCCESS, content = @Content(schema = @Schema(implementation = CertResDTO.class))),
+            @ApiResponse(responseCode = APICode.CODE.PARAM_ERROR, description = APICode.MSG.PARAM_ERROR),
+            @ApiResponse(responseCode = APICode.CODE.SERVER_ERROR, description = APICode.MSG.SERVER_ERROR)
+    })
+    @GetMapping
+    public ResponseEntity getCertByCertId(@RequestParam Integer userId, @RequestParam Integer certificationId) {
+        return SuccessReturn(certService.getCertByUserIdAndCertId(userId, certificationId));
+    }
+
+    /**
+     * [Total] 인증 조회
+     * @param userId, certificationId(제외할 인증 번호), pageable
+     * @return PageResDTO<CertResDTO, Integer>
+     */
+    @GetMapping("/all")
+    public ResponseEntity getTotalCert(
+            @RequestParam Integer userId,
+            @RequestParam(required = false) Integer certificationId,
+            @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return (certificationId == null)
+                ? SuccessReturn(certService.getCertAll(userId, pageable))
+                : SuccessReturn(certService.getCertAllExcludeSpecificCert(userId, certificationId,pageable));
+    }
+
+
+    /**
+     * [Date] 인증 조회 ex) 2023.07.10에 등록한 인증
+     * @param userId, date
+     * @return List<CertResDTO>
+     */
+    @GetMapping("/date")
+    public ResponseEntity getCertByDate(@RequestParam Integer userId, @RequestParam String date) {
+        return SuccessReturn(certService.getCertByDateAndUser(userId, LocalDate.parse(date)));
+    }
+
+    /**
+     * [Category] 인증 조회  ex) CA0000(전체 조회), CA0002(카페 조회)
+     * @param userId, categoryCode, pageable
+     * @return PageResDTO<CertResDTO, Integer>
+     */
+    @GetMapping("/category")
+    public ResponseEntity getCertByCategory(
+            @RequestParam Integer userId,
+            @RequestParam String categoryCode,
+            @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
+        if (categoryCode.isBlank()) return ErrorReturn(APICode.PARAM_ERROR);
+        return SuccessReturn(certService.getCertListByCategory(userId, categoryCode, pageable));
+    }
+
+    /**
+     * [Recent] 인증 조회
+     * @param userId, count(조회 개수)
+     * @return PageResDTO<CertResDTO, Integer>
+     */
+    @GetMapping("/recent")
+    public ResponseEntity getRecentCert(@RequestParam Integer userId, @RequestParam Integer count) {
+        return SuccessReturn(certService.getRecentCert(userId, count));
+    }
+
+    /**
+     * [Mungple] 인증 조회
+     * @param userId, mungpleId, pageable
+     * @return PageResDTO<CertByMungpleResDTO, Integer>
+     */
+    @GetMapping("/mungple")
+    public ResponseEntity getCertByMungple(
+            @RequestParam Integer userId,
+            @RequestParam Integer mungpleId,
+            @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return SuccessReturn(certService.getCertListByMungpleId(userId, mungpleId, pageable));
+    }
+
+    /**
+     * 전체 인증 개수 조회
+     * @param userId
+     * @return int
+     */
+    @GetMapping(value = {"/count/{userId}", "/count/"})
+    public ResponseEntity getTotalCertCount(@PathVariable Integer userId) {
+        return SuccessReturn(certService.getTotalCertCountByUser(userId));
+    }
+
+    /**
+     * [Category] 인증 개수 조회
+     * @param userId
+     * @return Map<String, Long>
+     */
+    @GetMapping(value = {"/category/count/{userId}", "/category/count/"})
+    public ResponseEntity getCertCountByCategory(@PathVariable Integer userId) {
+        return SuccessReturn(certService.getCountByCategory(userId));
+    }
+
+    /**
      * 인증 수정
-     * Request Data : CertificationModifyDTO
-     * Response Data : 등록한 인증 데이터 반환
+     * @param record
+     * @return CertResDTO
      */
     @PutMapping
-    public ResponseEntity modify(@Validated @RequestBody ModifyCertRecord record) {
+    public ResponseEntity modifyCert(@Validated @RequestBody ModifyCertRecord record) {
         Certification certification = certService.getCertById(record.certificationId());
         if (record.userId() != certification.getUser().getUserId())
             return ErrorReturn(APICode.INVALID_USER_ERROR);
@@ -84,131 +183,27 @@ public class CertController extends CommController {
         return SuccessReturn(new CertResDTO(updatedCertification));
     }
 
-
-    /*
-     * CertificationId로 Certification 조회
-     */
-    @Operation(summary = "Id로 인증 조회", description = "certificationId로 인증을 조회합니다.", tags = { "Certification" })
-    @ApiResponses({
-            @ApiResponse(responseCode = APICode.CODE.SUCCESS, description = APICode.MSG.SUCCESS, content = @Content(schema = @Schema(implementation = CertResDTO.class))),
-            @ApiResponse(responseCode = APICode.CODE.PARAM_ERROR, description = APICode.MSG.PARAM_ERROR),
-            @ApiResponse(responseCode = APICode.CODE.SERVER_ERROR, description = APICode.MSG.SERVER_ERROR)
-    })
-    @GetMapping
-    public ResponseEntity getCertification(@RequestParam Integer userId, @RequestParam Integer certificationId) {
-        return SuccessReturn(certService.getCertByUserIdAndCertId(userId, certificationId));
-    }
-
-    /*
-     * 날짜로 Certification 조회
-     * Request Data : CertificationId로
-     * Response Data : Certification
-     */
-    @GetMapping("/date")
-    public ResponseEntity getDataByDate(@RequestParam Integer userId, @RequestParam String date) {
-        return SuccessReturn(certService.getCertByDateAndUser(userId, LocalDate.parse(date)));
-    }
-
-    /*
-     * 인증 카테고리 별 조회
-     * Request Data : userId, categoryCode
-     * - CA0000 = 전체 조회
-     * Response Data : 카테고리별 인증 리스트 반환
-     */
-    @GetMapping("/category")
-    public ResponseEntity getCategory(
-            @RequestParam Integer userId,
-            @RequestParam String categoryCode,
-            @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        // Validate - Blank Check; [ String 만 해주면 됨 ]
-        if (categoryCode.isBlank()) return ErrorReturn(APICode.PARAM_ERROR);
-        return SuccessReturn(certService.getCertListByCategory(userId, categoryCode, pageable));
-    }
-
-    /*
-     * 카테고리 별 인증 개수 반환 ( 유저 )
-     * Request Data : userId
-     * Response Data : 카테고리별 인증 개수 반환
-     */
-    @GetMapping(value = {"/category/count/{userId}", "/category/count/"})
-    public ResponseEntity getCategoryCount(@PathVariable Integer userId) {
-        return SuccessReturn(certService.getCountByCategory(userId));
-    }
-
-    /*
-     * 유저 별 인증 개수 반환
-     * Request Data : userId
-     * Response Data : 총 개수 반환
-     */
-    @GetMapping(value = {"/count/{userId}", "/count/"})
-    public ResponseEntity getTotalCount(@PathVariable Integer userId) {
-        return SuccessReturn(certService.getTotalCertCountByUser(userId));
-    }
-
-    /*
-     * 인증 게시글의 좋아요 + 1
-     * Request Data : userId, certificationId
-     * - ConcurrentHashMap 사용 이유 - 모든 요청 DB Connection 시 감당 불가능
-     * Response Data : X
-     */
-    @PostMapping(value = {"/like/{userId}/{certificationId}", "/like/"})
-    public ResponseEntity setLike(@PathVariable Integer userId, @PathVariable Integer certificationId) throws IOException {
-        likeListService.like(userId, certificationId, certService.getCertById(certificationId).getUser().getUserId());
-
-        return SuccessReturn();
-    }
-
-    /*
-     * 가장 최근 등록한 인증 반환
-     * Request Data : userId, count(N)
-     * Response Data : 최근 등록 인증 N개 반환
-     */
-    @GetMapping("/recent")
-    public ResponseEntity getRecentData(@RequestParam Integer userId, @RequestParam Integer count) {
-        return SuccessReturn(certService.getRecentCert(userId, count));
-    }
-
-    /*
-     * 특정 Mungple 관련 인증 반환
-     * Request Data : mungpleId
-     * Response Data : 특정 Mungple 관련 인증 반환
-     */
-    @GetMapping("/mungple")
-    public ResponseEntity getMungplePagingData(
-            @RequestParam Integer userId,
-            @RequestParam Integer mungpleId,
-            @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return SuccessReturn(certService.getCertListByMungpleId(userId, mungpleId, pageable));
-    }
-
-    /*
-     * 모든 인증 리스트 페이징으로 반환 [ Main ]
-     * Request Data : currentPage ( 현재 페이지 번호 ), pageSize ( 페이지 크기 )
-     * certificationId - 해당 Cert는 제외하고 조회한다.
-     * Response Data : 인증 모두 조회 ( 페이징 처리 되어 있음 )
-     */
-    @GetMapping("/all")
-    public ResponseEntity getAllData(
-            @RequestParam Integer userId,
-            @RequestParam(required = false) Integer certificationId,
-            @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return (certificationId == null)
-                ? SuccessReturn(certService.getCertAll(userId, pageable))
-                : SuccessReturn(certService.getCertAllExcludeSpecificCert(userId, certificationId,pageable));
-    }
-
-    /*
+    /**
      * 인증 삭제
-     * Request Data : userId ( 삭제 요청 userId ), certificationId ( 삭제할 인증 )
-     * 요청 userId랑 등록 userId랑 비교 해야 함.
-     * Response Data : null
+     * @param userId, certificationId
      */
     @DeleteMapping(value = {"/{userId}/{certificationId}"})
-    public ResponseEntity delete(@PathVariable Integer userId, @PathVariable Integer certificationId) {
+    public ResponseEntity deleteCert(@PathVariable Integer userId, @PathVariable Integer certificationId) {
         if (!Objects.equals(userId, certService.getCertById(certificationId).getUser().getUserId()))
             return ErrorReturn(APICode.INVALID_USER_ERROR);
 
-        certService.delete(certificationId); // DB에서 삭제
+        certService.delete(certificationId);
+        return SuccessReturn();
+    }
+
+    /**
+     * 인증 LIKE
+     * @param userId, certificationId
+     */
+    @PostMapping(value = {"/like/{userId}/{certificationId}", "/like/"})
+    public ResponseEntity like(@PathVariable Integer userId, @PathVariable Integer certificationId) throws IOException {
+        likeListService.like(userId, certificationId, certService.getCertById(certificationId).getUser().getUserId());
+
         return SuccessReturn();
     }
 }
