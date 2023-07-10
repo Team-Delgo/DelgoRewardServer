@@ -54,7 +54,7 @@ public class CertController extends CommController {
     public ResponseEntity<?> createCert(@Validated @RequestPart(value = "data") CertRecord record, @RequestPart(required = false) MultipartFile photo) {
         if(photo.isEmpty()) ErrorReturn(APICode.PARAM_ERROR);
 
-        CertByAchvResDTO resDto = certService.register(record, photo);
+        CertByAchvResDTO resDto = certService.createCert(record, photo);
         log.info("{}", resDto.getCertificationId());
 
         // 비동기적 실행
@@ -76,23 +76,23 @@ public class CertController extends CommController {
             @ApiResponse(responseCode = APICode.CODE.SERVER_ERROR, description = APICode.MSG.SERVER_ERROR)
     })
     @GetMapping
-    public ResponseEntity getCertByCertId(@RequestParam Integer userId, @RequestParam Integer certificationId) {
-        return SuccessReturn(certService.getCertByUserIdAndCertId(userId, certificationId));
+    public ResponseEntity getCertsByCertId(@RequestParam Integer userId, @RequestParam Integer certificationId) {
+        return SuccessReturn(certService.getCertsByIdWithLike(userId, certificationId));
     }
 
     /**
-     * [Total] 인증 조회
+     * 전체 인증 조회
      * @param userId, certificationId(제외할 인증 번호), pageable
      * @return PageResDTO<CertResDTO, Integer>
      */
     @GetMapping("/all")
-    public ResponseEntity getTotalCert(
+    public ResponseEntity getAllCert(
             @RequestParam Integer userId,
             @RequestParam(required = false) Integer certificationId,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
         return (certificationId == null)
-                ? SuccessReturn(certService.getCertAll(userId, pageable))
-                : SuccessReturn(certService.getCertAllExcludeSpecificCert(userId, certificationId,pageable));
+                ? SuccessReturn(certService.getAllCert(userId, pageable))
+                : SuccessReturn(certService.getAllCertExcludeSpecificCert(userId, certificationId,pageable));
     }
 
 
@@ -102,8 +102,8 @@ public class CertController extends CommController {
      * @return List<CertResDTO>
      */
     @GetMapping("/date")
-    public ResponseEntity getCertByDate(@RequestParam Integer userId, @RequestParam String date) {
-        return SuccessReturn(certService.getCertByDateAndUser(userId, LocalDate.parse(date)));
+    public ResponseEntity getCertsByDate(@RequestParam Integer userId, @RequestParam String date) {
+        return SuccessReturn(certService.getCertsByDate(userId, LocalDate.parse(date)));
     }
 
     /**
@@ -112,12 +112,12 @@ public class CertController extends CommController {
      * @return PageResDTO<CertResDTO, Integer>
      */
     @GetMapping("/category")
-    public ResponseEntity getCertByCategory(
+    public ResponseEntity getCertsByCategory(
             @RequestParam Integer userId,
             @RequestParam String categoryCode,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
         if (categoryCode.isBlank()) return ErrorReturn(APICode.PARAM_ERROR);
-        return SuccessReturn(certService.getCertListByCategory(userId, categoryCode, pageable));
+        return SuccessReturn(certService.getCertsByCategory(userId, categoryCode, pageable));
     }
 
     /**
@@ -126,8 +126,8 @@ public class CertController extends CommController {
      * @return PageResDTO<CertResDTO, Integer>
      */
     @GetMapping("/recent")
-    public ResponseEntity getRecentCert(@RequestParam Integer userId, @RequestParam Integer count) {
-        return SuccessReturn(certService.getRecentCert(userId, count));
+    public ResponseEntity getRecentCerts(@RequestParam Integer userId, @RequestParam Integer count) {
+        return SuccessReturn(certService.getRecentCerts(userId, count));
     }
 
     /**
@@ -136,21 +136,21 @@ public class CertController extends CommController {
      * @return PageResDTO<CertByMungpleResDTO, Integer>
      */
     @GetMapping("/mungple")
-    public ResponseEntity getCertByMungple(
+    public ResponseEntity getCertsByMungple(
             @RequestParam Integer userId,
             @RequestParam Integer mungpleId,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return SuccessReturn(certService.getCertListByMungpleId(userId, mungpleId, pageable));
+        return SuccessReturn(certService.getCertsByMungpleId(userId, mungpleId, pageable));
     }
 
     /**
-     * 전체 인증 개수 조회
+     * [User] 인증 개수 조회
      * @param userId
      * @return int
      */
     @GetMapping(value = {"/count/{userId}", "/count/"})
-    public ResponseEntity getTotalCertCount(@PathVariable Integer userId) {
-        return SuccessReturn(certService.getTotalCertCountByUser(userId));
+    public ResponseEntity getCertCountByUser(@PathVariable Integer userId) {
+        return SuccessReturn(certService.getCertCountByUser(userId));
     }
 
     /**
@@ -160,7 +160,7 @@ public class CertController extends CommController {
      */
     @GetMapping(value = {"/category/count/{userId}", "/category/count/"})
     public ResponseEntity getCertCountByCategory(@PathVariable Integer userId) {
-        return SuccessReturn(certService.getCountByCategory(userId));
+        return SuccessReturn(certService.getCertCountByCategory(userId));
     }
 
     /**
@@ -176,7 +176,7 @@ public class CertController extends CommController {
 
         // 인증 분류 삭제
         classificationService.deleteClassificationWhenModifyCert(certification);
-        Certification updatedCertification = certService.modify(certification, record);
+        Certification updatedCertification = certService.modifyCert(certification, record);
 
         // 비동기적 실행
         classificationAsyncService.doClassification(updatedCertification.getCertificationId());
@@ -192,7 +192,7 @@ public class CertController extends CommController {
         if (!Objects.equals(userId, certService.getCertById(certificationId).getUser().getUserId()))
             return ErrorReturn(APICode.INVALID_USER_ERROR);
 
-        certService.delete(certificationId);
+        certService.deleteCert(certificationId);
         return SuccessReturn();
     }
 

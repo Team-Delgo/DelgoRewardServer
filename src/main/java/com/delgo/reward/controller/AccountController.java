@@ -93,8 +93,8 @@ public class AccountController extends CommController {
     public ResponseEntity<?> getAccount(@RequestParam Integer userId){
         return SuccessReturn(new UserByCertCountResDTO(
                 userService.getUserById(userId),
-                certService.getTotalCertCountByUser(userId),
-                certService.getTotalCertCountByMungpleAndUser(userId),
+                certService.getCertCountByUser(userId),
+                certService.getCertCountByMungpleOfSpecificUser(userId),
                 userService.getCategoryCountByUserId(userId)));
     }
 
