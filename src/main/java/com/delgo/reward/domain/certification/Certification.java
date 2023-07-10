@@ -4,6 +4,7 @@ package com.delgo.reward.domain.certification;
 import com.delgo.reward.domain.common.BaseTimeEntity;
 import com.delgo.reward.domain.like.LikeList;
 import com.delgo.reward.domain.user.User;
+import com.delgo.reward.record.certification.ModifyCertRecord;
 import lombok.*;
 
 import javax.persistence.*;
@@ -63,8 +64,9 @@ public class Certification extends BaseTimeEntity {
 
     }
 
-    public Certification modify(String description){
-        this.description = description;
+    public Certification modify(ModifyCertRecord record){
+        this.description = record.description();
+        this.isHideAddress = record.isHideAddress();
 
         return this;
     }

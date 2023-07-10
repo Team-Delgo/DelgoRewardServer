@@ -20,7 +20,8 @@ public class CertResDTO {
     private String placeName; // 장소 명
     private String description; // 내용
     private String photoUrl; // 사진 URL
-    private int commentCount; // 댓글 개수
+    private int mungpleId;
+
 
     private Boolean isHideAddress; // 주소 숨김 여부
     private Boolean isOwner; // cert 작성자인가?
@@ -33,6 +34,7 @@ public class CertResDTO {
 
     private Boolean isLike = false; // 내가 좋아요를 눌렀는가?
     private int likeCount = 0; // 좋아요 개수
+    private int commentCount; // 댓글 개수
 
     @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
     private LocalDateTime registDt;
@@ -48,6 +50,7 @@ public class CertResDTO {
 
     public CertResDTO(Certification cert) {
         certificationId = cert.getCertificationId();
+        mungpleId = cert.getMungpleId();
         userId = cert.getUser().getUserId();
         userName = cert.getUser().getName();
         userProfile = cert.getUser().getProfile();

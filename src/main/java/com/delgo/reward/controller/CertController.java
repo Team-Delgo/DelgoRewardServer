@@ -77,7 +77,7 @@ public class CertController extends CommController {
 
         // 인증 분류 삭제
         classificationService.deleteClassificationWhenModifyCert(certification);
-        Certification updatedCertification = certService.modify(certification, record.description());
+        Certification updatedCertification = certService.modify(certification, record);
 
         // 비동기적 실행
         classificationAsyncService.doClassification(updatedCertification.getCertificationId());
