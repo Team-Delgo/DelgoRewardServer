@@ -139,7 +139,7 @@ public class CertService {
      * [Recent] 인증 조회
      */
     public List<CertResDTO> getRecentCerts(int userId, int count) {
-        List<Integer> certIds = certRepository.findRecentCert(userId, PageRequest.of(0, count));
+        List<Integer> certIds = certRepository.findRecentCertId(userId, PageRequest.of(0, count));
         return getCertsByIds(certIds).stream().map(cert -> new CertResDTO(cert, userId)).toList();
     }
 
@@ -197,8 +197,8 @@ public class CertService {
      */
     public PageResDTO<CertResDTO, Integer> getCertsByCategory(int userId, String categoryCode, Pageable pageable) {
         Slice<Integer> slice = (!categoryCode.equals(CategoryCode.TOTAL.getCode()))
-                ? certRepository.findByUserUserIdAndCategoryCode(userId, categoryCode, pageable)
-                : certRepository.findByUserUserId(userId, pageable);
+                ? certRepository.findCertIdByUserIdAndCategoryCode(userId, categoryCode, pageable)
+                : certRepository.findCertIdByUserId(userId, pageable);
 
         List<CertResDTO> certs = getCertsByIds(slice.getContent()).stream().map(cert -> new CertResDTO(cert, userId)).toList();
         return new PageResDTO<>(certs, slice);
@@ -263,13 +263,13 @@ public class CertService {
 
         for(PGeoCode p: PGeoCode.values()){
             if(p.getPGeoCode().equals(PGeoCode.P101000.getPGeoCode())){
-                List<Certification> certificationListOfSongPa = certRepository.findByGeoCode(GeoCode.C101180.getGeoCode(), PageRequest.of(0, 3));
-                List<Certification> certificationListNotOfSongPa = certRepository.findByPGeoCodeExceptGeoCode(p.getPGeoCode(), GeoCode.C101180.getGeoCode(), PageRequest.of(0, 3));
+                List<Certification> certificationListOfSongPa = certRepository.findCertByGeoCode(GeoCode.C101180.getGeoCode(), PageRequest.of(0, 3));
+                List<Certification> certificationListNotOfSongPa = certRepository.findCertByPGeoCodeExceptGeoCode(p.getPGeoCode(), GeoCode.C101180.getGeoCode(), PageRequest.of(0, 3));
 
                 certificationList = Stream.concat(certificationListOfSongPa.stream(), certificationListNotOfSongPa.stream())
                         .collect(Collectors.toList());
             } else {
-                certificationList = certRepository.findByPGeoCode(p.getPGeoCode(), PageRequest.of(0, count));
+                certificationList = certRepository.findCertByPGeoCode(p.getPGeoCode(), PageRequest.of(0, count));
             }
             if(certificationList.size() > 0){
                 certByPGeoCode.put(p.getPGeoCode(), certificationList);
