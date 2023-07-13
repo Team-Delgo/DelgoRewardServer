@@ -58,16 +58,16 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     List<Integer> findCertIdByIsExpose(Pageable pageable);
 
     @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId")
-    Slice<Integer> findByUserUserId(@Param("userId") int userId, Pageable pageable);
+    Slice<Integer> findCertIdByUserId(@Param("userId") int userId, Pageable pageable);
 
     @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId and c.categoryCode = :categoryCode")
-    Slice<Integer> findByUserUserIdAndCategoryCode(@Param("userId")int userId, @Param("categoryCode") String categoryCode, Pageable pageable);
+    Slice<Integer> findCertIdByUserIdAndCategoryCode(@Param("userId")int userId, @Param("categoryCode") String categoryCode, Pageable pageable);
 
     @Query(value = "select c.certificationId from Certification c where c.mungpleId = :mungpleId and c.isCorrectPhoto = true")
     Slice<Integer> findCertByMungple(@Param("mungpleId") int mungpleId, Pageable pageable);
 
     @Query(value = "select c.certificationId from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrectPhoto = true order by c.registDt desc")
-    List<Integer> findRecentCert(@Param("userId") int userId, Pageable pageable);
+    List<Integer> findRecentCertId(@Param("userId") int userId, Pageable pageable);
 
     @Query("SELECT c.mungpleId FROM Certification c where c.mungpleId != 0 GROUP BY c.mungpleId ORDER BY COUNT(c) DESC")
     List<Integer>  findCertOrderByMungpleCount(Pageable pageable);
@@ -77,11 +77,11 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     // ---------------------------------------- Map TEST ----------------------------------------
 
     @Query(value = "SELECT c FROM Certification c where c.geoCode = :geoCode order by RAND()")
-    List<Certification> findByGeoCode(@Param("geoCode") String geoCode, Pageable pageable);
+    List<Certification> findCertByGeoCode(@Param("geoCode") String geoCode, Pageable pageable);
 
     @Query(value = "SELECT c FROM Certification c where c.pGeoCode = :pGeoCode order by RAND()")
-    List<Certification> findByPGeoCode(@Param("pGeoCode") String pGeoCode, Pageable pageable);
+    List<Certification> findCertByPGeoCode(@Param("pGeoCode") String pGeoCode, Pageable pageable);
 
     @Query(value = "SELECT c FROM Certification c where c.pGeoCode = :pGeoCode and not c.geoCode = :geoCode order by RAND()")
-    List<Certification> findByPGeoCodeExceptGeoCode(@Param("pGeoCode") String pGeoCode, @Param("geoCode") String geoCode, Pageable pageable);
+    List<Certification> findCertByPGeoCodeExceptGeoCode(@Param("pGeoCode") String pGeoCode, @Param("geoCode") String geoCode, Pageable pageable);
 }
