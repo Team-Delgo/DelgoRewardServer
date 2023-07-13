@@ -22,18 +22,16 @@ public class CertResDTO {
     private String photoUrl; // 사진 URL
     private int mungpleId;
 
-
     private Boolean isHideAddress; // 주소 숨김 여부
     private Boolean isOwner; // cert 작성자인가?
     private String address; // 주소
-
 
     private Integer userId; // 작성자 ID
     private String userName; // 작성자 이 름
     private String userProfile; // 작성자 프로필
 
-    private Boolean isLike = false; // 내가 좋아요를 눌렀는가?
-    private int likeCount = 0; // 좋아요 개수
+    private Boolean isLike; // 내가 좋아요를 눌렀는가?
+    private int likeCount; // 좋아요 개수
     private int commentCount; // 댓글 개수
 
     @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
@@ -41,10 +39,14 @@ public class CertResDTO {
 
     public CertResDTO(Certification certification, Integer ownerId) {
         this(certification);
-        if(certification.getLikeLists() != null) {
-            isOwner = certification.getUser().getUserId() == ownerId;
-            likeCount = (int) certification.getLikeLists().stream().filter(LikeList::isLike).count();
+        isOwner = certification.getUser().getUserId() == ownerId;
+
+        if (certification.getLikeLists() != null) {
             isLike = certification.getLikeLists().stream().anyMatch(likeList -> likeList.getUserId().equals(ownerId) && likeList.isLike());
+            likeCount = (int) certification.getLikeLists().stream().filter(LikeList::isLike).count();
+        } else {
+            isLike = false;
+            likeCount = 0;
         }
     }
 
@@ -60,6 +62,8 @@ public class CertResDTO {
         isHideAddress =  cert.getIsHideAddress();
         photoUrl = cert.getPhotoUrl();
         commentCount = cert.getCommentCount();
+        isLike = false;
+        likeCount = 0;
         registDt = cert.getRegistDt();
     }
 }
