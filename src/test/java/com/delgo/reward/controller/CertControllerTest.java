@@ -37,6 +37,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -227,5 +228,42 @@ public class CertControllerTest {
                 .andExpect(jsonPath("$.data.size").value(size))
                 .andExpect(jsonPath("$.data.number").value(number))
                 .andExpect(jsonPath("$.data.last").value(isLast));
+    }
+
+    @Test
+    @DisplayName("[API][GET] 날짜로 Cert 조회")
+    void getCertsByDateTest() throws Exception {
+        //given
+        String date = "1997-02-04";
+
+        int userId = 1;
+        int certificationId = 10;
+
+        List<CertResDTO> certResDTOS = List.of(new CertResDTO(certification, userId));
+        Mockito.when(certService.getCertsByDate(userId, LocalDate.parse(date))).thenReturn(certResDTOS);
+
+        // when & then
+        mockMvc.perform(get("/api/certification/date")
+                        .param("userId", String.valueOf(userId))
+                        .param("date", date))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+
+                // CertByAchvResDTO
+                .andExpect(jsonPath("$.data[0].certificationId").value(certificationId))
+                .andExpect(jsonPath("$.data[0].placeName").value("Test Place"))
+                .andExpect(jsonPath("$.data[0].description").value("Test Description"))
+                .andExpect(jsonPath("$.data[0].photoUrl").value("https://example.com/photo.jpg"))
+                .andExpect(jsonPath("$.data[0].mungpleId").value(0))
+                .andExpect(jsonPath("$.data[0].isHideAddress").value(false))
+                .andExpect(jsonPath("$.data[0].isOwner").value(true))
+                .andExpect(jsonPath("$.data[0].address").value("Seoul, South Korea"))
+                .andExpect(jsonPath("$.data[0].userId").value(userId))
+                .andExpect(jsonPath("$.data[0].userName").value("Test User"))
+                .andExpect(jsonPath("$.data[0].userProfile").value("https://example.com/profile.jpg"))
+                .andExpect(jsonPath("$.data[0].isLike").value(false))
+                .andExpect(jsonPath("$.data[0].likeCount").value(0))
+                .andExpect(jsonPath("$.data[0].commentCount").value(0));
     }
 }
