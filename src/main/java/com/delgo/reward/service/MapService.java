@@ -27,10 +27,10 @@ public class MapService {
         List<CertByMungpleResDTO> exposedCertList = certService.getExposedCerts(3).stream().map(c -> new CertByMungpleResDTO(c,userId)).toList();  // 노출시킬 인증 리스트 조회
 
         return (userId == 0)
-                ? Map.of("mungpleList", mungpleService.getMungpleByMap(CategoryCode.TOTAL.getCode()),
+                ? Map.of("mungpleList", mungpleService.getActiveMungpleByCategoryCode(CategoryCode.TOTAL.getCode()),
                 "exposedNormalCertList", exposedCertList.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList()),
                 "exposedMungpleCertList", exposedCertList.stream().filter(c -> c.getMungpleId() != 0).collect(Collectors.toList()))
-                : Map.of("mungpleList", mungpleService.getMungpleByMap(CategoryCode.TOTAL.getCode()),
+                : Map.of("mungpleList", mungpleService.getActiveMungpleByCategoryCode(CategoryCode.TOTAL.getCode()),
                 "normalCertList", certifications.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList()),
                 "mungpleCertList", certifications.stream().filter(c -> c.getMungpleId() != 0).collect(Collectors.toList()),
                 "exposedNormalCertList", exposedCertList.stream().filter(c -> c.getMungpleId() == 0).collect(Collectors.toList()),

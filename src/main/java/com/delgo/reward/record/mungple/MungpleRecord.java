@@ -1,7 +1,7 @@
 package com.delgo.reward.record.mungple;
 
 
-import com.delgo.reward.domain.Mungple;
+import com.delgo.reward.domain.mungple.Mungple;
 import com.delgo.reward.domain.common.Location;
 
 import javax.validation.constraints.NotNull;
