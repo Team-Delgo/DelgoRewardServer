@@ -8,6 +8,7 @@ import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.cert.CertByAchvResDTO;
 import com.delgo.reward.dto.cert.CertResDTO;
+import com.delgo.reward.dto.comm.PageResDTO;
 import com.delgo.reward.mongoService.ClassificationService;
 import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.service.CertService;
@@ -24,6 +25,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
@@ -180,5 +184,48 @@ public class CertControllerTest {
                 .andExpect(jsonPath("$.data[0].isLike").value(false))
                 .andExpect(jsonPath("$.data[0].likeCount").value(0))
                 .andExpect(jsonPath("$.data[0].commentCount").value(0));
+    }
+
+    @Test
+    @DisplayName("[API][GET] 전체 인증 조회 - 페이징")
+    void getAllCertTest() throws Exception {
+        // given
+        int userId = 1;
+        int certificationId = 10;
+        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "registDt");
+
+        int size = 0;
+        int number = 2;
+        boolean isLast = false;
+
+        List<CertResDTO> certResDTOS = List.of(new CertResDTO(certification, userId));
+        PageResDTO<CertResDTO> pageResDTO = new PageResDTO<>(certResDTOS, size, number, isLast);
+
+        Mockito.when(certService.getAllCert(userId, pageable)).thenReturn(pageResDTO);
+
+        // when & then
+        mockMvc.perform(get("/api/certification/all")
+                        .param("userId", String.valueOf(userId)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.content").isArray())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.data.content[0].certificationId").value(certificationId))
+                .andExpect(jsonPath("$.data.content[0].placeName").value("Test Place"))
+                .andExpect(jsonPath("$.data.content[0].description").value("Test Description"))
+                .andExpect(jsonPath("$.data.content[0].photoUrl").value("https://example.com/photo.jpg"))
+                .andExpect(jsonPath("$.data.content[0].mungpleId").value(0))
+                .andExpect(jsonPath("$.data.content[0].isHideAddress").value(false))
+                .andExpect(jsonPath("$.data.content[0].isOwner").value(true))
+                .andExpect(jsonPath("$.data.content[0].address").value("Seoul, South Korea"))
+                .andExpect(jsonPath("$.data.content[0].userId").value(userId))
+                .andExpect(jsonPath("$.data.content[0].userName").value("Test User"))
+                .andExpect(jsonPath("$.data.content[0].userProfile").value("https://example.com/profile.jpg"))
+                .andExpect(jsonPath("$.data.content[0].isLike").value(false))
+                .andExpect(jsonPath("$.data.content[0].likeCount").value(0))
+                .andExpect(jsonPath("$.data.content[0].commentCount").value(0))
+
+                .andExpect(jsonPath("$.data.size").value(size))
+                .andExpect(jsonPath("$.data.number").value(number))
+                .andExpect(jsonPath("$.data.last").value(isLast));
     }
 }
