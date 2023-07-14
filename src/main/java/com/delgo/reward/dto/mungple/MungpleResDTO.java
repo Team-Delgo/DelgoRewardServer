@@ -1,7 +1,7 @@
 package com.delgo.reward.dto.mungple;
 
 
-import com.delgo.reward.domain.Mungple;
+import com.delgo.reward.domain.mungple.Mungple;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;

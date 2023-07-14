@@ -1,6 +1,6 @@
 package com.delgo.reward.service.crawling;
 
-import com.delgo.reward.domain.Mungple;
+import com.delgo.reward.domain.mungple.Mungple;
 import com.delgo.reward.mongoRepository.MungpleDetailRepository;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.repository.MungpleRepository;
