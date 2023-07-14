@@ -33,7 +33,7 @@ public class MungpleController extends CommController {
     public ResponseEntity createMungple(@Validated @RequestPart(value = "data") MungpleRecord record, @RequestPart(required = false) MultipartFile photo) {
         return mungpleService.isMungpleExisting(record.address())
                 ? ErrorReturn(APICode.MUNGPLE_DUPLICATE_ERROR)
-                : SuccessReturn(mungpleService.register(record, photo));
+                : SuccessReturn(mungpleService.createMungple(record, photo));
     }
 
     /**
@@ -56,7 +56,7 @@ public class MungpleController extends CommController {
      */
     @GetMapping("/top")
     public ResponseEntity getMungpleOfMostCertCount(@RequestParam Integer count) {
-        return SuccessReturn(mungpleService.getMungpleOfMostCount(count));
+        return SuccessReturn(mungpleService.getMungpleOfMostCertCount(count));
     }
 
     /**
@@ -65,7 +65,7 @@ public class MungpleController extends CommController {
      */
     @DeleteMapping(value={"/{mungpleId}",""})
     public ResponseEntity deleteMungple(@PathVariable Integer mungpleId) {
-        mungpleService.delete(mungpleId);
+        mungpleService.deleteMungple(mungpleId);
         return SuccessReturn();
     }
 

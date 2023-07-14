@@ -57,7 +57,7 @@ public class ExcelParserService {
             String mungpleName = getStringExcelData(row.getCell(3));
             log.info("mungpleName :{}", mungpleName);
 
-            Mungple mungple = mungpleRepository.findByPlaceName(mungpleName);
+            Mungple mungple = mungpleRepository.findMungpleByPlaceName(mungpleName);
             if(mungple == null){
                 log.info("--------------------------------------------------------------------------------------");
                 continue;
@@ -185,7 +185,7 @@ public class ExcelParserService {
             String mungpleName = getStringExcelData(row.getCell(3));
             log.info("mungpleName :{}", mungpleName);
 
-            Mungple mungple = mungpleRepository.findByPlaceName(mungpleName);
+            Mungple mungple = mungpleRepository.findMungpleByPlaceName(mungpleName);
             if(mungple == null){
                 log.info("--------------------------------------------------------------------------------------");
                 continue;
