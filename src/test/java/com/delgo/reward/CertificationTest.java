@@ -25,7 +25,7 @@ public class CertificationTest {
         int certificationId = 935;
 
         //when
-        certificationService.delete(certificationId);
+        certificationService.deleteCert(certificationId);
 
         //then
     }
