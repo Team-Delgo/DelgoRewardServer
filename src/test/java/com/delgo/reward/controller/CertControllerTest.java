@@ -313,4 +313,41 @@ public class CertControllerTest {
                 .andExpect(jsonPath("$.data.number").value(number))
                 .andExpect(jsonPath("$.data.last").value(isLast));
     }
+
+    @Test
+    @DisplayName("[API][GET] 최근 인증 조회")
+    void getRecentCertsTest() throws Exception {
+        // given
+        int userId = 1;
+        int count = 5;
+        int certificationId = 10;
+
+        List<CertResDTO> certResDTOS = List.of(new CertResDTO(certification, userId));
+        Mockito.when(certService.getRecentCerts(userId, count)).thenReturn(certResDTOS);
+
+        // when & then
+        mockMvc.perform(get("/api/certification/recent")
+                        .param("userId", String.valueOf(userId))
+                        .param("count", String.valueOf(count)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.data[0].certificationId").value(certificationId))
+                .andExpect(jsonPath("$.data[0].placeName").value("Test Place"))
+                .andExpect(jsonPath("$.data[0].description").value("Test Description"))
+                .andExpect(jsonPath("$.data[0].photoUrl").value("https://example.com/photo.jpg"))
+                .andExpect(jsonPath("$.data[0].mungpleId").value(0))
+                .andExpect(jsonPath("$.data[0].isHideAddress").value(false))
+                .andExpect(jsonPath("$.data[0].isOwner").value(true))
+                .andExpect(jsonPath("$.data[0].address").value("Seoul, South Korea"))
+                .andExpect(jsonPath("$.data[0].userId").value(userId))
+                .andExpect(jsonPath("$.data[0].userName").value("Test User"))
+                .andExpect(jsonPath("$.data[0].userProfile").value("https://example.com/profile.jpg"))
+                .andExpect(jsonPath("$.data[0].isLike").value(false))
+                .andExpect(jsonPath("$.data[0].likeCount").value(0))
+                .andExpect(jsonPath("$.data[0].commentCount").value(0))
+
+                .andExpect(jsonPath("$.data.length()").value(certResDTOS.size()));
+    }
 }
