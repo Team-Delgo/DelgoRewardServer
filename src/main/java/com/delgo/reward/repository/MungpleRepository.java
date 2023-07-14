@@ -11,18 +11,15 @@ import java.util.List;
 
 public interface MungpleRepository extends JpaRepository<Mungple, Integer>, JpaSpecificationExecutor<Mungple> {
 
-    List<Mungple> findByCategoryCode(String categoryCode);
+    Mungple findMungpleByPlaceName(String placeName);
 
-    Mungple findByPlaceName(String placeName);
-
-    boolean existsByLatitudeAndLongitude(String latitude, String longitude);
-
-    List<Mungple> findAllByIsActive(boolean isActive);
-
-    List<Mungple> findByCategoryCodeAndIsActive(String categoryCode, boolean isActive);
+    List<Mungple> findMungpleByIsActive(boolean isActive);
+    List<Mungple> findMungpleByJibunAddress(String address);
+    List<Mungple> findMungpleByCategoryCode(String categoryCode);
+    List<Mungple> findMungpleByCategoryCodeAndIsActive(String categoryCode, boolean isActive);
 
     @Query("select m from Mungple m where m.isActive = true and m.mungpleId in :mungpleIds")
     List<Mungple> findMungpleByIds(List<Integer> mungpleIds);
 
-    List<Mungple> findByJibunAddress(String address);
+    boolean existsMungpleByLatitudeAndLongitude(String latitude, String longitude);
 }
