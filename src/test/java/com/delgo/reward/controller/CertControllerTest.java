@@ -59,11 +59,29 @@ public class CertControllerTest {
     @MockBean ClassificationService classificationService;
     @MockBean ClassificationAsyncService classificationAsyncService;
 
+    private Certification certification;
+
     @BeforeEach
     public void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .addFilter(new CharacterEncodingFilter("UTF-8", true))
                 .alwaysDo(print())
+                .build();
+
+        certification = Certification.builder()
+                .certificationId(10)
+                .placeName("Test Place")
+                .description("Test Description")
+                .photoUrl("https://example.com/photo.jpg")
+                .mungpleId(0)
+                .isHideAddress(false)
+                .address("Seoul, South Korea")
+                .commentCount(0)
+                .user(User.builder()
+                        .userId(1)
+                        .name("Test User")
+                        .profile("https://example.com/profile.jpg")
+                        .build())
                 .build();
     }
 
@@ -96,30 +114,13 @@ public class CertControllerTest {
         MockMultipartFile data = new MockMultipartFile("data", "data", "application/json", json.getBytes(StandardCharsets.UTF_8));
         MockMultipartFile photo = new MockMultipartFile("photo", "testPhoto.webp", "webp", new FileInputStream(DIR + "testPhoto.webp"));
 
-        // when
         int userId = 1;
         int certificationId = 10;
-        User user = User.builder()
-                .userId(userId)
-                .name("TEST USER NAME")
-                .profile("https://kr.object.ncloudstorage.com/reward-profile/276_profile.webp?2302150308309037")
-                .build();
-        Certification certification = Certification.builder()
-                .certificationId(certificationId)
-                .placeName("TEST PLACE NAME")
-                .description("TEST DESCRIPTION")
-                .photoUrl("https://kr.object.ncloudstorage.com/reward-certification/938_cert.webp?2302150348341034")
-                .mungpleId(0)
-                .isHideAddress(false)
-                .address("서울특별시 송파구")
-                .commentCount(0)
-                .user(user)
-                .build();
 
-        CertByAchvResDTO resDTO = new CertByAchvResDTO(certification, user.getUserId());
+        CertByAchvResDTO resDTO = new CertByAchvResDTO(certification, userId);
         Mockito.when(certService.createCert(certRecord, photo)).thenReturn(resDTO);
 
-        // then
+        // when & then
         mockMvc.perform(multipart("/api/certification")
                         .file(data)
                         .file(photo))
@@ -128,25 +129,21 @@ public class CertControllerTest {
 
                 // CertByAchvResDTO
                 .andExpect(jsonPath("$.data.certificationId").value(certificationId))
-                .andExpect(jsonPath("$.data.placeName").value("TEST PLACE NAME"))
-                .andExpect(jsonPath("$.data.description").value("TEST DESCRIPTION"))
-                .andExpect(jsonPath("$.data.photoUrl").value("https://kr.object.ncloudstorage.com/reward-certification/938_cert.webp?2302150348341034"))
+                .andExpect(jsonPath("$.data.placeName").value("Test Place"))
+                .andExpect(jsonPath("$.data.description").value("Test Description"))
+                .andExpect(jsonPath("$.data.photoUrl").value("https://example.com/photo.jpg"))
                 .andExpect(jsonPath("$.data.mungpleId").value(0))
-
                 .andExpect(jsonPath("$.data.isHideAddress").value(false))
                 .andExpect(jsonPath("$.data.isOwner").value(true))
-                .andExpect(jsonPath("$.data.address").value("서울특별시 송파구"))
-
+                .andExpect(jsonPath("$.data.address").value("Seoul, South Korea"))
                 .andExpect(jsonPath("$.data.userId").value(userId))
-                .andExpect(jsonPath("$.data.userName").value("TEST USER NAME"))
-                .andExpect(jsonPath("$.data.userProfile").value("https://kr.object.ncloudstorage.com/reward-profile/276_profile.webp?2302150308309037"))
-
+                .andExpect(jsonPath("$.data.userName").value("Test User"))
+                .andExpect(jsonPath("$.data.userProfile").value("https://example.com/profile.jpg"))
                 .andExpect(jsonPath("$.data.isLike").value(false))
                 .andExpect(jsonPath("$.data.likeCount").value(0))
                 .andExpect(jsonPath("$.data.commentCount").value(0))
 
-                .andExpect(jsonPath("$.data.isAchievements").value(false))
-        ;
+                .andExpect(jsonPath("$.data.isAchievements").value(false));
     }
 
     @Test
@@ -156,28 +153,11 @@ public class CertControllerTest {
         int userId = 1;
         int certificationId = 10;
 
-        User user = User.builder()
-                .userId(userId)
-                .name("TEST USER NAME")
-                .profile("https://kr.object.ncloudstorage.com/reward-profile/276_profile.webp?2302150308309037")
-                .build();
-        Certification certification = Certification.builder()
-                .certificationId(certificationId)
-                .placeName("TEST PLACE NAME")
-                .description("TEST DESCRIPTION")
-                .photoUrl("https://kr.object.ncloudstorage.com/reward-certification/938_cert.webp?2302150348341034")
-                .mungpleId(0)
-                .isHideAddress(false)
-                .address("서울특별시 송파구")
-                .commentCount(0)
-                .user(user)
-                .build();
-
-        // when
         List<CertResDTO> certResDTOS = List.of(new CertResDTO(certification, userId));
+
         Mockito.when(certService.getCertsByIdWithLike(userId, certificationId)).thenReturn(certResDTOS);
 
-        // then
+        // when & then
         mockMvc.perform(get("/api/certification")
                         .param("userId", String.valueOf(userId))
                         .param("certificationId", String.valueOf(certificationId)))
@@ -187,19 +167,16 @@ public class CertControllerTest {
 
                 // CertByAchvResDTO
                 .andExpect(jsonPath("$.data[0].certificationId").value(certificationId))
-                .andExpect(jsonPath("$.data[0].placeName").value("TEST PLACE NAME"))
-                .andExpect(jsonPath("$.data[0].description").value("TEST DESCRIPTION"))
-                .andExpect(jsonPath("$.data[0].photoUrl").value("https://kr.object.ncloudstorage.com/reward-certification/938_cert.webp?2302150348341034"))
+                .andExpect(jsonPath("$.data[0].placeName").value("Test Place"))
+                .andExpect(jsonPath("$.data[0].description").value("Test Description"))
+                .andExpect(jsonPath("$.data[0].photoUrl").value("https://example.com/photo.jpg"))
                 .andExpect(jsonPath("$.data[0].mungpleId").value(0))
-
                 .andExpect(jsonPath("$.data[0].isHideAddress").value(false))
                 .andExpect(jsonPath("$.data[0].isOwner").value(true))
-                .andExpect(jsonPath("$.data[0].address").value("서울특별시 송파구"))
-
+                .andExpect(jsonPath("$.data[0].address").value("Seoul, South Korea"))
                 .andExpect(jsonPath("$.data[0].userId").value(userId))
-                .andExpect(jsonPath("$.data[0].userName").value("TEST USER NAME"))
-                .andExpect(jsonPath("$.data[0].userProfile").value("https://kr.object.ncloudstorage.com/reward-profile/276_profile.webp?2302150308309037"))
-
+                .andExpect(jsonPath("$.data[0].userName").value("Test User"))
+                .andExpect(jsonPath("$.data[0].userProfile").value("https://example.com/profile.jpg"))
                 .andExpect(jsonPath("$.data[0].isLike").value(false))
                 .andExpect(jsonPath("$.data[0].likeCount").value(0))
                 .andExpect(jsonPath("$.data[0].commentCount").value(0));
