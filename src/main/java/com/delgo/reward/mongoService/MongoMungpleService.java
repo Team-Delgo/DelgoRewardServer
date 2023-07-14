@@ -2,7 +2,7 @@ package com.delgo.reward.mongoService;
 
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
-import com.delgo.reward.domain.Mungple;
+import com.delgo.reward.domain.mungple.Mungple;
 import com.delgo.reward.dto.mungple.CafeDetailResDTO;
 import com.delgo.reward.dto.mungple.MungpleDetailResDTO;
 import com.delgo.reward.dto.mungple.PriceTagDetailResDTO;
