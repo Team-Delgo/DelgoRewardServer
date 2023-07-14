@@ -2,6 +2,7 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.async.CertAsyncService;
 import com.delgo.reward.comm.async.ClassificationAsyncService;
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.config.WebConfig;
 import com.delgo.reward.comm.security.SecurityConfig;
 import com.delgo.reward.domain.certification.Certification;
@@ -265,5 +266,51 @@ public class CertControllerTest {
                 .andExpect(jsonPath("$.data[0].isLike").value(false))
                 .andExpect(jsonPath("$.data[0].likeCount").value(0))
                 .andExpect(jsonPath("$.data[0].commentCount").value(0));
+    }
+
+    @Test
+    @DisplayName("[API][GET] 카테고리별 인증 조회 - 페이징")
+    void getCertsByCategoryTest() throws Exception {
+        // given
+        int userId = 1;
+        int certificationId = 10;
+        String categoryCode = CategoryCode.CA0006.getCode();
+        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "registDt");
+
+        int size = 0;
+        int number = 2;
+        boolean isLast = false;
+
+        List<CertResDTO> certResDTOS = List.of(new CertResDTO(certification, userId));
+        PageResDTO<CertResDTO> pageResDTO = new PageResDTO<>(certResDTOS, size, number, isLast);
+
+        Mockito.when(certService.getCertsByCategory(userId, categoryCode, pageable)).thenReturn(pageResDTO);
+
+        // when & then
+        mockMvc.perform(get("/api/certification/category")
+                        .param("userId", String.valueOf(userId))
+                        .param("categoryCode", categoryCode))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.content").isArray())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.data.content[0].certificationId").value(certificationId))
+                .andExpect(jsonPath("$.data.content[0].placeName").value("Test Place"))
+                .andExpect(jsonPath("$.data.content[0].description").value("Test Description"))
+                .andExpect(jsonPath("$.data.content[0].photoUrl").value("https://example.com/photo.jpg"))
+                .andExpect(jsonPath("$.data.content[0].mungpleId").value(0))
+                .andExpect(jsonPath("$.data.content[0].isHideAddress").value(false))
+                .andExpect(jsonPath("$.data.content[0].isOwner").value(true))
+                .andExpect(jsonPath("$.data.content[0].address").value("Seoul, South Korea"))
+                .andExpect(jsonPath("$.data.content[0].userId").value(userId))
+                .andExpect(jsonPath("$.data.content[0].userName").value("Test User"))
+                .andExpect(jsonPath("$.data.content[0].userProfile").value("https://example.com/profile.jpg"))
+                .andExpect(jsonPath("$.data.content[0].isLike").value(false))
+                .andExpect(jsonPath("$.data.content[0].likeCount").value(0))
+                .andExpect(jsonPath("$.data.content[0].commentCount").value(0))
+
+                .andExpect(jsonPath("$.data.size").value(size))
+                .andExpect(jsonPath("$.data.number").value(number))
+                .andExpect(jsonPath("$.data.last").value(isLast));
     }
 }
