@@ -1,6 +1,6 @@
 package com.delgo.reward.service.crawling;
 
-import com.delgo.reward.domain.Mungple;
+import com.delgo.reward.domain.mungple.Mungple;
 import com.delgo.reward.mongoRepository.MungpleDetailRepository;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.repository.MungpleRepository;
@@ -63,7 +63,7 @@ public class GetNaverMungplePhotoCrawlingService {
         driver.get(url);    //브라우저에서 url로 이동한다.
         Thread.sleep(3000); //브라우저 로딩될때까지 잠시 기다린다.
 
-        List<Mungple> mungples = mungpleRepository.findAllByIsActive(true);
+        List<Mungple> mungples = mungpleRepository.findMungpleByIsActive(true);
         for(int m = 1 ; m < mungples.size(); m++) {
             log.info("{} mungple name : {}", m, mungples.get(m).getPlaceName());
 
@@ -136,7 +136,7 @@ public class GetNaverMungplePhotoCrawlingService {
         driver.get(url);    //브라우저에서 url로 이동한다.
         Thread.sleep(3000); //브라우저 로딩될때까지 잠시 기다린다.
 
-        List<Mungple> mungples = mungpleRepository.findAllByIsActive(true);
+        List<Mungple> mungples = mungpleRepository.findMungpleByIsActive(true);
         for (int m = 1; m < mungples.size(); m++) {
 
         log.info("{} mungple name : {}", m, mungples.get(m).getPlaceName());

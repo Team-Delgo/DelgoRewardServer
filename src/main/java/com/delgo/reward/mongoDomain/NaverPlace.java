@@ -1,7 +1,7 @@
 package com.delgo.reward.mongoDomain;
 
 
-import com.delgo.reward.domain.Mungple;
+import com.delgo.reward.domain.mungple.Mungple;
 import com.delgo.reward.domain.common.Location;
 import lombok.*;
 import org.springframework.data.annotation.Id;
