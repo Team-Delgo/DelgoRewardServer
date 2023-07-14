@@ -42,17 +42,6 @@ public class MungpleTest {
     }
 
     @Test
-    public void deleteMungpleTest() {
-        //given
-        int mungpleId = 70;
-
-        //when
-        mungpleService.delete(mungpleId);
-
-        //then
-    }
-
-    @Test
     public void deleteDuplicateMungpleTest() {
         List<Mungple> mungples = mungpleRepository.findAll();
         System.out.println("count :{} " + mungples.size());
