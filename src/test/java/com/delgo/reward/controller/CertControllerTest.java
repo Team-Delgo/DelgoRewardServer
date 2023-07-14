@@ -2,12 +2,14 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.async.CertAsyncService;
 import com.delgo.reward.comm.async.ClassificationAsyncService;
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.config.WebConfig;
 import com.delgo.reward.comm.security.SecurityConfig;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.cert.CertByAchvResDTO;
 import com.delgo.reward.dto.cert.CertResDTO;
+import com.delgo.reward.dto.comm.PageResDTO;
 import com.delgo.reward.mongoService.ClassificationService;
 import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.service.CertService;
@@ -24,6 +26,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
@@ -33,6 +38,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -59,11 +65,29 @@ public class CertControllerTest {
     @MockBean ClassificationService classificationService;
     @MockBean ClassificationAsyncService classificationAsyncService;
 
+    private Certification certification;
+
     @BeforeEach
     public void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .addFilter(new CharacterEncodingFilter("UTF-8", true))
                 .alwaysDo(print())
+                .build();
+
+        certification = Certification.builder()
+                .certificationId(10)
+                .placeName("Test Place")
+                .description("Test Description")
+                .photoUrl("https://example.com/photo.jpg")
+                .mungpleId(0)
+                .isHideAddress(false)
+                .address("Seoul, South Korea")
+                .commentCount(0)
+                .user(User.builder()
+                        .userId(1)
+                        .name("Test User")
+                        .profile("https://example.com/profile.jpg")
+                        .build())
                 .build();
     }
 
@@ -96,30 +120,13 @@ public class CertControllerTest {
         MockMultipartFile data = new MockMultipartFile("data", "data", "application/json", json.getBytes(StandardCharsets.UTF_8));
         MockMultipartFile photo = new MockMultipartFile("photo", "testPhoto.webp", "webp", new FileInputStream(DIR + "testPhoto.webp"));
 
-        // when
         int userId = 1;
         int certificationId = 10;
-        User user = User.builder()
-                .userId(userId)
-                .name("TEST USER NAME")
-                .profile("https://kr.object.ncloudstorage.com/reward-profile/276_profile.webp?2302150308309037")
-                .build();
-        Certification certification = Certification.builder()
-                .certificationId(certificationId)
-                .placeName("TEST PLACE NAME")
-                .description("TEST DESCRIPTION")
-                .photoUrl("https://kr.object.ncloudstorage.com/reward-certification/938_cert.webp?2302150348341034")
-                .mungpleId(0)
-                .isHideAddress(false)
-                .address("서울특별시 송파구")
-                .commentCount(0)
-                .user(user)
-                .build();
 
-        CertByAchvResDTO resDTO = new CertByAchvResDTO(certification, user.getUserId());
+        CertByAchvResDTO resDTO = new CertByAchvResDTO(certification, userId);
         Mockito.when(certService.createCert(certRecord, photo)).thenReturn(resDTO);
 
-        // then
+        // when & then
         mockMvc.perform(multipart("/api/certification")
                         .file(data)
                         .file(photo))
@@ -128,25 +135,21 @@ public class CertControllerTest {
 
                 // CertByAchvResDTO
                 .andExpect(jsonPath("$.data.certificationId").value(certificationId))
-                .andExpect(jsonPath("$.data.placeName").value("TEST PLACE NAME"))
-                .andExpect(jsonPath("$.data.description").value("TEST DESCRIPTION"))
-                .andExpect(jsonPath("$.data.photoUrl").value("https://kr.object.ncloudstorage.com/reward-certification/938_cert.webp?2302150348341034"))
+                .andExpect(jsonPath("$.data.placeName").value("Test Place"))
+                .andExpect(jsonPath("$.data.description").value("Test Description"))
+                .andExpect(jsonPath("$.data.photoUrl").value("https://example.com/photo.jpg"))
                 .andExpect(jsonPath("$.data.mungpleId").value(0))
-
                 .andExpect(jsonPath("$.data.isHideAddress").value(false))
                 .andExpect(jsonPath("$.data.isOwner").value(true))
-                .andExpect(jsonPath("$.data.address").value("서울특별시 송파구"))
-
+                .andExpect(jsonPath("$.data.address").value("Seoul, South Korea"))
                 .andExpect(jsonPath("$.data.userId").value(userId))
-                .andExpect(jsonPath("$.data.userName").value("TEST USER NAME"))
-                .andExpect(jsonPath("$.data.userProfile").value("https://kr.object.ncloudstorage.com/reward-profile/276_profile.webp?2302150308309037"))
-
+                .andExpect(jsonPath("$.data.userName").value("Test User"))
+                .andExpect(jsonPath("$.data.userProfile").value("https://example.com/profile.jpg"))
                 .andExpect(jsonPath("$.data.isLike").value(false))
                 .andExpect(jsonPath("$.data.likeCount").value(0))
                 .andExpect(jsonPath("$.data.commentCount").value(0))
 
-                .andExpect(jsonPath("$.data.isAchievements").value(false))
-        ;
+                .andExpect(jsonPath("$.data.isAchievements").value(false));
     }
 
     @Test
@@ -156,28 +159,11 @@ public class CertControllerTest {
         int userId = 1;
         int certificationId = 10;
 
-        User user = User.builder()
-                .userId(userId)
-                .name("TEST USER NAME")
-                .profile("https://kr.object.ncloudstorage.com/reward-profile/276_profile.webp?2302150308309037")
-                .build();
-        Certification certification = Certification.builder()
-                .certificationId(certificationId)
-                .placeName("TEST PLACE NAME")
-                .description("TEST DESCRIPTION")
-                .photoUrl("https://kr.object.ncloudstorage.com/reward-certification/938_cert.webp?2302150348341034")
-                .mungpleId(0)
-                .isHideAddress(false)
-                .address("서울특별시 송파구")
-                .commentCount(0)
-                .user(user)
-                .build();
-
-        // when
         List<CertResDTO> certResDTOS = List.of(new CertResDTO(certification, userId));
+
         Mockito.when(certService.getCertsByIdWithLike(userId, certificationId)).thenReturn(certResDTOS);
 
-        // then
+        // when & then
         mockMvc.perform(get("/api/certification")
                         .param("userId", String.valueOf(userId))
                         .param("certificationId", String.valueOf(certificationId)))
@@ -187,21 +173,181 @@ public class CertControllerTest {
 
                 // CertByAchvResDTO
                 .andExpect(jsonPath("$.data[0].certificationId").value(certificationId))
-                .andExpect(jsonPath("$.data[0].placeName").value("TEST PLACE NAME"))
-                .andExpect(jsonPath("$.data[0].description").value("TEST DESCRIPTION"))
-                .andExpect(jsonPath("$.data[0].photoUrl").value("https://kr.object.ncloudstorage.com/reward-certification/938_cert.webp?2302150348341034"))
+                .andExpect(jsonPath("$.data[0].placeName").value("Test Place"))
+                .andExpect(jsonPath("$.data[0].description").value("Test Description"))
+                .andExpect(jsonPath("$.data[0].photoUrl").value("https://example.com/photo.jpg"))
                 .andExpect(jsonPath("$.data[0].mungpleId").value(0))
-
                 .andExpect(jsonPath("$.data[0].isHideAddress").value(false))
                 .andExpect(jsonPath("$.data[0].isOwner").value(true))
-                .andExpect(jsonPath("$.data[0].address").value("서울특별시 송파구"))
-
+                .andExpect(jsonPath("$.data[0].address").value("Seoul, South Korea"))
                 .andExpect(jsonPath("$.data[0].userId").value(userId))
-                .andExpect(jsonPath("$.data[0].userName").value("TEST USER NAME"))
-                .andExpect(jsonPath("$.data[0].userProfile").value("https://kr.object.ncloudstorage.com/reward-profile/276_profile.webp?2302150308309037"))
-
+                .andExpect(jsonPath("$.data[0].userName").value("Test User"))
+                .andExpect(jsonPath("$.data[0].userProfile").value("https://example.com/profile.jpg"))
                 .andExpect(jsonPath("$.data[0].isLike").value(false))
                 .andExpect(jsonPath("$.data[0].likeCount").value(0))
                 .andExpect(jsonPath("$.data[0].commentCount").value(0));
+    }
+
+    @Test
+    @DisplayName("[API][GET] 전체 인증 조회 - 페이징")
+    void getAllCertTest() throws Exception {
+        // given
+        int userId = 1;
+        int certificationId = 10;
+        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "registDt");
+
+        int size = 0;
+        int number = 2;
+        boolean isLast = false;
+
+        List<CertResDTO> certResDTOS = List.of(new CertResDTO(certification, userId));
+        PageResDTO<CertResDTO> pageResDTO = new PageResDTO<>(certResDTOS, size, number, isLast);
+
+        Mockito.when(certService.getAllCert(userId, pageable)).thenReturn(pageResDTO);
+
+        // when & then
+        mockMvc.perform(get("/api/certification/all")
+                        .param("userId", String.valueOf(userId)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.content").isArray())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.data.content[0].certificationId").value(certificationId))
+                .andExpect(jsonPath("$.data.content[0].placeName").value("Test Place"))
+                .andExpect(jsonPath("$.data.content[0].description").value("Test Description"))
+                .andExpect(jsonPath("$.data.content[0].photoUrl").value("https://example.com/photo.jpg"))
+                .andExpect(jsonPath("$.data.content[0].mungpleId").value(0))
+                .andExpect(jsonPath("$.data.content[0].isHideAddress").value(false))
+                .andExpect(jsonPath("$.data.content[0].isOwner").value(true))
+                .andExpect(jsonPath("$.data.content[0].address").value("Seoul, South Korea"))
+                .andExpect(jsonPath("$.data.content[0].userId").value(userId))
+                .andExpect(jsonPath("$.data.content[0].userName").value("Test User"))
+                .andExpect(jsonPath("$.data.content[0].userProfile").value("https://example.com/profile.jpg"))
+                .andExpect(jsonPath("$.data.content[0].isLike").value(false))
+                .andExpect(jsonPath("$.data.content[0].likeCount").value(0))
+                .andExpect(jsonPath("$.data.content[0].commentCount").value(0))
+
+                .andExpect(jsonPath("$.data.size").value(size))
+                .andExpect(jsonPath("$.data.number").value(number))
+                .andExpect(jsonPath("$.data.last").value(isLast));
+    }
+
+    @Test
+    @DisplayName("[API][GET] 날짜로 Cert 조회")
+    void getCertsByDateTest() throws Exception {
+        //given
+        String date = "1997-02-04";
+
+        int userId = 1;
+        int certificationId = 10;
+
+        List<CertResDTO> certResDTOS = List.of(new CertResDTO(certification, userId));
+        Mockito.when(certService.getCertsByDate(userId, LocalDate.parse(date))).thenReturn(certResDTOS);
+
+        // when & then
+        mockMvc.perform(get("/api/certification/date")
+                        .param("userId", String.valueOf(userId))
+                        .param("date", date))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+
+                // CertByAchvResDTO
+                .andExpect(jsonPath("$.data[0].certificationId").value(certificationId))
+                .andExpect(jsonPath("$.data[0].placeName").value("Test Place"))
+                .andExpect(jsonPath("$.data[0].description").value("Test Description"))
+                .andExpect(jsonPath("$.data[0].photoUrl").value("https://example.com/photo.jpg"))
+                .andExpect(jsonPath("$.data[0].mungpleId").value(0))
+                .andExpect(jsonPath("$.data[0].isHideAddress").value(false))
+                .andExpect(jsonPath("$.data[0].isOwner").value(true))
+                .andExpect(jsonPath("$.data[0].address").value("Seoul, South Korea"))
+                .andExpect(jsonPath("$.data[0].userId").value(userId))
+                .andExpect(jsonPath("$.data[0].userName").value("Test User"))
+                .andExpect(jsonPath("$.data[0].userProfile").value("https://example.com/profile.jpg"))
+                .andExpect(jsonPath("$.data[0].isLike").value(false))
+                .andExpect(jsonPath("$.data[0].likeCount").value(0))
+                .andExpect(jsonPath("$.data[0].commentCount").value(0));
+    }
+
+    @Test
+    @DisplayName("[API][GET] 카테고리별 인증 조회 - 페이징")
+    void getCertsByCategoryTest() throws Exception {
+        // given
+        int userId = 1;
+        int certificationId = 10;
+        String categoryCode = CategoryCode.CA0006.getCode();
+        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "registDt");
+
+        int size = 0;
+        int number = 2;
+        boolean isLast = false;
+
+        List<CertResDTO> certResDTOS = List.of(new CertResDTO(certification, userId));
+        PageResDTO<CertResDTO> pageResDTO = new PageResDTO<>(certResDTOS, size, number, isLast);
+
+        Mockito.when(certService.getCertsByCategory(userId, categoryCode, pageable)).thenReturn(pageResDTO);
+
+        // when & then
+        mockMvc.perform(get("/api/certification/category")
+                        .param("userId", String.valueOf(userId))
+                        .param("categoryCode", categoryCode))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.content").isArray())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.data.content[0].certificationId").value(certificationId))
+                .andExpect(jsonPath("$.data.content[0].placeName").value("Test Place"))
+                .andExpect(jsonPath("$.data.content[0].description").value("Test Description"))
+                .andExpect(jsonPath("$.data.content[0].photoUrl").value("https://example.com/photo.jpg"))
+                .andExpect(jsonPath("$.data.content[0].mungpleId").value(0))
+                .andExpect(jsonPath("$.data.content[0].isHideAddress").value(false))
+                .andExpect(jsonPath("$.data.content[0].isOwner").value(true))
+                .andExpect(jsonPath("$.data.content[0].address").value("Seoul, South Korea"))
+                .andExpect(jsonPath("$.data.content[0].userId").value(userId))
+                .andExpect(jsonPath("$.data.content[0].userName").value("Test User"))
+                .andExpect(jsonPath("$.data.content[0].userProfile").value("https://example.com/profile.jpg"))
+                .andExpect(jsonPath("$.data.content[0].isLike").value(false))
+                .andExpect(jsonPath("$.data.content[0].likeCount").value(0))
+                .andExpect(jsonPath("$.data.content[0].commentCount").value(0))
+
+                .andExpect(jsonPath("$.data.size").value(size))
+                .andExpect(jsonPath("$.data.number").value(number))
+                .andExpect(jsonPath("$.data.last").value(isLast));
+    }
+
+    @Test
+    @DisplayName("[API][GET] 최근 인증 조회")
+    void getRecentCertsTest() throws Exception {
+        // given
+        int userId = 1;
+        int count = 5;
+        int certificationId = 10;
+
+        List<CertResDTO> certResDTOS = List.of(new CertResDTO(certification, userId));
+        Mockito.when(certService.getRecentCerts(userId, count)).thenReturn(certResDTOS);
+
+        // when & then
+        mockMvc.perform(get("/api/certification/recent")
+                        .param("userId", String.valueOf(userId))
+                        .param("count", String.valueOf(count)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.data[0].certificationId").value(certificationId))
+                .andExpect(jsonPath("$.data[0].placeName").value("Test Place"))
+                .andExpect(jsonPath("$.data[0].description").value("Test Description"))
+                .andExpect(jsonPath("$.data[0].photoUrl").value("https://example.com/photo.jpg"))
+                .andExpect(jsonPath("$.data[0].mungpleId").value(0))
+                .andExpect(jsonPath("$.data[0].isHideAddress").value(false))
+                .andExpect(jsonPath("$.data[0].isOwner").value(true))
+                .andExpect(jsonPath("$.data[0].address").value("Seoul, South Korea"))
+                .andExpect(jsonPath("$.data[0].userId").value(userId))
+                .andExpect(jsonPath("$.data[0].userName").value("Test User"))
+                .andExpect(jsonPath("$.data[0].userProfile").value("https://example.com/profile.jpg"))
+                .andExpect(jsonPath("$.data[0].isLike").value(false))
+                .andExpect(jsonPath("$.data[0].likeCount").value(0))
+                .andExpect(jsonPath("$.data[0].commentCount").value(0))
+
+                .andExpect(jsonPath("$.data.length()").value(certResDTOS.size()));
     }
 }
