@@ -1,4 +1,4 @@
-package com.delgo.reward.dto.mungple;
+package com.delgo.reward.dto.mungple.detail;
 
 import com.delgo.reward.comm.code.BusinessHourCode;
 import com.delgo.reward.comm.code.DetailCode;

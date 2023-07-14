@@ -1,4 +1,4 @@
-package com.delgo.reward.dto.mungple;
+package com.delgo.reward.dto.mungple.detail;
 
 import com.delgo.reward.domain.mungple.Mungple;
 import com.delgo.reward.mongoDomain.MungpleDetail;
@@ -10,12 +10,11 @@ import java.util.List;
 
 @Getter
 @ToString
-public class PriceTagDetailResDTO extends MungpleDetailResDTO {
+public class MungpleDetailByPriceTagResDTO extends MungpleDetailResDTO {
     private final Boolean isPriceTag; // 가격표 존재 여부
     private final List<String> priceTagPhotoUrls; // 가격표 사진
 
-
-    public PriceTagDetailResDTO(Mungple mungple, MungpleDetail mungpleDetail, int certCount){
+    public MungpleDetailByPriceTagResDTO(Mungple mungple, MungpleDetail mungpleDetail, int certCount){
         super(mungple,mungpleDetail,certCount);
 
         isPriceTag = mungpleDetail.getIsPriceTag();
