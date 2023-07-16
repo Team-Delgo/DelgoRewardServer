@@ -8,6 +8,7 @@ import com.delgo.reward.comm.security.SecurityConfig;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.cert.CertByAchvResDTO;
+import com.delgo.reward.dto.cert.CertByMungpleResDTO;
 import com.delgo.reward.dto.cert.CertResDTO;
 import com.delgo.reward.dto.comm.PageResDTO;
 import com.delgo.reward.mongoService.ClassificationService;
@@ -83,6 +84,8 @@ public class CertControllerTest {
                 .isHideAddress(false)
                 .address("Seoul, South Korea")
                 .commentCount(0)
+                .latitude("37.5101562")
+                .longitude("127.1091707")
                 .user(User.builder()
                         .userId(1)
                         .name("Test User")
@@ -349,5 +352,56 @@ public class CertControllerTest {
                 .andExpect(jsonPath("$.data[0].commentCount").value(0))
 
                 .andExpect(jsonPath("$.data.length()").value(certResDTOS.size()));
+    }
+
+    @Test
+    @DisplayName("[API][GET] Mungple별 인증 조회 - 페이징")
+    void getCertsByMungpleTest() throws Exception {
+        // given
+        int userId = 1;
+        int mungpleId = 10;
+        int certificationId = 10;
+        String latitude = "37.5101562";
+        String longitude = "127.1091707";
+        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "registDt");
+
+        int size = 0;
+        int number = 2;
+        boolean isLast = false;
+
+        List<CertByMungpleResDTO> certByMungpleResDTOS = List.of(new CertByMungpleResDTO(certification, userId));
+        PageResDTO<CertByMungpleResDTO> pageResDTO = new PageResDTO<>(certByMungpleResDTOS, size, number, isLast);
+
+        Mockito.when(certService.getCertsByMungpleId(userId, mungpleId, pageable)).thenReturn(pageResDTO);
+
+        // when & then
+        mockMvc.perform(get("/api/certification/mungple")
+                        .param("userId", String.valueOf(userId))
+                        .param("mungpleId", String.valueOf(mungpleId)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.content").isArray())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                /* Add assertions for the response JSON body */
+                .andExpect(jsonPath("$.data.content[0].certificationId").value(certificationId))
+                .andExpect(jsonPath("$.data.content[0].placeName").value("Test Place"))
+                .andExpect(jsonPath("$.data.content[0].description").value("Test Description"))
+                .andExpect(jsonPath("$.data.content[0].photoUrl").value("https://example.com/photo.jpg"))
+                .andExpect(jsonPath("$.data.content[0].mungpleId").value(0))
+                .andExpect(jsonPath("$.data.content[0].isHideAddress").value(false))
+                .andExpect(jsonPath("$.data.content[0].isOwner").value(true))
+                .andExpect(jsonPath("$.data.content[0].address").value("Seoul, South Korea"))
+                .andExpect(jsonPath("$.data.content[0].userId").value(userId))
+                .andExpect(jsonPath("$.data.content[0].userName").value("Test User"))
+                .andExpect(jsonPath("$.data.content[0].userProfile").value("https://example.com/profile.jpg"))
+                .andExpect(jsonPath("$.data.content[0].isLike").value(false))
+                .andExpect(jsonPath("$.data.content[0].likeCount").value(0))
+                .andExpect(jsonPath("$.data.content[0].commentCount").value(0))
+
+                .andExpect(jsonPath("$.data.content[0].latitude").value(latitude))
+                .andExpect(jsonPath("$.data.content[0].longitude").value(longitude))
+
+                .andExpect(jsonPath("$.data.size").value(pageResDTO.getSize()))
+                .andExpect(jsonPath("$.data.number").value(pageResDTO.getNumber()))
+                .andExpect(jsonPath("$.data.last").value(pageResDTO.isLast()));
     }
 }
