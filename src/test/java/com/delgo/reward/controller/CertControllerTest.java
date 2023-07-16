@@ -162,6 +162,9 @@ public class CertControllerTest {
                 .andExpect(jsonPath("$.data.commentCount").value(0))
 
                 .andExpect(jsonPath("$.data.isAchievements").value(false));
+
+        Mockito.verify(certAsyncService, Mockito.times(1)).doSomething(certificationId);
+        Mockito.verify(classificationAsyncService, Mockito.times(1)).doClassification(certificationId);
     }
 
     @Test
