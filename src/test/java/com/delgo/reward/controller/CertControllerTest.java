@@ -492,4 +492,21 @@ public class CertControllerTest {
         Mockito.verify(classificationService, Mockito.times(1)).deleteClassificationWhenModifyCert(certification);
         Mockito.verify(classificationAsyncService, Mockito.times(1)).doClassification(updatedCertification.getCertificationId());
     }
+
+    @Test
+    @DisplayName("[API][DELETE] Cert 삭제")
+    void deleteCertTest() throws Exception {
+        // given
+        int userId = 1;
+        int certificationId = 10;
+
+        Mockito.when(certService.getCertById(certificationId)).thenReturn(certification);
+
+        // when & then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/certification/{userId}/{certificationId}", userId, certificationId))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+
+        Mockito.verify(certService, Mockito.times(1)).deleteCert(certificationId);
+    }
 }
