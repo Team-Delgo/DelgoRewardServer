@@ -13,6 +13,7 @@ import com.delgo.reward.dto.cert.CertResDTO;
 import com.delgo.reward.dto.comm.PageResDTO;
 import com.delgo.reward.mongoService.ClassificationService;
 import com.delgo.reward.record.certification.CertRecord;
+import com.delgo.reward.record.certification.ModifyCertRecord;
 import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.LikeListService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,8 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -73,6 +73,7 @@ public class CertControllerTest {
     @MockBean ClassificationService classificationService;
     @MockBean ClassificationAsyncService classificationAsyncService;
 
+    private User user;
     private Certification certification;
 
     @BeforeEach
@@ -82,6 +83,11 @@ public class CertControllerTest {
                 .alwaysDo(print())
                 .build();
 
+        user = User.builder()
+                .userId(1)
+                .name("Test User")
+                .profile("https://example.com/profile.jpg")
+                .build();
         certification = Certification.builder()
                 .certificationId(10)
                 .placeName("Test Place")
@@ -93,11 +99,7 @@ public class CertControllerTest {
                 .commentCount(0)
                 .latitude("37.5101562")
                 .longitude("127.1091707")
-                .user(User.builder()
-                        .userId(1)
-                        .name("Test User")
-                        .profile("https://example.com/profile.jpg")
-                        .build())
+                .user(user)
                 .build();
     }
 
@@ -446,5 +448,48 @@ public class CertControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.CA0001").value(5))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.CA0002").value(10));
+    }
+
+    @Test
+    @DisplayName("[API][PUT] Cert 수정")
+    void modifyCertTest() throws Exception {
+        // given
+        int userId = 1;
+        int certificationId = 10;
+
+        String desc = "Update Description";
+        boolean isHideAddress = true;
+
+        ModifyCertRecord record = new ModifyCertRecord(userId, certificationId, desc, isHideAddress);
+
+        Certification updatedCertification = Certification.builder()
+                .certificationId(10)
+                .placeName("Test Place")
+                .description(desc)
+                .photoUrl("https://example.com/photo.jpg")
+                .mungpleId(0)
+                .isHideAddress(isHideAddress)
+                .address("Seoul, South Korea")
+                .commentCount(0)
+                .latitude("37.5101562")
+                .longitude("127.1091707")
+                .user(user)
+                .build();
+
+        Mockito.when(certService.getCertById(certificationId)).thenReturn(certification);
+        Mockito.when(certService.modifyCert(certification, record)).thenReturn(updatedCertification);
+
+        // when & then
+        mockMvc.perform(put("/api/certification")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(record)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.certificationId").value(certificationId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.description").value(desc))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.isHideAddress").value(isHideAddress));
+
+        Mockito.verify(classificationService, Mockito.times(1)).deleteClassificationWhenModifyCert(certification);
+        Mockito.verify(classificationAsyncService, Mockito.times(1)).doClassification(updatedCertification.getCertificationId());
     }
 }
