@@ -509,4 +509,22 @@ public class CertControllerTest {
 
         Mockito.verify(certService, Mockito.times(1)).deleteCert(certificationId);
     }
+
+    @Test
+    @DisplayName("[API][POST] 인증 좋아요")
+    void likeTest() throws Exception {
+        // given
+        int userId = 1;
+        int ownerId = 1;
+        int certificationId = 10;
+
+        Mockito.when(certService.getCertById(certificationId)).thenReturn(certification);
+
+        // when & then
+        mockMvc.perform(post("/api/certification/like/{userId}/{certificationId}", userId, certificationId))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+
+        Mockito.verify(likeListService, Mockito.times(1)).like(userId, certificationId, ownerId);
+    }
 }
