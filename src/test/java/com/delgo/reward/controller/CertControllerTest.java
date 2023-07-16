@@ -33,16 +33,21 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -403,5 +408,21 @@ public class CertControllerTest {
                 .andExpect(jsonPath("$.data.size").value(pageResDTO.getSize()))
                 .andExpect(jsonPath("$.data.number").value(pageResDTO.getNumber()))
                 .andExpect(jsonPath("$.data.last").value(pageResDTO.isLast()));
+    }
+
+    @Test
+    @DisplayName("[API][GET] User 인증 개수 조회")
+    void getCertCountByUserTest() throws Exception {
+        // given
+        int userId = 1;
+        int certCount = 5;
+
+        Mockito.when(certService.getCertCountByUser(userId)).thenReturn(certCount);
+
+        // when & then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/certification/count/{userId}", userId))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").value(certCount));
     }
 }
