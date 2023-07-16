@@ -44,7 +44,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -424,5 +426,25 @@ public class CertControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data").value(certCount));
+    }
+
+    @Test
+    @DisplayName("[API][GET] Category 별 인증 개수 조회")
+    void getCertCountByCategoryTest() throws Exception {
+        // given
+        int userId = 1;
+
+        Map<String, Long> certCountByCategory = new HashMap<>();
+        certCountByCategory.put("CA0001", 5L);
+        certCountByCategory.put("CA0002", 10L);
+
+        Mockito.when(certService.getCertCountByCategory(userId)).thenReturn(certCountByCategory);
+
+        // when & then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/certification/category/count/{userId}", userId))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.CA0001").value(5))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.CA0002").value(10));
     }
 }
