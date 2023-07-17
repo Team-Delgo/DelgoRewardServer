@@ -184,4 +184,29 @@ public class CertServiceTest {
             assertThat(result).isEqualTo(certification);
         }
     }
+
+    @Nested
+    @DisplayName("[TEST] 전체 인증 조회 - Not Paging")
+    class getCertsByUserIdTest {
+        @Test
+        @DisplayName("[SUCCESS] 전체 인증 조회")
+        public void getCertsByUserIdTest_Success() {
+            // given
+            int userId = 1;
+            List<Integer> certIds = Arrays.asList(10, 20, 30);
+            List<Certification> dummyCerts = Arrays.asList(
+                    Certification.builder().certificationId(10).build(),
+                    Certification.builder().certificationId(20).build(),
+                    Certification.builder().certificationId(30).build());
+
+            // when
+            Mockito.when(certRepository.findCertIdByUserUserId(userId)).thenReturn(certIds);
+            Mockito.when(certService.getCertsByIds(certIds)).thenReturn(dummyCerts);
+
+            List<Certification> result = certService.getCertsByUserId(userId);
+
+            // then
+            assertThat(result).isEqualTo(dummyCerts);
+        }
+    }
 }
