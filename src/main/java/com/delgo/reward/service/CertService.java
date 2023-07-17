@@ -154,7 +154,7 @@ public class CertService {
     /**
      * [ids] 인증 조회
      */
-    private List<Certification> getCertsByIds(List<Integer> ids){
+    public List<Certification> getCertsByIds(List<Integer> ids){
         return certRepository.findCertByIds(ids);
     }
 
