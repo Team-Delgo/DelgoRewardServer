@@ -35,7 +35,7 @@ public class CertAsyncService {
         certification.setIsCorrectPhoto(photoService.checkCorrectPhoto(DIR + jpgName));
         String ncpLink = photoService.uploadCertMultipartForWebp(certification.getCertificationId(), file);
         certification.setPhotoUrl(photoService.setCacheInvalidation(ncpLink));
-        certService.save(certification);
+        certService.saveCert(certification);
 
         // 안 쓰는 jpg 파일 삭제
         file.delete();
