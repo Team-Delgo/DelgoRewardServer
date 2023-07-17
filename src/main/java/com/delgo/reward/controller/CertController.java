@@ -123,7 +123,7 @@ public class CertController extends CommController {
     /**
      * [Recent] 인증 조회
      * @param userId, count(조회 개수)
-     * @return PageResDTO<CertResDTO, Integer>
+     * @return List<CertResDTO>
      */
     @GetMapping("/recent")
     public ResponseEntity getRecentCerts(@RequestParam Integer userId, @RequestParam Integer count) {
