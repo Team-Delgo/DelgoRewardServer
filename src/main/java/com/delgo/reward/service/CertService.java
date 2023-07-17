@@ -65,7 +65,7 @@ public class CertService {
      */
     public CertByAchvResDTO createCert(CertRecord record, MultipartFile photo) {
         User user = userService.getUserById(record.userId());
-        Certification certification = save(
+        Certification certification = saveCert(
                 (record.mungpleId() == 0)
                         ? record.toEntity(reverseGeoService.getReverseGeoData(new Location(record.latitude(), record.longitude())), user)
                         : record.toEntity(mungpleService.getMungpleById(record.mungpleId()),user));
@@ -89,7 +89,7 @@ public class CertService {
     /**
      * 인증 저장
      */
-    public Certification save(Certification certification) {
+    public Certification saveCert(Certification certification) {
         return certRepository.save(certification);
     }
 
@@ -154,7 +154,7 @@ public class CertService {
     /**
      * [ids] 인증 조회
      */
-    private List<Certification> getCertsByIds(List<Integer> ids){
+    public List<Certification> getCertsByIds(List<Integer> ids){
         return certRepository.findCertByIds(ids);
     }
 
