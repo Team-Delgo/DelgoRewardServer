@@ -20,6 +20,7 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,130 +72,116 @@ public class CertServiceTest {
     @Nested
     @DisplayName("[TEST] 인증 생성")
     class createCertTest {
-        @Nested
-        @DisplayName("[Success Case]")
-        class SuccessCase {
-            @Test
-            @DisplayName("일반 인증 생성")
-            public void createCertTest_Success_1() throws IOException {
-                // given
-                CertRecord certRecord = new CertRecord(1, "CA0002", 0, "TEST PLACE", "TEST DESCRIPTION", "", "", true);
-                MockMultipartFile photo = new MockMultipartFile("photo", "testPhoto.webp", "webp", new FileInputStream(DIR + "testPhoto.webp"));
-                Location location = new Location(certRecord.latitude(), certRecord.longitude());
+        @Test
+        @DisplayName("[SUCCESS] 일반 인증 생성")
+        public void createCertTest_Success_1() throws IOException {
+            // given
+            CertRecord certRecord = new CertRecord(1, "CA0002", 0, "TEST PLACE", "TEST DESCRIPTION", "", "", true);
+            MockMultipartFile photo = new MockMultipartFile("photo", "testPhoto.webp", "webp", new FileInputStream(DIR + "testPhoto.webp"));
+            Location location = new Location(certRecord.latitude(), certRecord.longitude());
 
-                Mockito.when(userService.getUserById(certRecord.userId())).thenReturn(user);
-                Mockito.when(reverseGeoService.getReverseGeoData(location)).thenReturn(new Location());
-                Mockito.when(certRepository.save(Mockito.any(Certification.class))).thenReturn(certification);
-                Mockito.when(photoService.uploadCertMultipartForJPG(certification.getCertificationId(), photo)).thenReturn("https://example.com/photo.jpg");
-                Mockito.when(achievementsService.checkEarnedAchievements(certRecord.userId(), certRecord.mungpleId() != 0)).thenReturn(List.of(new Achievements()));
+            Mockito.when(userService.getUserById(certRecord.userId())).thenReturn(user);
+            Mockito.when(reverseGeoService.getReverseGeoData(location)).thenReturn(new Location());
+            Mockito.when(certRepository.save(Mockito.any(Certification.class))).thenReturn(certification);
+            Mockito.when(photoService.uploadCertMultipartForJPG(certification.getCertificationId(), photo)).thenReturn("https://example.com/photo.jpg");
+            Mockito.when(achievementsService.checkEarnedAchievements(certRecord.userId(),
+                    certRecord.mungpleId() != 0)).thenReturn(List.of(new Achievements()));
 
-                // when
-                CertByAchvResDTO result = certService.createCert(certRecord, photo);
+            // when
+            CertByAchvResDTO result = certService.createCert(certRecord, photo);
 
-                // then
-                assertThat(result).isNotNull();
-                assertThat(result.getMungpleId()).isEqualTo(0);
-                assertThat(result.getCertificationId()).isEqualTo(certification.getCertificationId());
-            }
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result.getMungpleId()).isEqualTo(0);
+            assertThat(result.getCertificationId()).isEqualTo(certification.getCertificationId());
+        }
 
-            @Test
-            @DisplayName("멍플 인증 생성")
-            public void createCertTest_Success_2() throws IOException {
-                // given
-                int mungpleId = 3;
-                CertRecord certRecord = new CertRecord(1, "CA0002", mungpleId, "TEST PLACE", "TEST DESCRIPTION", "", "", true);
-                MockMultipartFile photo = new MockMultipartFile("photo", "testPhoto.webp", "webp", new FileInputStream(DIR + "testPhoto.webp"));
-                Mungple mungple = Mungple.builder().jibunAddress("TEST JIBUN ADDRESS").build();
+        @Test
+        @DisplayName("[SUCCESS] 멍플 인증 생성")
+        public void createCertTest_Success_2() throws IOException {
+            // given
+            int mungpleId = 3;
+            CertRecord certRecord = new CertRecord(1, "CA0002", mungpleId, "TEST PLACE", "TEST DESCRIPTION", "", "",
+                    true);
+            MockMultipartFile photo = new MockMultipartFile("photo", "testPhoto.webp", "webp", new FileInputStream(DIR + "testPhoto.webp"));
+            Mungple mungple = Mungple.builder().jibunAddress("TEST JIBUN ADDRESS").build();
 
-                Certification certificationByMungple = Certification.builder()
-                        .certificationId(13)
-                        .placeName("Test Place")
-                        .description("Test Description")
-                        .photoUrl("https://example.com/photo.jpg")
-                        .mungpleId(3)
-                        .isHideAddress(false)
-                        .address("Seoul, South Korea")
-                        .commentCount(0)
-                        .latitude("37.5101562")
-                        .longitude("127.1091707")
-                        .user(user)
-                        .build();
+            Certification certificationByMungple = Certification.builder()
+                    .certificationId(13)
+                    .placeName("Test Place")
+                    .description("Test Description")
+                    .photoUrl("https://example.com/photo.jpg")
+                    .mungpleId(3)
+                    .isHideAddress(false)
+                    .address("Seoul, South Korea")
+                    .commentCount(0)
+                    .latitude("37.5101562")
+                    .longitude("127.1091707")
+                    .user(user)
+                    .build();
 
-                // when
-                Mockito.when(userService.getUserById(certRecord.userId())).thenReturn(user);
-                Mockito.when(mungpleService.getMungpleById(certRecord.mungpleId())).thenReturn(mungple);
-                Mockito.when(certRepository.save(Mockito.any(Certification.class))).thenReturn(certificationByMungple);
-                Mockito.when(photoService.uploadCertMultipartForJPG(certificationByMungple.getCertificationId(), photo)).thenReturn("https://example.com/photo.jpg");
-                Mockito.when(achievementsService.checkEarnedAchievements(certRecord.userId(), certRecord.mungpleId() != 0)).thenReturn(List.of(new Achievements()));
+            // when
+            Mockito.when(userService.getUserById(certRecord.userId())).thenReturn(user);
+            Mockito.when(mungpleService.getMungpleById(certRecord.mungpleId())).thenReturn(mungple);
+            Mockito.when(certRepository.save(Mockito.any(Certification.class))).thenReturn(certificationByMungple);
+            Mockito.when(photoService.uploadCertMultipartForJPG(certificationByMungple.getCertificationId(), photo)).thenReturn("https://example.com/photo.jpg");
+            Mockito.when(achievementsService.checkEarnedAchievements(certRecord.userId(), certRecord.mungpleId() != 0)).thenReturn(List.of(new Achievements()));
 
-                CertByAchvResDTO result = certService.createCert(certRecord, photo);
+            CertByAchvResDTO result = certService.createCert(certRecord, photo);
 
-                // then
-                assertThat(result).isNotNull();
-                assertThat(result.getMungpleId()).isEqualTo(mungpleId);
-                assertThat(result.getCertificationId()).isEqualTo(certificationByMungple.getCertificationId());
-            }
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result.getMungpleId()).isEqualTo(mungpleId);
+            assertThat(result.getCertificationId()).isEqualTo(certificationByMungple.getCertificationId());
         }
     }
 
     @Nested
     @DisplayName("[TEST] [certId] 인증 조회")
     class getCertByIdTest {
-        @Nested
-        @DisplayName("[Success Case]")
-        class SuccessCase {
-            @Test
-            @DisplayName("유효한 certId로 인증 조회")
-            public void getCertByIdTest_Success_1() {
-                // given
-                int certificationId = 10;
+        @Test
+        @DisplayName("[SUCCESS] 유효한 certId로 인증 조회")
+        public void getCertByIdTest_Success_1() {
+            // given
+            int certificationId = 10;
 
-                // when
-                Mockito.when(certRepository.findCertByCertificationId(certificationId)).thenReturn(Optional.of(certification));
-                Certification result = certService.getCertById(certificationId);
+            // when
+            Mockito.when(certRepository.findCertByCertificationId(certificationId)).thenReturn(Optional.of(certification));
+            Certification result = certService.getCertById(certificationId);
 
-                // then
-                assertThat(certification).isEqualTo(result);
-            }
+            // then
+            assertThat(certification).isEqualTo(result);
         }
 
-        @Nested
-        @DisplayName("[Fail Case]")
-        class FailCase {
-            @Test
-            @DisplayName("유효하지 않은 certId로 인증 조회 - 예외 발생")
-            public void getCertByIdTest_Fail_1() {
-                // given
-                int certificationId = 2;
+        @Test
+        @DisplayName("[FAIL] 유효 하지 않은 certId로 인증 조회")
+        public void getCertByIdTest_Fail_1() {
+            // given
+            int certificationId = 2;
 
-                // when
-                Mockito.when(certRepository.findCertByCertificationId(certificationId)).thenReturn(Optional.empty());
+            // when
+            Mockito.when(certRepository.findCertByCertificationId(certificationId)).thenReturn(Optional.empty());
 
-                // then
-                assertThatThrownBy(() -> certService.getCertById(certificationId))
-                        .isInstanceOf(NullPointerException.class);
-            }
+            // then
+            assertThatThrownBy(() -> certService.getCertById(certificationId))
+                    .isInstanceOf(NullPointerException.class);
         }
     }
 
     @Nested
     @DisplayName("[TEST] 인증 DB 저장")
     class saveTest {
-        @Nested
-        @DisplayName("[Success Case]")
-        class SuccessCase {
-            @Test
-            @DisplayName("인증 저장")
-            public void saveTest_Success() {
-                // given
+        @Test
+        @DisplayName("[SUCCESS] 인증 DB 저장")
+        public void saveTest_Success() {
+            // given
 
-                // when
-                Mockito.when(certRepository.save(certification)).thenReturn(certification);
-                Certification result = certService.saveCert(certification);
+            // when
+            Mockito.when(certRepository.save(certification)).thenReturn(certification);
+            Certification result = certService.saveCert(certification);
 
-                // then
-                assertThat(result).isEqualTo(certification);
-            }
+            // then
+            assertThat(result).isEqualTo(certification);
         }
     }
 }
