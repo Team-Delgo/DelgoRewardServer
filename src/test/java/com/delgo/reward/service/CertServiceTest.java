@@ -5,9 +5,11 @@ import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.achievements.Achievements;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.common.Location;
+import com.delgo.reward.domain.like.LikeList;
 import com.delgo.reward.domain.mungple.Mungple;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.cert.CertByAchvResDTO;
+import com.delgo.reward.dto.cert.CertResDTO;
 import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.repository.CertRepository;
 import org.junit.jupiter.api.*;
@@ -207,6 +209,92 @@ public class CertServiceTest {
 
             // then
             assertThat(result).isEqualTo(dummyCerts);
+        }
+    }
+
+    @Nested
+    @DisplayName("[TEST] [certId & Like] 인증 조회")
+    class getCertsByIdWithLikeTEST {
+        @Test
+        @DisplayName("[SUCCESS] 본인 게시글 좋아요 클릭 O")
+        void getCertsByIdWithLikeTEST_Success_1() {
+            // given
+            int userId = 1;
+            int certificationId = 10;
+
+            List<LikeList> likeLists = Arrays.asList(
+                    LikeList.builder().userId(1).certificationId(10).isLike(true).build(),
+                    LikeList.builder().userId(2).certificationId(20).isLike(true).build(),
+                    LikeList.builder().userId(3).certificationId(30).isLike(true).build());
+
+            Certification certification = Certification.builder()
+                    .certificationId(10)
+                    .placeName("Test Place")
+                    .description("Test Description")
+                    .photoUrl("https://example.com/photo.jpg")
+                    .mungpleId(0)
+                    .isHideAddress(false)
+                    .address("Seoul, South Korea")
+                    .commentCount(0)
+                    .latitude("37.5101562")
+                    .longitude("127.1091707")
+                    .user(user)
+                    .likeLists(likeLists)
+                    .build();
+
+            // when
+            Mockito.when(certRepository.findCertByCertificationId(certificationId)).thenReturn(Optional.of(certification));
+            List<CertResDTO> result = certService.getCertsByIdWithLike(userId, certificationId);
+
+            // then
+            assertThat(result).hasSize(1);
+            assertThat(result.get(0).getCertificationId()).isEqualTo(certification.getCertificationId());
+            assertThat(result.get(0).getUserId()).isEqualTo(userId);
+
+            assertThat(result.get(0).getIsOwner()).isEqualTo(true);
+            assertThat(result.get(0).getIsLike()).isEqualTo(true);
+            assertThat(result.get(0).getLikeCount()).isEqualTo(3);
+        }
+
+        @Test
+        @DisplayName("[SUCCESS] 본인 게시글 좋아요 클릭 X")
+        void getCertsByIdWithLikeTEST_Success_2() {
+            // given
+            int userId = 1;
+            int certificationId = 10;
+
+            List<LikeList> likeLists = Arrays.asList(
+                    LikeList.builder().userId(1).certificationId(10).isLike(false).build(),
+                    LikeList.builder().userId(2).certificationId(20).isLike(true).build(),
+                    LikeList.builder().userId(3).certificationId(30).isLike(true).build());
+
+            Certification certification = Certification.builder()
+                    .certificationId(10)
+                    .placeName("Test Place")
+                    .description("Test Description")
+                    .photoUrl("https://example.com/photo.jpg")
+                    .mungpleId(0)
+                    .isHideAddress(false)
+                    .address("Seoul, South Korea")
+                    .commentCount(0)
+                    .latitude("37.5101562")
+                    .longitude("127.1091707")
+                    .user(user)
+                    .likeLists(likeLists)
+                    .build();
+
+            // when
+            Mockito.when(certRepository.findCertByCertificationId(certificationId)).thenReturn(Optional.of(certification));
+            List<CertResDTO> result = certService.getCertsByIdWithLike(userId, certificationId);
+
+            // then
+            assertThat(result).hasSize(1);
+            assertThat(result.get(0).getCertificationId()).isEqualTo(certification.getCertificationId());
+            assertThat(result.get(0).getUserId()).isEqualTo(userId);
+
+            assertThat(result.get(0).getIsOwner()).isEqualTo(true);
+            assertThat(result.get(0).getIsLike()).isEqualTo(false);
+            assertThat(result.get(0).getLikeCount()).isEqualTo(2);
         }
     }
 }
