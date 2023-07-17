@@ -35,10 +35,21 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     /**
+     * 댓글에 대한 알림 내용
+     */
+    public String makeCommentNotifyMsg(String name, String content){
+        return name + "님이 나의 게시글에 댓글을 남겼습니다.\n" + content;
+    }
+
+    /**
+     * 답글에 대한 알림 내용
+     */
+    public String makeReplyNotifyMsg(String name, String content){
+        return name + "님이 나의 댓글에 답글을 남겼습니다.\n" + content;
+    }
+
+    /**
      *  유저가 댓글을 작성하면 알림을 저장하고 인증 주인에게 푸시 알림을 보냄
-     * @param commentRecord
-     * @return 저장된 댓글 데이터 반환
-     * @throws IOException
      */
     public CommentResDTO createComment(CommentRecord commentRecord) throws IOException {
         User user = userService.getUserById(commentRecord.userId()); // 댓글 작성 유저 조회
@@ -50,7 +61,7 @@ public class CommentService {
         certification.setCommentCount(commentCount);
 
         // 인증 유저 알림
-        String notifyMsg = user.getName() + "님이 나의 게시글에 댓글을 남겼습니다.\n" + commentRecord.content();
+        String notifyMsg = makeCommentNotifyMsg(user.getName(), commentRecord.content());
         User certOwner = certification.getUser();
         notifyService.saveNotify(certOwner.getUserId(), NotifyType.COMMENT, notifyMsg);
         fcmService.commentPush(certOwner.getUserId(), notifyMsg);
@@ -58,16 +69,25 @@ public class CommentService {
         return new CommentResDTO(comment);
     }
 
+    /**
+     * [commentId] 뎃글 조회
+     */
     public Comment getCommentById(int commentId){
         return commentRepository.findCommentsById(commentId)
                 .orElseThrow(() -> new NullPointerException("NOT FOUND Comment ID : " + commentId));
     }
 
+    /**
+     * [certificationId] 뎃글 조회
+     */
     public List<CommentResDTO> getCommentsByCertId(int certificationId){
         return commentRepository.findCommentsByCertId(certificationId)
                 .stream().map(CommentResDTO::new).toList();
     }
 
+    /**
+     * 댓글 수정
+     */
     public Boolean modifyComment(ModifyCommentRecord modifyCommentRecord) {
         Comment comment = getCommentById(modifyCommentRecord.commentId());
         if (comment.getUser().getUserId() != modifyCommentRecord.userId())  // 유저 체크
@@ -77,6 +97,9 @@ public class CommentService {
         return true;
     }
 
+    /**
+     * 댓글 삭제
+     */
     public Boolean deleteComment(int commentId, int userId, int certificationId) {
         // 댓글 OR 인증 작성자인지 CHECK.
         Comment comment = getCommentById(commentId);
@@ -99,9 +122,6 @@ public class CommentService {
 
     /**
      * 유저가 답글을 작성하면 알림을 저장하고 인증 주인과 댓글 주인에게 푸시 알림을 보냄
-     * @param replyRecord
-     * @return 저장된 답글 데이터 반환
-     * @throws IOException
      */
     public ReplyResDTO createReply(ReplyRecord replyRecord) throws IOException {
         User user = userService.getUserById(replyRecord.userId()); // 답글 작성 유저 조회
@@ -114,19 +134,22 @@ public class CommentService {
 
         // 인증 유저 알림
         int certOwnerId = certification.getUser().getUserId();
-        String certOwnerNotifyMsg = user.getName() + "님이 나의 게시글에 댓글을 남겼습니다.\n" + replyRecord.content();
+        String certOwnerNotifyMsg = makeCommentNotifyMsg(user.getName(), replyRecord.content());
         notifyService.saveNotify(certOwnerId, NotifyType.COMMENT, certOwnerNotifyMsg);
         fcmService.commentPush(certOwnerId, certOwnerNotifyMsg);
 
         // 부모 댓글 유저 알림
         int commentOwnerId = getCommentById(replyRecord.parentCommentId()).getUser().getUserId();
-        String commentOwnerNotifyMsg = user.getName() + "님이 나의 댓글에 답글을 남겼습니다.\n" + replyRecord.content();
+        String commentOwnerNotifyMsg = makeReplyNotifyMsg(user.getName(), replyRecord.content());
         notifyService.saveNotify(commentOwnerId, NotifyType.REPLY, commentOwnerNotifyMsg);
         fcmService.commentPush(commentOwnerId, commentOwnerNotifyMsg);
 
         return new ReplyResDTO(reply);
     }
 
+    /**
+     * [parentCommentId] 댓글에 대한 답글 조회
+     */
     public List<ReplyResDTO> getReplyByParentCommentId(int parentCommentId){
         return commentRepository.findCommentsByParentCommentId(parentCommentId)
                 .stream().map(ReplyResDTO::new).toList();
