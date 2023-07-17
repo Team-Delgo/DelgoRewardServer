@@ -4,7 +4,7 @@ import com.delgo.reward.comm.code.BusinessHourCode;
 import com.delgo.reward.comm.code.DetailCode;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
-import com.delgo.reward.domain.Mungple;
+import com.delgo.reward.domain.mungple.Mungple;
 import com.delgo.reward.mongoDomain.MungpleDetail;
 import com.delgo.reward.mongoRepository.MungpleDetailRepository;
 import com.delgo.reward.mongoService.MongoMungpleService;
@@ -57,7 +57,7 @@ public class ExcelParserService {
             String mungpleName = getStringExcelData(row.getCell(3));
             log.info("mungpleName :{}", mungpleName);
 
-            Mungple mungple = mungpleRepository.findByPlaceName(mungpleName);
+            Mungple mungple = mungpleRepository.findMungpleByPlaceName(mungpleName);
             if(mungple == null){
                 log.info("--------------------------------------------------------------------------------------");
                 continue;
@@ -185,7 +185,7 @@ public class ExcelParserService {
             String mungpleName = getStringExcelData(row.getCell(3));
             log.info("mungpleName :{}", mungpleName);
 
-            Mungple mungple = mungpleRepository.findByPlaceName(mungpleName);
+            Mungple mungple = mungpleRepository.findMungpleByPlaceName(mungpleName);
             if(mungple == null){
                 log.info("--------------------------------------------------------------------------------------");
                 continue;

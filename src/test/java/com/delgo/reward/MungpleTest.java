@@ -3,7 +3,7 @@ package com.delgo.reward;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
-import com.delgo.reward.domain.Mungple;
+import com.delgo.reward.domain.mungple.Mungple;
 import com.delgo.reward.dto.mungple.MungpleResDTO;
 import com.delgo.reward.repository.MungpleRepository;
 import com.delgo.reward.service.MungpleService;
@@ -42,23 +42,12 @@ public class MungpleTest {
     }
 
     @Test
-    public void deleteMungpleTest() {
-        //given
-        int mungpleId = 70;
-
-        //when
-        mungpleService.delete(mungpleId);
-
-        //then
-    }
-
-    @Test
     public void deleteDuplicateMungpleTest() {
         List<Mungple> mungples = mungpleRepository.findAll();
         System.out.println("count :{} " + mungples.size());
         int i = 1;
         for(Mungple mungple :mungples){
-            List<Mungple> result = mungpleRepository.findByJibunAddress(mungple.getJibunAddress());
+            List<Mungple> result = mungpleRepository.findMungpleByJibunAddress(mungple.getJibunAddress());
             if(result.size() >= 2) {
                 i++;
                 System.out.println(i + " 두개 이상 존재하는 result : " + result.get(1));

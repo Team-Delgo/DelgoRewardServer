@@ -1,8 +1,8 @@
-package com.delgo.reward.dto.mungple;
+package com.delgo.reward.dto.mungple.detail;
 
 import com.delgo.reward.comm.code.BusinessHourCode;
 import com.delgo.reward.comm.code.DetailCode;
-import com.delgo.reward.domain.Mungple;
+import com.delgo.reward.domain.mungple.Mungple;
 import com.delgo.reward.mongoDomain.MungpleDetail;
 import lombok.Getter;
 import lombok.ToString;

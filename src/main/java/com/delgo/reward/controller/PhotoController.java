@@ -60,7 +60,7 @@ public class PhotoController extends CommController {
     @PostMapping(value={"/mungple/{mungpleId}","/upload/mungple"})
     public ResponseEntity<?> uploadMungplePhoto(@PathVariable Integer mungpleId, @RequestPart MultipartFile photo) {
         if (photo.isEmpty()) ParamErrorReturn("photo");
-        return SuccessReturn(mungpleService.changePhoto(mungpleId,photo));
+        return SuccessReturn(mungpleService.modifyPhoto(mungpleId,photo));
     }
 
     /*
