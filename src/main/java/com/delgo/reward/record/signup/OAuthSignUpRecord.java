@@ -29,7 +29,7 @@ public record OAuthSignUpRecord(
         return switch (userSocial) {
             case A -> User.builder()
                     .name(userName)
-                    .email(email)
+                    .email(null)
                     .phoneNo(phoneNo.replaceAll("[^0-9]", ""))
                     .userSocial(userSocial)
                     .address(address)

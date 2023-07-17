@@ -5,7 +5,7 @@ import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.ncp.GeoService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
-import com.delgo.reward.domain.Mungple;
+import com.delgo.reward.domain.mungple.Mungple;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.dto.mungple.MungpleResDTO;
 import com.delgo.reward.record.mungple.MungpleRecord;
@@ -36,72 +36,81 @@ public class MungpleService {
     private final CertRepository certRepository;
     private final MungpleRepository mungpleRepository;
 
-    // Mungple 등록
-    public MungpleResDTO register(MungpleRecord record, MultipartFile photo) {
+    /**
+     * Mungple 생성
+     */
+    public MungpleResDTO createMungple(MungpleRecord record, MultipartFile photo) {
         Location location = geoService.getGeoData(record.address()); // 위도, 경도
 
         Mungple mungple = mungpleRepository.save(record.toEntity(location));
-//        mungple.setPhotoUrl(photoService.uploadMungple(mungple.getMungpleId(), photo));
+        mungple.setPhotoUrl(photoService.uploadMungple(mungple.getMungpleId(), photo));
 
         return new MungpleResDTO(mungple);
     }
 
-    // mungpleId로 Mungple 조회
+    /**
+     * [mungpleId] Mungple 조회
+     */
     public Mungple getMungpleById(int mungpleId) {
         return mungpleRepository.findById(mungpleId)
-                .orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE"));
+                .orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE - mungpleId : " + mungpleId ));
     }
 
-    // categoryCode로 Mungple 조회
+    /**
+     * [categoryCode] Mungple 조회
+     */
     public List<MungpleResDTO> getMungpleByCategoryCode(String categoryCode) {
         List<Mungple> mungpleList = !categoryCode.equals(CategoryCode.TOTAL.getCode())
-                ? mungpleRepository.findByCategoryCode(categoryCode)
+                ? mungpleRepository.findMungpleByCategoryCode(categoryCode)
                 : mungpleRepository.findAll();
 
         return mungpleList.stream().map(MungpleResDTO::new).collect(Collectors.toList());
     }
 
-    // categoryCode로 Active Mungple 조회
+    /**
+     * [categoryCode] Active Mungple 조회
+     */
     public List<MungpleResDTO> getActiveMungpleByCategoryCode(String categoryCode) {
         List<Mungple> mungpleList = !categoryCode.equals(CategoryCode.TOTAL.getCode())
-                ? mungpleRepository.findByCategoryCodeAndIsActive(categoryCode, true)
-                : mungpleRepository.findAllByIsActive(true);
+                ? mungpleRepository.findMungpleByCategoryCodeAndIsActive(categoryCode, true)
+                : mungpleRepository.findMungpleByIsActive(true);
 
         return mungpleList.stream().map(MungpleResDTO::new).collect(Collectors.toList());
     }
 
-    // categoryCode로 Mungple 조회
-    public List<MungpleResDTO> getMungpleByMap(String categoryCode) {
-        List<Mungple> mungpleList = !categoryCode.equals(CategoryCode.TOTAL.getCode())
-                ? mungpleRepository.findByCategoryCodeAndIsActive(categoryCode,true)
-                : mungpleRepository.findAllByIsActive(true);
-
-        return mungpleList.stream().map(MungpleResDTO::new).collect(Collectors.toList());
-    }
-
-    // 중복 체크
+    /**
+     * [address] Mungple 중복 체크
+     * NCP - 위도, 경도 구해야 함.
+     */
     public boolean isMungpleExisting(String address) {
-        Location location = geoService.getGeoData(address); // 위도, 경도
-        log.info("Location : {}", location);
-
-        return mungpleRepository.existsByLatitudeAndLongitude(location.getLatitude(), location.getLongitude());
+        Location location = geoService.getGeoData(address);
+        return mungpleRepository.existsMungpleByLatitudeAndLongitude(location.getLatitude(), location.getLongitude());
     }
 
-    // 인증 개수 많은 멍플 조회
-    public List<Mungple> getMungpleOfMostCount(int count){
-       List<Integer> mungpleIds = certRepository.findCertOrderByMungpleCount(PageRequest.of(0, count));
-        return mungpleRepository.findMungpleByIds(mungpleIds);
+    /**
+     * [인증 개수 많은 순] Mungple 조회
+     */
+    public List<MungpleResDTO> getMungpleOfMostCertCount(int count) {
+        List<Integer> mungpleIds = certRepository.findCertOrderByMungpleCount(PageRequest.of(0, count));
+        List<Mungple> mungpleList = mungpleRepository.findMungpleByIds(mungpleIds);
+
+        return mungpleList.stream().map(MungpleResDTO::new).collect(Collectors.toList());
     }
 
-    // 멍플 삭제
-    public void delete(int mungpleId){
+    /**
+     * Mungple Photo 수정
+     */
+    public Mungple modifyPhoto(int mungpleId, MultipartFile photo){
+        return getMungpleById(mungpleId).setPhotoUrl(photoService.uploadMungple(mungpleId, photo));
+    }
+
+    /**
+     * Mungple 삭제
+     * NCP Object Storage 도 삭제 해줘야 함.
+     */
+    public void deleteMungple(int mungpleId){
         mungpleRepository.deleteById(mungpleId);
         objectStorageService.deleteObject(BucketName.MUNGPLE,mungpleId + "_mungple.webp"); // Thumbnail delete
         objectStorageService.deleteObject(BucketName.MUNGPLE_NOTE,mungpleId + "_mungplenote.webp"); // mungpleNote delete
-    }
-
-    // 멍플 사진 변경
-    public Mungple changePhoto(int mungpleId, MultipartFile photo){
-        return getMungpleById(mungpleId).setPhotoUrl(photoService.uploadMungple(mungpleId, photo));
     }
 }

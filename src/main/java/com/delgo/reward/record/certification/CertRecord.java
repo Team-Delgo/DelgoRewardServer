@@ -1,6 +1,6 @@
 package com.delgo.reward.record.certification;
 
-import com.delgo.reward.domain.Mungple;
+import com.delgo.reward.domain.mungple.Mungple;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.domain.user.User;
