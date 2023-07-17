@@ -21,8 +21,10 @@ import org.springframework.mock.web.MockMultipartFile;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ExtendWith(MockitoExtension.class)
 public class CertServiceTest {
@@ -131,6 +133,46 @@ public class CertServiceTest {
                 assertThat(result).isNotNull();
                 assertThat(result.getMungpleId()).isEqualTo(mungpleId);
                 assertThat(result.getCertificationId()).isEqualTo(certificationByMungple.getCertificationId());
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName(" [certId] 인증 조회 TEST")
+    class getCertByIdTest {
+        @Nested
+        @DisplayName("[Success Case]")
+        class SuccessCase {
+            @Test
+            @DisplayName("유효한 certId로 인증 조회")
+            public void getCertByIdTest_Success_1() {
+                // given
+                int certificationId = 10;
+
+                // when
+                Mockito.when(certRepository.findCertByCertificationId(certificationId)).thenReturn(Optional.of(certification));
+                Certification result = certService.getCertById(certificationId);
+
+                // then
+                assertThat(certification).isEqualTo(result);
+            }
+        }
+
+        @Nested
+        @DisplayName("[Fail Case]")
+        class FailCase {
+            @Test
+            @DisplayName("유효하지 않은 certId로 인증 조회 - 예외 발생")
+            public void getCertByIdTest_Fail_1() {
+                // given
+                int certificationId = 2;
+
+                // when
+                Mockito.when(certRepository.findCertByCertificationId(certificationId)).thenReturn(Optional.empty());
+
+                // then
+                assertThatThrownBy(() -> certService.getCertById(certificationId))
+                        .isInstanceOf(NullPointerException.class);
             }
         }
     }
