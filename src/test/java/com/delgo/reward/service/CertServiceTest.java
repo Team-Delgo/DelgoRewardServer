@@ -69,7 +69,7 @@ public class CertServiceTest {
     }
 
     @Nested
-    @DisplayName("인증 생성 TEST")
+    @DisplayName("[TEST] 인증 생성")
     class createCertTest {
         @Nested
         @DisplayName("[Success Case]")
@@ -138,7 +138,7 @@ public class CertServiceTest {
     }
 
     @Nested
-    @DisplayName(" [certId] 인증 조회 TEST")
+    @DisplayName("[TEST] [certId] 인증 조회")
     class getCertByIdTest {
         @Nested
         @DisplayName("[Success Case]")
@@ -173,6 +173,27 @@ public class CertServiceTest {
                 // then
                 assertThatThrownBy(() -> certService.getCertById(certificationId))
                         .isInstanceOf(NullPointerException.class);
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("[TEST] 인증 DB 저장")
+    class saveTest {
+        @Nested
+        @DisplayName("[Success Case]")
+        class SuccessCase {
+            @Test
+            @DisplayName("인증 저장")
+            public void saveTest_Success() {
+                // given
+
+                // when
+                Mockito.when(certRepository.save(certification)).thenReturn(certification);
+                Certification result = certService.saveCert(certification);
+
+                // then
+                assertThat(result).isEqualTo(certification);
             }
         }
     }
