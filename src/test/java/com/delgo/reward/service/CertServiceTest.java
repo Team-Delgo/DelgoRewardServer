@@ -22,9 +22,13 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -295,6 +299,37 @@ public class CertServiceTest {
             assertThat(result.get(0).getIsOwner()).isEqualTo(true);
             assertThat(result.get(0).getIsLike()).isEqualTo(false);
             assertThat(result.get(0).getLikeCount()).isEqualTo(2);
+        }
+    }
+
+    @Nested
+    @DisplayName("[TEST] 날짜별 인증 조회")
+    class getCertsByDateTest {
+        @Test
+        @DisplayName("[SUCCESS] 날짜별 인증 조회")
+        public void getCertsByDateTest_Success() {
+            // given
+            int userId = 1;
+            LocalDate date = LocalDate.now();
+            LocalDateTime startDateTime = date.atStartOfDay();
+            LocalDateTime endDateTime = date.atTime(23, 59, 59);
+            LocalDateTime registDateTime = date.atTime(05, 55, 04);
+
+            certification.setRegistDtByTest(registDateTime);
+            List<Certification> dummyCerts = Collections.singletonList(certification);
+
+            // when
+            Mockito.when(certRepository.findCertByDateAndUser(userId, startDateTime, endDateTime)).thenReturn(dummyCerts);
+
+            // then
+            List<CertResDTO> result = certService.getCertsByDate(userId, date);
+
+            List<CertResDTO> expected = dummyCerts.stream()
+                    .map(c -> new CertResDTO(c, userId))
+                    .collect(Collectors.toList());
+
+            assertThat(result.get(0).getRegistDt()).isEqualTo(registDateTime);
+            assertThat(result.get(0).getCertificationId()).isEqualTo(expected.get(0).getCertificationId());
         }
     }
 }

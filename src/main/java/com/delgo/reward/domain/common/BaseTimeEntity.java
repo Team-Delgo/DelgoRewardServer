@@ -19,4 +19,9 @@ public class BaseTimeEntity {
     private LocalDateTime registDt;
     @LastModifiedDate
     private LocalDateTime updatedDt;
+
+
+    public void setRegistDtByTest(LocalDateTime registDt){
+        this.registDt = registDt;
+    }
 }
