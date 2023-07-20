@@ -107,17 +107,17 @@ public class CertController extends CommController {
     }
 
     /**
-     * [Category] 인증 조회  ex) CA0000(전체 조회), CA0002(카페 조회)
+     * [User & Category] 인증 조회  ex) CA0000(전체 조회), CA0002(카페 조회)
      * @param userId, categoryCode, pageable
      * @return PageResDTO<CertResDTO, Integer>
      */
     @GetMapping("/category")
-    public ResponseEntity getCertsByCategory(
+    public ResponseEntity getCertsByCategoryAndUser(
             @RequestParam Integer userId,
             @RequestParam String categoryCode,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
         if (categoryCode.isBlank()) return ErrorReturn(APICode.PARAM_ERROR);
-        return SuccessReturn(certService.getCertsByCategory(userId, categoryCode, pageable));
+        return SuccessReturn(certService.getCertsByCategoryAndUser(userId, categoryCode, pageable));
     }
 
     /**

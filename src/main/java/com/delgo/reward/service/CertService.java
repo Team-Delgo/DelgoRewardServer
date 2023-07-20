@@ -195,7 +195,7 @@ public class CertService {
     /**
      * [Category] 인증 조회
      */
-    public PageResDTO<CertResDTO> getCertsByCategory(int userId, String categoryCode, Pageable pageable) {
+    public PageResDTO<CertResDTO> getCertsByCategoryAndUser(int userId, String categoryCode, Pageable pageable) {
         Slice<Integer> slice = (!categoryCode.equals(CategoryCode.TOTAL.getCode()))
                 ? certRepository.findCertIdByUserIdAndCategoryCode(userId, categoryCode, pageable)
                 : certRepository.findCertIdByUserId(userId, pageable);
