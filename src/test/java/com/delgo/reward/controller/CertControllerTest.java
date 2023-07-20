@@ -299,7 +299,7 @@ public class CertControllerTest {
         List<CertResDTO> certResDTOS = List.of(new CertResDTO(certification, userId));
         PageResDTO<CertResDTO> pageResDTO = new PageResDTO<>(certResDTOS, size, number, isLast);
 
-        Mockito.when(certService.getCertsByCategory(userId, categoryCode, pageable)).thenReturn(pageResDTO);
+        Mockito.when(certService.getCertsByCategoryAndUser(userId, categoryCode, pageable)).thenReturn(pageResDTO);
 
         // when & then
         mockMvc.perform(get("/api/certification/category")
