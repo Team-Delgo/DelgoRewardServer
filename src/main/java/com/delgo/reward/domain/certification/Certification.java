@@ -40,7 +40,7 @@ public class Certification extends BaseTimeEntity {
     private int commentCount; // 댓글 개수
     private Boolean isExpose; // Map에 노출 시키는 인증 구분. ( 초기엔 운영진이 직접 추가 예정 )
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", updatable = false)
     private User user;
 

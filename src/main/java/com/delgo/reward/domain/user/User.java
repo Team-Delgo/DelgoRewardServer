@@ -1,10 +1,13 @@
 package com.delgo.reward.domain.user;
 
+import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.common.BaseTimeEntity;
 import com.delgo.reward.domain.pet.Pet;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -40,6 +43,9 @@ public class User extends BaseTimeEntity {
 
     @OneToOne(mappedBy = "user")
     private Pet pet;
+
+    @OneToMany(mappedBy = "user")
+    private List<Certification> certifications = new ArrayList<>();
 
 //    @OneToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name="userId")
