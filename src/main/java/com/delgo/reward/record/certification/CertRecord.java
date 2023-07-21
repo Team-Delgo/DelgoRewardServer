@@ -42,7 +42,7 @@ public record CertRecord(
     // 멍플 인증 일 때는 주소 숨기기 불가능.
     public Certification toEntity(Mungple mungple, User user) {
         String[] arr = mungple.getJibunAddress().split(" ");
-        String address = arr[0] + " " + arr[1];
+        String address = arr[0] + " " + arr[1] + " " + arr[2];
         return Certification.builder()
                 .user(user)
                 .categoryCode(mungple.getCategoryCode())
