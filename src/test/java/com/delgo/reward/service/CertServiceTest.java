@@ -323,13 +323,38 @@ public class CertServiceTest {
 
             // then
             List<CertResDTO> result = certService.getCertsByDate(userId, date);
-
             List<CertResDTO> expected = dummyCerts.stream()
                     .map(c -> new CertResDTO(c, userId))
-                    .collect(Collectors.toList());
+                    .toList();
 
             assertThat(result.get(0).getRegistDt()).isEqualTo(registDateTime);
             assertThat(result.get(0).getCertificationId()).isEqualTo(expected.get(0).getCertificationId());
+        }
+    }
+
+    @Nested
+    @DisplayName("[TEST] 날짜별 모든 인증 조회")
+    class getCertsByDateWithoutUserTest {
+        @Test
+        @DisplayName("[SUCCESS]  날짜별 모든 인증 조회")
+        public void getCertsByDateWithoutUserTest_Success() {
+            // given
+            LocalDate date = LocalDate.now();
+            LocalDateTime startDateTime = date.minusDays(1).atStartOfDay();
+            LocalDateTime endDateTime = date.atStartOfDay();
+            LocalDateTime registDateTime = date.atTime(05, 55, 04);
+
+            certification.setRegistDtByTest(registDateTime);
+            List<Certification> dummyCerts = Collections.singletonList(certification);
+
+            // when
+            Mockito.when(certRepository.findCertByDate(startDateTime, endDateTime)).thenReturn(dummyCerts);
+
+            // then
+            List<Certification> result = certService.getCertsByDateWithoutUser(date);
+
+            assertThat(result.get(0).getRegistDt()).isEqualTo(registDateTime);
+            assertThat(result.get(0).getCertificationId()).isEqualTo(dummyCerts.get(0).getCertificationId());
         }
     }
 }
