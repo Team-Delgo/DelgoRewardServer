@@ -10,11 +10,9 @@ import com.delgo.reward.dto.user.UserResDTO;
 import com.delgo.reward.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,7 +38,14 @@ public class LoginController extends CommController {
 
         JwtToken jwt = jwtService.createToken(userId);
         response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
-        response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
+
+        ResponseCookie cookie = ResponseCookie.from(RefreshTokenProperties.HEADER_STRING, jwt.getRefreshToken())
+                .secure(true)
+                .httpOnly(true)
+                .path("/")
+                .sameSite("Strict")
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
 
         return SuccessReturn(new UserResDTO(userService.getUserById(userId)));
     }
@@ -61,11 +66,19 @@ public class LoginController extends CommController {
      * 성공 : 재발급, 실패 : 오류 코드 반환
      */
     @GetMapping("/api/token/reissue")
-    public ResponseEntity<?> tokenReissue(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<?> tokenReissue(@CookieValue(name = RefreshTokenProperties.HEADER_STRING, required = false) String refreshToken, HttpServletResponse response) {
         try {
-            JwtToken jwt = jwtService.createToken(jwtService.getUserIdByRefreshToken());
+            int userId = jwtService.getUserIdByRefreshToken(refreshToken);
+            JwtToken jwt = jwtService.createToken(userId);
             response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
-            response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
+
+            ResponseCookie cookie = ResponseCookie.from(RefreshTokenProperties.HEADER_STRING, jwt.getRefreshToken())
+                    .secure(true)
+                    .httpOnly(true)
+                    .path("/")
+                    .sameSite("Strict")
+                    .build();
+            response.addHeader("Set-Cookie", cookie.toString());
 
             return SuccessReturn();
         } catch (Exception e) { // Refresh_Toekn 인증 실패 ( 로그인 화면으로 이동 필요 )
