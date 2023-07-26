@@ -76,6 +76,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.antMatchers("/api/photo/mungple/*").permitAll()
 				.antMatchers("/api/photo/achievements/*").permitAll()
 				.antMatchers("/api/mungple").permitAll()
+				.antMatchers("/api/mungple/detail").permitAll()
 				.antMatchers("/api/mungple/category/*").permitAll()
 				.antMatchers("/health-check").permitAll()
 				.antMatchers("/kafka/**").permitAll()
