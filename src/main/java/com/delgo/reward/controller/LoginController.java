@@ -83,7 +83,7 @@ public class LoginController extends CommController {
             return SuccessReturn();
         } catch (Exception e) { // Refresh_Toekn 인증 실패 ( 로그인 화면으로 이동 필요 )
             e.printStackTrace();
-            return ErrorReturn(APICode.TOKEN_ERROR);
+            return TokenErrorReturn();
         }
     }
 
@@ -93,6 +93,6 @@ public class LoginController extends CommController {
      */
     @RequestMapping("/token/error")
     public ResponseEntity<?> tokenError() {
-        return ErrorReturn(APICode.TOKEN_ERROR);
+        return TokenErrorReturn();
     }
 }
