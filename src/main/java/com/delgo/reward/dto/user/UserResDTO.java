@@ -20,7 +20,7 @@ public class UserResDTO {
     // User Data
     private int userId;
     private String email;
-    private String userName;
+    private String nickname;
     private String phoneNo; // 보안 필요함.
     private String geoCode; // 보안 필요함.
     private String address;
@@ -42,7 +42,7 @@ public class UserResDTO {
         // User
         userId = user.getUserId();
         email = user.getEmail();
-        userName = user.getName();
+        nickname = user.getName();
         phoneNo = user.getPhoneNo();
         geoCode = user.getGeoCode();
         address = user.getAddress();
