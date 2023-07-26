@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.FilterChain;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -68,7 +69,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (Exception e) { // Token 시간 만료 및 토큰 인증 에러
             log.info("Access Token Expired : " + e.getLocalizedMessage());
-            chain.doFilter(request, response); // 403 Authorization Denied 발생
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/token/error");
+            dispatcher.forward(request, response); // 303 토큰 에러 발생
             return;
         }
         chain.doFilter(request, response);
