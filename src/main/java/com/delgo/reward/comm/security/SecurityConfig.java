@@ -18,6 +18,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
+
 @Configuration
 @EnableWebSecurity // 시큐리티 활성화 -> 기본 스프링 필터체인에 등록
 @RequiredArgsConstructor
@@ -34,11 +36,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 
-		configuration.addAllowedOriginPattern("*");
+//		configuration.addAllowedOriginPattern("*");
+		configuration.setAllowedOrigins(Arrays.asList(
+				"https://www.test.delgo.pet",
+				"http://localhost:3000"
+		));
 		configuration.addAllowedMethod("*");
 		configuration.addAllowedHeader("*");
 		configuration.addExposedHeader("Authorization_Access, Authorization_Refresh");
-//		configuration.setAllowCredentials(true);
+		configuration.setAllowCredentials(true);
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
@@ -74,7 +80,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				// delgo-map
 				.antMatchers("/api/map/**").permitAll()
 				.antMatchers("/api/map/mungple").permitAll()
-				.antMatchers("/api/survey/**").permitAll()
 				.antMatchers("/api/photo/webp").permitAll()
 				.antMatchers("/api/photo/mungplenote/*").permitAll()
 				.antMatchers("/api/photo/mungple/*").permitAll()
@@ -87,7 +92,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				// version
 				.antMatchers("/api/version").permitAll()
 
-				.antMatchers("/**").authenticated();
+				.anyRequest().authenticated();
 
 //				 TEST
 //				.antMatchers("/**").permitAll();

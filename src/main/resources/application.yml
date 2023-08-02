@@ -1,7 +1,7 @@
 # spring MariaDB Connect
 spring:
   profiles:
-      active: local
+      active: dev
   datasource:
     username: delgo
     password: Zlzl2022!
@@ -34,7 +34,7 @@ server:
 # Swagger 설정
 springdoc:
   api-docs:
-    enabled: true
+    enabled: false
     path: /api-docs
   show-actuator: true
   default-consumes-media-type: application/json
