@@ -173,6 +173,31 @@ public class PhotoService extends CommService {
         }
     }
 
+    public String uploadMongoMungple(String mungpleId, MultipartFile photo) {
+        String[] type = Objects.requireNonNull(photo.getContentType()).split("/"); // ex) png, jpg, jpeg
+        String extension = type[type.length - 1];
+
+        String[] originalFilename = Objects.requireNonNull(photo.getOriginalFilename()).split("\\.");
+        String fileName = originalFilename[0] + "_mungple.webp";
+        String ncpLink = BucketName.MUNGPLE.getUrl() + fileName;
+
+        try {
+            File file = new File(DIR + mungpleId + "_mungple." + extension); // 서버에 저장
+            photo.transferTo(file);
+
+            File webpFile = convertWebp(fileName, file);  // filePath에서 File 불러온 뒤 webp로 변환 후 저장.
+
+            objectStorageService.uploadObjects(BucketName.MUNGPLE, fileName, DIR + fileName); // Upload NCP
+            file.delete(); // 서버에 저장된 사진 삭제
+            webpFile.delete();
+
+            return setCacheInvalidation(ncpLink);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new NullPointerException("PHOTO UPLOAD ERROR");
+        }
+    }
+
     public String uploadMungpleNote(MultipartFile photo) {
         String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\."); // ex) png, jpg, jpeg
         String fileName = type[0] + "_mungplenote.webp";

@@ -3,6 +3,7 @@ package com.delgo.reward.record.mungple;
 
 import com.delgo.reward.domain.mungple.Mungple;
 import com.delgo.reward.domain.common.Location;
+import com.delgo.reward.mongoDomain.MongoMungple;
 
 import javax.validation.constraints.NotNull;
 
@@ -16,6 +17,22 @@ public record MungpleRecord(
 
     public Mungple toEntity(Location location) {
         return Mungple.builder()
+                .categoryCode(this.categoryCode)
+                .phoneNo(this.phoneNo)
+                .placeName(this.placeName)
+                .placeNameEn(this.placeNameEn)
+                .geoCode(location.getGeoCode())
+                .pGeoCode(location.getPGeoCode())
+                .roadAddress(location.getRoadAddress())
+                .jibunAddress(location.getJibunAddress())
+                .latitude(location.getLatitude())
+                .longitude(location.getLongitude())
+                .isActive(true)
+                .build();
+    }
+
+    public MongoMungple toMongoEntity(Location location){
+        return MongoMungple.builder()
                 .categoryCode(this.categoryCode)
                 .phoneNo(this.phoneNo)
                 .placeName(this.placeName)
