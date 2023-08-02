@@ -38,9 +38,20 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
+        String requestURI = request.getRequestURI();
+        log.info("[JwtAuthorizationFilter] : *** {} 들어옴 ***", requestURI);
+
+        // permitAll()로 설정한 API에 대해 검사를 스킵하고 통과시킴
+        if (requestURI.startsWith("/api/token/reissue")) {
+            log.info("[JwtAuthorizationFilter] : *** /api/token/reissue 들어옴 ***");
+            chain.doFilter(request, response);
+            return;
+        }
+
         String header = request.getHeader(AccessTokenProperties.HEADER_STRING);
         // Token 있는지 여부 체크
         if (header == null || !header.startsWith(AccessTokenProperties.TOKEN_PREFIX)) {
+            log.info("[JwtAuthorizationFilter] : *** 토큰 X ***");
             chain.doFilter(request, response);
             return;
         }
