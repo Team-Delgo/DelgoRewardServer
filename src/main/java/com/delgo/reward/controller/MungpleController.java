@@ -71,26 +71,26 @@ public class MungpleController extends CommController {
 
     // -------------------------------------- DETAIL --------------------------------------
 
-    /**
-     * Mungple Detail 등록
-     * @param record
-     * @return MungpleDetailResDTO
-     */
-    @PostMapping("/detail")
-    public ResponseEntity createMungpleDetail(@RequestBody MungpleDetailRecord record){
-        if(mongoMungpleService.isExist(record.mungpleId()))
-            return ErrorReturn(APICode.MUNGPLE_DUPLICATE_ERROR);
-
-        return SuccessReturn(mongoMungpleService.createMungpleDetail(record));
-    }
-
-    /**
-     * [MungpleId] Mungple Detail 조회
-     * @param mungpleId
-     * @return MungpleDetailResDTO
-     */
-    @GetMapping("/detail")
-    public ResponseEntity getMungpleDetailByMungpleId(@RequestParam int mungpleId){
-        return SuccessReturn(mongoMungpleService.getMungpleDetailDataByMungpleId(mungpleId));
-    }
+//    /**
+//     * Mungple Detail 등록
+//     * @param record
+//     * @return MungpleDetailResDTO
+//     */
+//    @PostMapping("/detail")
+//    public ResponseEntity createMungpleDetail(@RequestBody MungpleDetailRecord record){
+//        if(mongoMungpleService.isExist(record.mungpleId()))
+//            return ErrorReturn(APICode.MUNGPLE_DUPLICATE_ERROR);
+//
+//        return SuccessReturn(mongoMungpleService.createMungpleDetail(record));
+//    }
+//
+//    /**
+//     * [MungpleId] Mungple Detail 조회
+//     * @param mungpleId
+//     * @return MungpleDetailResDTO
+//     */
+//    @GetMapping("/detail")
+//    public ResponseEntity getMungpleDetailByMungpleId(@RequestParam int mungpleId){
+//        return SuccessReturn(mongoMungpleService.getMungpleDetailDataByMungpleId(mungpleId));
+//    }
 }
