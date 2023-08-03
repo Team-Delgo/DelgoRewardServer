@@ -39,11 +39,9 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             throws IOException, ServletException {
 
         String requestURI = request.getRequestURI();
-        log.info("[JwtAuthorizationFilter] : *** {} 들어옴 ***", requestURI);
 
         // permitAll()로 설정한 API에 대해 검사를 스킵하고 통과시킴
         if (requestURI.startsWith("/api/token/reissue")) {
-            log.info("[JwtAuthorizationFilter] : *** /api/token/reissue 들어옴 ***");
             chain.doFilter(request, response);
             return;
         }
@@ -51,7 +49,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         String header = request.getHeader(AccessTokenProperties.HEADER_STRING);
         // Token 있는지 여부 체크
         if (header == null || !header.startsWith(AccessTokenProperties.TOKEN_PREFIX)) {
-            log.info("[JwtAuthorizationFilter] : *** 토큰 X ***");
             chain.doFilter(request, response);
             return;
         }
@@ -63,7 +60,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         try {
             Integer userId = Integer.parseInt(String.valueOf(JWT.require(Algorithm.HMAC512(AccessTokenProperties.SECRET)).build().verify(token).getClaim("userId")));
 
-            log.info("JwtAuthorizationFilter userId : " + userId);
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new NullPointerException("NOT FOUND USER id: " + userId));
 
@@ -79,7 +75,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             // 강제로 시큐리티의 세션에 접근하여 값 저장 ( 권한 없으면 필요 없음 )
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (Exception e) { // Token 시간 만료 및 토큰 인증 에러
-            log.info("Access Token Expired : " + e.getLocalizedMessage());
             RequestDispatcher dispatcher = request.getRequestDispatcher("/token/error");
             dispatcher.forward(request, response); // 303 토큰 에러 발생
             return;
