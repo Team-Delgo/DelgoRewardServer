@@ -32,20 +32,20 @@ server:
   port: 8081
 
 # Swagger 설정
-springdoc:
-  api-docs:
-    enabled: false
-    path: /api-docs
-  show-actuator: true
-  default-consumes-media-type: application/json
-  default-produces-media-type: application/json
-  swagger-ui:
-    path: /swagger-ui.html
-    groups-order: DESC
-    operationsSorter: ordered
-    display-request-duration: true
-    syntax-highlight:
-      theme: nord
+#springdoc:
+#  api-docs:
+#    enabled: true
+#    path: /api-docs
+#  show-actuator: true
+#  default-consumes-media-type: application/json
+#  default-produces-media-type: application/json
+#  swagger-ui:
+#    path: /swagger-ui.html
+#    groups-order: DESC
+#    operationsSorter: ordered
+#    display-request-duration: true
+#    syntax-highlight:
+#      theme: nord
 
 
 
