@@ -5,6 +5,7 @@ import com.delgo.reward.comm.security.jwt.filter.JwtAuthenticationFilter;
 import com.delgo.reward.comm.security.jwt.filter.JwtAuthorizationFilter;
 import com.delgo.reward.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -18,12 +19,17 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity // 시큐리티 활성화 -> 기본 스프링 필터체인에 등록
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
 	private final UserRepository userRepository;
+
+	@Value("${config.cors-allow-url}")
+	String CORS_ALLOW_URL;
 
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {
@@ -34,11 +40,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 
-		configuration.addAllowedOriginPattern("*");
+		configuration.setAllowedOrigins(List.of(CORS_ALLOW_URL));
 		configuration.addAllowedMethod("*");
 		configuration.addAllowedHeader("*");
 		configuration.addExposedHeader("Authorization_Access, Authorization_Refresh");
-//		configuration.setAllowCredentials(true);
+		configuration.setAllowCredentials(true);
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
@@ -69,12 +75,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.antMatchers("/api/fcm/**").permitAll()
 				.antMatchers("/api/token/reissue").permitAll()
 				.antMatchers("/api/certification/all").permitAll()
+				.antMatchers("/api/certification/mungple").permitAll()
 				.antMatchers("/api/account/logout/**").permitAll()
 
 				// delgo-map
 				.antMatchers("/api/map/**").permitAll()
 				.antMatchers("/api/map/mungple").permitAll()
-				.antMatchers("/api/survey/**").permitAll()
 				.antMatchers("/api/photo/webp").permitAll()
 				.antMatchers("/api/photo/mungplenote/*").permitAll()
 				.antMatchers("/api/photo/mungple/*").permitAll()
@@ -88,7 +94,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				// version
 				.antMatchers("/api/version").permitAll()
 
-				.antMatchers("/**").authenticated();
+				.anyRequest().authenticated();
 
 //				 TEST
 //				.antMatchers("/**").permitAll();
