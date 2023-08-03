@@ -13,11 +13,6 @@ import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
 import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.LikeListService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -69,12 +64,6 @@ public class CertController extends CommController {
      * @param userId, certificationId
      * @return List<CertResDTO>
      */
-    @Operation(summary = "Id로 인증 조회", description = "certificationId로 인증을 조회합니다.", tags = { "Certification" })
-    @ApiResponses({
-            @ApiResponse(responseCode = APICode.CODE.SUCCESS, description = APICode.MSG.SUCCESS, content = @Content(schema = @Schema(implementation = CertResDTO.class))),
-            @ApiResponse(responseCode = APICode.CODE.PARAM_ERROR, description = APICode.MSG.PARAM_ERROR),
-            @ApiResponse(responseCode = APICode.CODE.SERVER_ERROR, description = APICode.MSG.SERVER_ERROR)
-    })
     @GetMapping
     public ResponseEntity getCertsByCertId(@RequestParam Integer userId, @RequestParam Integer certificationId) {
         return SuccessReturn(certService.getCertsByIdWithLike(userId, certificationId));

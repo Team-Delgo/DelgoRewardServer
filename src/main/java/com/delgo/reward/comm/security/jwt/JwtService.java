@@ -8,8 +8,10 @@ import com.delgo.reward.comm.exception.JwtException;
 import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
 import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 
@@ -62,5 +64,22 @@ public class JwtService {
                 )
         );
     }
+
+    public HttpServletResponse publishToken(HttpServletResponse response,  JwtToken jwt) {
+        // Access Token
+        response.addHeader(AccessTokenProperties.HEADER_STRING, jwt.getAccessToken());
+
+        // Refresh Token
+        ResponseCookie cookie = ResponseCookie.from(RefreshTokenProperties.HEADER_STRING, jwt.getRefreshToken())
+                .secure(true)
+                .httpOnly(true)
+                .path("/")
+                .sameSite("None")
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
+
+        return response;
+    }
+
 }
 
