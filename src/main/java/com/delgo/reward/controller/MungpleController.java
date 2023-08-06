@@ -3,9 +3,7 @@ package com.delgo.reward.controller;
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.mongoService.MongoMungpleService;
-import com.delgo.reward.record.mungple.MungpleDetailRecord;
 import com.delgo.reward.record.mungple.MungpleRecord;
-import com.delgo.reward.service.MungpleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -20,8 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @RequestMapping("/api/mungple")
 public class MungpleController extends CommController {
-
-    private final MungpleService mungpleService;
     private final MongoMungpleService mongoMungpleService;
 
     /**
@@ -31,9 +27,9 @@ public class MungpleController extends CommController {
      */
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity createMungple(@Validated @RequestPart(value = "data") MungpleRecord record, @RequestPart(required = false) MultipartFile photo) {
-        return mungpleService.isMungpleExisting(record.address())
+        return mongoMungpleService.isMungpleExisting(record.address())
                 ? ErrorReturn(APICode.MUNGPLE_DUPLICATE_ERROR)
-                : SuccessReturn(mungpleService.createMungple(record, photo));
+                : SuccessReturn(mongoMungpleService.createMungple(record, photo));
     }
 
     /**
@@ -45,7 +41,7 @@ public class MungpleController extends CommController {
     @GetMapping(value={"/category/{categoryCode}","/category"})
     public ResponseEntity getMungplesByCategory(@PathVariable String categoryCode) {
         if (categoryCode.isBlank()) return ParamErrorReturn("categoryCode"); // Validate - Blank Check
-        return SuccessReturn(mungpleService.getMungpleByCategoryCode(categoryCode));
+        return SuccessReturn(mongoMungpleService.getMungpleByCategoryCode(categoryCode));
     }
 
     /**
@@ -56,7 +52,7 @@ public class MungpleController extends CommController {
      */
     @GetMapping("/top")
     public ResponseEntity getMungpleOfMostCertCount(@RequestParam Integer count) {
-        return SuccessReturn(mungpleService.getMungpleOfMostCertCount(count));
+        return SuccessReturn(mongoMungpleService.getMungpleOfMostCertCount(count));
     }
 
     /**
@@ -65,7 +61,7 @@ public class MungpleController extends CommController {
      */
     @DeleteMapping(value={"/{mungpleId}",""})
     public ResponseEntity deleteMungple(@PathVariable Integer mungpleId) {
-        mungpleService.deleteMungple(mungpleId);
+        mongoMungpleService.deleteMungple(mungpleId);
         return SuccessReturn();
     }
 

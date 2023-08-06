@@ -121,8 +121,8 @@ public class MongoMungpleService {
      * Mungple 삭제
      * NCP Object Storage 도 삭제 해줘야 함.
      */
-    public void deleteMungple(String mungpleId){
-        mongoMungpleRepository.deleteById(mungpleId);
+    public void deleteMungple(int mungpleId){
+        mongoMungpleRepository.deleteByMungpleId(mungpleId);
         objectStorageService.deleteObject(BucketName.MUNGPLE,mungpleId + "_mungple.webp"); // Thumbnail delete
         objectStorageService.deleteObject(BucketName.MUNGPLE_NOTE,mungpleId + "_mungplenote.webp"); // mungpleNote delete
     }

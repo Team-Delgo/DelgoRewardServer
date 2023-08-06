@@ -45,6 +45,7 @@ public class MungpleResDTO {
 
     public MungpleResDTO(MongoMungple mungple) {
         id = mungple.getId();
+        mungpleId = mungple.getMungpleId();
         categoryCode = mungple.getCategoryCode();
 
         placeName = mungple.getPlaceName();

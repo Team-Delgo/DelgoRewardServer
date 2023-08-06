@@ -15,6 +15,5 @@ public interface MongoMungpleRepository extends MongoRepository<MongoMungple, St
     List<MongoMungple> findByCategoryCodeAndIsActive(String categoryCode, boolean isActive);
     boolean existsByLatitudeAndLongitude(String latitude, String longitude);
     boolean existsByMungpleId(int mungpleId);
-
-
+    void deleteByMungpleId(int mungpleId);
 }
