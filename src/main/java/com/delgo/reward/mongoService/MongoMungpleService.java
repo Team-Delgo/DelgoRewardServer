@@ -5,11 +5,7 @@ import com.delgo.reward.comm.ncp.GeoService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.common.Location;
-import com.delgo.reward.domain.mungple.Mungple;
 import com.delgo.reward.dto.mungple.MungpleResDTO;
-import com.delgo.reward.dto.mungple.detail.MungpleDetailByMenuResDTO;
-import com.delgo.reward.dto.mungple.detail.MungpleDetailResDTO;
-import com.delgo.reward.dto.mungple.detail.MungpleDetailByPriceTagResDTO;
 import com.delgo.reward.mongoDomain.MongoMungple;
 import com.delgo.reward.mongoDomain.MungpleDetail;
 import com.delgo.reward.mongoRepository.MongoMungpleRepository;
@@ -17,7 +13,6 @@ import com.delgo.reward.mongoRepository.MungpleDetailRepository;
 import com.delgo.reward.record.mungple.MungpleDetailRecord;
 import com.delgo.reward.record.mungple.MungpleRecord;
 import com.delgo.reward.repository.CertRepository;
-import com.delgo.reward.service.MungpleService;
 import com.delgo.reward.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,7 +56,7 @@ public class MongoMungpleService {
         Location location = geoService.getGeoData(record.address()); // 위도, 경도
 
         MongoMungple mongoMungple = mongoMungpleRepository.save(record.toMongoEntity(location));
-        mongoMungple.setPhotoUrl(photoService.uploadMongoMungple(mongoMungple.getId(), photo));
+        mongoMungple.setPhotoUrl(photoService.uploadMungple(mongoMungple.getMungpleId(), photo));
 
         return new MungpleResDTO(mongoMungple);
     }
@@ -68,8 +64,8 @@ public class MongoMungpleService {
     /**
      * [mungpleId] Mungple 조회
      */
-    public MongoMungple getMungpleById(String mungpleId) {
-        return mongoMungpleRepository.findById(mungpleId)
+    public MongoMungple getMungpleByMungpleId(int mungpleId) {
+        return mongoMungpleRepository.findByMungpleId(mungpleId)
                 .orElseThrow(() -> new NullPointerException("NOT FOUND MongoMungple - mungpleId : " + mungpleId ));
     }
 
@@ -104,21 +100,21 @@ public class MongoMungpleService {
         return mongoMungpleRepository.existsByLatitudeAndLongitude(location.getLatitude(), location.getLongitude());
     }
 
-    /**
-     * TODO: [인증 개수 많은 순] Mungple 조회
-     */
-//    public List<MungpleResDTO> getMungpleOfMostCertCount(int count) {
-//        List<String> mungpleIds = certRepository.findCertOrderByMungpleCount(PageRequest.of(0, count));
-//        List<MongoMungple> mungpleList = mongoMungpleRepository.findMungpleByIds(mungpleIds);
-//
-//        return mungpleList.stream().map(MungpleResDTO::new).collect(Collectors.toList());
-//    }
+    public List<MungpleResDTO> getMungpleOfMostCertCount(int count) {
+        List<Integer> mungpleIdList = certRepository.findCertOrderByMungpleCount(PageRequest.of(0, count));
+        List<MongoMungple> mungpleList = new ArrayList<>();
+        for(int mungpleId: mungpleIdList){
+            mungpleList.add(mongoMungpleRepository.findByMungpleId(mungpleId).get());
+        }
+
+        return mungpleList.stream().map(MungpleResDTO::new).collect(Collectors.toList());
+    }
 
     /**
      * Mungple Photo 수정
      */
-    public MongoMungple modifyPhoto(String mungpleId, MultipartFile photo){
-        return getMungpleById(mungpleId).setPhotoUrl(photoService.uploadMongoMungple(mungpleId, photo));
+    public MongoMungple modifyPhoto(int mungpleId, MultipartFile photo){
+        return getMungpleByMungpleId(mungpleId).setPhotoUrl(photoService.uploadMungple(mungpleId, photo));
     }
 
     /**
@@ -131,24 +127,8 @@ public class MongoMungpleService {
         objectStorageService.deleteObject(BucketName.MUNGPLE_NOTE,mungpleId + "_mungplenote.webp"); // mungpleNote delete
     }
 
-//    public MungpleDetailResDTO getMungpleDetailDataByMungpleId(String mungpleId) {
-//        MongoMungple mongoMungple = getMungpleById(mungpleId);
-//        MungpleDetail mungpleDetail = mungpleDetailRepository.findByMungpleId(mungpleId).orElseThrow(() -> new NullPointerException("NOT FOUND MUNGPLE: mungpleId = " + mungpleId));
-//        int certCount = certRepository.countOfCertByMungple(mungpleId);
-//
-//        CategoryCode categoryCode = CategoryCode.valueOf(mungple.getCategoryCode());
-//        switch (categoryCode){
-//            case CA0002, CA0003 -> {
-//                return new MungpleDetailByMenuResDTO(mungple, mungpleDetail, certCount);
-//            }
-//            default -> {
-//                return new MungpleDetailByPriceTagResDTO(mungple, mungpleDetail, certCount);
-//            }
-//        }
-//    }
-
-    public Boolean isExist(String mungpleId) {
-        return mongoMungpleRepository.existsById(mungpleId);
+    public Boolean isExist(int mungpleId) {
+        return mongoMungpleRepository.existsByMungpleId(mungpleId);
     }
 
     public MungpleDetail createMungpleDetail(MungpleDetailRecord record) {
