@@ -73,7 +73,6 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     List<Integer>  findCertOrderByMungpleCount(Pageable pageable);
 
 
-
     // ---------------------------------------- Map TEST ----------------------------------------
 
     @Query(value = "SELECT c FROM Certification c where c.geoCode = :geoCode order by RAND()")
