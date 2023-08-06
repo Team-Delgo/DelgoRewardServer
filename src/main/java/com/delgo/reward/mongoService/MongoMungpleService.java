@@ -58,7 +58,7 @@ public class MongoMungpleService {
         MongoMungple mongoMungple = mongoMungpleRepository.save(record.toMongoEntity(location));
         mongoMungple.setPhotoUrl(photoService.uploadMungple(mongoMungple.getMungpleId(), photo));
 
-        return new MungpleResDTO(mongoMungple);
+        return new MungpleResDTO(mongoMungpleRepository.save(mongoMungple));
     }
 
     /**
