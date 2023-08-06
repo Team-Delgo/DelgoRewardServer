@@ -2,6 +2,7 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.domain.achievements.Achievements;
+import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,8 @@ public class PhotoController extends CommController {
     private final CertService certService;
     private final UserService userService;
     private final PhotoService photoService;
-    private final MungpleService mungpleService;
+//    private final MungpleService mungpleService;
+    private final MongoMungpleService mongoMungpleService;
     private final AchievementsService achievementsService;
 
     /*
@@ -60,7 +62,7 @@ public class PhotoController extends CommController {
     @PostMapping(value={"/mungple/{mungpleId}","/upload/mungple"})
     public ResponseEntity<?> uploadMungplePhoto(@PathVariable Integer mungpleId, @RequestPart MultipartFile photo) {
         if (photo.isEmpty()) ParamErrorReturn("photo");
-        return SuccessReturn(mungpleService.modifyPhoto(mungpleId,photo));
+        return SuccessReturn(mongoMungpleService.modifyPhoto(mungpleId, photo));
     }
 
     /*
