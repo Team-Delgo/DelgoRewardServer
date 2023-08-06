@@ -4,11 +4,13 @@ package com.delgo.reward.mongoDomain;
 import com.delgo.reward.comm.code.BusinessHourCode;
 import com.delgo.reward.comm.code.DetailCode;
 import lombok.*;
+import org.apache.kafka.common.metrics.internals.IntGaugeSuite;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +23,12 @@ import java.util.Map;
 @AllArgsConstructor
 @Document(collection="mungple")
 public class MongoMungple {
+    @Transient
+    public static final String SEQUENCE_NAME = "mungple_sequence";
     // Mungple
     @Id private String id;
+
+    @Field("mungple_id") private Integer mungpleId;
     @Field("category_code")private String categoryCode; // 카테고리 코드 ( ex. 카페, 음식점 .. )
 
     @Field("phone_no")private String phoneNo;
@@ -86,6 +92,10 @@ public class MongoMungple {
     private Boolean isPriceTag; // 가격표 존재 여부
     @Field("price_tag_photo_urls")
     private List<String> priceTagPhotoUrls; // 가격표 사진
+
+    public void setMungpleId(Integer mungpleId) {
+        this.mungpleId = mungpleId;
+    }
 
     public MongoMungple setPhotoUrl(String photoUrl){
         this.photoUrl = photoUrl;
