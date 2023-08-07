@@ -1,7 +1,7 @@
 # spring MariaDB Connect
 spring:
   profiles:
-      active: local
+      active: dev
   datasource:
     username: delgo
     password: Zlzl2022!
@@ -32,20 +32,20 @@ server:
   port: 8081
 
 # Swagger 설정
-springdoc:
-  api-docs:
-    enabled: true
-    path: /api-docs
-  show-actuator: true
-  default-consumes-media-type: application/json
-  default-produces-media-type: application/json
-  swagger-ui:
-    path: /swagger-ui.html
-    groups-order: DESC
-    operationsSorter: ordered
-    display-request-duration: true
-    syntax-highlight:
-      theme: nord
+#springdoc:
+#  api-docs:
+#    enabled: true
+#    path: /api-docs
+#  show-actuator: true
+#  default-consumes-media-type: application/json
+#  default-produces-media-type: application/json
+#  swagger-ui:
+#    path: /swagger-ui.html
+#    groups-order: DESC
+#    operationsSorter: ordered
+#    display-request-duration: true
+#    syntax-highlight:
+#      theme: nord
 
 
 
@@ -57,7 +57,7 @@ spring:
         database: delgo_reward_develop
         uri: mongodb://delgo:Zlzl2022!@101.101.208.202:27017
   datasource:
-    url: jdbc:mariadb://101.101.208.202:3306/delgo_reward_develop
+    url: jdbc:mariadb://101.101.208.202:9724/delgo_reward_develop
 
 config:
   profiles: local
@@ -69,6 +69,7 @@ config:
   kakao:
     REDIRECT_URL: "https://www.test.delgo.pet/oauth/callback/kakao"
   classificationDir: src/main/resources/classification_data_set/classification_category.json
+  cors-allow-url: http://localhost:3000
 
 ---
 spring:
@@ -78,7 +79,7 @@ spring:
           database: delgo_reward_develop
           uri: mongodb://delgo:Zlzl2022!@101.101.208.202:27017
   datasource:
-    url: jdbc:mariadb://101.101.208.202:3306/delgo_reward_develop
+    url: jdbc:mariadb://101.101.208.202:9724/delgo_reward_develop
 
 config:
   profiles: dev
@@ -87,6 +88,7 @@ config:
   kakao:
     REDIRECT_URL: "https://www.test.delgo.pet/oauth/callback/kakao"
   classificationDir: /var/www/reward-backend/WEB-INF/classes/classification_data_set/classification_category.json
+  cors-allow-url: https://www.test.delgo.pet
 
 
 ---
@@ -97,7 +99,7 @@ spring:
           database: delgo_reward
           uri: mongodb://delgo:Zlzl2022!@101.101.208.202:27017
   datasource:
-    url: jdbc:mariadb://101.101.208.202:3306/delgo_reward
+    url: jdbc:mariadb://101.101.208.202:9724/delgo_reward
 
 config:
   profiles: real
@@ -106,3 +108,4 @@ config:
   kakao:
     REDIRECT_URL: "https://www.reward.delgo.pet/oauth/callback/kakao"
   classificationDir: /var/www/reward-backend/WEB-INF/classes/classification_data_set/classification_category.json
+  cors-allow-url: https://www.reward.delgo.pet

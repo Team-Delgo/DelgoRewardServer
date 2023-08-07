@@ -5,8 +5,6 @@ import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.security.jwt.JwtService;
 import com.delgo.reward.comm.security.jwt.JwtToken;
-import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
-import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
 import com.delgo.reward.domain.SmsAuth;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.domain.user.UserSocial;
@@ -14,7 +12,8 @@ import com.delgo.reward.dto.user.UserResDTO;
 import com.delgo.reward.record.signup.OAuthSignUpRecord;
 import com.delgo.reward.record.signup.SignUpRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
-import com.delgo.reward.service.*;
+import com.delgo.reward.service.SmsAuthService;
+import com.delgo.reward.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -71,8 +70,7 @@ public class UserController extends CommController {
 
         User user = userService.oAuthSignup(oAuthSignUpRecord, profile);
         JwtToken jwt = jwtService.createToken(user.getUserId());
-        response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
-        response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
+        jwtService.publishToken(response, jwt);
 
         return SuccessReturn(new UserResDTO(user));
     }
@@ -89,8 +87,7 @@ public class UserController extends CommController {
 
         User user = userService.signup(signUpRecord, profile);
         JwtToken jwt = jwtService.createToken(user.getUserId());
-        response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
-        response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
+        jwtService.publishToken(response, jwt);
 
         return SuccessReturn(new UserResDTO(user));
     }
