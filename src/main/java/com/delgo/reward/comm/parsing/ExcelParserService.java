@@ -1,6 +1,7 @@
-package com.delgo.reward.service;
+package com.delgo.reward.comm.parsing;
 
 import com.delgo.reward.comm.code.BusinessHourCode;
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.DetailCode;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
@@ -9,6 +10,7 @@ import com.delgo.reward.mongoDomain.MungpleDetail;
 import com.delgo.reward.mongoRepository.MungpleDetailRepository;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.repository.MungpleRepository;
+import com.delgo.reward.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
@@ -98,44 +100,6 @@ public class ExcelParserService {
 //                map.forEach((key, value) -> log.info("{} : {}", key, value.getCode()));
             }
 
-            // 썸네일 사진
-            String ThumbnailsText = getStringExcelData(row.getCell(8));
-            if (!ThumbnailsText.isEmpty()) {
-                List<String> thumbnails = Arrays.stream(ThumbnailsText.split("\n"))
-                        .filter(s -> !s.isEmpty())
-                        .toList();
-
-                thumbnails.forEach(thumbnail -> log.info("thumbnails: {}", thumbnail));
-                List<String> ncpUrls = thumbnailNCPUpload(mungpleName, thumbnails);
-                mungpleDetail.setPhotoUrls(ncpUrls);
-            }
-
-            // 메뉴판 사진
-            String menuBoardText = getStringExcelData(row.getCell(25));
-            if (!menuBoardText.isEmpty()) {
-                List<String> menuBoards = Arrays.stream(menuBoardText.split("\n"))
-                        .filter(s -> !s.isEmpty())
-                        .toList();
-
-                List<String> ncpUrls = menuBoardNCPUpload(mungpleName,menuBoards);
-                mungpleDetail.setRepresentMenuPhotoUrls(ncpUrls);
-//                menuBoards.forEach(menu_board -> log.info("menu_board: {}", menu_board));
-            }
-
-            // 메뉴 사진
-            String representMenuPhotoText =  getStringExcelData(row.getCell(16));
-            if (!representMenuPhotoText.isEmpty()) {
-                List<String> representMenuPhotos = Arrays.stream(representMenuPhotoText.split("\n"))
-                        .filter(s -> !s.isEmpty())
-                        .toList();
-
-                List<String> ncpUrls = menuNCPUpload(mungpleName, representMenuPhotos);
-                // 메뉴판 사진 -> 메뉴 저장.
-                mungpleDetail.getRepresentMenuPhotoUrls().addAll(ncpUrls);
-                mungpleDetail.setRepresentMenuPhotoUrls(mungpleDetail.getRepresentMenuPhotoUrls());
-//                representMenuPhotos.forEach(menu_photo -> log.info("menu_photo: {}", menu_photo));
-            }
-
             log.info("phoneNo: {}", phoneNo);
             log.info("editorNoteUrl :{}", mungple.getDetailUrl());
             log.info("copyLink :{}", COPY_URL + mungple.getMungpleId());
@@ -173,7 +137,7 @@ public class ExcelParserService {
         Workbook workbook = new XSSFWorkbook(file);
         Sheet sheet = workbook.getSheetAt(0); // 첫 번째 시트를 선택
 
-        for(int i = 123 ; i < 126 ; i++) {
+        for(int i = 2 ; i < 7 ; i++) {
             Row row = sheet.getRow(i);
 
             // 흰색일 때만 파싱을 동작시킨다.
@@ -223,8 +187,8 @@ public class ExcelParserService {
                         .toList();
 
                 thumbnails.forEach(thumbnail -> log.info("thumbnails: {}", thumbnail));
-                List<String> ncpUrls = thumbnailNCPUpload(mungpleName, thumbnails);
-                mungpleDetail.setPhotoUrls(ncpUrls);
+//                List<String> ncpUrls = thumbnailNCPUpload(mungpleName, thumbnails);
+//                mungpleDetail.setPhotoUrls(ncpUrls);
             }
 
             // 가격표 사진
@@ -321,10 +285,18 @@ public class ExcelParserService {
                 .orElse("");
     }
 
-    public List<String> thumbnailNCPUpload(String mungpleName, List<String> urls) {
+    public List<String> thumbnailNCPUpload(Mungple mungple, List<String> urls) {
         List<String> ncpUrls = new ArrayList<>();
         for (int i = 0; i < urls.size(); i++) {
-            String fileName = photoService.convertWebpFromUrl(mungpleName + "_" + (i + 1), urls.get(i));
+
+            // TODO: FILENAME 변경 필요 주소랑 카테고리 붙여야 함.
+            String[] address_arr = mungple.getJibunAddress().split(" ");
+            String category = CategoryCode.valueOf(mungple.getCategoryCode()).getValue();
+            String name = address_arr[1] + "_" +
+                    category + "_" +
+                    mungple.getPlaceName() + "_" +
+                    (i + 1);
+            String fileName = photoService.convertWebpFromUrl(name, urls.get(i));
             objectStorageService.uploadObjects(BucketName.DETAIL_THUMBNAIL, fileName, DIR + fileName);
             ncpUrls.add(BucketName.DETAIL_THUMBNAIL.getUrl() + fileName);
         }
@@ -336,6 +308,8 @@ public class ExcelParserService {
     public List<String> menuBoardNCPUpload(String mungpleName, List<String> urls) {
         List<String> ncpUrls = new ArrayList<>();
         for (int i = 0; i < urls.size(); i++) {
+
+            // TODO: FILENAME 변경 필요
             String fileName = photoService.convertWebpFromUrl(mungpleName + "_menu_board_" + (i + 1), urls.get(i));
             objectStorageService.uploadObjects(BucketName.DETAIL_MENU_BOARD, fileName, DIR + fileName);
             ncpUrls.add(BucketName.DETAIL_MENU_BOARD.getUrl() + fileName);
@@ -347,6 +321,8 @@ public class ExcelParserService {
     public List<String> menuNCPUpload(String mungpleName, List<String> urls) {
         List<String> ncpUrls = new ArrayList<>();
         for (int i = 0; i < urls.size(); i++) {
+
+            // TODO: FILENAME 변경 필요
             String fileName = photoService.convertWebpFromUrl(mungpleName + "_menu_" + (i + 1), urls.get(i));
             objectStorageService.uploadObjects(BucketName.DETAIL_MENU, fileName, DIR + fileName);
             ncpUrls.add(BucketName.DETAIL_MENU.getUrl() + fileName);
@@ -358,6 +334,8 @@ public class ExcelParserService {
     public List<String> priceTagNCPUpload(String mungpleName, List<String> urls) {
         List<String> ncpUrls = new ArrayList<>();
         for (int i = 0; i < urls.size(); i++) {
+
+            // TODO: FILENAME 변경 필요
             String fileName = photoService.convertWebpFromUrl(mungpleName + "_price_tag_" + (i + 1), urls.get(i));
             objectStorageService.uploadObjects(BucketName.DETAIL_PRICE_TAG, fileName, DIR + fileName);
             ncpUrls.add(BucketName.DETAIL_PRICE_TAG.getUrl() + fileName);
@@ -365,6 +343,4 @@ public class ExcelParserService {
 
         return ncpUrls;
     }
-
-
 }
