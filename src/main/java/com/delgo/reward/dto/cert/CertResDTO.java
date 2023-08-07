@@ -34,6 +34,8 @@ public class CertResDTO {
     private int likeCount; // 좋아요 개수
     private int commentCount; // 댓글 개수
 
+    private String categoryCode;
+
     @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
     private LocalDateTime registDt;
 
@@ -65,5 +67,6 @@ public class CertResDTO {
         isLike = false;
         likeCount = 0;
         registDt = cert.getRegistDt();
+        categoryCode = cert.getCategoryCode();
     }
 }
