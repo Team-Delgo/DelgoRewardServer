@@ -3,6 +3,7 @@ package com.delgo.reward.comm;
 
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.record.common.ResponseRecord;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 public class CommController {
@@ -29,5 +30,10 @@ public class CommController {
                         APICode.PARAM_ERROR + " : [" + param + "]",
                         null)
         );
+    }
+
+    public ResponseEntity TokenErrorReturn() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ResponseRecord(APICode.TOKEN_ERROR.getCode(), APICode.TOKEN_ERROR.getMsg(), null));
     }
 }

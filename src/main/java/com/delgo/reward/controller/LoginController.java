@@ -4,17 +4,13 @@ import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.security.jwt.JwtService;
 import com.delgo.reward.comm.security.jwt.JwtToken;
-import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
 import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
 import com.delgo.reward.dto.user.UserResDTO;
 import com.delgo.reward.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,10 +33,8 @@ public class LoginController extends CommController {
     @PostMapping("/login/success")
     public ResponseEntity<?> loginSuccess(HttpServletRequest request, HttpServletResponse response) {
         int userId = Integer.parseInt(request.getAttribute("userId").toString());
-
         JwtToken jwt = jwtService.createToken(userId);
-        response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
-        response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
+        jwtService.publishToken(response, jwt);
 
         return SuccessReturn(new UserResDTO(userService.getUserById(userId)));
     }
@@ -61,16 +55,16 @@ public class LoginController extends CommController {
      * 성공 : 재발급, 실패 : 오류 코드 반환
      */
     @GetMapping("/api/token/reissue")
-    public ResponseEntity<?> tokenReissue(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<?> tokenReissue(@CookieValue(name = RefreshTokenProperties.HEADER_STRING, required = false) String refreshToken, HttpServletResponse response) {
         try {
-            JwtToken jwt = jwtService.createToken(jwtService.getUserIdByRefreshToken());
-            response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
-            response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
+            int userId = jwtService.getUserIdByRefreshToken(refreshToken);
+            JwtToken jwt = jwtService.createToken(userId);
+            jwtService.publishToken(response, jwt);
 
             return SuccessReturn();
         } catch (Exception e) { // Refresh_Toekn 인증 실패 ( 로그인 화면으로 이동 필요 )
             e.printStackTrace();
-            return ErrorReturn(APICode.TOKEN_ERROR);
+            return TokenErrorReturn();
         }
     }
 
@@ -80,6 +74,6 @@ public class LoginController extends CommController {
      */
     @RequestMapping("/token/error")
     public ResponseEntity<?> tokenError() {
-        return ErrorReturn(APICode.TOKEN_ERROR);
+        return TokenErrorReturn();
     }
 }

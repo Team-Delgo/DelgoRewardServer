@@ -8,11 +8,10 @@ import com.delgo.reward.comm.exception.JwtException;
 import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
 import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 
@@ -47,44 +46,40 @@ public class JwtService {
     }
 
     /**
-     * Header에서 X-ACCESS-TOKEN 으로 JWT 추출
-     *
-     * @return String
-     **/
-    public String getAccessToken() {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        return request.getHeader(AccessTokenProperties.HEADER_STRING).replace(AccessTokenProperties.TOKEN_PREFIX, "");
-    }
-
-    /**
-     * Header에서 X-REFRESH-TOKEN 으로 JWT 추출
-     *
-     * @return String
-     **/
-    public String getRefreshToken() {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        return request.getHeader(RefreshTokenProperties.HEADER_STRING).replace(RefreshTokenProperties.TOKEN_PREFIX, "");
-    }
-
-    /**
      * JWT에서 userId 추출
      *
      * @return int
      * @throws JwtException
      */
-    public Integer getUserIdByAccessToken() throws JwtException {
-        String accessToken = getAccessToken();
-        if (accessToken == null || accessToken.length() == 0)
+    public Integer getUserIdByRefreshToken(String refreshToken) throws JwtException {
+        if (refreshToken == null || refreshToken.length() == 0)
             throw new JwtException(APICode.TOKEN_ERROR);
 
-        return Integer.parseInt(String.valueOf(JWT.require(Algorithm.HMAC512(AccessTokenProperties.SECRET)).build().verify(accessToken).getClaim("userId")));
+        return Integer.parseInt(
+                String.valueOf(
+                        JWT.require(Algorithm.HMAC512(RefreshTokenProperties.SECRET))
+                                .build()
+                                .verify(refreshToken) // Token 유효성 검증
+                                .getClaim("userId")
+                )
+        );
     }
 
-    public Integer getUserIdByRefreshToken() throws JwtException {
-        String refreshToken = getRefreshToken();
-        if (refreshToken == null || refreshToken.length() == 0) throw new JwtException(APICode.TOKEN_ERROR);
+    public HttpServletResponse publishToken(HttpServletResponse response,  JwtToken jwt) {
+        // Access Token
+        response.addHeader(AccessTokenProperties.HEADER_STRING, jwt.getAccessToken());
 
-        return Integer.parseInt(String.valueOf(JWT.require(Algorithm.HMAC512(RefreshTokenProperties.SECRET)).build().verify(refreshToken).getClaim("userId")));
+        // Refresh Token
+        ResponseCookie cookie = ResponseCookie.from(RefreshTokenProperties.HEADER_STRING, jwt.getRefreshToken())
+                .secure(true)
+                .httpOnly(true)
+                .path("/")
+                .sameSite("None")
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
+
+        return response;
     }
+
 }
 
