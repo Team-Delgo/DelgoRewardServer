@@ -15,6 +15,7 @@ import com.delgo.reward.dto.cert.CertByAchvResDTO;
 import com.delgo.reward.dto.cert.CertByMungpleResDTO;
 import com.delgo.reward.dto.cert.CertResDTO;
 import com.delgo.reward.dto.comm.PageResDTO;
+import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
 import com.delgo.reward.repository.CertRepository;
@@ -49,7 +50,8 @@ public class CertService {
     private final UserService userService;
     private final PhotoService photoService;
     private final ArchiveService archiveService;
-    private final MungpleService mungpleService;
+//    private final MungpleService mungpleService;
+    private final MongoMungpleService mongoMungpleService;
     private final LikeListService likeListService;
     private final ReverseGeoService reverseGeoService;
     private final AchievementsService achievementsService;
@@ -68,7 +70,7 @@ public class CertService {
         Certification certification = saveCert(
                 (record.mungpleId() == 0)
                         ? record.toEntity(reverseGeoService.getReverseGeoData(new Location(record.latitude(), record.longitude())), user)
-                        : record.toEntity(mungpleService.getMungpleById(record.mungpleId()),user));
+                        : record.toEntity(mongoMungpleService.getMungpleByMungpleId(record.mungpleId()),user));
 
         String ncpLink = photoService.uploadCertMultipartForJPG(certification.getCertificationId(), photo);
         certification.setPhotoUrl(ncpLink);
