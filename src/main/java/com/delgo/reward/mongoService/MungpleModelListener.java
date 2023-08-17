@@ -13,6 +13,8 @@ public class MungpleModelListener extends AbstractMongoEventListener<MongoMungpl
 
     @Override
     public void onBeforeConvert(BeforeConvertEvent<MongoMungple> event) {
-        event.getSource().setMungpleId((int) sequenceGenerator.generateSequence(MongoMungple.SEQUENCE_NAME));
+        if(event.getSource().getId() == null){
+            event.getSource().setMungpleId((int) sequenceGenerator.generateSequence(MongoMungple.SEQUENCE_NAME));
+        }
     }
 }
