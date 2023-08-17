@@ -1,5 +1,7 @@
 package com.delgo.reward.mongoService;
 
+import com.delgo.reward.cache.MungpleCache;
+import com.delgo.reward.cacheService.MungpleCacheService;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.ncp.GeoService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
@@ -39,6 +41,9 @@ public class MongoMungpleService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    // Cache
+    private final MungpleCacheService mungpleCacheService;
+
     // Service
     private final GeoService geoService;
     private final PhotoService photoService;
@@ -58,6 +63,8 @@ public class MongoMungpleService {
         MongoMungple mongoMungple = mongoMungpleRepository.save(record.toMongoEntity(location));
         mongoMungple.setPhotoUrl(photoService.uploadMungple(mongoMungple.getMungpleId(), photo));
 
+        mungpleCacheService.updateCacheData(mongoMungple.getMungpleId(), mongoMungple);
+
         return new MungpleResDTO(mongoMungpleRepository.save(mongoMungple));
     }
 
@@ -65,8 +72,13 @@ public class MongoMungpleService {
      * [mungpleId] Mungple 조회
      */
     public MongoMungple getMungpleByMungpleId(int mungpleId) {
-        return mongoMungpleRepository.findByMungpleId(mungpleId)
-                .orElseThrow(() -> new NullPointerException("NOT FOUND MongoMungple - mungpleId : " + mungpleId ));
+        MungpleCache cacheData = mungpleCacheService.getCacheData(mungpleId);
+        if (!mungpleCacheService.isValidation(cacheData)) {
+            cacheData = mungpleCacheService.updateCacheData(mungpleId, mongoMungpleRepository.findByMungpleId(mungpleId)
+                    .orElseThrow(() -> new NullPointerException("NOT FOUND MongoMungple - mungpleId : " + mungpleId )));
+        }
+
+        return cacheData.getMongoMungple();
     }
 
     /**
@@ -120,9 +132,11 @@ public class MongoMungpleService {
     /**
      * Mungple 삭제
      * NCP Object Storage 도 삭제 해줘야 함.
+     * 캐시도 삭제해줘야함
      */
     public void deleteMungple(int mungpleId){
         mongoMungpleRepository.deleteByMungpleId(mungpleId);
+        mungpleCacheService.expireCacheData(mungpleId);
         objectStorageService.deleteObject(BucketName.MUNGPLE,mungpleId + "_mungple.webp"); // Thumbnail delete
         objectStorageService.deleteObject(BucketName.MUNGPLE_NOTE,mungpleId + "_mungplenote.webp"); // mungpleNote delete
     }
