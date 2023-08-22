@@ -16,4 +16,8 @@ public class CertPhoto extends BaseTimeEntity {
     private Integer certPhotoId;
     private Integer certificationId;
     private String url;
+
+    public void setUrl(String url){
+        this.url = url;
+    }
 }

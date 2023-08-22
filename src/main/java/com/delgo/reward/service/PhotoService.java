@@ -26,17 +26,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.PosixFilePermission;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 
 @Slf4j
@@ -103,35 +97,67 @@ public class PhotoService extends CommService {
         }
     }
 
-    public String uploadCertMultipartForJPG(int certificationId, MultipartFile photo) {
-        String[] type = Objects.requireNonNull(photo.getContentType()).split("/"); // ex) png, jpg, jpeg
-        String extension = type[type.length - 1];
+//    public String uploadCertPhoto(int certificationId, MultipartFile photo) {
+//        String[] type = Objects.requireNonNull(photo.getContentType()).split("/"); // ex) png, jpg, jpeg
+//        String extension = type[type.length - 1];
+//
+//        String fileName = certificationId + "_cert." + extension;
+//        String url = (profiles.equals("real"))
+//                ? "https://www.reward.delgo.pet/images/" + fileName
+//                : "https://www.test.delgo.pet/images/" + fileName;
+//
+//        try {
+//            File file = new File(DIR + certificationId + "_cert." + extension);
+//            photo.transferTo(file); // 서버에 저장
+//
+//            // 파일 권한 변경
+//            Path filePath = file.toPath();
+//            Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(filePath);
+//            permissions.add(PosixFilePermission.OTHERS_READ);
+//
+//            Files.setPosixFilePermissions(filePath, permissions);
+//
+//            return url;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new NullPointerException("JPG PHOTO UPLOAD ERROR");
+//        }
+//    }
 
-        String fileName = certificationId + "_cert." + extension;
-        String url = (profiles.equals("real"))
-                ? "https://www.reward.delgo.pet/images/" + fileName
-                : "https://www.test.delgo.pet/images/" + fileName;
+    public List<String> uploadCertPhotos(int certificationId, List<MultipartFile> photos) {
+        List<String> urls = new ArrayList<>();
+        int i = 1;
+        for (MultipartFile photo : photos) {
+            String[] type = Objects.requireNonNull(photo.getContentType()).split("/"); // ex) png, jpg, jpeg
+            String extension = type[type.length - 1];
 
-        try {
-            File file = new File(DIR + certificationId + "_cert." + extension);
-            photo.transferTo(file); // 서버에 저장
+            String fileName = certificationId + "_cert_" + i++ + "." + extension;
+            String url = (profiles.equals("real"))
+                    ? "https://www.reward.delgo.pet/images/" + fileName
+                    : "https://www.test.delgo.pet/images/" + fileName;
 
-            // 파일 권한 변경
-            Path filePath = file.toPath();
-            Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(filePath);
-            permissions.add(PosixFilePermission.OTHERS_READ);
+            try {
+                File file = new File(DIR + fileName);
+                photo.transferTo(file); // 서버에 저장
 
-            Files.setPosixFilePermissions(filePath, permissions);
+                // 파일 권한 변경
+//                Path filePath = file.toPath();
+//                Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(filePath);
+//                permissions.add(PosixFilePermission.OTHERS_READ);
+//
+//                Files.setPosixFilePermissions(filePath, permissions);
 
-            return url;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new NullPointerException("JPG PHOTO UPLOAD ERROR");
+                urls.add(url);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new NullPointerException("JPG PHOTO UPLOAD ERROR");
+            }
         }
+        return urls;
     }
 
-    public String uploadCertMultipartForWebp(int certificationId, File originalFile) {
-        String webpfileName = certificationId + "_cert.webp";
+    public String uploadCertMultipartForWebp(String fileName, File originalFile) {
+        String webpfileName = fileName + ".webp";
         String ncpLink = (profiles.equals("real"))
                 ? BucketName.CERTIFICATION.getUrl() + webpfileName
                 : BucketName.CERTIFICATION.getTestUrl() + webpfileName;
