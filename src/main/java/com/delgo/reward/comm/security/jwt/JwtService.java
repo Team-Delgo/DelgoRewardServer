@@ -65,7 +65,7 @@ public class JwtService {
 
         // 입력 받은 refreshToken이 null이거나 빈 값인지 체크
         if (!StringUtils.hasText(refreshToken))
-            throw new JwtException(APICode.REFRESH_TOKEN_ERROR);
+            throw new JwtException(APICode.TOKEN_ERROR);
 
         int userId = JWT.require(Algorithm.HMAC512(RefreshTokenProperties.SECRET))
                 .build()
@@ -75,7 +75,7 @@ public class JwtService {
 
         String refreshTokenFromDB = tokenService.getRefreshToken(userId);
         if (!StringUtils.hasText(refreshToken) || !refreshTokenFromDB.equals(refreshToken))
-            throw new JwtException(APICode.REFRESH_TOKEN_ERROR);
+            throw new JwtException(APICode.DB_TOKEN_ERROR);
 
         return userId;
     }
@@ -101,4 +101,3 @@ public class JwtService {
         return response;
     }
 }
-
