@@ -1,6 +1,7 @@
 package com.delgo.reward.domain.like;
 
 
+import com.delgo.reward.domain.common.BaseTimeEntity;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -16,7 +17,7 @@ import java.util.Objects;
 @IdClass(LikeListPK.class)
 @NoArgsConstructor
 @AllArgsConstructor
-public class LikeList {
+public class LikeList extends BaseTimeEntity {
     @Id private Integer userId; // 좋아요 누른 user Id
     @Id private Integer certificationId; // 게시글 Id
     private boolean isLike; // True : like , False : unlike

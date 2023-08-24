@@ -10,6 +10,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 public class JwtToken {
+    private int userId;
     private String accessToken;
     private String refreshToken;
 }
