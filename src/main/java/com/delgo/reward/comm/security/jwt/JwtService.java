@@ -73,9 +73,12 @@ public class JwtService {
                 .getClaim("userId")
                 .asInt();
 
-        String refreshTokenFromDB = tokenService.getRefreshToken(userId);
-        if (!StringUtils.hasText(refreshToken) || !refreshTokenFromDB.equals(refreshToken))
-            throw new JwtException(APICode.DB_TOKEN_ERROR);
+        // 시간 제한을 줘서 1초 안에 여러개의 token 재발행이 들어오면 이전 요청이어도 에러 안나게 할까
+
+
+//        String refreshTokenFromDB = tokenService.getRefreshToken(userId);
+//        if (!StringUtils.hasText(refreshToken) || !refreshTokenFromDB.equals(refreshToken))
+//            throw new JwtException(APICode.DB_TOKEN_ERROR);
 
         return userId;
     }
@@ -95,7 +98,7 @@ public class JwtService {
                 .build();
 
         // Refresh Token DB Update
-        tokenService.saveRefreshToken(jwt.getUserId(),jwt.getRefreshToken());
+//        tokenService.saveRefreshToken(jwt.getUserId(),jwt.getRefreshToken());
 
         response.addHeader("Set-Cookie", cookie.toString());
         return response;
