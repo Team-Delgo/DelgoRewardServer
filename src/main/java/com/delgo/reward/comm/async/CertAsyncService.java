@@ -33,7 +33,7 @@ public class CertAsyncService {
 
         // [DIR 사진 파일 기준] 강아지 사진 여부 체크
         certification.setIsCorrectPhoto(photoService.checkCorrectPhoto(DIR + jpgName));
-        String ncpLink = photoService.uploadCertMultipartForWebp(certification.getCertificationId(), file);
+        String ncpLink = photoService.uploadCertPhotosWithWebp(certification.getCertificationId(), file);
         certification.setPhotoUrl(photoService.setCacheInvalidation(ncpLink));
         certService.saveCert(certification);
 
