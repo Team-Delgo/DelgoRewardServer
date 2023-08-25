@@ -49,15 +49,16 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         String header = request.getHeader(AccessTokenProperties.HEADER_STRING);
         // Token 있는지 여부 체크
         if (header == null || !header.startsWith(AccessTokenProperties.TOKEN_PREFIX)) {
+            log.info("token header가 존재 하지 않습니다. 혹은 header string이 일치하지 않습니다.");
             chain.doFilter(request, response);
             return;
         }
 
-        String token = request.getHeader(AccessTokenProperties.HEADER_STRING).replace(AccessTokenProperties.TOKEN_PREFIX, "");
 
         // 토큰 검증 (이게 인증이기 때문에 AuthenticationManager도 필요 없음)
         // SecurityContext에 접근해서 세션을 만들때 자동으로 UserDetailsService에 있는 loadByUsername이 호출됨.
         try {
+            String token = request.getHeader(AccessTokenProperties.HEADER_STRING).replace(AccessTokenProperties.TOKEN_PREFIX, "");
             Integer userId = Integer.parseInt(String.valueOf(JWT.require(Algorithm.HMAC512(AccessTokenProperties.SECRET)).build().verify(token).getClaim("userId")));
 
             User user = userRepository.findById(userId)
@@ -75,6 +76,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             // 강제로 시큐리티의 세션에 접근하여 값 저장 ( 권한 없으면 필요 없음 )
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (Exception e) { // Token 시간 만료 및 토큰 인증 에러
+            log.info("JwtAuthorizationFilter 에러 발생");
+            e.printStackTrace();
             RequestDispatcher dispatcher = request.getRequestDispatcher("/token/error");
             dispatcher.forward(request, response); // 303 토큰 에러 발생
             return;
