@@ -5,6 +5,7 @@ import com.delgo.reward.comm.security.jwt.filter.JwtAuthenticationFilter;
 import com.delgo.reward.comm.security.jwt.filter.JwtAuthorizationFilter;
 import com.delgo.reward.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,9 +20,11 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
+@Slf4j
 @EnableWebSecurity // 시큐리티 활성화 -> 기본 스프링 필터체인에 등록
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
@@ -40,7 +43,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 
-		configuration.setAllowedOrigins(List.of(CORS_ALLOW_URL));
+		List<String> allowedOrigins = Arrays.asList(CORS_ALLOW_URL.split(",\\s*"));
+		configuration.setAllowedOrigins(allowedOrigins);
 		configuration.addAllowedMethod("*");
 		configuration.addAllowedHeader("*");
 		configuration.addExposedHeader("Authorization_Access, Authorization_Refresh");

@@ -38,6 +38,8 @@ public class CertResDTO {
 
     private List<String> photos;
 
+    private String categoryCode;
+
     @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
     private LocalDateTime registDt;
 
@@ -71,5 +73,6 @@ public class CertResDTO {
         registDt = cert.getRegistDt();
 
         photos = cert.getPhotos().stream().map(CertPhoto::getUrl).toList();
+        categoryCode = cert.getCategoryCode();
     }
 }
