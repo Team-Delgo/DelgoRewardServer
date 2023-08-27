@@ -88,8 +88,7 @@ config:
   kakao:
     REDIRECT_URL: "https://www.test.delgo.pet/oauth/callback/kakao"
   classificationDir: /var/www/reward-backend/WEB-INF/classes/classification_data_set/classification_category.json
-  cors-allow-url: https://www.test.delgo.pet
-
+  cors-allow-url: https://www.test.delgo.pet, http://localhost:3000
 
 ---
 spring:
@@ -109,3 +108,22 @@ config:
     REDIRECT_URL: "https://www.reward.delgo.pet/oauth/callback/kakao"
   classificationDir: /var/www/reward-backend/WEB-INF/classes/classification_data_set/classification_category.json
   cors-allow-url: https://www.reward.delgo.pet
+
+---
+spring:
+  profiles: qa
+  data:
+    mongodb:
+      database: delgo_reward_develop
+      uri: mongodb://delgo:Zlzl2022!@101.101.208.202:27017
+  datasource:
+    url: jdbc:mariadb://101.101.208.202:9724/delgo_reward_qa
+
+config:
+  profiles: qa
+  driverLocation: /var/www/chrome/chromedriver
+  photoDir: /var/www/reward-backend/
+  kakao:
+    REDIRECT_URL: "https://www.qa.delgo.pet/oauth/callback/kakao"
+  classificationDir: /var/www/reward-backend/WEB-INF/classes/classification_data_set/classification_category.json
+  cors-allow-url: https://www.qa.delgo.pet
