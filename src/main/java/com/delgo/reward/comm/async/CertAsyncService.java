@@ -1,8 +1,11 @@
 package com.delgo.reward.comm.async;
 
+import com.delgo.reward.comm.ncp.greeneye.GreenEyeService;
 import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.repository.CertPhotoRepository;
+import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.PhotoService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,11 +22,13 @@ public class CertAsyncService {
     @Value("${config.photoDir}")
     String DIR;
 
+    private final CertService certService;
     private final PhotoService photoService;
+    private final GreenEyeService greenEyeService;
     private final CertPhotoRepository certPhotoRepository;
 
     @Async
-    public void doSomething(Integer certificationId) {
+    public void doSomething(Integer certificationId) throws JsonProcessingException {
         List<CertPhoto> certPhotos = certPhotoRepository.findPhotosByCertificationId(certificationId);
         for(CertPhoto photo : certPhotos) {
             String jpgUrl = photo.getUrl();
@@ -33,8 +38,13 @@ public class CertAsyncService {
 
             File file = new File(DIR + jpgName);
 
-            // [DIR 사진 파일 기준] 강아지 사진 여부 체크
-//        certification.setIsCorrectPhoto(photoService.checkCorrectPhoto(DIR + jpgName));
+            // [DIR 사진 파일 기준] 유해 사진 체크
+            boolean isCorrect = greenEyeService.checkHarmfulPhoto(jpgUrl);
+            photo.setIsCorrect(isCorrect);
+            if(!isCorrect){
+                certService.changeIsCorrect(certificationId, false);
+            }
+
             String ncpLink = photoService.uploadCertMultipartForWebp(fileName, file);
             photo.setUrl(photoService.setCacheInvalidation(ncpLink));
             certPhotoRepository.save(photo);
