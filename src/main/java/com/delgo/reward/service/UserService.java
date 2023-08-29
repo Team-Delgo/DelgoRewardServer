@@ -36,6 +36,7 @@ public class UserService {
     // Service
     private final PetService petService;
     private final CodeService codeService;
+    private final TokenService tokenService;
     private final KakaoService kakaoService;
     private final PhotoService photoService;
     private final ArchiveService archiveService;
@@ -124,7 +125,7 @@ public class UserService {
     public void deleteUser(int userId) throws Exception {
         User user = getUserById(userId);
         if (user.getUserSocial().equals(UserSocial.K))
-            kakaoService.logout(user.getKakaoId()); // kakao 로그아웃
+            kakaoService.logout(user.getKakaoId()); // kakao 로그아웃 , Naver는 로그아웃 지원 X
 
         certRepository.deleteAllByUserUserId(userId);
         likeListRepository.deleteByUserId(userId); // USER가 좋아요 누른 DATA 삭제
@@ -137,6 +138,19 @@ public class UserService {
         userRepository.delete(user);
 
         objectStorageService.deleteObject(BucketName.PROFILE, userId + "_profile.webp");
+    }
+
+    /**
+     * 로그아웃
+     * @param userId
+     * @throws Exception
+     */
+    public void logout(int userId) throws Exception {
+        User user = getUserById(userId);
+        if (user.getUserSocial().equals(UserSocial.K))
+            kakaoService.logout(user.getKakaoId()); // kakao 로그아웃 , Naver는 로그아웃 지원 X
+
+        tokenService.deleteToken(userId);
     }
 
     /**
