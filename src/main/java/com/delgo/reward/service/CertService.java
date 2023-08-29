@@ -254,6 +254,14 @@ public class CertService {
     }
 
     /**
+     * isCorrect 수정
+     */
+    public void changeIsCorrect(int certId, boolean isCorrect) {
+        Certification cert = getCertById(certId);
+        cert.setIsCorrect(isCorrect);
+    }
+
+    /**
      * 인증 삭제
      * 관련 좋아요 삭제, NCP Object Storage 삭제 필요
      */
