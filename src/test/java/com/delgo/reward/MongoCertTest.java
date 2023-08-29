@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,7 @@ public class MongoCertTest {
     public CertService certService;
 
     @Test
-    public void saveMongoCertFromMariaCert(){
+    public void saveMongoCertFromMariaCert() {
         Certification certification = certService.getCertById(1019);
         Map<ReactionCode, Integer> reactionCount = new HashMap<>();
         Map<ReactionCode, List<Integer>> reactionUserList = new HashMap<>();
@@ -50,7 +49,7 @@ public class MongoCertTest {
                 .latitude(certification.getLatitude())
                 .longitude(certification.getLongitude())
                 .photoUrl(certification.getPhotoUrl())
-                .isCorrectPhoto(certification.getIsCorrectPhoto())
+                .isCorrect(certification.getIsCorrect())
                 .isAchievements(certification.getIsAchievements())
                 .commentCount(certification.getCommentCount())
                 .isExpose(certification.getIsExpose())
@@ -61,7 +60,7 @@ public class MongoCertTest {
     }
 
     @Test
-    public void ReactionTest(){
+    public void ReactionTest() {
         int userId = 333;
         String certId = "64856395125b002d1a2b48f9";
         ReactionCode reactionCode = ReactionCode.CUTE;
