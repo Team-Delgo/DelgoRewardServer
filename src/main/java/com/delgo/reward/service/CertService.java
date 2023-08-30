@@ -70,7 +70,7 @@ public class CertService {
                         ? record.toEntity(reverseGeoService.getReverseGeoData(new Location(record.latitude(), record.longitude())), user)
                         : record.toEntity(mungpleService.getMungpleById(record.mungpleId()),user));
 
-        String ncpLink = photoService.uploadCertMultipartForJPG(certification.getCertificationId(), photo);
+        String ncpLink = photoService.uploadCertPhotoWithJPG(certification.getCertificationId(), photo);
         certification.setPhotoUrl(ncpLink);
 //        pointService.givePoint(userService.getUserById(record.userId()).getUserId(), CategoryCode.valueOf(record.categoryCode()).getPoint());
 

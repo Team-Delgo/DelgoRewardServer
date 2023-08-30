@@ -85,7 +85,7 @@ public class CertServiceTest {
             Mockito.when(userService.getUserById(certRecord.userId())).thenReturn(user);
             Mockito.when(reverseGeoService.getReverseGeoData(location)).thenReturn(new Location());
             Mockito.when(certRepository.save(Mockito.any(Certification.class))).thenReturn(certification);
-            Mockito.when(photoService.uploadCertMultipartForJPG(certification.getCertificationId(), photo)).thenReturn("https://example.com/photo.jpg");
+            Mockito.when(photoService.uploadCertPhotoWithJPG(certification.getCertificationId(), photo)).thenReturn("https://example.com/photo.jpg");
             Mockito.when(achievementsService.checkEarnedAchievements(certRecord.userId(),
                     certRecord.mungpleId() != 0)).thenReturn(List.of(new Achievements()));
 
@@ -126,7 +126,7 @@ public class CertServiceTest {
             Mockito.when(userService.getUserById(certRecord.userId())).thenReturn(user);
             Mockito.when(mungpleService.getMungpleById(certRecord.mungpleId())).thenReturn(mungple);
             Mockito.when(certRepository.save(Mockito.any(Certification.class))).thenReturn(certificationByMungple);
-            Mockito.when(photoService.uploadCertMultipartForJPG(certificationByMungple.getCertificationId(), photo)).thenReturn("https://example.com/photo.jpg");
+            Mockito.when(photoService.uploadCertPhotoWithJPG(certificationByMungple.getCertificationId(), photo)).thenReturn("https://example.com/photo.jpg");
             Mockito.when(achievementsService.checkEarnedAchievements(certRecord.userId(), certRecord.mungpleId() != 0)).thenReturn(List.of(new Achievements()));
 
             CertByAchvResDTO result = certService.createCert(certRecord, photo);
