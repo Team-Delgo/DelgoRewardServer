@@ -8,6 +8,7 @@ import com.delgo.reward.comm.ncp.ReverseGeoService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.achievements.Achievements;
+import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.domain.user.User;
@@ -17,6 +18,7 @@ import com.delgo.reward.dto.cert.CertResDTO;
 import com.delgo.reward.dto.comm.PageResDTO;
 import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
+import com.delgo.reward.repository.CertPhotoRepository;
 import com.delgo.reward.repository.CertRepository;
 import com.google.api.client.util.ArrayMap;
 import lombok.RequiredArgsConstructor;
@@ -57,26 +59,33 @@ public class CertService {
 
     // Repository
     private final CertRepository certRepository;
+    private final CertPhotoRepository certPhotoRepository;
 //    private final JDBCTemplateRankingRepository jdbcTemplateRankingRepository;
 
     /**
      * 인증 생성
      * 일반 인증 - (위도,경도)로 NCP에서 주소 조회 필요
      */
-    public CertByAchvResDTO createCert(CertRecord record, MultipartFile photo) {
+    public CertByAchvResDTO createCert(CertRecord record, List<MultipartFile> photos) {
         User user = userService.getUserById(record.userId());
         Certification certification = saveCert(
                 (record.mungpleId() == 0)
                         ? record.toEntity(reverseGeoService.getReverseGeoData(new Location(record.latitude(), record.longitude())), user)
-                        : record.toEntity(mungpleService.getMungpleById(record.mungpleId()),user));
+                        : record.toEntity(mungpleService.getMungpleById(record.mungpleId()), user));
 
-        String ncpLink = photoService.uploadCertPhotoWithJPG(certification.getCertificationId(), photo);
-        certification.setPhotoUrl(ncpLink);
-//        pointService.givePoint(userService.getUserById(record.userId()).getUserId(), CategoryCode.valueOf(record.categoryCode()).getPoint());
+        List<String> photoUrls = photoService.uploadCertPhotos(certification.getCertificationId(), photos);
+        List<CertPhoto> certPhotos = photoUrls.stream().map(photoUrl -> CertPhoto.builder()
+                .certificationId(certification.getCertificationId())
+                .url(photoUrl)
+                .build()).toList();
+
+        certPhotoRepository.saveAll(certPhotos);
+        certification.setPhotos(certPhotos);
 
         CertByAchvResDTO resDto = new CertByAchvResDTO(certification, record.userId());
         // 획득 가능한 업적 Check
-        List<Achievements> earnAchievements = achievementsService.checkEarnedAchievements(record.userId(), record.mungpleId() != 0);
+        List<Achievements> earnAchievements = achievementsService.checkEarnedAchievements(record.userId(),
+                record.mungpleId() != 0);
         if (!earnAchievements.isEmpty()) {
             archiveService.registerArchives(earnAchievements.stream()
                     .map(achievement -> achievement.toArchive(record.userId())).collect(Collectors.toList()));
@@ -242,6 +251,14 @@ public class CertService {
      */
     public Certification changeCertPhotoUrl(Certification certification, String text) {
         return certification.setPhotoUrl(text);
+    }
+
+    /**
+     * isCorrect 수정
+     */
+    public void changeIsCorrect(int certId, boolean isCorrect) {
+        Certification cert = getCertById(certId);
+        cert.setIsCorrect(isCorrect);
     }
 
     /**
