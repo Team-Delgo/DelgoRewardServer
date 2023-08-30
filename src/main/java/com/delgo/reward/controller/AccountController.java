@@ -1,6 +1,9 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
+import com.delgo.reward.comm.oauth.KakaoService;
+import com.delgo.reward.domain.user.User;
+import com.delgo.reward.domain.user.UserSocial;
 import com.delgo.reward.dto.user.UserByCertCountResDTO;
 import com.delgo.reward.record.user.ModifyPetRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
@@ -22,7 +25,6 @@ public class AccountController extends CommController {
     private final PetService petService;
     private final CertService certService;
     private final UserService userService;
-    private final TokenService tokenService;
 
     /**
      * 알림 정보 수정
@@ -104,8 +106,8 @@ public class AccountController extends CommController {
      * @return 성공 / 실패 여부
      */
     @PostMapping(value = {"/logout/{userId}","/logout"})
-    public ResponseEntity<?> logout(@PathVariable Integer userId){
-        tokenService.deleteToken(userId);
+    public ResponseEntity<?> logout(@PathVariable Integer userId) throws Exception {
+        userService.logout(userId);
         return SuccessReturn();
     }
 }
