@@ -45,7 +45,7 @@ public class CertAsyncService {
                 certService.changeIsCorrect(certificationId, false);
             }
 
-            String ncpLink = photoService.uploadCertMultipartForWebp(fileName, file);
+            String ncpLink = photoService.uploadCertPhotoWithWebp(fileName, file);
             photo.setUrl(photoService.setCacheInvalidation(ncpLink));
             certPhotoRepository.save(photo);
 
