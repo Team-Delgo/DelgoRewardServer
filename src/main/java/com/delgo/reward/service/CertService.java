@@ -165,12 +165,8 @@ public class CertService {
      *   - Paging, EntityGraph 같이 사용시 메모리 과부하
      */
     public PageResDTO<CertResDTO> getAllCert(int userId, Pageable pageable) {
-        log.info("asdfasdfsa");
         Slice<Integer> slice = certRepository.findAllCertIdByPaging(userId, pageable);
-        log.info("slice : {}", slice.getContent());
         List<CertResDTO> certs = getCertsByIds(slice.getContent()).stream().map(cert -> new CertResDTO(cert, userId)).toList();
-        log.info("certs : {}", getCertsByIds(slice.getContent()).size());
-        log.info("certs : {}", certs.size());
 
         return new PageResDTO<>(certs, slice.getSize(), slice.getNumber(), slice.isLast());
     }
