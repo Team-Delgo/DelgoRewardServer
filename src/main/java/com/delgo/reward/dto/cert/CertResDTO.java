@@ -1,6 +1,7 @@
 package com.delgo.reward.dto.cert;
 
 
+import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.like.LikeList;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @ToString
@@ -33,6 +35,8 @@ public class CertResDTO {
     private Boolean isLike; // 내가 좋아요를 눌렀는가?
     private int likeCount; // 좋아요 개수
     private int commentCount; // 댓글 개수
+
+    private List<String> photos;
 
     private String categoryCode;
 
@@ -67,6 +71,8 @@ public class CertResDTO {
         isLike = false;
         likeCount = 0;
         registDt = cert.getRegistDt();
+
+        photos = cert.getPhotos().stream().map(CertPhoto::getUrl).toList();
         categoryCode = cert.getCategoryCode();
     }
 }

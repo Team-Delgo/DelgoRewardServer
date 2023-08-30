@@ -44,17 +44,17 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @Query(value = "select c from Certification c where c.user.userId = :userId and  c.registDt between :startDt and :endDt order by c.registDt desc")
     List<Certification> findCertByDateAndUser(@Param("userId") int userId, @Param("startDt") LocalDateTime startDt, @Param("endDt") LocalDateTime endDate);
 
-    @Query(value = "select c.certificationId from Certification c where c.user.userId  not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrectPhoto = true")
+    @Query(value = "select c.certificationId from Certification c where c.user.userId  not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrect = true")
     Slice<Integer> findAllCertIdByPaging(@Param("userId") int userId, Pageable pageable);
 
-    @Query(value = "select c.certificationId from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.certificationId != :certificationId and c.isCorrectPhoto = true")
+    @Query(value = "select c.certificationId from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.certificationId != :certificationId and c.isCorrect = true")
     Slice<Integer> findAllExcludeSpecificCert(@Param("userId") int userId, @Param("certificationId") int certificationId, Pageable pageable);
 
     // 자기 자신 인증 조회
     @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId")
     List<Integer> findCertIdByUserUserId(@Param("userId") int userId);
 
-    @Query(value = "SELECT c.certificationId FROM Certification c where c.isExpose = true and c.isCorrectPhoto = true order by RAND()")
+    @Query(value = "SELECT c.certificationId FROM Certification c where c.isExpose = true and c.isCorrect = true order by RAND()")
     List<Integer> findCertIdByIsExpose(Pageable pageable);
 
     @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId")
@@ -63,10 +63,10 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId and c.categoryCode = :categoryCode")
     Slice<Integer> findCertIdByUserIdAndCategoryCode(@Param("userId")int userId, @Param("categoryCode") String categoryCode, Pageable pageable);
 
-    @Query(value = "select c.certificationId from Certification c where c.mungpleId = :mungpleId and c.isCorrectPhoto = true")
+    @Query(value = "select c.certificationId from Certification c where c.mungpleId = :mungpleId and c.isCorrect = true")
     Slice<Integer> findCertByMungple(@Param("mungpleId") int mungpleId, Pageable pageable);
 
-    @Query(value = "select c.certificationId from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrectPhoto = true order by c.registDt desc")
+    @Query(value = "select c.certificationId from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrect = true order by c.registDt desc")
     List<Integer> findRecentCertId(@Param("userId") int userId, Pageable pageable);
 
     @Query("SELECT c.mungpleId FROM Certification c where c.mungpleId != 0 GROUP BY c.mungpleId ORDER BY COUNT(c) DESC")
