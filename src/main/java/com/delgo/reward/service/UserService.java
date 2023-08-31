@@ -8,20 +8,20 @@ import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.CategoryCount;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.domain.user.UserSocial;
-import com.delgo.reward.dto.user.UserResDTO;
+import com.delgo.reward.dto.user.SearchUserResDTO;
 import com.delgo.reward.record.signup.OAuthSignUpRecord;
 import com.delgo.reward.record.signup.SignUpRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
 import com.delgo.reward.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -276,5 +276,10 @@ public class UserService {
      */
     public CategoryCount categoryCountSave(CategoryCount categoryCount){
         return categoryCountRepository.save(categoryCount);
+    }
+
+
+    public List<SearchUserResDTO> getSearchUsers(String searchWord, Pageable pageable){
+        return userRepository.searchByName(searchWord, pageable).stream().map(SearchUserResDTO::new).toList();
     }
 }
