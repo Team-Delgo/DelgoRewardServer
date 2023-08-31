@@ -16,8 +16,11 @@ import com.delgo.reward.service.SmsAuthService;
 import com.delgo.reward.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,10 +37,17 @@ public class UserController extends CommController {
     private final UserService userService;
     private final SmsAuthService smsAuthService;
 
-    // User 조회
-    @GetMapping
-    public ResponseEntity<?> getUser(@RequestParam Integer userId) {
-        return SuccessReturn(new UserResDTO(userService.getUserById(userId)));
+    /**
+     * User 검색
+     * @param searchWord, pageable(페이징) [ page, size ]
+     * @return 성공 List<SearchUserResDTO> / 실패 여부
+     */
+    @GetMapping("/search")
+    public ResponseEntity<?> getSearchUser(@RequestParam String searchWord, @PageableDefault Pageable pageable) {
+        if (searchWord.length() < 2 || !StringUtils.hasText(searchWord))
+            return ParamErrorReturn("searchWord");
+
+        return SuccessReturn(userService.getSearchUsers(searchWord, pageable));
     }
 
     /**
