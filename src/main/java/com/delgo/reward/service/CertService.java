@@ -202,9 +202,9 @@ public class CertService {
     }
 
     /**
-     * [Category] 인증 조회
+     * [My] 내가 작성한 인증 조회
      */
-    public PageResDTO<CertResDTO> getCertsByCategory(int userId, String categoryCode, Pageable pageable) {
+    public PageResDTO<CertResDTO> getMyCerts(int userId, String categoryCode, Pageable pageable) {
         Slice<Integer> slice = (!categoryCode.equals(CategoryCode.TOTAL.getCode()))
                 ? certRepository.findCertIdByUserIdAndCategoryCode(userId, categoryCode, pageable)
                 : certRepository.findCertIdByUserId(userId, pageable);
@@ -214,15 +214,15 @@ public class CertService {
     }
 
     /**
-     * [Category] 인증 개수 조회
+     *  [Other] 다른 사용자가 작성한 인증 조회
      */
-    public Map<String, Long> getCertCountByCategory(int userId) {
-        Map<String, Long> map = getCertsByUserId(userId).stream().collect(groupingBy(cert -> CategoryCode.valueOf(cert.getCategoryCode()).getValue(),counting()));
-        //*** putIfAbsent
-        //- Key 값이 존재하는 경우 Map의 Value의 값을 반환하고, Key값이 존재하지 않는 경우 Key와 Value를 Map에 저장하고 Null을 반환합니다.
-        for (CategoryCode categoryCode : CategoryCode.values())
-            map.putIfAbsent(categoryCode.getValue(), 0L);
-        return map;
+    public PageResDTO<CertResDTO> getOtherCerts(int userId, String categoryCode, Pageable pageable) {
+        Slice<Integer> slice = (!categoryCode.equals(CategoryCode.TOTAL.getCode()))
+                ? certRepository.findCorrectCertIdByUserIdAndCategoryCode(userId, categoryCode, pageable)
+                : certRepository.findCorrectCertIdByUserId(userId, pageable);
+
+        List<CertResDTO> certs = getCertsByIds(slice.getContent()).stream().map(cert -> new CertResDTO(cert, userId)).toList();
+        return new PageResDTO<>(certs, slice.getSize(), slice.getNumber(), slice.isLast());
     }
 
     /**
@@ -295,4 +295,17 @@ public class CertService {
 
         return certByPGeoCode;
     }
+
+    //    /**
+//     * [Category] 인증 개수 조회
+//     */
+//    public Map<String, Long> getCertCountByCategory(int userId) {
+//        Map<String, Long> map = getCertsByUserId(userId).stream().collect(groupingBy(cert -> CategoryCode.valueOf(cert.getCategoryCode()).getValue(),counting()));
+//        //*** putIfAbsent
+//        //- Key 값이 존재하는 경우 Map의 Value의 값을 반환하고, Key값이 존재하지 않는 경우 Key와 Value를 Map에 저장하고 Null을 반환합니다.
+//        for (CategoryCode categoryCode : CategoryCode.values())
+//            map.putIfAbsent(categoryCode.getValue(), 0L);
+//        return map;
+//    }
+
 }
