@@ -78,9 +78,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.antMatchers("/api/code/**").permitAll()
 				.antMatchers("/api/fcm/**").permitAll()
 				.antMatchers("/api/token/reissue").permitAll()
-				.antMatchers("/api/certification/all").permitAll()
-				.antMatchers("/api/certification/mungple").permitAll()
 				.antMatchers("/api/account/logout/**").permitAll()
+
+				// certification
+				.antMatchers("/api/certification/all").permitAll()
+				.antMatchers("/api/certification/other").permitAll()
+				.antMatchers("/api/certification/mungple").permitAll()
 
 				// delgo-map
 				.antMatchers("/api/map/**").permitAll()
