@@ -11,6 +11,7 @@ import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 
 @Getter
 @ToString
@@ -35,6 +36,9 @@ public class UserResDTO {
     private String breedName;
     private LocalDate birthday;
 
+    private int yearOfPetAge;
+    private int monthOfPetAge;
+
     @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
     private LocalDateTime registDt;
 
@@ -57,5 +61,9 @@ public class UserResDTO {
         breedName = user.getPet().getBreedName();
         birthday = user.getPet().getBirthday();
         registDt = user.getRegistDt();
+
+        Period period = Period.between(user.getPet().getBirthday(), LocalDate.now());
+        yearOfPetAge = period.getYears();
+        monthOfPetAge = period.getMonths();
     }
 }
