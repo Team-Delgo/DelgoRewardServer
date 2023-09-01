@@ -4,6 +4,7 @@ import com.delgo.reward.domain.mungple.Mungple;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.domain.user.User;
+import com.delgo.reward.mongoDomain.MongoMungple;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -55,6 +56,28 @@ public record CertRecord(
                 .latitude(mungple.getLatitude())
                 .longitude(mungple.getLongitude())
                 .isCorrect(false)
+                .isAchievements(false)
+                .isExpose(true)
+                .isHideAddress(false)
+                .commentCount(0)
+                .build();
+    }
+
+    public Certification toEntity(MongoMungple mongoMungple, User user){
+        String[] arr = mongoMungple.getJibunAddress().split(" ");
+        String address = arr[0] + " " + arr[1] + " " + arr[2];
+        return Certification.builder()
+                .user(user)
+                .categoryCode(mongoMungple.getCategoryCode())
+                .mungpleId(mungpleId)
+                .placeName(mongoMungple.getPlaceName())
+                .description(description)
+                .address(address)
+                .geoCode(mongoMungple.getGeoCode())
+                .pGeoCode(mongoMungple.getPGeoCode())
+                .latitude(mongoMungple.getLatitude())
+                .longitude(mongoMungple.getLongitude())
+                .isCorrectPhoto(false)
                 .isAchievements(false)
                 .isExpose(true)
                 .isHideAddress(false)
