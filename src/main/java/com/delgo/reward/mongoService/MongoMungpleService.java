@@ -73,9 +73,11 @@ public class MongoMungpleService {
      */
     public MongoMungple getMungpleByMungpleId(int mungpleId) {
         MungpleCache cacheData = mungpleCacheService.getCacheData(mungpleId);
+
         if (!mungpleCacheService.isValidation(cacheData)) {
-            cacheData = mungpleCacheService.updateCacheData(mungpleId, mongoMungpleRepository.findByMungpleId(mungpleId)
-                    .orElseThrow(() -> new NullPointerException("NOT FOUND MongoMungple - mungpleId : " + mungpleId )));
+            MongoMungple mongoMungple = mongoMungpleRepository.findByMungpleId(mungpleId)
+                    .orElseThrow(() -> new NullPointerException("NOT FOUND MongoMungple - mungpleId : " + mungpleId ));
+            cacheData = mungpleCacheService.updateCacheData(mungpleId, mongoMungple);
         }
 
         return cacheData.getMongoMungple();
@@ -113,11 +115,7 @@ public class MongoMungpleService {
     }
 
     public List<MungpleResDTO> getMungpleOfMostCertCount(int count) {
-        List<Integer> mungpleIdList = certRepository.findCertOrderByMungpleCount(PageRequest.of(0, count));
-        List<MongoMungple> mungpleList = new ArrayList<>();
-        for(int mungpleId: mungpleIdList){
-            mungpleList.add(mongoMungpleRepository.findByMungpleId(mungpleId).get());
-        }
+        List<MongoMungple> mungpleList = mongoMungpleRepository.findByMungpleIdIn(certRepository.findCertOrderByMungpleCount(PageRequest.of(0, count)));
 
         return mungpleList.stream().map(MungpleResDTO::new).collect(Collectors.toList());
     }
