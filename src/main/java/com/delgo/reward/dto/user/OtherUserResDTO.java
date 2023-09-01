@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class SearchUserResDTO {
+public class OtherUserResDTO {
     // User
     private int userId;
     private String nickname;
@@ -26,7 +26,7 @@ public class SearchUserResDTO {
     private String breedName;
     private int petAge;
 
-    public SearchUserResDTO(User user){
+    public OtherUserResDTO(User user){
         userId = user.getUserId();
         nickname = user.getName();
         profile = user.getProfile();
