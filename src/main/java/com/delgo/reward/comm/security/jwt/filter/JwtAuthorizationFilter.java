@@ -2,6 +2,7 @@ package com.delgo.reward.comm.security.jwt.filter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
 import com.delgo.reward.comm.security.services.PrincipalDetails;
 import com.delgo.reward.domain.user.User;
@@ -38,6 +39,14 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
+        String requestURI = request.getRequestURI();
+
+        // permitAll()로 설정한 API에 대해 검사를 스킵하고 통과시킴
+        if (requestURI.startsWith("/api/token/reissue")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         String header = request.getHeader(AccessTokenProperties.HEADER_STRING);
         // Token 있는지 여부 체크
         if (header == null || !header.startsWith(AccessTokenProperties.TOKEN_PREFIX)) {
@@ -50,9 +59,11 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         // 토큰 검증 (이게 인증이기 때문에 AuthenticationManager도 필요 없음)
         // SecurityContext에 접근해서 세션을 만들때 자동으로 UserDetailsService에 있는 loadByUsername이 호출됨.
         try {
-            Integer userId = Integer.parseInt(String.valueOf(JWT.require(Algorithm.HMAC512(AccessTokenProperties.SECRET)).build().verify(token).getClaim("userId")));
+            Integer userId = JWT.require(Algorithm.HMAC512(AccessTokenProperties.SECRET))
+                            .build()
+                            .verify(token)
+                            .getClaim("userId").asInt();
 
-            log.info("JwtAuthorizationFilter userId : " + userId);
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new NullPointerException("NOT FOUND USER id: " + userId));
 
@@ -67,8 +78,14 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                             principalDetails.getAuthorities());
             // 강제로 시큐리티의 세션에 접근하여 값 저장 ( 권한 없으면 필요 없음 )
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (Exception e) { // Token 시간 만료 및 토큰 인증 에러
-            log.info("Access Token Expired : " + e.getLocalizedMessage());
+        } catch (JWTDecodeException e) {
+            log.info("JwtAuthorizationFilter Undefined 에러 처리 들어옴");
+            chain.doFilter(request, response);
+            return;
+        }
+        catch (Exception e) { // Token 시간 만료 및 토큰 인증 에러
+            log.info("JwtAuthorizationFilter 에러 발생");
+            e.printStackTrace();
             RequestDispatcher dispatcher = request.getRequestDispatcher("/token/error");
             dispatcher.forward(request, response); // 303 토큰 에러 발생
             return;

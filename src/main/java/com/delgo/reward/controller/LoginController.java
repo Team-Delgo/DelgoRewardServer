@@ -2,15 +2,14 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.APICode;
+import com.delgo.reward.comm.exception.JwtException;
 import com.delgo.reward.comm.security.jwt.JwtService;
 import com.delgo.reward.comm.security.jwt.JwtToken;
-import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
 import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
 import com.delgo.reward.dto.user.UserResDTO;
 import com.delgo.reward.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,17 +34,8 @@ public class LoginController extends CommController {
     @PostMapping("/login/success")
     public ResponseEntity<?> loginSuccess(HttpServletRequest request, HttpServletResponse response) {
         int userId = Integer.parseInt(request.getAttribute("userId").toString());
-
         JwtToken jwt = jwtService.createToken(userId);
-        response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
-
-        ResponseCookie cookie = ResponseCookie.from(RefreshTokenProperties.HEADER_STRING, jwt.getRefreshToken())
-                .secure(true)
-                .httpOnly(true)
-                .path("/")
-                .sameSite("Strict")
-                .build();
-        response.addHeader("Set-Cookie", cookie.toString());
+        jwtService.publishToken(response, jwt);
 
         return SuccessReturn(new UserResDTO(userService.getUserById(userId)));
     }
@@ -70,20 +60,11 @@ public class LoginController extends CommController {
         try {
             int userId = jwtService.getUserIdByRefreshToken(refreshToken);
             JwtToken jwt = jwtService.createToken(userId);
-            response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
-
-            ResponseCookie cookie = ResponseCookie.from(RefreshTokenProperties.HEADER_STRING, jwt.getRefreshToken())
-                    .secure(true)
-                    .httpOnly(true)
-                    .path("/")
-                    .sameSite("Strict")
-                    .build();
-            response.addHeader("Set-Cookie", cookie.toString());
+            jwtService.publishToken(response, jwt);
 
             return SuccessReturn();
-        } catch (Exception e) { // Refresh_Toekn 인증 실패 ( 로그인 화면으로 이동 필요 )
-            e.printStackTrace();
-            return TokenErrorReturn();
+        } catch (JwtException e) { // Refresh_Toekn 인증 실패 ( 로그인 화면으로 이동 필요 )
+            return TokenErrorReturn(e.getStatus());
         }
     }
 
@@ -93,6 +74,6 @@ public class LoginController extends CommController {
      */
     @RequestMapping("/token/error")
     public ResponseEntity<?> tokenError() {
-        return TokenErrorReturn();
+        return TokenErrorReturn(APICode.TOKEN_ERROR);
     }
 }

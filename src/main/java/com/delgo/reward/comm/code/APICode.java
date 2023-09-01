@@ -10,6 +10,7 @@ public enum APICode {
 
     // TOKEN ERROR
     TOKEN_ERROR(CODE.TOKEN_ERROR, MSG.TOKEN_ERROR),
+    DB_TOKEN_ERROR(CODE.TOKEN_ERROR, MSG.DB_TOKEN_ERROR),
 
     // LOGIN ERROR
     LOGIN_ERROR(CODE.LOGIN_ERROR, MSG.LOGIN_ERROR),
@@ -133,6 +134,7 @@ public enum APICode {
 
         // TOKEN ERROR
         public static final String TOKEN_ERROR = "TOKEN_ERROR";
+        public static final String DB_TOKEN_ERROR = "DB_TOKEN_ERROR";
 
         // LOGIN ERROR
         public static final String LOGIN_ERROR = "LOGIN_ERROR";
