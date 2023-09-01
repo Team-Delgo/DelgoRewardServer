@@ -1,9 +1,6 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.comm.oauth.KakaoService;
-import com.delgo.reward.domain.user.User;
-import com.delgo.reward.domain.user.UserSocial;
 import com.delgo.reward.dto.user.UserByCertCountResDTO;
 import com.delgo.reward.record.user.ModifyPetRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
@@ -25,6 +22,21 @@ public class AccountController extends CommController {
     private final PetService petService;
     private final CertService certService;
     private final UserService userService;
+
+    /**
+     * 내 정보 조회
+     * @param userId
+     * @return 유저 정보 반환
+     */
+    @GetMapping
+    public ResponseEntity<?> getAccount(@RequestParam Integer userId){
+        return SuccessReturn(new UserByCertCountResDTO(
+                userService.getUserById(userId),
+                certService.getCertCountByUser(userId),
+                certService.getCertCountByMungpleOfSpecificUser(userId),
+                userService.getCategoryCountByUserId(userId)));
+    }
+
 
     /**
      * 알림 정보 수정
@@ -84,20 +96,6 @@ public class AccountController extends CommController {
 //        rankingService.rankingByPoint(); // 랭킹 실시간으로 집계
 
         return SuccessReturn();
-    }
-
-    /**
-     * 유저 조회
-     * @param userId
-     * @return 유저 정보 반환
-     */
-    @GetMapping
-    public ResponseEntity<?> getAccount(@RequestParam Integer userId){
-        return SuccessReturn(new UserByCertCountResDTO(
-                userService.getUserById(userId),
-                certService.getCertCountByUser(userId),
-                certService.getCertCountByMungpleOfSpecificUser(userId),
-                userService.getCategoryCountByUserId(userId)));
     }
 
     /**
