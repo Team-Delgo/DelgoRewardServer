@@ -22,7 +22,21 @@ public class AccountController extends CommController {
     private final PetService petService;
     private final CertService certService;
     private final UserService userService;
-    private final TokenService tokenService;
+
+    /**
+     * 내 정보 조회
+     * @param userId
+     * @return 유저 정보 반환
+     */
+    @GetMapping
+    public ResponseEntity<?> getAccount(@RequestParam Integer userId){
+        return SuccessReturn(new UserByCertCountResDTO(
+                userService.getUserById(userId),
+                certService.getCertCountByUser(userId),
+                certService.getCertCountByMungpleOfSpecificUser(userId),
+                userService.getCategoryCountByUserId(userId)));
+    }
+
 
     /**
      * 알림 정보 수정
@@ -85,27 +99,13 @@ public class AccountController extends CommController {
     }
 
     /**
-     * 유저 조회
-     * @param userId
-     * @return 유저 정보 반환
-     */
-    @GetMapping
-    public ResponseEntity<?> getAccount(@RequestParam Integer userId){
-        return SuccessReturn(new UserByCertCountResDTO(
-                userService.getUserById(userId),
-                certService.getCertCountByUser(userId),
-                certService.getCertCountByMungpleOfSpecificUser(userId),
-                userService.getCategoryCountByUserId(userId)));
-    }
-
-    /**
      * 로그아웃
      * @param userId
      * @return 성공 / 실패 여부
      */
     @PostMapping(value = {"/logout/{userId}","/logout"})
-    public ResponseEntity<?> logout(@PathVariable Integer userId){
-        tokenService.deleteToken(userId);
+    public ResponseEntity<?> logout(@PathVariable Integer userId) throws Exception {
+        userService.logout(userId);
         return SuccessReturn();
     }
 }

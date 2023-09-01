@@ -5,10 +5,8 @@ import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.oauth.AppleService;
 import com.delgo.reward.comm.oauth.KakaoService;
 import com.delgo.reward.comm.oauth.NaverService;
-import com.delgo.reward.comm.security.jwt.JwtToken;
-import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
 import com.delgo.reward.comm.security.jwt.JwtService;
-import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
+import com.delgo.reward.comm.security.jwt.JwtToken;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.domain.user.UserSocial;
 import com.delgo.reward.dto.OAuthDTO;
@@ -53,8 +51,7 @@ public class OAuthController extends CommController {
 
         // TOKEN 발행
         JwtToken jwt = jwtService.createToken(user.getUserId());
-        response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
-        response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
+        jwtService.publishToken(response, jwt);
 
         return SuccessReturn(new UserResDTO(user));
     }
@@ -92,8 +89,7 @@ public class OAuthController extends CommController {
 
         // TOKEN 발행
         JwtToken jwt = jwtService.createToken(user.getUserId());
-        response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
-        response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
+        jwtService.publishToken(response, jwt);
 
         return SuccessReturn(new UserResDTO(user)); //200
     }
@@ -130,8 +126,7 @@ public class OAuthController extends CommController {
 
         // TOKEN 발행
         JwtToken jwt = jwtService.createToken(user.getUserId());
-        response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
-        response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
+        jwtService.publishToken(response, jwt);
 
         return SuccessReturn(new UserResDTO(user)); //200
     }

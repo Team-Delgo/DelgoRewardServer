@@ -32,8 +32,8 @@ public class CommController {
         );
     }
 
-    public ResponseEntity TokenErrorReturn() {
+    public ResponseEntity TokenErrorReturn(APICode apiCode) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ResponseRecord(APICode.TOKEN_ERROR.getCode(), APICode.TOKEN_ERROR.getMsg(), null));
+                .body(new ResponseRecord(apiCode.getCode(), apiCode.getMsg(), null));
     }
 }

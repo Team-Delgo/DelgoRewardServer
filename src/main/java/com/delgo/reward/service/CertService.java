@@ -8,6 +8,7 @@ import com.delgo.reward.comm.ncp.ReverseGeoService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.achievements.Achievements;
+import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.domain.user.User;
@@ -18,6 +19,7 @@ import com.delgo.reward.dto.comm.PageResDTO;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
+import com.delgo.reward.repository.CertPhotoRepository;
 import com.delgo.reward.repository.CertRepository;
 import com.google.api.client.util.ArrayMap;
 import lombok.RequiredArgsConstructor;
@@ -37,8 +39,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.counting;
-import static java.util.stream.Collectors.groupingBy;
 
 @Slf4j
 @Service
@@ -59,26 +59,33 @@ public class CertService {
 
     // Repository
     private final CertRepository certRepository;
+    private final CertPhotoRepository certPhotoRepository;
 //    private final JDBCTemplateRankingRepository jdbcTemplateRankingRepository;
 
     /**
      * 인증 생성
      * 일반 인증 - (위도,경도)로 NCP에서 주소 조회 필요
      */
-    public CertByAchvResDTO createCert(CertRecord record, MultipartFile photo) {
+    public CertByAchvResDTO createCert(CertRecord record, List<MultipartFile> photos) {
         User user = userService.getUserById(record.userId());
         Certification certification = saveCert(
                 (record.mungpleId() == 0)
                         ? record.toEntity(reverseGeoService.getReverseGeoData(new Location(record.latitude(), record.longitude())), user)
                         : record.toEntity(mongoMungpleService.getMungpleByMungpleId(record.mungpleId()),user));
 
-        String ncpLink = photoService.uploadCertMultipartForJPG(certification.getCertificationId(), photo);
-        certification.setPhotoUrl(ncpLink);
-//        pointService.givePoint(userService.getUserById(record.userId()).getUserId(), CategoryCode.valueOf(record.categoryCode()).getPoint());
+        List<String> photoUrls = photoService.uploadCertPhotos(certification.getCertificationId(), photos);
+        List<CertPhoto> certPhotos = photoUrls.stream().map(photoUrl -> CertPhoto.builder()
+                .certificationId(certification.getCertificationId())
+                .url(photoUrl)
+                .build()).toList();
+
+        certPhotoRepository.saveAll(certPhotos);
+        certification.setPhotos(certPhotos);
 
         CertByAchvResDTO resDto = new CertByAchvResDTO(certification, record.userId());
         // 획득 가능한 업적 Check
-        List<Achievements> earnAchievements = achievementsService.checkEarnedAchievements(record.userId(), record.mungpleId() != 0);
+        List<Achievements> earnAchievements = achievementsService.checkEarnedAchievements(record.userId(),
+                record.mungpleId() != 0);
         if (!earnAchievements.isEmpty()) {
             archiveService.registerArchives(earnAchievements.stream()
                     .map(achievement -> achievement.toArchive(record.userId())).collect(Collectors.toList()));
@@ -195,9 +202,9 @@ public class CertService {
     }
 
     /**
-     * [Category] 인증 조회
+     * [My] 내가 작성한 인증 조회
      */
-    public PageResDTO<CertResDTO> getCertsByCategory(int userId, String categoryCode, Pageable pageable) {
+    public PageResDTO<CertResDTO> getMyCerts(int userId, String categoryCode, Pageable pageable) {
         Slice<Integer> slice = (!categoryCode.equals(CategoryCode.TOTAL.getCode()))
                 ? certRepository.findCertIdByUserIdAndCategoryCode(userId, categoryCode, pageable)
                 : certRepository.findCertIdByUserId(userId, pageable);
@@ -207,15 +214,15 @@ public class CertService {
     }
 
     /**
-     * [Category] 인증 개수 조회
+     *  [Other] 다른 사용자가 작성한 인증 조회
      */
-    public Map<String, Long> getCertCountByCategory(int userId) {
-        Map<String, Long> map = getCertsByUserId(userId).stream().collect(groupingBy(cert -> CategoryCode.valueOf(cert.getCategoryCode()).getValue(),counting()));
-        //*** putIfAbsent
-        //- Key 값이 존재하는 경우 Map의 Value의 값을 반환하고, Key값이 존재하지 않는 경우 Key와 Value를 Map에 저장하고 Null을 반환합니다.
-        for (CategoryCode categoryCode : CategoryCode.values())
-            map.putIfAbsent(categoryCode.getValue(), 0L);
-        return map;
+    public PageResDTO<CertResDTO> getOtherCerts(int userId, String categoryCode, Pageable pageable) {
+        Slice<Integer> slice = (!categoryCode.equals(CategoryCode.TOTAL.getCode()))
+                ? certRepository.findCorrectCertIdByUserIdAndCategoryCode(userId, categoryCode, pageable)
+                : certRepository.findCorrectCertIdByUserId(userId, pageable);
+
+        List<CertResDTO> certs = getCertsByIds(slice.getContent()).stream().map(cert -> new CertResDTO(cert, userId)).toList();
+        return new PageResDTO<>(certs, slice.getSize(), slice.getNumber(), slice.isLast());
     }
 
     /**
@@ -223,6 +230,13 @@ public class CertService {
      */
     public int getCertCountByUser(int userId) {
         return certRepository.countByUserUserId(userId);
+    }
+
+    /**
+     * [User] 인증 개수 조회
+     */
+    public int getCorrectCertCountByUser(int userId) {
+        return certRepository.countByUserUserIdAndIsCorrect(userId, true);
     }
 
     /**
@@ -244,6 +258,14 @@ public class CertService {
      */
     public Certification changeCertPhotoUrl(Certification certification, String text) {
         return certification.setPhotoUrl(text);
+    }
+
+    /**
+     * isCorrect 수정
+     */
+    public void changeIsCorrect(int certId, boolean isCorrect) {
+        Certification cert = getCertById(certId);
+        cert.setIsCorrect(isCorrect);
     }
 
     /**
@@ -280,4 +302,17 @@ public class CertService {
 
         return certByPGeoCode;
     }
+
+    //    /**
+//     * [Category] 인증 개수 조회
+//     */
+//    public Map<String, Long> getCertCountByCategory(int userId) {
+//        Map<String, Long> map = getCertsByUserId(userId).stream().collect(groupingBy(cert -> CategoryCode.valueOf(cert.getCategoryCode()).getValue(),counting()));
+//        //*** putIfAbsent
+//        //- Key 값이 존재하는 경우 Map의 Value의 값을 반환하고, Key값이 존재하지 않는 경우 Key와 Value를 Map에 저장하고 Null을 반환합니다.
+//        for (CategoryCode categoryCode : CategoryCode.values())
+//            map.putIfAbsent(categoryCode.getValue(), 0L);
+//        return map;
+//    }
+
 }
