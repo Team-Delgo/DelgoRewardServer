@@ -33,7 +33,10 @@ public class PetService {
     public void changePetInfo(ModifyPetRecord modifyPetRecord,User user){
         Optional.ofNullable(modifyPetRecord.name()).ifPresent(user.getPet()::setName);
         Optional.ofNullable(modifyPetRecord.birthday()).ifPresent(user.getPet()::setBirthday);
-        Optional.ofNullable(modifyPetRecord.breed()).ifPresent(user.getPet()::setBreed);
+        Optional.ofNullable(modifyPetRecord.breed()).ifPresent(breed ->{
+            user.getPet().setBreed(breed);
+            user.getPet().setBreedName(codeService.getCode(breed).getCodeName());
+        });
     }
 
     // 단순 DB 데이터 적치용
