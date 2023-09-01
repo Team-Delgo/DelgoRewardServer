@@ -8,10 +8,12 @@ import com.delgo.reward.comm.security.jwt.JwtToken;
 import com.delgo.reward.domain.SmsAuth;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.domain.user.UserSocial;
+import com.delgo.reward.dto.user.OtherUserResDTO;
 import com.delgo.reward.dto.user.UserResDTO;
 import com.delgo.reward.record.signup.OAuthSignUpRecord;
 import com.delgo.reward.record.signup.SignUpRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
+import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.SmsAuthService;
 import com.delgo.reward.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * 해당 Controller는 권한 체크 없이 호출이 가능하다.
+ */
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -35,7 +41,20 @@ public class UserController extends CommController {
 
     private final JwtService jwtService;
     private final UserService userService;
+    private final CertService certService;
     private final SmsAuthService smsAuthService;
+
+    /**
+     * 다른 User 정보 조회
+     * @param userId
+     * @return 성공 OtherUserResDTO / 실패 여부
+     */
+    @GetMapping("/other")
+    public ResponseEntity<?> getOtherUser(@RequestParam int userId) {
+        return SuccessReturn(new OtherUserResDTO(
+                userService.getUserById(userId),
+                certService.getCorrectCertCountByUser(userId)));
+    }
 
     /**
      * User 검색
@@ -66,7 +85,7 @@ public class UserController extends CommController {
         return SuccessReturn();
     }
 
-    /*
+    /**
      * 소셜 회원가입 ( Kakao, Naver, Apple )
      * Request Data : OAuthSignUpDTO, MultipartFile (프로필 사진)
      * Response Data : 등록한 인증 데이터 반환
@@ -85,7 +104,7 @@ public class UserController extends CommController {
         return SuccessReturn(new UserResDTO(user));
     }
 
-    /*
+    /**
      * 일반 회원가입
      * Request Data : SignUpDTO, MultipartFile (프로필 사진)
      * Response Data : 등록한 인증 데이터 반환

@@ -6,15 +6,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.time.Period;
 
 @Getter
+@Slf4j
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class SearchUserResDTO {
+public class OtherUserResDTO {
     // User
     private int userId;
     private String nickname;
@@ -28,7 +30,9 @@ public class SearchUserResDTO {
     private int yearOfPetAge;
     private int monthOfPetAge;
 
-    public SearchUserResDTO(User user){
+    private int certCount;
+
+    public OtherUserResDTO(User user, int certCount){
         userId = user.getUserId();
         nickname = user.getName();
         profile = user.getProfile();
@@ -41,5 +45,7 @@ public class SearchUserResDTO {
         Period period = Period.between(user.getPet().getBirthday(), LocalDate.now());
         yearOfPetAge = period.getYears();
         monthOfPetAge = period.getMonths();
+
+        this.certCount = certCount;
     }
 }

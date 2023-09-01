@@ -17,6 +17,7 @@ import java.util.Optional;
 public interface CertRepository extends JpaRepository<Certification, Integer>, JpaSpecificationExecutor<Certification> {
 
     Integer countByUserUserId(int userId);
+    Integer countByUserUserIdAndIsCorrect(int userId, boolean isCorrect);
     void deleteAllByUserUserId(int userId);
 
     @EntityGraph(attributePaths = {"likeLists"})
@@ -44,18 +45,8 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @Query(value = "select c from Certification c where c.user.userId = :userId and  c.registDt between :startDt and :endDt order by c.registDt desc")
     List<Certification> findCertByDateAndUser(@Param("userId") int userId, @Param("startDt") LocalDateTime startDt, @Param("endDt") LocalDateTime endDate);
 
-    @Query(value = "select c.certificationId from Certification c where c.user.userId  not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrect = true")
-    Slice<Integer> findAllCertIdByPaging(@Param("userId") int userId, Pageable pageable);
-
-    @Query(value = "select c.certificationId from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.certificationId != :certificationId and c.isCorrect = true")
-    Slice<Integer> findAllExcludeSpecificCert(@Param("userId") int userId, @Param("certificationId") int certificationId, Pageable pageable);
-
-    // 자기 자신 인증 조회
     @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId")
     List<Integer> findCertIdByUserUserId(@Param("userId") int userId);
-
-    @Query(value = "SELECT c.certificationId FROM Certification c where c.isExpose = true and c.isCorrect = true order by RAND()")
-    List<Integer> findCertIdByIsExpose(Pageable pageable);
 
     @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId")
     Slice<Integer> findCertIdByUserId(@Param("userId") int userId, Pageable pageable);
@@ -63,16 +54,32 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId and c.categoryCode = :categoryCode")
     Slice<Integer> findCertIdByUserIdAndCategoryCode(@Param("userId")int userId, @Param("categoryCode") String categoryCode, Pageable pageable);
 
-    @Query(value = "select c.certificationId from Certification c where c.mungpleId = :mungpleId and c.isCorrect = true")
-    Slice<Integer> findCertByMungple(@Param("mungpleId") int mungpleId, Pageable pageable);
-
-    @Query(value = "select c.certificationId from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrect = true order by c.registDt desc")
-    List<Integer> findRecentCertId(@Param("userId") int userId, Pageable pageable);
-
     @Query("SELECT c.mungpleId FROM Certification c where c.mungpleId != 0 GROUP BY c.mungpleId ORDER BY COUNT(c) DESC")
     List<Integer>  findCertOrderByMungpleCount(Pageable pageable);
 
 
+    // ---------------------- isCorrect -----------------------------
+
+    @Query(value = "SELECT c.certificationId FROM Certification c where c.isExpose = true and c.isCorrect = true order by RAND()")
+    List<Integer> findCertIdByIsExpose(Pageable pageable);
+
+    @Query(value = "select c.certificationId from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrect = true order by c.registDt desc")
+    List<Integer> findRecentCertId(@Param("userId") int userId, Pageable pageable);
+
+    @Query(value = "select c.certificationId from Certification c where c.user.userId  not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrect = true")
+    Slice<Integer> findAllCertIdByPaging(@Param("userId") int userId, Pageable pageable);
+
+    @Query(value = "select c.certificationId from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.certificationId != :certificationId and c.isCorrect = true")
+    Slice<Integer> findAllExcludeSpecificCert(@Param("userId") int userId, @Param("certificationId") int certificationId, Pageable pageable);
+
+    @Query(value = "select c.certificationId from Certification c where c.mungpleId = :mungpleId and c.isCorrect = true")
+    Slice<Integer> findCertByMungple(@Param("mungpleId") int mungpleId, Pageable pageable);
+
+    @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId and c.categoryCode = :categoryCode and c.isCorrect = true")
+    Slice<Integer> findCorrectCertIdByUserIdAndCategoryCode(@Param("userId")int userId, @Param("categoryCode") String categoryCode, Pageable pageable);
+
+    @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId and c.isCorrect = true")
+    Slice<Integer> findCorrectCertIdByUserId(@Param("userId") int userId, Pageable pageable);
 
     // ---------------------------------------- Map TEST ----------------------------------------
 
