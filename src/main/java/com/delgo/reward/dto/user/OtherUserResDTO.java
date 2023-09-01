@@ -30,7 +30,9 @@ public class OtherUserResDTO {
     private int yearOfPetAge;
     private int monthOfPetAge;
 
-    public OtherUserResDTO(User user){
+    private int certCount;
+
+    public OtherUserResDTO(User user, int certCount){
         userId = user.getUserId();
         nickname = user.getName();
         profile = user.getProfile();
@@ -43,5 +45,7 @@ public class OtherUserResDTO {
         Period period = Period.between(user.getPet().getBirthday(), LocalDate.now());
         yearOfPetAge = period.getYears();
         monthOfPetAge = period.getMonths();
+
+        this.certCount = certCount;
     }
 }

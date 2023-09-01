@@ -17,6 +17,7 @@ import java.util.Optional;
 public interface CertRepository extends JpaRepository<Certification, Integer>, JpaSpecificationExecutor<Certification> {
 
     Integer countByUserUserId(int userId);
+    Integer countByUserUserIdAndIsCorrect(int userId, boolean isCorrect);
     void deleteAllByUserUserId(int userId);
 
     @EntityGraph(attributePaths = {"likeLists"})
