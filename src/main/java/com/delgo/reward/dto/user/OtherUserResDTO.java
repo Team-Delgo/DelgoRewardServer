@@ -6,10 +6,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
+import java.time.Period;
 
 @Getter
+@Slf4j
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,7 +27,8 @@ public class OtherUserResDTO {
     private String petName;
     private String breed;
     private String breedName;
-    private int petAge;
+    private int yearOfPetAge;
+    private int monthOfPetAge;
 
     public OtherUserResDTO(User user){
         userId = user.getUserId();
@@ -35,6 +39,9 @@ public class OtherUserResDTO {
         petName = user.getPet().getName();
         breed = user.getPet().getBreed();
         breedName = user.getPet().getBreedName();
-        petAge = LocalDate.now().getYear() - user.getPet().getBirthday().getYear() + 1;
+
+        Period period = Period.between(user.getPet().getBirthday(), LocalDate.now());
+        yearOfPetAge = period.getYears();
+        monthOfPetAge = period.getMonths();
     }
 }
