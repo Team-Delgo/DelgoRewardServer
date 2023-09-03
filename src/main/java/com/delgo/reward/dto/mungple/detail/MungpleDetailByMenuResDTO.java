@@ -1,7 +1,6 @@
 package com.delgo.reward.dto.mungple.detail;
 
-import com.delgo.reward.domain.mungple.Mungple;
-import com.delgo.reward.mongoDomain.MungpleDetail;
+import com.delgo.reward.mongoDomain.MongoMungple;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -16,12 +15,12 @@ public class MungpleDetailByMenuResDTO extends MungpleDetailResDTO {
     private final String representMenuTitle; // 대표 메뉴 제목
     private final List<String> representMenuPhotoUrls; // 대표 메뉴 사진 URL // ※무조건 3개 이상이어야 함.
 
-    public MungpleDetailByMenuResDTO(Mungple mungple, MungpleDetail mungpleDetail, int certCount){
-        super(mungple,mungpleDetail,certCount);
-        residentDogName = mungpleDetail.getResidentDogName();
-        residentDogPhoto = mungpleDetail.getResidentDogPhoto();
+    public MungpleDetailByMenuResDTO(MongoMungple mongoMungple, int certCount){
+        super(mongoMungple,certCount);
+        residentDogName = mongoMungple.getResidentDogName();
+        residentDogPhoto = mongoMungple.getResidentDogPhoto();
 
-        representMenuTitle = mungpleDetail.getRepresentMenuTitle();
-        representMenuPhotoUrls = mungpleDetail.getRepresentMenuPhotoUrls();
+        representMenuTitle = mongoMungple.getRepresentMenuTitle();
+        representMenuPhotoUrls = mongoMungple.getRepresentMenuPhotoUrls();
     }
 }
