@@ -15,10 +15,21 @@ public class PageResDTO<T> {
     private boolean last;
     private List<T> content;
 
+    private int totalCount;
+
     public PageResDTO(List<T> data, int size, int number, boolean last) {
         this.content = data;
         this.size = size;
         this.number = number;
         this.last = last;
+    }
+
+    // [/certification/my] , [certification/other] 의 경우 totalCount가 필요함.
+    public PageResDTO(List<T> data, int size, int number, boolean last, int totalCount) {
+        this.content = data;
+        this.size = size;
+        this.number = number;
+        this.last = last;
+        this.totalCount = totalCount;
     }
 }
