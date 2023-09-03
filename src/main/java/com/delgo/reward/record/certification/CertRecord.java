@@ -77,12 +77,11 @@ public record CertRecord(
                 .pGeoCode(mongoMungple.getPGeoCode())
                 .latitude(mongoMungple.getLatitude())
                 .longitude(mongoMungple.getLongitude())
-                .isCorrectPhoto(false)
+                .isCorrect(false)
                 .isAchievements(false)
                 .isExpose(true)
                 .isHideAddress(false)
                 .commentCount(0)
                 .build();
     }
-
 }

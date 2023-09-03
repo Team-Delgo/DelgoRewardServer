@@ -2,8 +2,11 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.APICode;
+import com.delgo.reward.dto.mungple.detail.MungpleDetailResDTO;
 import com.delgo.reward.mongoService.MongoMungpleService;
+import com.delgo.reward.record.mungple.MungpleDetailRecord;
 import com.delgo.reward.record.mungple.MungpleRecord;
+import com.delgo.reward.service.CertService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -18,7 +21,9 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @RequestMapping("/api/mungple")
 public class MungpleController extends CommController {
+    private final CertService certService;
     private final MongoMungpleService mongoMungpleService;
+
 
     /**
      * Mungple 생성
@@ -67,26 +72,29 @@ public class MungpleController extends CommController {
 
     // -------------------------------------- DETAIL --------------------------------------
 
-//    /**
-//     * Mungple Detail 등록
-//     * @param record
-//     * @return MungpleDetailResDTO
-//     */
-//    @PostMapping("/detail")
-//    public ResponseEntity createMungpleDetail(@RequestBody MungpleDetailRecord record){
-//        if(mongoMungpleService.isExist(record.mungpleId()))
-//            return ErrorReturn(APICode.MUNGPLE_DUPLICATE_ERROR);
-//
-//        return SuccessReturn(mongoMungpleService.createMungpleDetail(record));
-//    }
-//
-//    /**
-//     * [MungpleId] Mungple Detail 조회
-//     * @param mungpleId
-//     * @return MungpleDetailResDTO
-//     */
-//    @GetMapping("/detail")
-//    public ResponseEntity getMungpleDetailByMungpleId(@RequestParam int mungpleId){
-//        return SuccessReturn(mongoMungpleService.getMungpleDetailDataByMungpleId(mungpleId));
-//    }
+    /**
+     * Mungple Detail 등록
+     * @param record
+     * @return MungpleDetailResDTO
+     */
+    @PostMapping("/detail")
+    public ResponseEntity createMungpleDetail(@RequestBody MungpleDetailRecord record){
+        if(mongoMungpleService.isExist(record.mungpleId()))
+            return ErrorReturn(APICode.MUNGPLE_DUPLICATE_ERROR);
+
+        return SuccessReturn(mongoMungpleService.createMungpleDetail(record));
+    }
+
+    /**
+     * [MungpleId] Mungple Detail 조회
+     * @param mungpleId
+     * @return MungpleDetailResDTO
+     */
+    @GetMapping("/detail")
+    public ResponseEntity getMungpleDetailByMungpleId(@RequestParam int mungpleId) {
+        return SuccessReturn(
+                new MungpleDetailResDTO(
+                        mongoMungpleService.getMungpleByMungpleId(mungpleId),
+                        certService.getCertCountByMungple(mungpleId)));
+    }
 }
