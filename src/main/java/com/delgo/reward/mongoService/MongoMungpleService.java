@@ -19,6 +19,7 @@ import com.delgo.reward.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.geo.Circle;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -37,6 +38,7 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class MongoMungpleService {
+    private final String MUNGPLE_CACHE_STORE = "MungpleCacheStore";
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -86,6 +88,7 @@ public class MongoMungpleService {
     /**
      * [categoryCode] Mungple 조회
      */
+    @Cacheable(cacheNames = MUNGPLE_CACHE_STORE)
     public List<MungpleResDTO> getMungpleByCategoryCode(String categoryCode) {
         List<MongoMungple> mungpleList = !categoryCode.equals(CategoryCode.TOTAL.getCode())
                 ? mongoMungpleRepository.findByCategoryCode(categoryCode)
@@ -134,7 +137,7 @@ public class MongoMungpleService {
      */
     public void deleteMungple(int mungpleId){
         mongoMungpleRepository.deleteByMungpleId(mungpleId);
-        mungpleCacheService.expireCacheData(mungpleId);
+        mungpleCacheService.deleteCacheData(mungpleId);
         objectStorageService.deleteObject(BucketName.MUNGPLE,mungpleId + "_mungple.webp"); // Thumbnail delete
         objectStorageService.deleteObject(BucketName.MUNGPLE_NOTE,mungpleId + "_mungplenote.webp"); // mungpleNote delete
     }
