@@ -247,6 +247,13 @@ public class CertService {
     }
 
     /**
+     * [Mungple] 인증 개수 조회
+     */
+    public int getCertCountByMungple(int mungpleId) {
+        return certRepository.countOfCertByMungple(mungpleId);
+    }
+
+    /**
      * 인증 수정
      */
     public Certification modifyCert(Certification certification, ModifyCertRecord record) {
