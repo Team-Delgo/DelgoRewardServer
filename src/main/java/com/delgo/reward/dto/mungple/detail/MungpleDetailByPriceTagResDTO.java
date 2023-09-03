@@ -1,7 +1,6 @@
 package com.delgo.reward.dto.mungple.detail;
 
-import com.delgo.reward.domain.mungple.Mungple;
-import com.delgo.reward.mongoDomain.MungpleDetail;
+import com.delgo.reward.mongoDomain.MongoMungple;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -14,10 +13,10 @@ public class MungpleDetailByPriceTagResDTO extends MungpleDetailResDTO {
     private final Boolean isPriceTag; // 가격표 존재 여부
     private final List<String> priceTagPhotoUrls; // 가격표 사진
 
-    public MungpleDetailByPriceTagResDTO(Mungple mungple, MungpleDetail mungpleDetail, int certCount){
-        super(mungple,mungpleDetail,certCount);
+    public MungpleDetailByPriceTagResDTO(MongoMungple mongoMungple, int certCount){
+        super(mongoMungple,certCount);
 
-        isPriceTag = mungpleDetail.getIsPriceTag();
-        priceTagPhotoUrls = mungpleDetail.getPriceTagPhotoUrls();
+        isPriceTag = mongoMungple.getIsPriceTag();
+        priceTagPhotoUrls = mongoMungple.getPriceTagPhotoUrls();
     }
 }
