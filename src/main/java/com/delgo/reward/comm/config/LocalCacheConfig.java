@@ -12,10 +12,11 @@ import java.util.List;
 @EnableCaching
 @Configuration
 public class LocalCacheConfig {
+    private final String MUNGPLE_CACHE_STORE = "MungpleCacheStore";
     @Bean
     public CacheManager cacheManager() {
         SimpleCacheManager simpleCacheManager = new SimpleCacheManager();
-        simpleCacheManager.setCaches(List.of(new ConcurrentMapCache("mungpleStore")));
+        simpleCacheManager.setCaches(List.of(new ConcurrentMapCache(MUNGPLE_CACHE_STORE)));
         return simpleCacheManager;
     }
 }
