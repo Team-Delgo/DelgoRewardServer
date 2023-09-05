@@ -71,11 +71,6 @@ public class MongoMungple {
     @Field("parking_info")
     private String parkingInfo; // 주차 정보
 
-    @Field("editor_note_url")
-    private String editorNoteUrl; // 에디터 노트 URL
-    @Field("copy_link")
-    private String copyLink;
-
     // CA0002, CA0003
     @Field("resident_dog_name")
     private String residentDogName; // 상주견 이름
@@ -95,12 +90,6 @@ public class MongoMungple {
 
     public void setMungpleId(Integer mungpleId) {
         this.mungpleId = mungpleId;
-    }
-
-    public MongoMungple setDetailUrl(String detailUrl){
-        this.detailUrl = detailUrl;
-
-        return this;
     }
 
     public MongoMungple setPhoneNo(String phoneNo){
