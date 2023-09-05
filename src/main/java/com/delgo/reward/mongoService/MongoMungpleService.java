@@ -8,6 +8,9 @@ import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.dto.mungple.MungpleResDTO;
+import com.delgo.reward.dto.mungple.detail.MungpleDetailByMenuResDTO;
+import com.delgo.reward.dto.mungple.detail.MungpleDetailByPriceTagResDTO;
+import com.delgo.reward.dto.mungple.detail.MungpleDetailResDTO;
 import com.delgo.reward.mongoDomain.MongoMungple;
 import com.delgo.reward.mongoDomain.MungpleDetail;
 import com.delgo.reward.mongoRepository.MongoMungpleRepository;
@@ -157,6 +160,20 @@ public class MongoMungpleService {
         query.addCriteria(Criteria.where("location").withinSphere(new Circle(Double.parseDouble(longitude), Double.parseDouble(latitude), maxDistanceInRadians)));
 
         return mongoTemplate.find(query, MongoMungple.class);
+    }
+
+    public MungpleDetailResDTO getMungpleDetailByMungpleId(int mungpleId) {
+        MongoMungple mongoMungple = getMungpleByMungpleId(mungpleId);
+        int certCount = certRepository.countOfCertByMungple(mungpleId);
+
+        switch (CategoryCode.valueOf(mongoMungple.getCategoryCode())) {
+            case CA0002, CA0003 -> {
+                return new MungpleDetailByMenuResDTO(mongoMungple, certCount);
+            }
+            default -> {
+                return new MungpleDetailByPriceTagResDTO(mongoMungple, certCount);
+            }
+        }
     }
 }
 
