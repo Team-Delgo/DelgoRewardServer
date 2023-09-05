@@ -16,9 +16,7 @@ import com.delgo.reward.mongoDomain.MungpleDetail;
 import com.delgo.reward.mongoRepository.MongoMungpleRepository;
 import com.delgo.reward.mongoRepository.MungpleDetailRepository;
 import com.delgo.reward.record.mungple.MungpleDetailRecord;
-import com.delgo.reward.record.mungple.MungpleRecord;
 import com.delgo.reward.repository.CertRepository;
-import com.delgo.reward.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +27,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -50,7 +47,6 @@ public class MongoMungpleService {
 
     // Service
     private final GeoService geoService;
-    private final PhotoService photoService;
     private final ObjectStorageService objectStorageService;
 
     // Repository
@@ -64,17 +60,6 @@ public class MongoMungpleService {
 
     public MongoMungple save(MongoMungple mongoMungple) {
         return mongoMungpleRepository.save(mongoMungple);
-    }
-
-    public MungpleResDTO createMungple(MungpleRecord record, MultipartFile photo) {
-        Location location = geoService.getGeoData(record.address()); // 위도, 경도
-
-        MongoMungple mongoMungple = mongoMungpleRepository.save(record.toMongoEntity(location));
-        mongoMungple.setPhotoUrl(photoService.uploadMungple(mongoMungple.getMungpleId(), photo));
-
-        mungpleCacheService.updateCacheData(mongoMungple.getMungpleId(), mongoMungple);
-
-        return new MungpleResDTO(mongoMungpleRepository.save(mongoMungple));
     }
 
     /**
@@ -133,9 +118,9 @@ public class MongoMungpleService {
     /**
      * Mungple Photo 수정
      */
-    public MongoMungple modifyPhoto(int mungpleId, MultipartFile photo){
-        return getMungpleByMungpleId(mungpleId).setPhotoUrl(photoService.uploadMungple(mungpleId, photo));
-    }
+//    public MongoMungple modifyPhoto(int mungpleId, MultipartFile photo){
+//         TODO: 고도화 시켜야 함.
+//    }
 
     /**
      * Mungple 삭제
