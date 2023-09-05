@@ -1,6 +1,9 @@
 package com.delgo.reward.comm.sheets;
 
 import com.delgo.reward.comm.code.CategoryCode;
+import com.delgo.reward.comm.ncp.GeoService;
+import com.delgo.reward.mongoDomain.MongoMungple;
+import com.delgo.reward.mongoService.MongoMungpleService;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -32,6 +35,9 @@ import static com.amazonaws.util.ClassLoaderHelper.getResourceAsStream;
 @Service
 @RequiredArgsConstructor
 public class SheetsService {
+    private final GeoService geoService;
+    private final MongoMungpleService mongoMungpleService;
+
     private final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
     public void getSheetsData(CategoryCode categoryCode) throws IOException, GeneralSecurityException {
@@ -50,9 +56,15 @@ public class SheetsService {
                 .execute();
 
         List<List<Object>> values = response.getValues();
-        for (List row : values) {
-            SheetsDTO dto = new SheetsDTO(row);
-            log.info("dto : {}", dto);
+        for(int i=1; i< values.size(); i++){ // 1 행은 Filter 행 따라서 패싱 한다.
+            List<Object> row = values.get(i);
+            SheetDTO sheet = new SheetDTO(row);
+
+            MongoMungple mongoMungple = sheet.toMongoEntity(categoryCode, geoService.getGeoData(sheet.getAddress()));
+            mongoMungple.setAcceptSize(sheet.getAcceptSize());
+            mongoMungple.setBusinessHour(sheet.getBusinessHour());
+
+            mongoMungpleService.save(mongoMungple);
         }
     }
 

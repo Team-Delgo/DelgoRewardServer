@@ -12,8 +12,10 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Getter
@@ -113,5 +115,25 @@ public class MongoMungple {
         this.phoneNo = phoneNo.replace("-","");
 
         return this;
+    }
+
+    public void setAcceptSize(String input) {
+        acceptSize = Arrays.stream(input.replaceAll("[\n\"]", "").split(","))
+                .map(s -> s.split(": "))
+                .collect(Collectors.toMap(
+                        arr -> arr[0],
+                        arr -> DetailCode.valueOf(arr[1])
+                ));
+    }
+
+    public void setBusinessHour(String input) {
+        businessHour = Arrays.stream(input.replaceAll("[\n\"]", "").split(","))
+                .map(s -> s.split(": "))
+                .collect(Collectors.toMap(
+                        arr -> BusinessHourCode.valueOf(arr[0]),
+                        arr -> arr[1]));
+        // Default 값 세팅
+        Arrays.stream(BusinessHourCode.values())
+                .forEach(code -> businessHour.computeIfAbsent(code, BusinessHourCode::getDefaultValue));
     }
 }
