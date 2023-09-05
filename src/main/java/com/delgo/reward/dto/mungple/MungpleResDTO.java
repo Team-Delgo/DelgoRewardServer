@@ -53,7 +53,7 @@ public class MungpleResDTO {
         latitude = mungple.getLatitude();
         longitude = mungple.getLongitude();
 
-        photoUrl = mungple.getPhotoUrl();
+        photoUrl = mungple.getPhotoUrls().get(0);
         detailUrl = mungple.getDetailUrl();
     }
 }

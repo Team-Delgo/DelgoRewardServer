@@ -4,7 +4,6 @@ package com.delgo.reward.mongoDomain;
 import com.delgo.reward.comm.code.BusinessHourCode;
 import com.delgo.reward.comm.code.DetailCode;
 import lombok.*;
-import org.apache.kafka.common.metrics.internals.IntGaugeSuite;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -44,7 +43,6 @@ public class MongoMungple {
     @Field("latitude")private String latitude; // 위도
     @Field("longitude")private String longitude; // 경도
 
-    @Field("photo_url")private String photoUrl; // 사진 url
     @Field("detail_url")private String detailUrl; // 상세 페이지 url
 
     private boolean isActive; // 활성화 여부
@@ -97,12 +95,6 @@ public class MongoMungple {
 
     public void setMungpleId(Integer mungpleId) {
         this.mungpleId = mungpleId;
-    }
-
-    public MongoMungple setPhotoUrl(String photoUrl){
-        this.photoUrl = photoUrl;
-
-        return this;
     }
 
     public MongoMungple setDetailUrl(String detailUrl){

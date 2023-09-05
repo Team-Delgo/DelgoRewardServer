@@ -1,7 +1,6 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.domain.achievements.Achievements;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.service.*;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/photo")
 public class PhotoController extends CommController {
 
-    private final CertService certService;
     private final UserService userService;
     private final PhotoService photoService;
-
-    private final MongoMungpleService mongoMungpleService;
-    private final AchievementsService achievementsService;
-    private final MungpleService mungpleService;
 
     /*
      * profile 등록 및 수정 [회원가입 or AccountPage]
@@ -40,13 +34,14 @@ public class PhotoController extends CommController {
     }
 
     /*
+     * TODO 고도화 필요
      * 멍플 사진 등록 및 수정
      * Request Data : mungpleId, photo
      * Response Data : 사진 저장된 URL
      */
-    @PostMapping(value={"/mungple/{mungpleId}","/upload/mungple"})
-    public ResponseEntity<?> uploadMungplePhoto(@PathVariable Integer mungpleId, @RequestPart MultipartFile photo) {
-        if (photo.isEmpty()) ParamErrorReturn("photo");
-        return SuccessReturn(mongoMungpleService.modifyPhoto(mungpleId, photo));
-    }
+//    @PostMapping(value={"/mungple/{mungpleId}","/upload/mungple"})
+//    public ResponseEntity<?> uploadMungplePhoto(@PathVariable Integer mungpleId, @RequestPart MultipartFile photo) {
+//        if (photo.isEmpty()) ParamErrorReturn("photo");
+//        return SuccessReturn(mongoMungpleService.modifyPhoto(mungpleId, photo));
+//    }
 }
