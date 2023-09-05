@@ -32,7 +32,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,6 +61,11 @@ public class MongoMungpleService {
     /**
      * Mungple 생성
      */
+
+    public MongoMungple save(MongoMungple mongoMungple) {
+        return mongoMungpleRepository.save(mongoMungple);
+    }
+
     public MungpleResDTO createMungple(MungpleRecord record, MultipartFile photo) {
         Location location = geoService.getGeoData(record.address()); // 위도, 경도
 
