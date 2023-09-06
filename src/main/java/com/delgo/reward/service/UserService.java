@@ -8,6 +8,7 @@ import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.CategoryCount;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.domain.user.UserSocial;
+import com.delgo.reward.dto.comm.PageResDTO;
 import com.delgo.reward.dto.user.SearchUserResDTO;
 import com.delgo.reward.record.signup.OAuthSignUpRecord;
 import com.delgo.reward.record.signup.SignUpRecord;
@@ -16,6 +17,7 @@ import com.delgo.reward.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +48,6 @@ public class UserService {
     private final PetRepository petRepository;
     private final UserRepository userRepository;
     private final CertRepository certRepository;
-    private final CommentRepository commentRepository;
     private final LikeListRepository likeListRepository;
     private final CategoryCountRepository categoryCountRepository;
 
@@ -239,9 +240,11 @@ public class UserService {
      * @param modifyUserRecord
      * @return 수정된 유저 정보 반환
      */
-    public User changeUserInfo(ModifyUserRecord modifyUserRecord) {
+    public User changeUserInfo(ModifyUserRecord modifyUserRecord, MultipartFile profile) {
         User user = getUserById(modifyUserRecord.userId());
 
+        if (profile != null)
+            user.setProfile(photoService.uploadProfile(user.getUserId(), profile));
         if (modifyUserRecord.geoCode() != null && modifyUserRecord.pGeoCode() != null) {
             user.setGeoCode(modifyUserRecord.geoCode());
             user.setPGeoCode(modifyUserRecord.pGeoCode());
@@ -256,7 +259,6 @@ public class UserService {
         }
 
         Optional.ofNullable(modifyUserRecord.name()).ifPresent(user::setName);
-
         return user;
     }
 
@@ -279,7 +281,13 @@ public class UserService {
     }
 
 
-    public List<SearchUserResDTO> getSearchUsers(String searchWord, Pageable pageable){
-        return userRepository.searchByName(searchWord, pageable).stream().map(SearchUserResDTO::new).toList();
+    public PageResDTO<SearchUserResDTO> getSearchUsers(String searchWord, Pageable pageable) {
+        Slice<User> users = userRepository.searchByName(searchWord, pageable);
+        List<SearchUserResDTO> resDTOs = users.getContent().stream().map(SearchUserResDTO::new).toList();
+        return new PageResDTO<>(resDTOs, users.getSize(), users.getNumber(), users.isLast());
+    }
+
+    public void increaseViewCount(int userId){
+        userRepository.increaseViewCount(userId);
     }
 }
