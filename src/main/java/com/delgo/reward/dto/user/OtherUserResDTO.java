@@ -21,6 +21,7 @@ public class OtherUserResDTO {
     private int userId;
     private String nickname;
     private String profile;
+    private int viewCount;
 
     // Pet
     private int petId;
@@ -31,10 +32,13 @@ public class OtherUserResDTO {
     private int monthOfPetAge;
 
     public OtherUserResDTO(User user){
+        // User
         userId = user.getUserId();
         nickname = user.getName();
         profile = user.getProfile();
+        viewCount = user.getViewCount();
 
+        // Pet
         petId = user.getPet().getPetId();
         petName = user.getPet().getName();
         breed = user.getPet().getBreed();
