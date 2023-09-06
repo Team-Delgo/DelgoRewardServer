@@ -3,12 +3,12 @@ package com.delgo.reward.repository;
 
 import com.delgo.reward.domain.user.User;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
@@ -33,5 +33,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             "WHEN u.name LIKE CONCAT('%', :keyword, '%') THEN ABS(LENGTH(u.name) - LENGTH(:keyword) - 1)"+
             "WHEN u.pet.name LIKE CONCAT('%', :keyword, '%') THEN ABS(LENGTH(u.pet.name) - LENGTH(:keyword))" +
             "ELSE 100 END")
-    List<User> searchByName(@Param("keyword") String keyword, Pageable pageable);
+    Slice<User> searchByName(@Param("keyword") String keyword, Pageable pageable);
 }
