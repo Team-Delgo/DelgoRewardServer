@@ -116,4 +116,14 @@ public class UserController extends CommController {
 
         return SuccessReturn(new UserResDTO(user));
     }
+
+    /**
+     * Map View Count
+     * @param userId
+     */
+    @PostMapping(value = {"/view/{userId}", "/view/"})
+    public ResponseEntity increaseViewCount(@PathVariable Integer userId) {
+        userService.increaseViewCount(userId);
+        return SuccessReturn();
+    }
 }
