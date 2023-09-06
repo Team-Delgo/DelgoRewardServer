@@ -286,4 +286,8 @@ public class UserService {
         List<SearchUserResDTO> resDTOs = users.getContent().stream().map(SearchUserResDTO::new).toList();
         return new PageResDTO<>(resDTOs, users.getSize(), users.getNumber(), users.isLast());
     }
+
+    public void increaseViewCount(int userId){
+        userRepository.increaseViewCount(userId);
+    }
 }
