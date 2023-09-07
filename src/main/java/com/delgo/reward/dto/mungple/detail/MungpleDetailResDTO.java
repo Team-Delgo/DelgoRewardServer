@@ -2,8 +2,7 @@ package com.delgo.reward.dto.mungple.detail;
 
 import com.delgo.reward.comm.code.BusinessHourCode;
 import com.delgo.reward.comm.code.DetailCode;
-import com.delgo.reward.domain.mungple.Mungple;
-import com.delgo.reward.mongoDomain.MungpleDetail;
+import com.delgo.reward.mongoDomain.MongoMungple;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -36,26 +35,26 @@ public class MungpleDetailResDTO {
     private final Integer certCount; // 인증 개수
     private final Integer recommendCount = 0; // 추천 개수
 
-    public MungpleDetailResDTO(Mungple mungple, MungpleDetail mungpleDetail, int certCount){
-        mungpleId = mungple.getMungpleId();
-        phoneNo = mungple.getPhoneNo();
-        categoryCode = mungple.getCategoryCode();
-        placeName = mungple.getPlaceName();
-        placeNameEn = mungple.getPlaceNameEn();
-        address = mungple.getJibunAddress();
+    public MungpleDetailResDTO(MongoMungple mongoMungple, int certCount){
+        mungpleId = mongoMungple.getMungpleId();
+        phoneNo = mongoMungple.getPhoneNo();
+        categoryCode = mongoMungple.getCategoryCode();
+        placeName = mongoMungple.getPlaceName();
+        placeNameEn = mongoMungple.getPlaceNameEn();
+        address = mongoMungple.getJibunAddress();
 
-        enterDesc = mungpleDetail.getEnterDesc();
-        acceptSize = mungpleDetail.getAcceptSize();
-        businessHour = mungpleDetail.getBusinessHour();
+        enterDesc = mongoMungple.getEnterDesc();
+        acceptSize = mongoMungple.getAcceptSize();
+        businessHour = mongoMungple.getBusinessHour();
 
-        instaId = mungpleDetail.getInstaId();
-        photoUrls = mungpleDetail.getPhotoUrls();
+        instaId = mongoMungple.getInstaId();
+        photoUrls = mongoMungple.getPhotoUrls();
 
-        editorNoteUrl = mungple.getDetailUrl();
-        copyLink = mungpleDetail.getCopyLink();
+        editorNoteUrl = mongoMungple.getDetailUrl();
+        copyLink = mongoMungple.getCopyLink();
 
-        isParking = mungpleDetail.getIsParking();
-        parkingInfo = mungpleDetail.getParkingInfo();
+        isParking = mongoMungple.getIsParking();
+        parkingInfo = mongoMungple.getParkingInfo();
 
         this.certCount = certCount;
     }

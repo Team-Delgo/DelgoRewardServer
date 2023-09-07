@@ -34,6 +34,8 @@ public class User extends BaseTimeEntity {
     private String appleUniqueNo; // Apple 연동 시에만 필요.
     private String kakaoId; // Kakao 연동 시에만 필요.
 
+    private int viewCount; // 내 지도 View Count
+
     @Column(name = "social")
     @Enumerated(EnumType.STRING)
     private UserSocial userSocial;

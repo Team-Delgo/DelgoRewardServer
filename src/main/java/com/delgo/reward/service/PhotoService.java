@@ -26,7 +26,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -34,9 +33,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermission;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 
 @Slf4j
@@ -77,61 +74,38 @@ public class PhotoService extends CommService {
         }
     }
 
-    public String updateCertMultipart(int certificationId, MultipartFile photo) {
-        String[] type = Objects.requireNonNull(photo.getContentType()).split("/"); // ex) png, jpg, jpeg
-        String extension = type[type.length - 1];
+    public List<String> uploadCertPhotos(int certificationId, List<MultipartFile> photos) {
+        int i = 1;
+        List<String> urls = new ArrayList<>();
 
-        String fileName = certificationId + "_cert.webp";
-        String ncpLink = (profiles.equals("real"))
-                ? BucketName.CERTIFICATION.getUrl() + fileName
-                : BucketName.CERTIFICATION.getTestUrl() + fileName;
+        for (MultipartFile photo : photos) {
+            String fileName = certificationId + "_cert_" + i++ + "." + getExtension(photo);
+            String url = (profiles.equals("real"))
+                    ? "https://www.reward.delgo.pet/images/" + fileName
+                    : "https://www.test.delgo.pet/images/" + fileName;
 
-        try {
-            File file = new File(DIR + certificationId + "_cert." + extension);
-            photo.transferTo(file); // 서버에 저장
+            try {
+                File file = new File(DIR + fileName);
+                photo.transferTo(file); // 서버에 저장
 
-            File webpFile = convertWebp(fileName, file);  // filePath에서 File 불러온 뒤 webp로 변환 후 저장.
-            objectStorageService.uploadObjects(BucketName.CERTIFICATION, fileName, DIR + fileName); // Upload NCP
+                // 파일 권한 변경
+                Path filePath = file.toPath();
+                Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(filePath);
+                permissions.add(PosixFilePermission.OTHERS_READ);
 
-            file.delete(); // 서버에 저장된 사진.jpg 삭제
-            webpFile.delete(); // 서버에 저장된 사진.webp 삭제
+                Files.setPosixFilePermissions(filePath, permissions);
 
-            return ncpLink;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new NullPointerException("PHOTO UPLOAD ERROR");
+                urls.add(url);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new NullPointerException("JPG PHOTO UPLOAD ERROR");
+            }
         }
+        return urls;
     }
 
-    public String uploadCertMultipartForJPG(int certificationId, MultipartFile photo) {
-        String[] type = Objects.requireNonNull(photo.getContentType()).split("/"); // ex) png, jpg, jpeg
-        String extension = type[type.length - 1];
-
-        String fileName = certificationId + "_cert." + extension;
-        String url = (profiles.equals("real"))
-                ? "https://www.reward.delgo.pet/images/" + fileName
-                : "https://www.test.delgo.pet/images/" + fileName;
-
-        try {
-            File file = new File(DIR + certificationId + "_cert." + extension);
-            photo.transferTo(file); // 서버에 저장
-
-            // 파일 권한 변경
-            Path filePath = file.toPath();
-            Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(filePath);
-            permissions.add(PosixFilePermission.OTHERS_READ);
-
-            Files.setPosixFilePermissions(filePath, permissions);
-
-            return url;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new NullPointerException("JPG PHOTO UPLOAD ERROR");
-        }
-    }
-
-    public String uploadCertMultipartForWebp(int certificationId, File originalFile) {
-        String webpfileName = certificationId + "_cert.webp";
+    public String uploadCertPhotoWithWebp(String fileName, File originalFile) {
+        String webpfileName = fileName + ".webp";
         String ncpLink = (profiles.equals("real"))
                 ? BucketName.CERTIFICATION.getUrl() + webpfileName
                 : BucketName.CERTIFICATION.getTestUrl() + webpfileName;
@@ -140,7 +114,7 @@ public class PhotoService extends CommService {
             File webpFile = convertWebp(webpfileName, originalFile);  // filePath에서 File 불러온 뒤 webp로 변환 후 저장.
             objectStorageService.uploadObjects(BucketName.CERTIFICATION, webpfileName, DIR + webpfileName); // Upload NCP
 
-            webpFile.delete();
+            fileDelete(webpFile);
             return ncpLink;
         } catch (IOException e) {
             e.printStackTrace();
@@ -149,22 +123,19 @@ public class PhotoService extends CommService {
     }
 
     public String uploadMungple(int mungpleId, MultipartFile photo) {
-        String[] type = Objects.requireNonNull(photo.getContentType()).split("/"); // ex) png, jpg, jpeg
-        String extension = type[type.length - 1];
-
         String[] originalFilename = Objects.requireNonNull(photo.getOriginalFilename()).split("\\.");
         String fileName = originalFilename[0] + "_mungple.webp";
         String ncpLink = BucketName.MUNGPLE.getUrl() + fileName;
 
         try {
-            File file = new File(DIR + mungpleId + "_mungple." + extension); // 서버에 저장
+            File file = new File(DIR + mungpleId + "_mungple." + getExtension(photo)); // 서버에 저장
             photo.transferTo(file);
 
             File webpFile = convertWebp(fileName, file);  // filePath에서 File 불러온 뒤 webp로 변환 후 저장.
 
             objectStorageService.uploadObjects(BucketName.MUNGPLE, fileName, DIR + fileName); // Upload NCP
-            file.delete(); // 서버에 저장된 사진 삭제
-            webpFile.delete();
+            fileDelete(file); // 서버에 저장된 사진 삭제
+            fileDelete(webpFile);
 
             return setCacheInvalidation(ncpLink);
         } catch (Exception e) {
@@ -173,39 +144,15 @@ public class PhotoService extends CommService {
         }
     }
 
-    public String uploadMungpleNote(MultipartFile photo) {
-        String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\."); // ex) png, jpg, jpeg
-        String fileName = type[0] + "_mungplenote.webp";
-        String ncpLink = BucketName.MUNGPLE_NOTE.getUrl() + fileName;
-
-        try {
-            File file = new File(DIR + photo.getOriginalFilename()); // 서버에 저장
-            photo.transferTo(file);
-
-            File webpFile = convertWebp(fileName, file);  // filePath에서 File 불러온 뒤 webp로 변환 후 저장.
-
-            objectStorageService.uploadObjects(BucketName.MUNGPLE_NOTE, fileName, DIR + fileName); // Upload NCP
-            file.delete(); // 서버에 저장된 사진 삭제
-            webpFile.delete();
-
-            return setCacheInvalidation(ncpLink);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new NullPointerException("PHOTO UPLOAD ERROR");
-        }
-    }
 
     public String uploadProfile(int userId, MultipartFile photo) {
-        String[] type = Objects.requireNonNull(photo.getContentType()).split("/"); // ex) png, jpg, jpeg
-        String extension = type[type.length - 1];
-
         String fileName = userId + "_profile.webp";
         String ncpLink = (profiles.equals("real"))
                 ? BucketName.PROFILE.getUrl() + fileName
                 : BucketName.PROFILE.getTestUrl() + fileName;
 
         try {
-            File file = new File(DIR + userId + "_profile." + extension); // 서버에 저장
+            File file = new File(DIR + userId + "_profile." + getExtension(photo)); // 서버에 저장
             photo.transferTo(file);
 
             File webpFile = convertWebp(fileName, file);  // filePath에서 File 불러온 뒤 webp로 변환 후 저장.
@@ -213,7 +160,7 @@ public class PhotoService extends CommService {
             objectStorageService.uploadObjects(BucketName.PROFILE, fileName, DIR + fileName); // Upload NCP
 
             file.delete(); // 서버에 저장된 사진 삭제
-            webpFile.delete();
+            fileDelete(webpFile);
 
             return setCacheInvalidation(ncpLink);
         } catch (Exception e) {
@@ -223,8 +170,7 @@ public class PhotoService extends CommService {
     }
 
     public String uploadAchievements(int achievementsId, MultipartFile photo) {
-        String[] type = Objects.requireNonNull(photo.getContentType()).split("/"); // ex) png, jpg, jpeg
-        String extension = type[type.length - 1];
+        String extension = getExtension(photo);
 
         String fileName = achievementsId + "_achievements.webp";
         String ncpLink = BucketName.ACHIEVEMENTS.getUrl() + fileName; // NCP Link
@@ -238,7 +184,7 @@ public class PhotoService extends CommService {
             objectStorageService.uploadObjects(BucketName.ACHIEVEMENTS, fileName, DIR + fileName); // Upload NCP
 
             file.delete(); // 서버에 저장된 사진 삭제
-            webpFile.delete();
+            fileDelete(webpFile);
 
             return setCacheInvalidation(ncpLink);
         } catch (Exception e) {
@@ -271,7 +217,6 @@ public class PhotoService extends CommService {
         return in;
     }
 
-
     public String convertWebpFromUrl(String name, String imageUrl) {
         String fileName = name + ".webp";
 
@@ -297,7 +242,6 @@ public class PhotoService extends CommService {
         }
     }
 
-
     public File convertWebp(String fileName, File file) throws IOException {
         return ImmutableImage.loader().fromFile(file)
                 .output(WebpWriter.DEFAULT, new File(DIR + fileName));
@@ -307,30 +251,13 @@ public class PhotoService extends CommService {
         return ncpLink + "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1); // Cache 무효화
     }
 
+    public String getExtension(MultipartFile photo){
+        String[] extension_arr = Objects.requireNonNull(photo.getContentType()).split("/"); // ex) png, jpg, jpeg
 
-    // Encoding File Upload [ Deprecated ]
-//    public String uploadCertEncodingFile(int certificationId, String photoUrl) {
-//        String fileName = certificationId + "_cert.jpeg";
-//        String ncpLink = BucketName.CERTIFICATION.getUrl() + fileName;
-//
-//        try {
-//            byte[] decodedByte = Base64.getMimeDecoder().decode(photoUrl.replace("data:image/jpeg;base64,", "").getBytes());
-//            File convertFile = new File(DIR + fileName);
-//            if (convertFile.createNewFile()) {
-//                FileOutputStream fos = new FileOutputStream(convertFile);
-//                fos.write(decodedByte);
-//                fos.close();
-//            }
-//
-//            if (convertFile.exists()) {
-//                objectStorageService.uploadObjects(BucketName.CERTIFICATION, fileName, DIR + fileName);  // Upload NCP
-//                convertFile.delete(); // 서버에 저장된 사진 삭제
-//            }
-//
-//            return setCacheInvalidation(ncpLink);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new NullPointerException("PHOTO UPLOAD ERROR");
-//        }
-//    }
+        return extension_arr[extension_arr.length - 1];
+    }
+
+    public void fileDelete(File file){
+        if (!file.delete()) log.info("Failed to delete the file.");
+    }
 }

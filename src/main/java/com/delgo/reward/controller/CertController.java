@@ -13,6 +13,7 @@ import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
 import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.LikeListService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -20,12 +21,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -41,15 +44,60 @@ public class CertController extends CommController {
     private final ClassificationAsyncService classificationAsyncService;
 
     /**
+     * 전체 인증 조회
+     * @param userId, certificationId(제외할 인증 번호), pageable
+     * @return PageResDTO<CertResDTO, Integer>
+     */
+    @GetMapping("/all")
+    public ResponseEntity getAllCert(
+            @RequestParam Integer userId,
+            @RequestParam(required = false) Integer certificationId,
+            @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return (certificationId == null)
+                ? SuccessReturn(certService.getAllCert(userId, pageable))
+                : SuccessReturn(certService.getAllCertExcludeSpecificCert(userId, certificationId,pageable));
+    }
+
+    /**
+     * [Other]다른 사용자 작성 인증 조회  ex) CA0000(전체 조회), CA0002(카페 조회)
+     * @param userId, categoryCode, pageable
+     * @return PageResDTO<CertResDTO, Integer>
+     */
+    @GetMapping("/other")
+    public ResponseEntity getOtherCerts(
+            @RequestParam Integer userId,
+            @RequestParam String categoryCode,
+            @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
+        if (!StringUtils.hasText(categoryCode)) return ErrorReturn(APICode.PARAM_ERROR);
+        return SuccessReturn(certService.getOtherCerts(userId, categoryCode, pageable));
+    }
+
+
+    /**
+     * [Mungple] 인증 조회
+     * @param userId, mungpleId, pageable
+     * @return PageResDTO<CertByMungpleResDTO, Integer>
+     */
+    @GetMapping("/mungple")
+    public ResponseEntity getCertsByMungple(
+            @RequestParam Integer userId,
+            @RequestParam Integer mungpleId,
+            @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return SuccessReturn(certService.getCertsByMungpleId(userId, mungpleId, pageable));
+    }
+
+    // ---------------------------------권한 필요--------------------------------------------
+
+    /**
      * 인증 생성
      * @param record, photo
      * @return CertByAchvResDTO
      */
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<?> createCert(@Validated @RequestPart(value = "data") CertRecord record, @RequestPart(required = false) MultipartFile photo) {
-        if(photo.isEmpty()) ErrorReturn(APICode.PARAM_ERROR);
+    public ResponseEntity<?> createCert(@Validated @RequestPart(value = "data") CertRecord record, @RequestPart(required = false) List<MultipartFile> photos) throws JsonProcessingException {
+        if(photos.isEmpty()) ErrorReturn(APICode.PARAM_ERROR);
 
-        CertByAchvResDTO resDto = certService.createCert(record, photo);
+        CertByAchvResDTO resDto = certService.createCert(record, photos);
         log.info("{}", resDto.getCertificationId());
 
         // 비동기적 실행
@@ -69,21 +117,6 @@ public class CertController extends CommController {
         return SuccessReturn(certService.getCertsByIdWithLike(userId, certificationId));
     }
 
-    /**
-     * 전체 인증 조회
-     * @param userId, certificationId(제외할 인증 번호), pageable
-     * @return PageResDTO<CertResDTO, Integer>
-     */
-    @GetMapping("/all")
-    public ResponseEntity getAllCert(
-            @RequestParam Integer userId,
-            @RequestParam(required = false) Integer certificationId,
-            @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return (certificationId == null)
-                ? SuccessReturn(certService.getAllCert(userId, pageable))
-                : SuccessReturn(certService.getAllCertExcludeSpecificCert(userId, certificationId,pageable));
-    }
-
 
     /**
      * [Date] 인증 조회 ex) 2023.07.10에 등록한 인증
@@ -96,17 +129,17 @@ public class CertController extends CommController {
     }
 
     /**
-     * [Category] 인증 조회  ex) CA0000(전체 조회), CA0002(카페 조회)
+     * [My]내가 작성한 인증 조회  ex) CA0000(전체 조회), CA0002(카페 조회)
      * @param userId, categoryCode, pageable
      * @return PageResDTO<CertResDTO, Integer>
      */
-    @GetMapping("/category")
-    public ResponseEntity getCertsByCategory(
+    @GetMapping("/my")
+    public ResponseEntity getMyCerts(
             @RequestParam Integer userId,
             @RequestParam String categoryCode,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        if (categoryCode.isBlank()) return ErrorReturn(APICode.PARAM_ERROR);
-        return SuccessReturn(certService.getCertsByCategory(userId, categoryCode, pageable));
+        if (!StringUtils.hasText(categoryCode)) return ErrorReturn(APICode.PARAM_ERROR);
+        return SuccessReturn(certService.getMyCerts(userId, categoryCode, pageable));
     }
 
     /**
@@ -120,19 +153,6 @@ public class CertController extends CommController {
     }
 
     /**
-     * [Mungple] 인증 조회
-     * @param userId, mungpleId, pageable
-     * @return PageResDTO<CertByMungpleResDTO, Integer>
-     */
-    @GetMapping("/mungple")
-    public ResponseEntity getCertsByMungple(
-            @RequestParam Integer userId,
-            @RequestParam Integer mungpleId,
-            @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return SuccessReturn(certService.getCertsByMungpleId(userId, mungpleId, pageable));
-    }
-
-    /**
      * [User] 인증 개수 조회
      * @param userId
      * @return int
@@ -142,15 +162,6 @@ public class CertController extends CommController {
         return SuccessReturn(certService.getCertCountByUser(userId));
     }
 
-    /**
-     * [Category] 인증 개수 조회
-     * @param userId
-     * @return Map<String, Long>
-     */
-    @GetMapping(value = {"/category/count/{userId}", "/category/count/"})
-    public ResponseEntity getCertCountByCategory(@PathVariable Integer userId) {
-        return SuccessReturn(certService.getCertCountByCategory(userId));
-    }
 
     /**
      * 인증 수정

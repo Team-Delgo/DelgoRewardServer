@@ -68,9 +68,4 @@ public class ExceptionController extends CommController {
     public ResponseEntity methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         return ParamErrorReturn(e.getParameter().getParameterName());
     }
-
-    @ExceptionHandler
-    public ResponseEntity jwtException(JwtException e){
-        return ErrorReturn(e.getStatus());
-    }
 }
