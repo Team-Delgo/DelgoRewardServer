@@ -7,9 +7,13 @@ import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.exception.JwtException;
 import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
 import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
+import com.delgo.reward.service.TokenService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
@@ -22,7 +26,12 @@ import java.util.Date;
  */
 @Slf4j
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class JwtService {
+
+    private final TokenService tokenService;
+
     /**
      * JWT 생성
      *
@@ -32,6 +41,7 @@ public class JwtService {
     // Create Token
     public JwtToken createToken(int userId) {
         return new JwtToken(
+                userId,
                 JWT.create() // Access Token
                         .withSubject(String.valueOf(userId))
                         .withExpiresAt(new Date(System.currentTimeMillis() + AccessTokenProperties.EXPIRATION_TIME))
@@ -52,17 +62,25 @@ public class JwtService {
      * @throws JwtException
      */
     public Integer getUserIdByRefreshToken(String refreshToken) throws JwtException {
-        if (refreshToken == null || refreshToken.length() == 0)
+
+        // 입력 받은 refreshToken이 null이거나 빈 값인지 체크
+        if (!StringUtils.hasText(refreshToken))
             throw new JwtException(APICode.TOKEN_ERROR);
 
-        return Integer.parseInt(
-                String.valueOf(
-                        JWT.require(Algorithm.HMAC512(RefreshTokenProperties.SECRET))
-                                .build()
-                                .verify(refreshToken) // Token 유효성 검증
-                                .getClaim("userId")
-                )
-        );
+        int userId = JWT.require(Algorithm.HMAC512(RefreshTokenProperties.SECRET))
+                .build()
+                .verify(refreshToken)
+                .getClaim("userId")
+                .asInt();
+
+        // 시간 제한을 줘서 1초 안에 여러개의 token 재발행이 들어오면 이전 요청이어도 에러 안나게 할까
+
+
+        String refreshTokenFromDB = tokenService.getRefreshToken(userId);
+        if (!StringUtils.hasText(refreshToken) || !refreshTokenFromDB.equals(refreshToken))
+            throw new JwtException(APICode.DB_TOKEN_ERROR);
+
+        return userId;
     }
 
     public HttpServletResponse publishToken(HttpServletResponse response,  JwtToken jwt) {
@@ -75,11 +93,14 @@ public class JwtService {
                 .httpOnly(true)
                 .path("/")
                 .sameSite("None")
+                .domain(".delgo.pet")
+                .maxAge(RefreshTokenProperties.EXPIRATION_TIME)
                 .build();
-        response.addHeader("Set-Cookie", cookie.toString());
 
+        // Refresh Token DB Update
+        tokenService.saveRefreshToken(jwt.getUserId(),jwt.getRefreshToken());
+
+        response.addHeader("Set-Cookie", cookie.toString());
         return response;
     }
-
 }
-

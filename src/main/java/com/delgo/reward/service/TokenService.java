@@ -20,15 +20,30 @@ public class TokenService {
         return Optional.ofNullable(token.getFcmToken());
     }
 
-    public boolean isFcmToken(int userId){
-        return tokenRepository.findByUserId(userId).isPresent();
+    public String getRefreshToken(int userId){
+        return tokenRepository.findByUserId(userId)
+                .map(Token::getRefreshToken)
+                .orElse(""); // 빈 문자열 또는 다른 적절한 기본값
+    }
+
+    public boolean isToken(int userId){
+        return tokenRepository.existsByUserId(userId);
     }
 
     public void saveFcmToken(FcmTokenDTO fcmTokenDTO){
-        if(isFcmToken(fcmTokenDTO.getUserId()))
-            tokenRepository.updateByUserId(fcmTokenDTO.getUserId(), fcmTokenDTO.getFcmToken());
+        if(isToken(fcmTokenDTO.getUserId()))
+            tokenRepository.updateFcmTokenByUserId(fcmTokenDTO.getUserId(), fcmTokenDTO.getFcmToken());
         else{
             Token token = Token.builder().userId(fcmTokenDTO.getUserId()).fcmToken(fcmTokenDTO.getFcmToken()).build();
+            tokenRepository.save(token);
+        }
+    }
+
+    public void saveRefreshToken(int userId, String refreshToken){
+        if(isToken(userId))
+            tokenRepository.updateRefreshTokenByUserId(userId, refreshToken);
+        else{
+            Token token = Token.builder().userId(userId).refreshToken(refreshToken).build();
             tokenRepository.save(token);
         }
     }
