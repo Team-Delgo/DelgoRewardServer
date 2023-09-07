@@ -1,16 +1,22 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
+import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.user.UserByCertCountResDTO;
+import com.delgo.reward.dto.user.UserResDTO;
 import com.delgo.reward.record.user.ModifyPetRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
-import com.delgo.reward.service.*;
+import com.delgo.reward.service.CertService;
+import com.delgo.reward.service.PetService;
+import com.delgo.reward.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Slf4j
@@ -53,12 +59,12 @@ public class AccountController extends CommController {
      * @param modifyUserRecord
      * @return 성공 / 실패 여부
      */
-    @PutMapping("/user")
-    public ResponseEntity<?> changeUserInfo(@Validated @RequestBody ModifyUserRecord modifyUserRecord) {
-        userService.changeUserInfo(modifyUserRecord);
+    @PutMapping(value = "/user", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> changeUserInfo(@Validated @RequestPart(value = "data") ModifyUserRecord modifyUserRecord, @RequestPart(required = false) MultipartFile profile) {
+        User user = userService.changeUserInfo(modifyUserRecord, profile);
         // 랭킹 실시간으로 집계
 //        rankingService.rankingByPoint();
-        return SuccessReturn();
+        return SuccessReturn(new UserResDTO(user));
     }
 
     /**

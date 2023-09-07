@@ -28,6 +28,7 @@ public class UserResDTO {
     private String profile;
     private UserSocial userSocial;
     private Boolean isNotify;
+    private int viewCount;
 
     // Pet Data
     private int petId;
@@ -53,6 +54,7 @@ public class UserResDTO {
         profile = user.getProfile();
         userSocial = user.getUserSocial();
         isNotify = user.getIsNotify();
+        viewCount = user.getViewCount();
 
         // Pet
         petId = user.getPet().getPetId();

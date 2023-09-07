@@ -107,8 +107,8 @@ public class PhotoService extends CommService {
     public String uploadCertPhotoWithWebp(String fileName, File originalFile) {
         String webpfileName = fileName + ".webp";
         String ncpLink = (profiles.equals("real"))
-                ? BucketName.CERTIFICATION.getUrl() + fileName
-                : BucketName.CERTIFICATION.getTestUrl() + fileName;
+                ? BucketName.CERTIFICATION.getUrl() + webpfileName
+                : BucketName.CERTIFICATION.getTestUrl() + webpfileName;
 
         try {
             File webpFile = convertWebp(webpfileName, originalFile);  // filePath에서 File 불러온 뒤 webp로 변환 후 저장.
