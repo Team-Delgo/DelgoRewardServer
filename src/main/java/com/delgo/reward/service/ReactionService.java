@@ -8,8 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -40,20 +38,14 @@ public class ReactionService {
      * [Reaction] 리액션 존재 여부 반환
      */
     public Boolean hasReaction(int userId, int certId, ReactionCode reactionCode) {
-        List<Reaction> userReactionList = reactionRepository.findByCertificationId(certId);
+        return getReaction(userId, certId).getReactionCode().equals(reactionCode);
+    }
 
-        if (userReactionList.size() > 0){
-            userReactionList.stream()
-                    .filter(reaction -> reaction.getUserId() == userId)
-                    .collect(Collectors.toList());
-
-            for (Reaction reaction: userReactionList){
-                if(reaction.getReactionCode().equals(reactionCode)){
-                    return true;
-                }
-            }
-        }
-
-        return false;
+    /**
+     * [Reaction] 리액션 가져오기
+     */
+    public Reaction getReaction(int userId, int certId){
+        return reactionRepository.findByUserIdAndCertificationId(userId, certId)
+                .orElseThrow(() -> new NullPointerException("NOT FOUND Reaction userId : " + userId + " certificationId: " + certId));
     }
 }
