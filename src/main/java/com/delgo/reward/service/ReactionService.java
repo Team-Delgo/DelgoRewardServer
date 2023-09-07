@@ -18,6 +18,9 @@ import java.util.stream.Collectors;
 public class ReactionService {
     private final ReactionRepository reactionRepository;
 
+    /**
+     * [Reaction] 리액션 등록
+     */
     public Reaction reaction(int userId, int certId, ReactionCode reactionCode) {
         // 리액션이 존재하면 삭제
         if(hasReaction(userId, certId, reactionCode)){
@@ -33,6 +36,9 @@ public class ReactionService {
         return null;
     }
 
+    /**
+     * [Reaction] 리액션 존재 여부 반환
+     */
     public Boolean hasReaction(int userId, int certId, ReactionCode reactionCode) {
         List<Reaction> userReactionList = reactionRepository.findByCertificationId(certId);
 
