@@ -63,26 +63,15 @@ public class CertResDTO {
         }
 
         if (reactionMap == null) {
-            this.initializeReactionMap();
+            reactionMap = ReactionCode.initializeReactionMap();
         }
         if (reactionCountMap == null) {
-            this.initializeReactionCountMap();
+            reactionCountMap = ReactionCode.initializeReactionCountMap();
         }
 
         if (certification.getReactionList() != null) {
-            for (Reaction reaction : certification.getReactionList()) {
-                if(reaction.getUserId().equals(ownerId)){
-                    reactionMap.put(reaction.getReactionCode(), true);
-                }
-                switch (reaction.getReactionCode()) {
-                    case HELPER -> {
-                        reactionCountMap.put(ReactionCode.HELPER, reactionCountMap.get(ReactionCode.HELPER) + 1);
-                    }
-                    case CUTE -> {
-                        reactionCountMap.put(ReactionCode.CUTE, reactionCountMap.get(ReactionCode.CUTE) + 1);
-                    }
-                }
-            }
+            ReactionCode.setReactionMapByUserId(reactionMap, certification.getReactionList(), ownerId);
+            ReactionCode.setReactionCountMap(reactionCountMap, certification.getReactionList());
         }
     }
 
@@ -106,15 +95,5 @@ public class CertResDTO {
         categoryCode = cert.getCategoryCode();
     }
 
-    public void initializeReactionMap(){
-        this.reactionMap = new HashMap<>();
-        this.reactionMap.put(ReactionCode.HELPER, false);
-        this.reactionMap.put(ReactionCode.CUTE, false);
-    }
 
-    public void initializeReactionCountMap(){
-        this.reactionCountMap = new HashMap<>();
-        this.reactionCountMap.put(ReactionCode.HELPER, 0);
-        this.reactionCountMap.put(ReactionCode.CUTE, 0);
-    }
 }

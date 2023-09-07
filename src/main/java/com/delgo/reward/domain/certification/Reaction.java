@@ -19,5 +19,10 @@ public class Reaction {
     @Enumerated(EnumType.STRING)
     private ReactionCode reactionCode;
     private Integer userId;
+    private boolean isReaction;
 
+    public Reaction setIsReactionReverse(){
+        this.isReaction = !this.isReaction;
+        return this;
+    }
 }
