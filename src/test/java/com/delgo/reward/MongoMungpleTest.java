@@ -1,8 +1,6 @@
 package com.delgo.reward;
 
 
-import com.delgo.reward.comm.code.BusinessHourCode;
-import com.delgo.reward.comm.code.DetailCode;
 import com.delgo.reward.domain.mungple.Mungple;
 import com.delgo.reward.mongoDomain.MongoMungple;
 import com.delgo.reward.mongoDomain.MungpleDetail;
@@ -16,7 +14,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
-import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.persistence.Id;
@@ -74,7 +71,6 @@ public class MongoMungpleTest {
                     .pGeoCode(mungple.getPGeoCode())
                     .latitude(mungple.getLatitude())
                     .longitude(mungple.getLongitude())
-                    .photoUrl(mungple.getPhotoUrl())
                     .detailUrl(mungple.getDetailUrl())
                     .isActive(mungple.isActive())
                     .createdAt(LocalDateTime.now())
@@ -86,8 +82,6 @@ public class MongoMungpleTest {
                     .instaId(mungpleDetail.getInstaId())
                     .isParking(mungpleDetail.getIsParking())
                     .parkingInfo(mungpleDetail.getParkingInfo())
-                    .editorNoteUrl(mungpleDetail.getEditorNoteUrl())
-                    .copyLink(mungpleDetail.getCopyLink())
                     .residentDogName(mungpleDetail.getResidentDogName())
                     .residentDogPhoto(mungpleDetail.getResidentDogPhoto())
                     .representMenuTitle(mungpleDetail.getRepresentMenuTitle())
