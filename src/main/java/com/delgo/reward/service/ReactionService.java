@@ -23,7 +23,7 @@ public class ReactionService {
      */
     public Reaction reaction(int userId, int certId, ReactionCode reactionCode) {
         if (hasReaction(userId, certId, reactionCode)) {
-            return reactionRepository.save(getReaction(userId, certId, reactionCode).setIsReactionReverse());
+            return getReaction(userId, certId, reactionCode).setIsReactionReverse();
         } else {
             return reactionRepository.save(Reaction.builder()
                     .userId(userId)
