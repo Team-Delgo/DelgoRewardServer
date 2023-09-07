@@ -52,6 +52,10 @@ public class Certification extends BaseTimeEntity {
     @OneToMany(mappedBy = "certificationId", fetch = FetchType.LAZY)
     private List<CertPhoto> photos;
 
+    @ToString.Exclude
+    @OneToMany(mappedBy = "certificationId", fetch = FetchType.LAZY)
+    private List<Reaction> reactionList;
+
 
     public Certification setPhotoUrl(String photoUrl){
         this.photoUrl = photoUrl;

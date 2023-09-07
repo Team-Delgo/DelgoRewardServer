@@ -1,8 +1,10 @@
 package com.delgo.reward.dto.cert;
 
 
+import com.delgo.reward.comm.code.ReactionCode;
 import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.domain.certification.Certification;
+import com.delgo.reward.domain.certification.Reaction;
 import com.delgo.reward.domain.like.LikeList;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -11,7 +13,9 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @ToString
@@ -36,11 +40,14 @@ public class CertResDTO {
     private int likeCount; // 좋아요 개수
     private int commentCount; // 댓글 개수
 
+    private Map<ReactionCode, Boolean> reactionMap;
+    private Map<ReactionCode, Integer> reactionCountMap; // 리액션 별 개수
+
     private List<String> photos;
 
     private String categoryCode;
 
-    @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
+    @JsonFormat(pattern = "yyyy.MM.dd/HH:mm/E")
     private LocalDateTime registDt;
 
     public CertResDTO(Certification certification, Integer ownerId) {
@@ -54,6 +61,18 @@ public class CertResDTO {
             isLike = false;
             likeCount = 0;
         }
+
+        if (reactionMap == null) {
+            reactionMap = ReactionCode.initializeReactionMap();
+        }
+        if (reactionCountMap == null) {
+            reactionCountMap = ReactionCode.initializeReactionCountMap();
+        }
+
+        if (certification.getReactionList() != null) {
+            ReactionCode.setReactionMapByUserId(reactionMap, certification.getReactionList(), ownerId);
+            ReactionCode.setReactionCountMap(reactionCountMap, certification.getReactionList());
+        }
     }
 
     public CertResDTO(Certification cert) {
@@ -64,8 +83,8 @@ public class CertResDTO {
         userProfile = cert.getUser().getProfile();
         placeName = cert.getPlaceName();
         description = cert.getDescription();
-        address =  cert.getAddress();
-        isHideAddress =  cert.getIsHideAddress();
+        address = cert.getAddress();
+        isHideAddress = cert.getIsHideAddress();
         photoUrl = cert.getPhotoUrl();
         commentCount = cert.getCommentCount();
         isLike = false;
@@ -75,4 +94,6 @@ public class CertResDTO {
         photos = cert.getPhotos().stream().map(CertPhoto::getUrl).toList();
         categoryCode = cert.getCategoryCode();
     }
+
+
 }
