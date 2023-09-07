@@ -1,6 +1,7 @@
 package com.delgo.reward.domain.certification;
 
 import com.delgo.reward.comm.code.ReactionCode;
+import com.delgo.reward.domain.common.BaseTimeEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Reaction {
+public class Reaction extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer reactionId;
