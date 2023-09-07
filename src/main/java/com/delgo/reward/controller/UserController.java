@@ -59,7 +59,7 @@ public class UserController extends CommController {
      */
     @GetMapping("/search")
     public ResponseEntity<?> getSearchUser(@RequestParam String searchWord, @PageableDefault Pageable pageable) {
-        if (searchWord.length() < 2 || !StringUtils.hasText(searchWord))
+        if (!StringUtils.hasText(searchWord))
             return ParamErrorReturn("searchWord");
 
         return SuccessReturn(userService.getSearchUsers(searchWord, pageable));
