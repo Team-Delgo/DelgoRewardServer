@@ -50,7 +50,6 @@ public class CertService {
     private final UserService userService;
     private final PhotoService photoService;
     private final ArchiveService archiveService;
-//    private final MungpleService mungpleService;
     private final MongoMungpleService mongoMungpleService;
     private final LikeListService likeListService;
     private final ReverseGeoService reverseGeoService;
@@ -77,6 +76,7 @@ public class CertService {
         List<CertPhoto> certPhotos = photoUrls.stream().map(photoUrl -> CertPhoto.builder()
                 .certificationId(certification.getCertificationId())
                 .url(photoUrl)
+                .isCorrect(true)
                 .build()).toList();
 
         certPhotoRepository.saveAll(certPhotos);

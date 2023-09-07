@@ -3,12 +3,13 @@ package com.delgo.reward.repository;
 
 import com.delgo.reward.domain.user.User;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
@@ -18,6 +19,10 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByUserId(Integer userId);
     Optional<User> findByPhoneNo(String phoneNo);
     Optional<User> findByAppleUniqueNo(String appleUniqueNo);
+
+    @Modifying
+    @Query("UPDATE User u SET u.viewCount = u.viewCount + 1 WHERE u.userId = :userId")
+    void increaseViewCount(@Param("userId") int userId);
 
 
 //    [정렬 조건] - 페이징으로 인해 Java가 아닌 Sql로 정렬한다.
@@ -33,5 +38,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             "WHEN u.name LIKE CONCAT('%', :keyword, '%') THEN ABS(LENGTH(u.name) - LENGTH(:keyword) - 1)"+
             "WHEN u.pet.name LIKE CONCAT('%', :keyword, '%') THEN ABS(LENGTH(u.pet.name) - LENGTH(:keyword))" +
             "ELSE 100 END")
-    List<User> searchByName(@Param("keyword") String keyword, Pageable pageable);
+    Slice<User> searchByName(@Param("keyword") String keyword, Pageable pageable);
 }
