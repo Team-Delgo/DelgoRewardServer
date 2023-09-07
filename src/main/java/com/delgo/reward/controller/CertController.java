@@ -5,6 +5,7 @@ import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.async.CertAsyncService;
 import com.delgo.reward.comm.async.ClassificationAsyncService;
 import com.delgo.reward.comm.code.APICode;
+import com.delgo.reward.comm.code.ReactionCode;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.dto.cert.CertByAchvResDTO;
 import com.delgo.reward.dto.cert.CertResDTO;
@@ -13,6 +14,7 @@ import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
 import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.LikeListService;
+import com.delgo.reward.service.ReactionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +41,7 @@ public class CertController extends CommController {
 
     private final CertService certService;
     private final LikeListService likeListService;
+    private final ReactionService reactionService;
     private final CertAsyncService certAsyncService;
     private final ClassificationService classificationService;
     private final ClassificationAsyncService classificationAsyncService;
@@ -205,5 +208,14 @@ public class CertController extends CommController {
         likeListService.like(userId, certificationId, certService.getCertById(certificationId).getUser().getUserId());
 
         return SuccessReturn();
+    }
+
+    /**
+     * 인증 Reaction
+     * @param userId, certificationId, reactionCode
+     */
+    @PostMapping(value = {"/reaction/{userId}/{certificationId}/{reactionCode}"})
+    public ResponseEntity reaction(@PathVariable Integer userId, @PathVariable Integer certificationId, @PathVariable String reactionCode){
+        return SuccessReturn(reactionService.reaction(userId, certificationId, ReactionCode.from(reactionCode)));
     }
 }

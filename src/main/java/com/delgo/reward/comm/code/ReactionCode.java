@@ -3,7 +3,7 @@ package com.delgo.reward.comm.code;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 public enum ReactionCode {
-    HELPER("Helper", "도움돼요"),
+    HELPER("HELPER", "도움돼요"),
     CUTE("CUTE", "귀여워요");
 
     private final String code;
