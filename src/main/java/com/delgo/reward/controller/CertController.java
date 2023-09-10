@@ -89,6 +89,16 @@ public class CertController extends CommController {
         return SuccessReturn(certService.getCertsByMungpleId(userId, mungpleId, pageable));
     }
 
+    /**
+     * [certId] 인증 조회
+     * @param userId, certificationId
+     * @return List<CertResDTO>
+     */
+    @GetMapping("/id")
+    public ResponseEntity getCertsByCertId(@RequestParam Integer userId, @RequestParam Integer certificationId) {
+        return SuccessReturn(certService.getCertsByIdWithLike(userId, certificationId));
+    }
+
     // ---------------------------------권한 필요--------------------------------------------
 
     /**
@@ -109,17 +119,6 @@ public class CertController extends CommController {
 
         return SuccessReturn(resDto);
     }
-
-    /**
-     * [certId] 인증 조회
-     * @param userId, certificationId
-     * @return List<CertResDTO>
-     */
-    @GetMapping
-    public ResponseEntity getCertsByCertId(@RequestParam Integer userId, @RequestParam Integer certificationId) {
-        return SuccessReturn(certService.getCertsByIdWithLike(userId, certificationId));
-    }
-
 
     /**
      * [Date] 인증 조회 ex) 2023.07.10에 등록한 인증
