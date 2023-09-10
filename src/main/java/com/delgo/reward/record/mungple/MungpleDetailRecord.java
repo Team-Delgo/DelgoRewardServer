@@ -3,7 +3,7 @@ package com.delgo.reward.record.mungple;
 
 import com.delgo.reward.comm.code.BusinessHourCode;
 import com.delgo.reward.comm.code.DetailCode;
-import com.delgo.reward.mongoDomain.MungpleDetail;
+import com.delgo.reward.mongoDomain.mungple.MungpleDetail;
 
 import java.util.List;
 import java.util.Map;

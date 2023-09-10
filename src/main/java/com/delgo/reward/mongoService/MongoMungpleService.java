@@ -11,8 +11,8 @@ import com.delgo.reward.dto.mungple.MungpleResDTO;
 import com.delgo.reward.dto.mungple.detail.MungpleDetailByMenuResDTO;
 import com.delgo.reward.dto.mungple.detail.MungpleDetailByPriceTagResDTO;
 import com.delgo.reward.dto.mungple.detail.MungpleDetailResDTO;
-import com.delgo.reward.mongoDomain.MongoMungple;
-import com.delgo.reward.mongoDomain.MungpleDetail;
+import com.delgo.reward.mongoDomain.mungple.MongoMungple;
+import com.delgo.reward.mongoDomain.mungple.MungpleDetail;
 import com.delgo.reward.mongoRepository.MongoMungpleRepository;
 import com.delgo.reward.mongoRepository.MungpleDetailRepository;
 import com.delgo.reward.record.mungple.MungpleDetailRecord;
@@ -32,7 +32,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
