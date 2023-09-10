@@ -1,6 +1,6 @@
 package com.delgo.reward.mongoService;
 
-import com.delgo.reward.mongoDomain.MongoMungple;
+import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.BeforeConvertEvent;
