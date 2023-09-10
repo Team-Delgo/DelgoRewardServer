@@ -23,7 +23,6 @@ public class PhotoController extends CommController {
 
     private final MongoMungpleService mongoMungpleService;
     private final AchievementsService achievementsService;
-    private final MungpleService mungpleService;
 
     /*
      * profile 등록 및 수정 [회원가입 or AccountPage]

@@ -1,7 +1,7 @@
 package com.delgo.reward.cacheService;
 
 import com.delgo.reward.cache.MungpleCache;
-import com.delgo.reward.mongoDomain.MongoMungple;
+import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
