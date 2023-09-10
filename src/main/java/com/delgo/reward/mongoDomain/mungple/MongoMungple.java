@@ -8,7 +8,9 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -98,12 +100,6 @@ public class MongoMungple {
 
     public MongoMungple setPhotoUrl(String photoUrl){
         this.photoUrl = photoUrl;
-
-        return this;
-    }
-
-    public MongoMungple setDetailUrl(String detailUrl){
-        this.detailUrl = detailUrl;
 
         return this;
     }
