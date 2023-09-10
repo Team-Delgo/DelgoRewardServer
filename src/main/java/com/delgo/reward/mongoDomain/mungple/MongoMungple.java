@@ -1,10 +1,9 @@
-package com.delgo.reward.mongoDomain;
+package com.delgo.reward.mongoDomain.mungple;
 
 
 import com.delgo.reward.comm.code.BusinessHourCode;
 import com.delgo.reward.comm.code.DetailCode;
 import lombok.*;
-import org.apache.kafka.common.metrics.internals.IntGaugeSuite;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;

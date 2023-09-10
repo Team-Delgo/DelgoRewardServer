@@ -5,7 +5,6 @@ import com.delgo.reward.comm.ncp.GeoService;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.mongoDomain.NaverPlace;
 import com.delgo.reward.mongoRepository.NaverPlaceRepository;
-import com.delgo.reward.service.MungpleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
