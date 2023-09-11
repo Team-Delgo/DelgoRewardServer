@@ -25,17 +25,17 @@ public class FigmaService {
 
     private final String API_URL = "https://api.figma.com/v1/";
     private final String figmaToken = "figd_r19ArRmULsFDOcl1Mim1B7zpphHYgqYM-YT84yfI";
-    private final String figmaFileKey = "yzrVwMDiG6uU8LM57RUfN0";
+    private final String figmaFileKey = "Lrcjf0B8Up9Zp2fdHK2EnN";
 
     // https://api.figma.com/v1/files/yzrVwMDiG6uU8LM57RUfN0/nodes?ids=5:39
-    public Map<String, ArrayList<String>> getComponent(String fileId){
+    public Map<String, ArrayList<String>> getComponent(String nodeId){
         HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
 
         RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-FIGMA-TOKEN", figmaToken);
 
-        String requestURL = API_URL + "files/" + figmaFileKey +"/nodes?ids=" + fileId;
+        String requestURL = API_URL + "files/" + figmaFileKey +"/nodes?ids=" + nodeId;
 
         HttpEntity<Object> entity = new HttpEntity<>(headers);
         ResponseEntity<String> responseEntity = restTemplate.exchange(requestURL, HttpMethod.GET, entity, String.class);
@@ -51,7 +51,7 @@ public class FigmaService {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             JsonNode rootNode = objectMapper.readTree(responseEntity.getBody());
-            JsonNode childrNodes = rootNode.get("nodes").get(fileId).get("document").get("children");
+            JsonNode childrNodes = rootNode.get("nodes").get(nodeId).get("document").get("children");
 
             for (JsonNode childNode : childrNodes) {
                 String name = childNode.get("name").asText();
@@ -96,6 +96,8 @@ public class FigmaService {
             e.printStackTrace();
         }
 
+        for(String img: images)
+            log.info("img :{}", img);
         return images;
     }
 
@@ -107,6 +109,7 @@ public class FigmaService {
         } else if (split.length == 6) {
             return "menu_board";
         } else {
+            log.info("text: {}", text);
             String type = split[3];
             return switch (type) {
                 case "menu" -> "menu";
