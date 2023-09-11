@@ -1,6 +1,6 @@
 package com.delgo.reward.cache;
 
-import com.delgo.reward.mongoDomain.MongoMungple;
+import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import lombok.Data;
 
 import java.time.LocalDateTime;

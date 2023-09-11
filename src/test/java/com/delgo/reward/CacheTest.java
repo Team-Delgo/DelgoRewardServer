@@ -3,7 +3,7 @@ package com.delgo.reward;
 import com.delgo.reward.cache.MungpleCache;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.dto.mungple.MungpleResDTO;
-import com.delgo.reward.mongoDomain.MongoMungple;
+import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoRepository.MongoMungpleRepository;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.cacheService.MungpleCacheService;
