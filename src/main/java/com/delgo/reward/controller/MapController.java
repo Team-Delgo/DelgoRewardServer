@@ -29,6 +29,11 @@ public class MapController extends CommController {
         return SuccessReturn(mapService.getMap(userId));
     }
 
+    @GetMapping("/other")
+    public ResponseEntity getOther(@RequestParam Integer userId) {
+        return SuccessReturn(mapService.getOtherMap(userId));
+    }
+
     @GetMapping("/mungple")
     public ResponseEntity getMap(@RequestParam String latitude, @RequestParam String longitude) {
         return SuccessReturn(mongoMungpleService.findWithin3Km(latitude, longitude));
