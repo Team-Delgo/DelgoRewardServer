@@ -80,6 +80,9 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
 
     @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId and c.isCorrect = true")
     Slice<Integer> findCorrectCertIdByUserId(@Param("userId") int userId, Pageable pageable);
+
+    @Query(value = "select c from Certification c where c.user.userId = :userId and c.isCorrect = true")
+    List<Certification> findCorrectCertByUserId(@Param("userId") int userId);
   
     // ---------------------------------------- Map TEST ----------------------------------------
 

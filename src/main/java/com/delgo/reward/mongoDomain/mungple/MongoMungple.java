@@ -1,4 +1,4 @@
-package com.delgo.reward.mongoDomain;
+package com.delgo.reward.mongoDomain.mungple;
 
 
 import com.delgo.reward.comm.code.BusinessHourCode;

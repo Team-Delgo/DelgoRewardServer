@@ -2,8 +2,8 @@ package com.delgo.reward;
 
 
 import com.delgo.reward.domain.mungple.Mungple;
-import com.delgo.reward.mongoDomain.MongoMungple;
-import com.delgo.reward.mongoDomain.MungpleDetail;
+import com.delgo.reward.mongoDomain.mungple.MongoMungple;
+import com.delgo.reward.mongoDomain.mungple.MungpleDetail;
 import com.delgo.reward.mongoRepository.MongoMungpleRepository;
 import com.delgo.reward.mongoRepository.MungpleDetailRepository;
 import com.delgo.reward.mongoService.MongoMungpleService;
@@ -16,12 +16,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.persistence.Id;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RunWith(SpringRunner.class)
