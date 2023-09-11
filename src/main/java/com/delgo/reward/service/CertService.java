@@ -222,7 +222,14 @@ public class CertService {
                 : certRepository.findCorrectCertIdByUserId(userId, pageable);
 
         List<CertResDTO> certs = getCertsByIds(slice.getContent()).stream().map(cert -> new CertResDTO(cert, userId)).toList();
-        return new PageResDTO<>(certs, slice.getSize(), slice.getNumber(), slice.isLast(), getCorrectCertCountByUser(userId));
+        return new PageResDTO<>(certs, slice.getSize(), slice.getNumber(), slice.isLast(), getCorrectCertCountByUserId(userId));
+    }
+
+    /**
+     *  [User] 작성한 올바른 인증 조회
+     */
+    public List<Certification> getCorrectCertsByUserId(int userId) {
+        return certRepository.findCorrectCertByUserId(userId);
     }
 
     /**
@@ -235,7 +242,7 @@ public class CertService {
     /**
      * [User] 인증 개수 조회
      */
-    public int getCorrectCertCountByUser(int userId) {
+    public int getCorrectCertCountByUserId(int userId) {
         return certRepository.countByUserUserIdAndIsCorrect(userId, true);
     }
 

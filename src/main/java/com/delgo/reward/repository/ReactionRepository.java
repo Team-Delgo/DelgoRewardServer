@@ -10,5 +10,7 @@ import java.util.Optional;
 public interface ReactionRepository extends JpaRepository<Reaction, Integer> {
     List<Reaction> findByCertificationId(int certId);
     List<Reaction> findByUserId(int userId);
+    Boolean existsByUserIdAndCertificationIdAndReactionCode(Integer userId, Integer certificationId, ReactionCode reactionCode);
+    Optional<Reaction> findByUserIdAndCertificationIdAndReactionCode(int userId, int certId, ReactionCode reactionCode);
     void deleteByUserIdAndCertificationIdAndReactionCode(int userId, int certId, ReactionCode reactionCode);
 }

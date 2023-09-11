@@ -82,6 +82,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
 				// certification
 				.antMatchers("/api/certification/all").permitAll()
+				.antMatchers("/api/certification/id").permitAll()
 				.antMatchers("/api/certification/other").permitAll()
 				.antMatchers("/api/certification/mungple").permitAll()
 
