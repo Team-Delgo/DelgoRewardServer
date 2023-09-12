@@ -18,6 +18,7 @@ import com.delgo.reward.mongoRepository.MungpleDetailRepository;
 import com.delgo.reward.record.mungple.MungpleDetailRecord;
 import com.delgo.reward.record.mungple.MungpleRecord;
 import com.delgo.reward.repository.CertRepository;
+import com.delgo.reward.service.BookmarkService;
 import com.delgo.reward.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +53,7 @@ public class MongoMungpleService {
     private final GeoService geoService;
     private final PhotoService photoService;
     private final ObjectStorageService objectStorageService;
+    private final BookmarkService bookmarkService;
 
     // Repository
     private final CertRepository certRepository;
@@ -161,16 +163,19 @@ public class MongoMungpleService {
         return mongoTemplate.find(query, MongoMungple.class);
     }
 
-    public MungpleDetailResDTO getMungpleDetailByMungpleId(int mungpleId) {
+    public MungpleDetailResDTO getMungpleDetailByMungpleIdAndUserId(int mungpleId, int userId) {
         MongoMungple mongoMungple = getMungpleByMungpleId(mungpleId);
         int certCount = certRepository.countOfCertByMungple(mungpleId);
 
+
+        boolean isBookmarked = (userId != 0 && bookmarkService.hasBookmarkByIsBookmarked(userId, mungpleId, true));
+
         switch (CategoryCode.valueOf(mongoMungple.getCategoryCode())) {
             case CA0002, CA0003 -> {
-                return new MungpleDetailByMenuResDTO(mongoMungple, certCount);
+                return new MungpleDetailByMenuResDTO(mongoMungple, certCount, isBookmarked);
             }
             default -> {
-                return new MungpleDetailByPriceTagResDTO(mongoMungple, certCount);
+                return new MungpleDetailByPriceTagResDTO(mongoMungple, certCount, isBookmarked);
             }
         }
     }

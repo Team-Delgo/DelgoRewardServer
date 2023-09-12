@@ -39,6 +39,13 @@ public class BookmarkService {
     }
 
     /**
+     * [userId, mungpleId, isBookmarked] 북마크 데이터가 존재하고 북마크가 되어있는 지 여부 반환
+     */
+    public Boolean hasBookmarkByIsBookmarked(int userId, int mungpleId, boolean isBookmarked){
+        return bookmarkRepository.existsByUserIdAndMungpleIdAndIsBookmarked(userId, mungpleId, isBookmarked);
+    }
+
+    /**
      * [mungpleId] 북마크 가져오기
      */
     public List<Bookmark> getBookmarkByMungpleId(int mungpleId) {
