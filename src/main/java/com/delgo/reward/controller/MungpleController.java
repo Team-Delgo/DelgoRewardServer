@@ -91,7 +91,7 @@ public class MungpleController extends CommController {
      * @return MungpleDetailResDTO
      */
     @GetMapping("/detail")
-    public ResponseEntity getMungpleDetailByMungpleId(@RequestParam int mungpleId) {
-        return SuccessReturn(mongoMungpleService.getMungpleDetailByMungpleId(mungpleId));
+    public ResponseEntity getMungpleDetailByMungpleIdAndUserId(@RequestParam int mungpleId, @RequestParam int userId) {
+        return SuccessReturn(mongoMungpleService.getMungpleDetailByMungpleIdAndUserId(mungpleId, userId));
     }
 }
