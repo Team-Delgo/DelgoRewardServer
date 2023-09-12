@@ -2,18 +2,12 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.APICode;
-import com.delgo.reward.dto.mungple.detail.MungpleDetailResDTO;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.record.mungple.MungpleDetailRecord;
-import com.delgo.reward.record.mungple.MungpleRecord;
-import com.delgo.reward.service.CertService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 
 @Slf4j
@@ -21,21 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @RequestMapping("/api/mungple")
 public class MungpleController extends CommController {
-    private final CertService certService;
     private final MongoMungpleService mongoMungpleService;
-
-
-    /**
-     * Mungple 생성
-     * @param record, photo
-     * @return MungpleResDTO
-     */
-    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity createMungple(@Validated @RequestPart(value = "data") MungpleRecord record, @RequestPart(required = false) MultipartFile photo) {
-        return mongoMungpleService.isMungpleExisting(record.address())
-                ? ErrorReturn(APICode.MUNGPLE_DUPLICATE_ERROR)
-                : SuccessReturn(mongoMungpleService.createMungple(record, photo));
-    }
 
     /**
      * [Category] Mungple 조회 - (CA0000: 전체 조회)
