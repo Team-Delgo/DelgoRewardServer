@@ -9,58 +9,75 @@ public enum BucketName {
             "reward-achievements",
             "reward-achievements",
             "https://kr.object.ncloudstorage.com/reward-achievements/",
-            "https://kr.object.ncloudstorage.com/reward-achievements/"),
+            "https://kr.object.ncloudstorage.com/reward-achievements/",
+            ""),
     CERTIFICATION(
             "reward-certification",
             "test-certification",
             "https://kr.object.ncloudstorage.com/reward-certification/",
-            "https://kr.object.ncloudstorage.com/test-certification/"), // 산책
+            "https://kr.object.ncloudstorage.com/test-certification/",
+            ""), // 산책
     MUNGPLE(
             "reward-mungple",
             "reward-mungple",
             "https://kr.object.ncloudstorage.com/reward-mungple/",
-            "https://kr.object.ncloudstorage.com/reward-mungple/"), // 카페
+            "https://kr.object.ncloudstorage.com/reward-mungple/",
+            ""), // 카페
     MUNGPLE_NOTE(
             "reward-mungplenote",
             "reward-mungplenote",
             "https://kr.object.ncloudstorage.com/reward-mungplenote/",
-            "https://kr.object.ncloudstorage.com/reward-mungplenote/"), // 식당
+            "https://kr.object.ncloudstorage.com/reward-mungplenote/",
+            ""),
     PROFILE(
             "reward-profile",
             "test-profile",
             "https://kr.object.ncloudstorage.com/reward-profile/",
-            "https://kr.object.ncloudstorage.com/test-profile/"),
+            "https://kr.object.ncloudstorage.com/test-profile/",
+            ""),
     DETAIL_PRICE_TAG(
             "reward-detail-price-tag",
             "reward-detail-price-tag",
             "https://kr.object.ncloudstorage.com/reward-detail-price-tag/",
-            "https://kr.object.ncloudstorage.com/reward-detail-price_tag/"),
+            "https://kr.object.ncloudstorage.com/reward-detail-price_tag/",
+            "price_tag"),
     DETAIL_MENU(
             "reward-detail-menu",
             "reward-detail-menu",
             "https://kr.object.ncloudstorage.com/reward-detail-menu/",
-            "https://kr.object.ncloudstorage.com/reward-detail-menu/"),
+            "https://kr.object.ncloudstorage.com/reward-detail-menu/",
+            "menu"),
     DETAIL_MENU_BOARD(
             "reward-detail-menu-board",
             "reward-detail-menu-board",
             "https://kr.object.ncloudstorage.com/reward-detail-menu-board/",
-            "https://kr.object.ncloudstorage.com/reward-detail-menu-board/"),
+            "https://kr.object.ncloudstorage.com/reward-detail-menu-board/",
+            "menu_board"),
     DETAIL_THUMBNAIL(
             "reward-detail-thumbnail",
             "reward-detail-thumbnail",
             "https://kr.object.ncloudstorage.com/reward-detail-thumbnail/",
-            "https://kr.object.ncloudstorage.com/reward-detail-thumbnail/");
+            "https://kr.object.ncloudstorage.com/reward-detail-thumbnail/",
+            "thumbnail"),
+    DETAIL_DOG(
+            "reward-detail-dog",
+            "reward-detail-dog",
+            "https://kr.object.ncloudstorage.com/reward-detail-dog/",
+            "https://kr.object.ncloudstorage.com/reward-detail-dog/",
+            "dog");
 
     private final String name;
     private final String testName;
     private final String url;
     private final String testUrl;
+    private final String figma;
 
-    BucketName(String name, String testName, String url, String testUrl) {
+    BucketName(String name, String testName, String url, String testUrl, String figma) {
         this.name = name;
         this.testName = testName;
         this.url = url;
         this.testUrl = testUrl;
+        this.figma = figma;
     }
 
     public String getName() {
@@ -77,5 +94,18 @@ public enum BucketName {
 
     public String getTestUrl() {
         return this.testUrl;
+    }
+
+    public String getFigma() {
+        return this.figma;
+    }
+
+    public static BucketName fromFigma(String figmaValue) {
+        for (BucketName bucket : values()) {
+            if (bucket.figma.equals(figmaValue)) {
+                return bucket;
+            }
+        }
+        throw new IllegalArgumentException("No BucketName for figma value: " + figmaValue);
     }
 }

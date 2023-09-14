@@ -68,4 +68,10 @@ public class ExceptionController extends CommController {
     public ResponseEntity methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         return ParamErrorReturn(e.getParameter().getParameterName());
     }
+
+    @ExceptionHandler({FigmaException.class})
+    public ResponseEntity figmaException(FigmaException e) {
+        e.printStackTrace();
+        return ErrorReturn(APICode.SERVER_ERROR);
+    }
 }
