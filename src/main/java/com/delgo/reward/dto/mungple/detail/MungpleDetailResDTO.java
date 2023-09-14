@@ -26,8 +26,7 @@ public class MungpleDetailResDTO {
     private final String instaId; // 인스타 ID
     private final List<String> photoUrls; // 매장 사진 URL List
 
-    private final String editorNoteUrl; //
-    private final String copyLink;
+    private final String editorNoteUrl;
 
     private final Boolean isParking; // 주차 가능
     private final String parkingInfo; // 주차 정보
@@ -53,7 +52,6 @@ public class MungpleDetailResDTO {
         photoUrls = mongoMungple.getPhotoUrls();
 
         editorNoteUrl = mongoMungple.getDetailUrl();
-        copyLink = mongoMungple.getCopyLink();
 
         isParking = mongoMungple.getIsParking();
         parkingInfo = mongoMungple.getParkingInfo();
