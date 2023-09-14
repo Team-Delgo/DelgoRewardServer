@@ -80,9 +80,11 @@ public class PhotoService extends CommService {
 
         for (MultipartFile photo : photos) {
             String fileName = certificationId + "_cert_" + i++ + "." + getExtension(photo);
-            String url = (profiles.equals("real"))
-                    ? "https://www.reward.delgo.pet/images/" + fileName
-                    : "https://www.test.delgo.pet/images/" + fileName;
+            String url = switch (profiles) {
+                case "real" -> "https://www.reward.delgo.pet/images/" + fileName;
+                case "qa" -> "https://www.qa.delgo.pet/images/" + fileName;
+                default -> "https://www.test.delgo.pet/images/" + fileName;
+            };
 
             try {
                 File file = new File(DIR + fileName);

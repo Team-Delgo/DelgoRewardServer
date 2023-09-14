@@ -13,8 +13,10 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Getter
@@ -43,7 +45,6 @@ public class MongoMungple {
     @Field("latitude")private String latitude; // 위도
     @Field("longitude")private String longitude; // 경도
 
-    @Field("photo_url")private String photoUrl; // 사진 url
     @Field("detail_url")private String detailUrl; // 상세 페이지 url
 
     private boolean isActive; // 활성화 여부
@@ -72,11 +73,6 @@ public class MongoMungple {
     @Field("parking_info")
     private String parkingInfo; // 주차 정보
 
-    @Field("editor_note_url")
-    private String editorNoteUrl; // 에디터 노트 URL
-    @Field("copy_link")
-    private String copyLink;
-
     // CA0002, CA0003
     @Field("resident_dog_name")
     private String residentDogName; // 상주견 이름
@@ -98,15 +94,29 @@ public class MongoMungple {
         this.mungpleId = mungpleId;
     }
 
-    public MongoMungple setPhotoUrl(String photoUrl){
-        this.photoUrl = photoUrl;
-
-        return this;
-    }
-
     public MongoMungple setPhoneNo(String phoneNo){
         this.phoneNo = phoneNo.replace("-","");
 
         return this;
+    }
+
+    public void setAcceptSize(String input) {
+        acceptSize = Arrays.stream(input.replaceAll("[\n\"]", "").split(","))
+                .map(s -> s.split(": "))
+                .collect(Collectors.toMap(
+                        arr -> arr[0],
+                        arr -> DetailCode.valueOf(arr[1])
+                ));
+    }
+
+    public void setBusinessHour(String input) {
+        businessHour = Arrays.stream(input.replaceAll("[\n\"]", "").split(","))
+                .map(s -> s.split(": "))
+                .collect(Collectors.toMap(
+                        arr -> BusinessHourCode.valueOf(arr[0]),
+                        arr -> arr[1]));
+        // Default 값 세팅
+        Arrays.stream(BusinessHourCode.values())
+                .forEach(code -> businessHour.computeIfAbsent(code, BusinessHourCode::getDefaultValue));
     }
 }
