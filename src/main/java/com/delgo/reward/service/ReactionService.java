@@ -19,7 +19,7 @@ public class ReactionService {
     private final ReactionRepository reactionRepository;
 
     /**
-     * [Reaction] 리액션 등록
+     * [Reaction] 리액션 등록 또는 제거
      */
     public Reaction reaction(int userId, int certId, ReactionCode reactionCode) {
         if (hasReaction(userId, certId, reactionCode)) {
