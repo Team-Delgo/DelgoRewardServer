@@ -45,12 +45,6 @@ public class BookmarkService {
         return bookmarkRepository.existsByUserIdAndMungpleIdAndIsBookmarked(userId, mungpleId, isBookmarked);
     }
 
-    /**
-     * [mungpleId] 북마크 가져오기
-     */
-    public List<Bookmark> getBookmarkByMungpleId(int mungpleId) {
-        return bookmarkRepository.findByMungpleIdAndIsBookmarked(mungpleId, true);
-    }
 
     /**
      * [userId, mungpleId] 북마크 가져오기
