@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookmarkRepository extends JpaRepository<Bookmark, Integer> {
-    List<Bookmark> findByMungpleIdAndIsBookmarked(Integer mungpleId, boolean isBookmarked);
     Boolean existsByUserIdAndMungpleId(Integer userId, Integer mungpleId);
     Boolean existsByUserIdAndMungpleIdAndIsBookmarked(Integer userId, Integer mungpleId, boolean isBookmarked);
     Optional<Bookmark> findByUserIdAndMungpleId(Integer userId, Integer mungpleId);
