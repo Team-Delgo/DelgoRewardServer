@@ -33,10 +33,12 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @EntityGraph(attributePaths = {"pet"})
     @Query("SELECT u FROM User u WHERE u.name LIKE CONCAT('%', :keyword, '%') or u.pet.name LIKE CONCAT('%', :keyword, '%') " +
             "ORDER BY CASE " +
-            "WHEN u.name = :keyword THEN -2 " +
-            "WHEN u.pet.name = :keyword THEN -1 " +
-            "WHEN u.name LIKE CONCAT('%', :keyword, '%') THEN ABS(LENGTH(u.name) - LENGTH(:keyword) - 1)"+
-            "WHEN u.pet.name LIKE CONCAT('%', :keyword, '%') THEN ABS(LENGTH(u.pet.name) - LENGTH(:keyword))" +
+            "WHEN u.name = :keyword THEN -4 " +
+            "WHEN u.pet.name = :keyword THEN -3 " +
+            "WHEN u.name LIKE CONCAT(:keyword, '%') THEN -2 " +
+            "WHEN u.pet.name LIKE CONCAT(:keyword, '%') THEN -1 " +
+            "WHEN u.name LIKE CONCAT('%', :keyword, '%') THEN ABS(LENGTH(u.name) - LENGTH(:keyword) - 1) " +
+            "WHEN u.pet.name LIKE CONCAT('%', :keyword, '%') THEN ABS(LENGTH(u.pet.name) - LENGTH(:keyword)) " +
             "ELSE 100 END")
     Slice<User> searchByName(@Param("keyword") String keyword, Pageable pageable);
 }
