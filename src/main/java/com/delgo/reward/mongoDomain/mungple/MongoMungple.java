@@ -100,6 +100,11 @@ public class MongoMungple {
         return this;
     }
 
+    public void setRepresentMenuTitle(String representMenuTitle){
+        this.representMenuTitle = representMenuTitle;
+
+    }
+
     public void setAcceptSize(String input) {
         acceptSize = Arrays.stream(input.replaceAll("[\n\"]", "").split(","))
                 .map(s -> s.split(": "))
