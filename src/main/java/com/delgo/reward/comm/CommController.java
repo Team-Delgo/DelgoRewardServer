@@ -19,6 +19,10 @@ public class CommController {
         return ResponseEntity.ok().body(new ResponseRecord(apiCode.getCode(), apiCode.getMsg(), null));
     }
 
+    public ResponseEntity ErrorReturnSetMessage(APICode apiCode, String msg) {
+        return ResponseEntity.ok().body(new ResponseRecord(apiCode.getCode(), msg, null));
+    }
+
     public ResponseEntity ErrorReturn(APICode apiCode, Object data) {
         return ResponseEntity.ok().body(new ResponseRecord(apiCode.getCode(), apiCode.getMsg(), data));
     }
