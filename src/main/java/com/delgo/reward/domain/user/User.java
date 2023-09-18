@@ -36,6 +36,7 @@ public class User extends BaseTimeEntity {
     private String kakaoId; // Kakao 연동 시에만 필요.
 
     private int viewCount; // 내 지도 View Count
+    private String version; // 현재 User의 버전
 
     @Column(name = "social")
     @Enumerated(EnumType.STRING)
@@ -90,6 +91,10 @@ public class User extends BaseTimeEntity {
     public User setAddress(String address){
         this.address = address;
         return this;
+    }
+
+    public void setVersion(String version){
+        this.version = version;
     }
 
     //    // 권한
