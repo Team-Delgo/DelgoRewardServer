@@ -15,8 +15,8 @@ public class MungpleDetailByMenuResDTO extends MungpleDetailResDTO {
     private final String representMenuTitle; // 대표 메뉴 제목
     private final List<String> representMenuPhotoUrls; // 대표 메뉴 사진 URL // ※무조건 3개 이상이어야 함.
 
-    public MungpleDetailByMenuResDTO(MongoMungple mongoMungple, int certCount){
-        super(mongoMungple,certCount);
+    public MungpleDetailByMenuResDTO(MongoMungple mongoMungple, int certCount, boolean isBookmarked){
+        super(mongoMungple,certCount, isBookmarked);
         residentDogName = mongoMungple.getResidentDogName();
         residentDogPhoto = mongoMungple.getResidentDogPhoto();
 

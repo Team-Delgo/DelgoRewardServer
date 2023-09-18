@@ -13,8 +13,8 @@ public class MungpleDetailByPriceTagResDTO extends MungpleDetailResDTO {
     private final Boolean isPriceTag; // 가격표 존재 여부
     private final List<String> priceTagPhotoUrls; // 가격표 사진
 
-    public MungpleDetailByPriceTagResDTO(MongoMungple mongoMungple, int certCount){
-        super(mongoMungple,certCount);
+    public MungpleDetailByPriceTagResDTO(MongoMungple mongoMungple, int certCount, boolean isBookmarked){
+        super(mongoMungple,certCount, isBookmarked);
 
         isPriceTag = mongoMungple.getIsPriceTag();
         priceTagPhotoUrls = mongoMungple.getPriceTagPhotoUrls();

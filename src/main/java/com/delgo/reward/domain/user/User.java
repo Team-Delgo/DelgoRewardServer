@@ -5,6 +5,7 @@ import com.delgo.reward.domain.pet.Pet;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Entity
@@ -46,6 +47,10 @@ public class User extends BaseTimeEntity {
 //    @OneToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name="userId")
 //    private Point point;
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "userId", fetch = FetchType.LAZY)
+    private List<Bookmark> bookmarkList;
 
     public User setPet(Pet pet) {
         this.pet = pet;
