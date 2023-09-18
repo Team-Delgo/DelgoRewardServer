@@ -1,9 +1,9 @@
 package com.delgo.reward.service;
 
+import com.delgo.reward.comm.exception.FigmaException;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
-import com.delgo.reward.mongoService.MongoMungpleService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +19,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
 import java.util.*;
 
 
@@ -27,7 +28,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class FigmaService {
     private final PhotoService photoService;
-    private final MongoMungpleService mongoMungpleService;
     private final ObjectStorageService objectStorageService;
 
     private final String API_URL = "https://api.figma.com/v1/";
@@ -37,14 +37,12 @@ public class FigmaService {
     @Value("${config.photoDir}")
     String DIR;
 
-    public void uploadFigmaDataToNCP(String nodeId, int mungpleId) {
+    public void uploadFigmaDataToNCP(String nodeId, MongoMungple mongoMungple) {
+
         try {
             // Figma 연동 Data 조회
             Map<String, String> imageIdMap = getImageIdFromFigma(nodeId);
             Map<String, String> imageUrlMap = getImageUrlFromFigma(imageIdMap);
-
-            // Mungple 조회
-            MongoMungple mongoMungple = mongoMungpleService.getMungpleByMungpleId(mungpleId);
 
             // typeListMap 초기화
             Map<String, ArrayList<String>> typeListMap = Map.of(
@@ -60,10 +58,9 @@ public class FigmaService {
 
             // typeList를 각 Fileds에 매치 후 저장
             mongoMungple.setFigmaPhotoData(typeListMap);
-            mongoMungpleService.save(mongoMungple);
-
         } catch (Exception e){
-            throw new RuntimeException("[uploadFigmaDataToNCP] mungpleId :"  + mungpleId);
+            e.printStackTrace();
+            throw new FigmaException(e.getMessage());
         }
     }
 
@@ -78,7 +75,7 @@ public class FigmaService {
         return new RestTemplate(httpRequestFactory);
     }
 
-    private Map<String, String> getImageIdFromFigma(String nodeId){
+    private Map<String, String> getImageIdFromFigma(String nodeId) {
         RestTemplate restTemplate = createRestTemplate();
         HttpHeaders headers = createHeaders();
 
@@ -96,13 +93,14 @@ public class FigmaService {
                 imageIdMap.put(imageId, fileName);
             }
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("[getImageIdFromFigma] :"  + nodeId);
+            e.printStackTrace();
+            throw new FigmaException(e.getMessage());
         }
 
         return imageIdMap;
     }
 
-    private Map<String,String> getImageUrlFromFigma(Map<String,String> imageIdMap){
+    private Map<String,String> getImageUrlFromFigma(Map<String,String> imageIdMap) {
         RestTemplate restTemplate = createRestTemplate();
         HttpHeaders headers = createHeaders();
 
@@ -118,22 +116,21 @@ public class FigmaService {
                 Map.Entry<String, JsonNode> field = fields.next();
                 String imageId = field.getKey(); // ex) 4931:43548
                 String imageUrl = field.getValue().asText(); // ex) https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/8ab72901-93ef-48f2-b11a-dd204e9eec31
-                String fileName = imageIdMap.get(imageId); // ex) 강동구_애견동반식당_담금_thumbnail_5
+                String fileName = imageIdMap.get(imageId); // ex) 강동구_애견동반식당_담금_menu_5
 
                 imageUrlMap.put(fileName, imageUrl);
             }
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("[getImageUrlFromFigma] " + e.getMessage());
+            e.printStackTrace();
+            throw new FigmaException(e.getMessage());
         }
 
         return imageUrlMap;
     }
 
-
     private void processImages(Map<String, String> imageMap, Map<String, ArrayList<String>> listMap) {
         for (String fileName : imageMap.keySet()) {
             if (StringUtils.isNotEmpty(imageMap.get(fileName))) {
-                System.out.println("  fileName: " + fileName);
                 String image = imageMap.get(fileName);
                 String webpFileName = photoService.convertWebpFromUrl(fileName, image);
 
@@ -143,9 +140,12 @@ public class FigmaService {
                     objectStorageService.uploadObjects(bucketName, webpFileName, DIR + webpFileName);
                     String savedImage = bucketName.getUrl() + webpFileName;
 
+                    new File(DIR + webpFileName).delete();
+
                     listMap.get(type).add(savedImage);
                 } catch (IllegalArgumentException e) {
-                    log.error("Failed to determine BucketName for file: " + webpFileName, e);
+                    e.printStackTrace();
+                    throw new FigmaException(e.getMessage());
                 }
             }
         }
@@ -155,9 +155,10 @@ public class FigmaService {
         String[] split = text.split("_");
         if (split.length == 6)
             return "menu_board";
+        if(split.length == 4)
+            return "thumbnail";
 
         return switch (split[3]) {
-            case "thumbnail" -> "thumbnail";
             case "menu" -> "menu";
             case "price" -> "price";
             case "dog" -> "dog";
