@@ -1,7 +1,7 @@
 package com.delgo.reward;
 
 
-import com.delgo.reward.service.ExcelParserService;
+import com.delgo.reward.comm.parsing.ExcelParserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,12 +2,15 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.APICode;
+import com.delgo.reward.comm.googlesheet.GoogleSheetService;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.record.mungple.MungpleDetailRecord;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @Slf4j
@@ -16,6 +19,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/mungple")
 public class MungpleController extends CommController {
     private final MongoMungpleService mongoMungpleService;
+    private final GoogleSheetService googleSheetService;
+
+    /**
+     * Mungple 등록 From GoogleSheet, Figma
+     * @return MungpleDetailResDTO
+     */
+    @GetMapping("/parsing")
+    public ResponseEntity parsingGoogleSheetMungple() {
+        List<String> placeNames = googleSheetService.saveSheetsDataToDB();
+
+        return SuccessReturn(placeNames);
+    }
 
     /**
      * [Category] Mungple 조회 - (CA0000: 전체 조회)
