@@ -1,5 +1,6 @@
 package com.delgo.reward.service;
 
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.achievements.Achievements;
@@ -79,7 +80,7 @@ public class AchievementsService {
     public List<Achievements> checkEarnedAchievements(int userId, boolean isMungple) {
         return achievementsRepository.findAchievementsNotEarned(userId, isMungple).stream().map(achievement -> {
             achievement.getAchievementsCondition().forEach(ac -> { // ac.getMungpleId() == 0 -> 일반 인증 조건
-                if (ac.getCount() > getCategoryCount(userId, ac.getCategoryCode(), ac.getMungpleId()))
+                if (ac.getCount() > getCategoryCount(userId, CategoryCode.valueOf(ac.getCategoryCode()), ac.getMungpleId()))
                     achievement.setConditionCheck(false);
             });
             // 모든 조건을 만족하면 획득한 업적 리스트에 저장
@@ -119,7 +120,7 @@ public class AchievementsService {
     }
 
     // 사용자가 특정 카테고리의 인증을 몇번했는지 조회
-    public int getCategoryCount(int userId, String categoryCode, int mungpleId) {
+    public int getCategoryCount(int userId, CategoryCode categoryCode, int mungpleId) {
         return certRepository.countCertByCategory(userId, categoryCode, mungpleId);
     }
 
