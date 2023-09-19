@@ -10,4 +10,5 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Integer> {
     Boolean existsByUserIdAndMungpleId(Integer userId, Integer mungpleId);
     Boolean existsByUserIdAndMungpleIdAndIsBookmarked(Integer userId, Integer mungpleId, boolean isBookmarked);
     Optional<Bookmark> findByUserIdAndMungpleId(Integer userId, Integer mungpleId);
+    List<Bookmark> findByUserId(Integer userId);
 }

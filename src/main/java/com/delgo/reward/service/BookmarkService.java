@@ -53,4 +53,11 @@ public class BookmarkService {
         return bookmarkRepository.findByUserIdAndMungpleId(userId, mungpleId)
                 .orElseThrow(() -> new NullPointerException("NOT FOUND Bookmark userId : " + userId + " mungpleId: " + mungpleId));
     }
+
+    /**
+     * [userId] 북마크 가져오기
+     */
+    public List<Bookmark> getBookmarkByUserId(int userId) {
+        return bookmarkRepository.findByUserId(userId);
+    }
 }
