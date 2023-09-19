@@ -85,7 +85,7 @@ public class MongoMungpleService {
      */
     @Cacheable(cacheNames = MUNGPLE_CACHE_STORE)
     public List<MungpleResDTO> getMungpleByCategoryCode(String categoryCode) {
-        List<MongoMungple> mungpleList = !categoryCode.equals(CategoryCode.TOTAL.getCode())
+        List<MongoMungple> mungpleList = !categoryCode.equals(CategoryCode.CA0000.getCode())
                 ? mongoMungpleRepository.findByCategoryCode(categoryCode)
                 : mongoMungpleRepository.findAll();
 

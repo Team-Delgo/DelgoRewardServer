@@ -64,7 +64,7 @@ public class CacheTest {
     @Test
     public void getCacheCompareTest(){
         StopWatch stopWatch1 = new StopWatch();
-        String categoryCode = CategoryCode.TOTAL.getCode();
+        String categoryCode = CategoryCode.CA0000.getCode();
 
         System.out.println("=======[Database]=======");
         stopWatch1.start();
