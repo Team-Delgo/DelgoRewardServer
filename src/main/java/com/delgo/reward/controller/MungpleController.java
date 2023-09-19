@@ -39,9 +39,8 @@ public class MungpleController extends CommController {
      *
      */
     @GetMapping(value={"/category/{categoryCode}","/category"})
-    public ResponseEntity getMungplesByCategory(@PathVariable String categoryCode) {
-        if (categoryCode.isBlank()) return ParamErrorReturn("categoryCode"); // Validate - Blank Check
-        return SuccessReturn(mongoMungpleService.getMungpleByCategoryCode(categoryCode));
+    public ResponseEntity getMungplesByCategory(@PathVariable CategoryCode categoryCode) {
+        return SuccessReturn(mongoMungpleService.getActiveMungpleByCategoryCode(categoryCode));
     }
 
     /**

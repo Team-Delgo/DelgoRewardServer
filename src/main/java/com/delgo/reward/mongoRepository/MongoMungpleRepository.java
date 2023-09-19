@@ -1,5 +1,6 @@
 package com.delgo.reward.mongoRepository;
 
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
@@ -12,7 +13,7 @@ public interface MongoMungpleRepository extends MongoRepository<MongoMungple, St
     List<MongoMungple> findByMungpleIdIn(List<Integer> mungpleIdList);
     List<MongoMungple> findByIsActive(boolean isActive);
     List<MongoMungple> findByCategoryCode(String categoryCode);
-    List<MongoMungple> findByCategoryCodeAndIsActive(String categoryCode, boolean isActive);
+    List<MongoMungple> findByCategoryCodeAndIsActive(CategoryCode categoryCode, boolean isActive);
     boolean existsByLatitudeAndLongitude(String latitude, String longitude);
     boolean existsByMungpleId(int mungpleId);
     void deleteByMungpleId(int mungpleId);

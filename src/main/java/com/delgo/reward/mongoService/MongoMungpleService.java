@@ -95,8 +95,8 @@ public class MongoMungpleService {
     /**
      * [categoryCode] Active Mungple 조회
      */
-    public List<MungpleResDTO> getActiveMungpleByCategoryCode(String categoryCode) {
-        List<MongoMungple> mungpleList = !categoryCode.equals(CategoryCode.TOTAL.getCode())
+    public List<MungpleResDTO> getActiveMungpleByCategoryCode(CategoryCode categoryCode) {
+        List<MongoMungple> mungpleList = !categoryCode.equals(CategoryCode.CA0000)
                 ? mongoMungpleRepository.findByCategoryCodeAndIsActive(categoryCode, true)
                 : mongoMungpleRepository.findByIsActive(true);
 
