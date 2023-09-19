@@ -2,6 +2,8 @@ package com.delgo.reward.comm.code;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
+import java.util.EnumSet;
+
 public enum CategoryCode {
     TOTAL("CA0000","전체",0,""),
     CA0001("CA0001","산책",10,"CA0001_List"), // 산책
@@ -39,6 +41,14 @@ public enum CategoryCode {
 
     public Integer getPoint(){
         return this.point;
+    }
+
+    public static final EnumSet<CategoryCode> MENU_CODES = EnumSet.of(CA0002, CA0003);
+
+    private static final EnumSet<CategoryCode> SKIPPABLE_CODES = EnumSet.of(TOTAL, CA9999);
+
+    public boolean shouldSkip() {
+        return SKIPPABLE_CODES.contains(this);
     }
 
     // @RequestParam ENUM Parsing

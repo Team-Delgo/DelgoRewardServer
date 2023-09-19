@@ -13,9 +13,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 
@@ -83,6 +83,8 @@ public class MongoMungple {
     private String representMenuTitle; // 대표 메뉴 제목
     @Field("represent_menu_photo_urls")
     private List<String> representMenuPhotoUrls; // 대표 메뉴 URL List // ※무조건 3개 이상이어야 함.
+    @Field("represent_menu_board_photo_urls")
+    private List<String> representMenuBoardPhotoUrls; // 대표 메뉴 URL List // ※무조건 3개 이상이어야 함.
 
     // CA0001, CA0005, CA0006, CA0007
     @Field("is_price_tag")
@@ -98,6 +100,11 @@ public class MongoMungple {
         this.phoneNo = phoneNo.replace("-","");
 
         return this;
+    }
+
+    public void setRepresentMenuTitle(String representMenuTitle){
+        this.representMenuTitle = representMenuTitle;
+
     }
 
     public void setAcceptSize(String input) {
@@ -118,5 +125,33 @@ public class MongoMungple {
         // Default 값 세팅
         Arrays.stream(BusinessHourCode.values())
                 .forEach(code -> businessHour.computeIfAbsent(code, BusinessHourCode::getDefaultValue));
+    }
+
+    public void setFigmaPhotoData(Map<String, ArrayList<String>> listMap) {
+        this.photoUrls = sortAndRetrieveUrls(listMap, "thumbnail");
+        this.representMenuPhotoUrls = sortAndRetrieveUrls(listMap, "menu");
+        this.representMenuBoardPhotoUrls = sortAndRetrieveUrls(listMap, "menu_board");
+        this.priceTagPhotoUrls = sortAndRetrieveUrls(listMap, "price_tag");
+        this.residentDogPhoto = Optional.ofNullable(listMap.get("dog"))
+                .filter(list -> !list.isEmpty())
+                .map(list -> list.get(0))
+                .orElse(null);
+    }
+
+    private List<String> sortAndRetrieveUrls(Map<String, ArrayList<String>> map, String key) {
+        return Optional.ofNullable(map.get(key))
+                .filter(list -> !list.isEmpty())
+                .map(this::sortUrlList)
+                .orElse(Collections.emptyList());
+    }
+
+    private List<String> sortUrlList(List<String> list){
+        Pattern pattern = Pattern.compile("_([0-9]+)\\.webp"); // Extracts the number before ".webp"
+        return list.stream()
+                .sorted(Comparator.comparingInt(url -> {
+                    Matcher matcher = pattern.matcher(url);
+                    return matcher.find() ? Integer.parseInt(matcher.group(1)) : 0;
+                }))
+                .collect(Collectors.toList());
     }
 }
