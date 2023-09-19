@@ -7,6 +7,7 @@ import com.delgo.reward.comm.ncp.GeoService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.common.Location;
+import com.delgo.reward.domain.user.Bookmark;
 import com.delgo.reward.dto.mungple.MungpleResDTO;
 import com.delgo.reward.dto.mungple.detail.MungpleDetailByMenuResDTO;
 import com.delgo.reward.dto.mungple.detail.MungpleDetailByPriceTagResDTO;
@@ -18,7 +19,6 @@ import com.delgo.reward.mongoRepository.MungpleDetailRepository;
 import com.delgo.reward.record.mungple.MungpleDetailRecord;
 import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.service.BookmarkService;
-import com.delgo.reward.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,6 +102,18 @@ public class MongoMungpleService {
 
         return mungpleList.stream().map(MungpleResDTO::new).collect(Collectors.toList());
     }
+
+    /**
+     * [BookMark] Active Mungple 조회
+     */
+    public List<MungpleResDTO> getActiveMungpleByBookMark(int userId) {
+        List<Bookmark> bookmarks = bookmarkService.getBookmarkByUserId(userId);
+        List<Integer> mungpleIdList = bookmarks.stream().map(Bookmark::getMungpleId).toList();
+        List<MongoMungple> mungpleList = mongoMungpleRepository.findByMungpleIdIn(mungpleIdList);
+
+        return mungpleList.stream().map(MungpleResDTO::new).collect(Collectors.toList());
+    }
+
 
     /**
      * [address] Mungple 중복 체크
