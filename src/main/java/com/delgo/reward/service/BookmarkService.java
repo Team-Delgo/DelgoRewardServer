@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -52,5 +51,12 @@ public class BookmarkService {
     public Bookmark getBookmark(int userId, int mungpleId) {
         return bookmarkRepository.findByUserIdAndMungpleId(userId, mungpleId)
                 .orElseThrow(() -> new NullPointerException("NOT FOUND Bookmark userId : " + userId + " mungpleId: " + mungpleId));
+    }
+
+    /**
+     * [mungpleId] 북마크 개수
+     */
+    public int getActiveBookmarkCount(int mungpleId) {
+        return bookmarkRepository.countOfActiveBookmarkByMungple(mungpleId);
     }
 }
