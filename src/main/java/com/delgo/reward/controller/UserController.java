@@ -49,7 +49,7 @@ public class UserController extends CommController {
      */
     @GetMapping("/other")
     public ResponseEntity<?> getOtherUser(@RequestParam int userId) {
-        return SuccessReturn(new OtherUserResDTO(userService.getUserById(userId)));
+        return SuccessReturn(new OtherUserResDTO(userService.getUserById(userId), userService.getActivityByUserId(userId)));
     }
 
     /**

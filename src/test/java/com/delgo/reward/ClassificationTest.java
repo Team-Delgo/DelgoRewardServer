@@ -1,5 +1,6 @@
 package com.delgo.reward;
 
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.user.CategoryCount;
 import com.delgo.reward.domain.user.User;
@@ -18,6 +19,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.security.core.parameters.P;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.StopWatch;
 
@@ -25,10 +27,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -43,6 +42,25 @@ public class ClassificationTest {
     private CategoryCountRepository categoryCountRepository;
     @Autowired
     private UserRepository userRepository;
+
+    @Test
+    public void getCategoryByUserIdTest() {
+        int userId = 423;
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        List<Classification> classificationList = classificationRepository.findAllByUser_UserId(userId);
+        System.out.println("classificationList count: " + classificationList.size());
+
+        for(Classification classification: classificationList){
+            Set<String> keySet = classification.getCategory().keySet();
+            for(String key: keySet){
+                System.out.println("Key: " + key);
+            }
+        }
+        stopWatch.stop();
+        System.out.println(stopWatch.prettyPrint());
+        System.out.println("코드 실행 시간 (s): " + stopWatch.getTotalTimeSeconds());
+    }
 
     @Test
     public void classificationByCertificationTest() throws IOException, ParseException {
@@ -143,8 +161,9 @@ public class ClassificationTest {
         }
 
     }
+
     @Test
-    public void TEST_RESOURCE(){
+    public void TEST_RESOURCE() {
         String CATEGORY_CLASSIFICATION_DATA_SET_DIR = "classification_data_set/category_test.json";
 
         ClassPathResource classPathResource = new ClassPathResource(CATEGORY_CLASSIFICATION_DATA_SET_DIR);
@@ -183,9 +202,9 @@ public class ClassificationTest {
     }
 
     @Test
-    public void TEST_SET_CATEGORYCOUNT(){
+    public void TEST_SET_CATEGORYCOUNT() {
         List<User> users = userRepository.findAll();
-        users.forEach(user->{
+        users.forEach(user -> {
             categoryCountRepository.save(new CategoryCount().create(user.getUserId()));
         });
     }

@@ -13,10 +13,12 @@ import java.util.List;
 @Configuration
 public class LocalCacheConfig {
     private final String MUNGPLE_CACHE_STORE = "MungpleCacheStore";
+    private final String ACTIVITY_BY_CLASSIFICATION_CACHE_STORE = "ActivityByClassificationCacheStore";
+
     @Bean
     public CacheManager cacheManager() {
         SimpleCacheManager simpleCacheManager = new SimpleCacheManager();
-        simpleCacheManager.setCaches(List.of(new ConcurrentMapCache(MUNGPLE_CACHE_STORE)));
+        simpleCacheManager.setCaches(List.of(new ConcurrentMapCache(MUNGPLE_CACHE_STORE), new ConcurrentMapCache(ACTIVITY_BY_CLASSIFICATION_CACHE_STORE)));
         return simpleCacheManager;
     }
 }

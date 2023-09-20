@@ -1,9 +1,12 @@
 package com.delgo.reward.dto.user;
 
 
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.user.CategoryCount;
 import com.delgo.reward.domain.user.User;
 import lombok.*;
+
+import java.util.Map;
 
 
 @Getter
@@ -22,7 +25,10 @@ public class UserByCertCountResDTO extends UserResDTO {
     private int CA0007Count;
     private int CA9999Count;
 
-    public UserByCertCountResDTO(User user, int totalCount, int totalCountByMungple, CategoryCount categoryCount) {
+    // Activity
+    private Map<CategoryCode, Integer> activityMapByCategoryCode;
+
+    public UserByCertCountResDTO(User user, int totalCount, int totalCountByMungple, CategoryCount categoryCount, Map<CategoryCode, Integer> activityMapByCategoryCode) {
         super(user);
         this.totalCount = totalCount;
         this.totalCountByMungple = totalCountByMungple;
@@ -34,5 +40,6 @@ public class UserByCertCountResDTO extends UserResDTO {
         CA0006Count = categoryCount.getCA0006();
         CA0007Count = categoryCount.getCA0007();
         CA9999Count = categoryCount.getCA9999();
+        this.activityMapByCategoryCode = activityMapByCategoryCode;
     }
 }
