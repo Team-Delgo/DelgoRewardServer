@@ -20,7 +20,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
-import java.util.*;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 
 @Slf4j
@@ -128,19 +134,22 @@ public class FigmaService {
         return imageUrlMap;
     }
 
-    private void processImages(Map<String, String> imageMap, Map<String, ArrayList<String>> listMap) {
+    private void processImages(Map<String, String> imageMap, Map<String, ArrayList<String>> listMap) throws UnsupportedEncodingException {
         for (String fileName : imageMap.keySet()) {
             if (StringUtils.isNotEmpty(imageMap.get(fileName))) {
                 String image = imageMap.get(fileName);
-                String webpFileName = photoService.convertWebpFromUrl(fileName, image);
+                String encodedFileNmae = photoService.convertWebpFromUrl(fileName, image);
 
                 try {
                     String type = checkType(fileName);
                     BucketName bucketName = BucketName.fromFigma(type);
-                    objectStorageService.uploadObjects(bucketName, webpFileName, DIR + webpFileName);
+                    log.info("encodedFileNmae: {}", encodedFileNmae);
+                    String webpFileName = URLDecoder.decode(encodedFileNmae, StandardCharsets.UTF_8);
+                    log.info("decoding webpFileName: {}", webpFileName);
+                    objectStorageService.uploadObjects(bucketName, webpFileName, DIR + encodedFileNmae + ".webp");
                     String savedImage = bucketName.getUrl() + webpFileName;
 
-                    new File(DIR + webpFileName).delete();
+                    new File(DIR + encodedFileNmae + ".webp").delete();
 
                     listMap.get(type).add(savedImage);
                 } catch (IllegalArgumentException e) {
