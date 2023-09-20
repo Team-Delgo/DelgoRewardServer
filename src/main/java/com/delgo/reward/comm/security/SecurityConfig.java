@@ -110,9 +110,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.antMatchers("/swagger-ui/**").permitAll()
 				.antMatchers("/v3/**").permitAll()
 
-				.anyRequest().authenticated();
+//				.anyRequest().authenticated();
 
 //				 TEST
-//				.antMatchers("/**").permitAll();
+				.antMatchers("/**").permitAll();
 	}
 }
