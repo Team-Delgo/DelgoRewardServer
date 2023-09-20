@@ -33,10 +33,11 @@ public class MungpleDetailResDTO {
 
     private final Integer certCount; // 인증 개수
     private final Integer recommendCount = 0; // 추천 개수
+    private Integer bookmarkCount = 0; // 추천 개수
 
     private final Boolean isBookmarked; // 유저가 북마크를 했는가?
 
-    public MungpleDetailResDTO(MongoMungple mongoMungple, int certCount, boolean isBookmarked){
+    public MungpleDetailResDTO(MongoMungple mongoMungple, int certCount, int bookmarkCount, boolean isBookmarked){
         mungpleId = mongoMungple.getMungpleId();
         phoneNo = mongoMungple.getPhoneNo();
         categoryCode = mongoMungple.getCategoryCode();
@@ -57,6 +58,7 @@ public class MungpleDetailResDTO {
         parkingInfo = mongoMungple.getParkingInfo();
 
         this.isBookmarked = isBookmarked;
+        this.bookmarkCount = bookmarkCount;
 
         this.certCount = certCount;
     }

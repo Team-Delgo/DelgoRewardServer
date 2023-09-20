@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -59,5 +58,11 @@ public class BookmarkService {
      */
     public List<Bookmark> getBookmarkByUserId(int userId) {
         return bookmarkRepository.findByUserId(userId);
+
+    /**
+     * [mungpleId] 북마크 개수
+     */
+    public int getActiveBookmarkCount(int mungpleId) {
+        return bookmarkRepository.countOfActiveBookmarkByMungple(mungpleId);
     }
 }
