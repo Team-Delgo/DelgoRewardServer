@@ -21,10 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -219,12 +216,13 @@ public class PhotoService extends CommService {
         return in;
     }
 
-    public String convertWebpFromUrl(String name, String imageUrl) {
-        String fileName = name + ".webp";
+    public String convertWebpFromUrl(String name, String imageUrl) throws UnsupportedEncodingException {
+        String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8);
+        String fileName = encodedName + ".webp";
 
         try {
             InputStream in = downloadImage(imageUrl);
-            File file = new File(DIR + name + ".jpg"); // 서버에 저장
+            File file = new File(DIR + encodedName + ".jpg"); // 서버에 저장
 
             try(FileOutputStream out = new FileOutputStream(file)) {
                 byte[] buffer = new byte[4096];
@@ -234,10 +232,11 @@ public class PhotoService extends CommService {
                 }
             }
 
-            File webpFile = convertWebp(fileName, file);  // filePath에서 File 불러온 뒤 webp로 변환 후 저장.
+            File convertWebpFromUrl = convertWebp(fileName, file);  // filePath에서 File 불러온 뒤 webp로 변환 후 저장.
+            log.info("convertWebpFromUrl convertWebpFromUrl : {}", convertWebpFromUrl);
             file.delete();
 
-            return fileName;
+            return encodedName;
         } catch (Exception e) {
             log.error("menu_photo: {} webpFile 생성 실패",name);
             return "";
