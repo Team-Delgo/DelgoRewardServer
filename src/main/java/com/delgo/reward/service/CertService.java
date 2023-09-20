@@ -204,10 +204,11 @@ public class CertService {
     /**
      * [My] 내가 작성한 인증 조회
      */
-    public PageResDTO<CertResDTO> getMyCerts(int userId, String categoryCode, Pageable pageable) {
-        Slice<Integer> slice = (!categoryCode.equals(CategoryCode.TOTAL.getCode()))
-                ? certRepository.findCertIdByUserIdAndCategoryCode(userId, categoryCode, pageable)
-                : certRepository.findCertIdByUserId(userId, pageable);
+    public PageResDTO<CertResDTO> getMyCerts(int userId, CategoryCode categoryCode, Pageable pageable) {
+        Slice<Integer> slice = categoryCode.equals(CategoryCode.CA0000)
+                ? certRepository.findCertIdByUserId(userId, pageable)
+                : certRepository.findCertIdByUserIdAndCategoryCode(userId, categoryCode, pageable);
+
 
         List<CertResDTO> certs = getCertsByIds(slice.getContent()).stream().map(cert -> new CertResDTO(cert, userId)).toList();
         return new PageResDTO<>(certs, slice.getSize(), slice.getNumber(), slice.isLast(), getCertCountByUser(userId));
@@ -216,10 +217,10 @@ public class CertService {
     /**
      *  [Other] 다른 사용자가 작성한 인증 조회
      */
-    public PageResDTO<CertResDTO> getOtherCerts(int userId, String categoryCode, Pageable pageable) {
-        Slice<Integer> slice = (!categoryCode.equals(CategoryCode.TOTAL.getCode()))
-                ? certRepository.findCorrectCertIdByUserIdAndCategoryCode(userId, categoryCode, pageable)
-                : certRepository.findCorrectCertIdByUserId(userId, pageable);
+    public PageResDTO<CertResDTO> getOtherCerts(int userId, CategoryCode categoryCode, Pageable pageable) {
+        Slice<Integer> slice = !categoryCode.equals(CategoryCode.CA0000)
+                ? certRepository.findCorrectCertIdByUserId(userId, pageable)
+                :certRepository.findCorrectCertIdByUserIdAndCategoryCode(userId, categoryCode, pageable);
 
         List<CertResDTO> certs = getCertsByIds(slice.getContent()).stream().map(cert -> new CertResDTO(cert, userId)).toList();
         return new PageResDTO<>(certs, slice.getSize(), slice.getNumber(), slice.isLast(), getCorrectCertCountByUserId(userId));

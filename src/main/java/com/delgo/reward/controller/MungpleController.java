@@ -2,6 +2,7 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.APICode;
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.googlesheet.GoogleSheetService;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.record.mungple.MungpleDetailRecord;
@@ -39,9 +40,19 @@ public class MungpleController extends CommController {
      *
      */
     @GetMapping(value={"/category/{categoryCode}","/category"})
-    public ResponseEntity getMungplesByCategory(@PathVariable String categoryCode) {
-        if (categoryCode.isBlank()) return ParamErrorReturn("categoryCode"); // Validate - Blank Check
-        return SuccessReturn(mongoMungpleService.getMungpleByCategoryCode(categoryCode));
+    public ResponseEntity getMungplesByCategory(@PathVariable CategoryCode categoryCode) {
+        return SuccessReturn(mongoMungpleService.getActiveMungpleByCategoryCode(categoryCode));
+    }
+
+    /**
+     * [Bookmark] Mungple 조회
+     * @param userId
+     * @return List<MungpleResDTO>
+     *
+     */
+    @GetMapping("/bookmark")
+    public ResponseEntity getMungplesByBookmark(@RequestParam int userId) {
+        return SuccessReturn(mongoMungpleService.getActiveMungpleByBookMark(userId));
     }
 
     /**

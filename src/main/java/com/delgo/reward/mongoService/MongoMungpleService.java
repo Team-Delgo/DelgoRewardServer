@@ -7,6 +7,7 @@ import com.delgo.reward.comm.ncp.GeoService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.common.Location;
+import com.delgo.reward.domain.user.Bookmark;
 import com.delgo.reward.dto.mungple.MungpleResDTO;
 import com.delgo.reward.dto.mungple.detail.MungpleDetailByMenuResDTO;
 import com.delgo.reward.dto.mungple.detail.MungpleDetailByPriceTagResDTO;
@@ -84,7 +85,7 @@ public class MongoMungpleService {
      */
     @Cacheable(cacheNames = MUNGPLE_CACHE_STORE)
     public List<MungpleResDTO> getMungpleByCategoryCode(String categoryCode) {
-        List<MongoMungple> mungpleList = !categoryCode.equals(CategoryCode.TOTAL.getCode())
+        List<MongoMungple> mungpleList = !categoryCode.equals(CategoryCode.CA0000.getCode())
                 ? mongoMungpleRepository.findByCategoryCode(categoryCode)
                 : mongoMungpleRepository.findAll();
 
@@ -94,13 +95,25 @@ public class MongoMungpleService {
     /**
      * [categoryCode] Active Mungple 조회
      */
-    public List<MungpleResDTO> getActiveMungpleByCategoryCode(String categoryCode) {
-        List<MongoMungple> mungpleList = !categoryCode.equals(CategoryCode.TOTAL.getCode())
+    public List<MungpleResDTO> getActiveMungpleByCategoryCode(CategoryCode categoryCode) {
+        List<MongoMungple> mungpleList = !categoryCode.equals(CategoryCode.CA0000)
                 ? mongoMungpleRepository.findByCategoryCodeAndIsActive(categoryCode, true)
                 : mongoMungpleRepository.findByIsActive(true);
 
         return mungpleList.stream().map(MungpleResDTO::new).collect(Collectors.toList());
     }
+
+    /**
+     * [BookMark] Active Mungple 조회
+     */
+    public List<MungpleResDTO> getActiveMungpleByBookMark(int userId) {
+        List<Bookmark> bookmarks = bookmarkService.getBookmarkByUserId(userId);
+        List<Integer> mungpleIdList = bookmarks.stream().map(Bookmark::getMungpleId).toList();
+        List<MongoMungple> mungpleList = mongoMungpleRepository.findByMungpleIdIn(mungpleIdList);
+
+        return mungpleList.stream().map(MungpleResDTO::new).collect(Collectors.toList());
+    }
+
 
     /**
      * [address] Mungple 중복 체크
