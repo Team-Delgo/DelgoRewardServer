@@ -1,6 +1,7 @@
 package com.delgo.reward.repository;
 
 
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.certification.Certification;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -35,7 +36,7 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     Integer countOfCertByMungple(@Param("mungpleId") int mungpleId);
 
     @Query(value = "select count(c) from Certification c where c.user.userId = :userId and c.categoryCode = :categoryCode and c.mungpleId = :mungpleId")
-    Integer countCertByCategory(@Param("userId") int userId, @Param("categoryCode") String categoryCode, @Param("mungpleId") int mungpleId);
+    Integer countCertByCategory(@Param("userId") int userId, @Param("categoryCode") CategoryCode categoryCode, @Param("mungpleId") int mungpleId);
 
     @Query(value = "select c from Certification c where c.registDt between :startDt and :endDt order by c.registDt desc")
     List<Certification> findCertByDate(@Param("startDt") LocalDateTime startDt, @Param("endDt") LocalDateTime endDate);
@@ -52,7 +53,7 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     Slice<Integer> findCertIdByUserId(@Param("userId") int userId, Pageable pageable);
 
     @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId and c.categoryCode = :categoryCode")
-    Slice<Integer> findCertIdByUserIdAndCategoryCode(@Param("userId")int userId, @Param("categoryCode") String categoryCode, Pageable pageable);
+    Slice<Integer> findCertIdByUserIdAndCategoryCode(@Param("userId")int userId, @Param("categoryCode") CategoryCode categoryCode, Pageable pageable);
 
     @Query("SELECT c.mungpleId FROM Certification c where c.mungpleId != 0 GROUP BY c.mungpleId ORDER BY COUNT(c) DESC")
     List<Integer>  findCertOrderByMungpleCount(Pageable pageable);
@@ -76,7 +77,7 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     Slice<Integer> findCertByMungple(@Param("mungpleId") int mungpleId, Pageable pageable);
 
     @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId and c.categoryCode = :categoryCode and c.isCorrect = true")
-    Slice<Integer> findCorrectCertIdByUserIdAndCategoryCode(@Param("userId")int userId, @Param("categoryCode") String categoryCode, Pageable pageable);
+    Slice<Integer> findCorrectCertIdByUserIdAndCategoryCode(@Param("userId")int userId, @Param("categoryCode") CategoryCode categoryCode, Pageable pageable);
 
     @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId and c.isCorrect = true")
     Slice<Integer> findCorrectCertIdByUserId(@Param("userId") int userId, Pageable pageable);

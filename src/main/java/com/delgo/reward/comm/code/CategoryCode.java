@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.EnumSet;
 
 public enum CategoryCode {
-    TOTAL("CA0000","전체",0,""),
+    CA0000("CA0000","전체",0,""),
     CA0001("CA0001","산책",10,"CA0001_List"), // 산책
     CA0002("CA0002","카페",10,"CA0002_List"), // 카페
     CA0003("CA0003","식당",10, "CA0003_List"), // 식당
@@ -45,7 +45,7 @@ public enum CategoryCode {
 
     public static final EnumSet<CategoryCode> MENU_CODES = EnumSet.of(CA0002, CA0003);
 
-    private static final EnumSet<CategoryCode> SKIPPABLE_CODES = EnumSet.of(TOTAL, CA9999);
+    private static final EnumSet<CategoryCode> SKIPPABLE_CODES = EnumSet.of(CA0000, CA9999);
 
     public boolean shouldSkip() {
         return SKIPPABLE_CODES.contains(this);

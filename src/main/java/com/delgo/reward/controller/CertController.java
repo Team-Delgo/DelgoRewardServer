@@ -5,6 +5,7 @@ import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.async.CertAsyncService;
 import com.delgo.reward.comm.async.ClassificationAsyncService;
 import com.delgo.reward.comm.code.APICode;
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.ReactionCode;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.dto.cert.CertByAchvResDTO;
@@ -69,9 +70,8 @@ public class CertController extends CommController {
     @GetMapping("/other")
     public ResponseEntity getOtherCerts(
             @RequestParam Integer userId,
-            @RequestParam String categoryCode,
+            @RequestParam CategoryCode categoryCode,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        if (!StringUtils.hasText(categoryCode)) return ErrorReturn(APICode.PARAM_ERROR);
         return SuccessReturn(certService.getOtherCerts(userId, categoryCode, pageable));
     }
 
@@ -138,9 +138,8 @@ public class CertController extends CommController {
     @GetMapping("/my")
     public ResponseEntity getMyCerts(
             @RequestParam Integer userId,
-            @RequestParam String categoryCode,
+            @RequestParam CategoryCode categoryCode,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        if (!StringUtils.hasText(categoryCode)) return ErrorReturn(APICode.PARAM_ERROR);
         return SuccessReturn(certService.getMyCerts(userId, categoryCode, pageable));
     }
 
