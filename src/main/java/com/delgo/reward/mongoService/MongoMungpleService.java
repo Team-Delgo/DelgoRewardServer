@@ -18,7 +18,6 @@ import com.delgo.reward.mongoRepository.MungpleDetailRepository;
 import com.delgo.reward.record.mungple.MungpleDetailRecord;
 import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.service.BookmarkService;
-import com.delgo.reward.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -158,15 +157,15 @@ public class MongoMungpleService {
         MongoMungple mongoMungple = getMungpleByMungpleId(mungpleId);
         int certCount = certRepository.countOfCertByMungple(mungpleId);
 
-
         boolean isBookmarked = (userId != 0 && bookmarkService.hasBookmarkByIsBookmarked(userId, mungpleId, true));
+        int bookmarkCount = bookmarkService.getActiveBookmarkCount(mungpleId);
 
         switch (CategoryCode.valueOf(mongoMungple.getCategoryCode())) {
             case CA0002, CA0003 -> {
-                return new MungpleDetailByMenuResDTO(mongoMungple, certCount, isBookmarked);
+                return new MungpleDetailByMenuResDTO(mongoMungple, certCount, bookmarkCount, isBookmarked);
             }
             default -> {
-                return new MungpleDetailByPriceTagResDTO(mongoMungple, certCount, isBookmarked);
+                return new MungpleDetailByPriceTagResDTO(mongoMungple, certCount, bookmarkCount, isBookmarked);
             }
         }
     }
