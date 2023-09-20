@@ -170,15 +170,15 @@ public class MongoMungpleService {
         MongoMungple mongoMungple = getMungpleByMungpleId(mungpleId);
         int certCount = certRepository.countOfCertByMungple(mungpleId);
 
-
         boolean isBookmarked = (userId != 0 && bookmarkService.hasBookmarkByIsBookmarked(userId, mungpleId, true));
+        int bookmarkCount = bookmarkService.getActiveBookmarkCount(mungpleId);
 
         switch (CategoryCode.valueOf(mongoMungple.getCategoryCode())) {
             case CA0002, CA0003 -> {
-                return new MungpleDetailByMenuResDTO(mongoMungple, certCount, isBookmarked);
+                return new MungpleDetailByMenuResDTO(mongoMungple, certCount, bookmarkCount, isBookmarked);
             }
             default -> {
-                return new MungpleDetailByPriceTagResDTO(mongoMungple, certCount, isBookmarked);
+                return new MungpleDetailByPriceTagResDTO(mongoMungple, certCount, bookmarkCount, isBookmarked);
             }
         }
     }

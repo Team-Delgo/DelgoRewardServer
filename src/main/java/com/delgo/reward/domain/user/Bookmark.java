@@ -20,7 +20,7 @@ public class Bookmark extends BaseTimeEntity {
     private Integer bookmarkId;
     private Integer userId;
     private Integer mungpleId;
-    private boolean isBookmarked;
+    private Boolean isBookmarked;
 
     public Bookmark setIsBookmarkedReverse(){
         this.isBookmarked = !this.isBookmarked;
