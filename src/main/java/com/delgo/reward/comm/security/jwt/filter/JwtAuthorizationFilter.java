@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.RequestDispatcher;
@@ -71,7 +72,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             String version = request.getHeader("version");
 
             // DB Version과 일치하지 않을 때 DB의 버전 업데이트
-            if (!user.getVersion().equals(version)) {
+            if (StringUtils.hasText(version) && !user.getVersion().equals(version)) {
                 user.setVersion(version);
                 userRepository.save(user);
             }
