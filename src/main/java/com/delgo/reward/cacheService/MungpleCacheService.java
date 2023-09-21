@@ -50,6 +50,14 @@ public class MungpleCacheService {
     }
 
     /**
+     * [MUNGPLE_CACHE_STORE] 모든 캐시 삭제
+     */
+    @CacheEvict(cacheNames = MUNGPLE_CACHE_STORE, allEntries = true)
+    public void deleteAllCacheData() {
+        log.info("[CacheService] MungpleCache의 모든 캐시를 삭제합니다.");
+    }
+
+    /**
      * [MUNGPLE_CACHE_STORE] 캐시 데이터 유효 검증성 확인
      */
     public boolean isValidation(final MungpleCache cacheData) {
