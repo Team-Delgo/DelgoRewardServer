@@ -106,4 +106,13 @@ public class MungpleController extends CommController {
     public ResponseEntity getMungpleDetailByMungpleIdAndUserId(@RequestParam int mungpleId, @RequestParam int userId) {
         return SuccessReturn(mongoMungpleService.getMungpleDetailByMungpleIdAndUserId(mungpleId, userId));
     }
+
+    /**
+     * Mungple Cache Reset
+     */
+    @PutMapping("/cache")
+    public ResponseEntity resetMungpleCache() {
+        mongoMungpleService.resetMungpleCache();
+        return SuccessReturn();
+    }
 }
