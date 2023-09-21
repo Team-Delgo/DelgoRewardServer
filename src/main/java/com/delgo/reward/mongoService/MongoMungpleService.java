@@ -183,7 +183,7 @@ public class MongoMungpleService {
 
     public MungpleDetailResDTO getMungpleDetailByMungpleIdAndUserId(int mungpleId, int userId) {
         MongoMungple mongoMungple = getMungpleByMungpleId(mungpleId);
-        int certCount = certRepository.countOfCertByMungple(mungpleId);
+        int certCount = certRepository.countOfCorrectCertByMungple(mungpleId);
 
         boolean isBookmarked = (userId != 0 && bookmarkService.hasBookmarkByIsBookmarked(userId, mungpleId, true));
         int bookmarkCount = bookmarkService.getActiveBookmarkCount(mungpleId);
