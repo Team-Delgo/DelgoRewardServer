@@ -73,7 +73,7 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @Query(value = "select c.certificationId from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.certificationId != :certificationId and c.isCorrect = true")
     Slice<Integer> findAllExcludeSpecificCert(@Param("userId") int userId, @Param("certificationId") int certificationId, Pageable pageable);
 
-    @Query(value = "select c.certificationId from Certification c where c.mungpleId = :mungpleId")
+    @Query(value = "select c.certificationId from Certification c where c.mungpleId = :mungpleId and c.isCorrect = true")
     Slice<Integer> findCertByMungple(@Param("mungpleId") int mungpleId, Pageable pageable);
 
     @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId and c.categoryCode = :categoryCode and c.isCorrect = true")
