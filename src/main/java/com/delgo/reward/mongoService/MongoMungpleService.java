@@ -3,6 +3,7 @@ package com.delgo.reward.mongoService;
 import com.delgo.reward.cache.MungpleCache;
 import com.delgo.reward.cacheService.MungpleCacheService;
 import com.delgo.reward.comm.code.CategoryCode;
+import com.delgo.reward.comm.code.MungpleSort;
 import com.delgo.reward.comm.ncp.GeoService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
@@ -16,6 +17,10 @@ import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoDomain.mungple.MungpleDetail;
 import com.delgo.reward.mongoRepository.MongoMungpleRepository;
 import com.delgo.reward.mongoRepository.MungpleDetailRepository;
+import com.delgo.reward.service.strategy.BookmarkCountSorting;
+import com.delgo.reward.service.strategy.CertCountSorting;
+import com.delgo.reward.service.strategy.DistanceSorting;
+import com.delgo.reward.service.strategy.MungpleSortingStrategy;
 import com.delgo.reward.record.mungple.MungpleDetailRecord;
 import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.service.BookmarkService;
@@ -49,13 +54,18 @@ public class MongoMungpleService {
 
     // Service
     private final GeoService geoService;
-    private final ObjectStorageService objectStorageService;
     private final BookmarkService bookmarkService;
+    private final ObjectStorageService objectStorageService;
 
     // Repository
     private final CertRepository certRepository;
     private final MongoMungpleRepository mongoMungpleRepository;
     private final MungpleDetailRepository mungpleDetailRepository;
+
+    // strategy
+    private final CertCountSorting certCountSorting;
+    private final BookmarkCountSorting bookmarkCountSorting;
+
 
     /**
      * Mungple 생성
@@ -106,14 +116,19 @@ public class MongoMungpleService {
     /**
      * [BookMark] Active Mungple 조회
      */
-    public List<MungpleResDTO> getActiveMungpleByBookMark(int userId) {
-        List<Bookmark> bookmarks = bookmarkService.getBookmarkByUserId(userId);
+    public List<MungpleResDTO> getActiveMungpleByBookMark(int userId, MungpleSort sort, String latitude, String longitude) {
+        List<Bookmark> bookmarks = bookmarkService.getActiveBookmarkByUserId(userId);
         List<Integer> mungpleIdList = bookmarks.stream().map(Bookmark::getMungpleId).toList();
         List<MongoMungple> mungpleList = mongoMungpleRepository.findByMungpleIdIn(mungpleIdList);
 
-        return mungpleList.stream().map(MungpleResDTO::new).collect(Collectors.toList());
-    }
+        MungpleSortingStrategy sortingStrategy = switch (sort) {
+            case DISTANCE -> new DistanceSorting(latitude, longitude);
+            case BOOKMARK -> bookmarkCountSorting;
+            case CERT -> certCountSorting;
+        };
 
+        return sortingStrategy.sort(mungpleList).stream().map(MungpleResDTO::new).collect(Collectors.toList());
+    }
 
     /**
      * [address] Mungple 중복 체크

@@ -3,6 +3,7 @@ package com.delgo.reward.controller;
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.code.CategoryCode;
+import com.delgo.reward.comm.code.MungpleSort;
 import com.delgo.reward.comm.googlesheet.GoogleSheetService;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.record.mungple.MungpleDetailRecord;
@@ -51,8 +52,13 @@ public class MungpleController extends CommController {
      *
      */
     @GetMapping("/bookmark")
-    public ResponseEntity getMungplesByBookmark(@RequestParam int userId) {
-        return SuccessReturn(mongoMungpleService.getActiveMungpleByBookMark(userId));
+    public ResponseEntity getMungplesByBookmark(
+            @RequestParam int userId,
+            @RequestParam MungpleSort sort,
+            @RequestParam(required = false) String latitude,
+            @RequestParam(required = false) String longitude
+            ) {
+        return SuccessReturn(mongoMungpleService.getActiveMungpleByBookMark(userId, sort, latitude, longitude));
     }
 
     /**
