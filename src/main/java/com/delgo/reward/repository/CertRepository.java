@@ -32,8 +32,8 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @Query(value = "select count(c) from Certification c where c.user.userId = :userId and c.mungpleId != 0")
     Integer countOfCertByMungpleAndUser(@Param("userId") int userId);
 
-    @Query(value = "select count(c) from Certification c where c.mungpleId = :mungpleId")
-    Integer countOfCertByMungple(@Param("mungpleId") int mungpleId);
+    @Query(value = "select count(c) from Certification c where c.mungpleId = :mungpleId and c.isCorrect = true")
+    Integer countOfCorrectCertByMungple(@Param("mungpleId") int mungpleId);
 
     @Query(value = "select count(c) from Certification c where c.user.userId = :userId and c.categoryCode = :categoryCode and c.mungpleId = :mungpleId")
     Integer countCertByCategory(@Param("userId") int userId, @Param("categoryCode") CategoryCode categoryCode, @Param("mungpleId") int mungpleId);
@@ -73,7 +73,7 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @Query(value = "select c.certificationId from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.certificationId != :certificationId and c.isCorrect = true")
     Slice<Integer> findAllExcludeSpecificCert(@Param("userId") int userId, @Param("certificationId") int certificationId, Pageable pageable);
 
-    @Query(value = "select c.certificationId from Certification c where c.mungpleId = :mungpleId and c.isCorrect = true")
+    @Query(value = "select c.certificationId from Certification c where c.mungpleId = :mungpleId")
     Slice<Integer> findCertByMungple(@Param("mungpleId") int mungpleId, Pageable pageable);
 
     @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId and c.categoryCode = :categoryCode and c.isCorrect = true")

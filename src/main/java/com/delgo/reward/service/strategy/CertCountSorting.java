@@ -21,7 +21,7 @@ public class CertCountSorting implements MungpleSortingStrategy {
         // MariaDB에서 각 mungpleId별 Certification 개수 조회
         Map<MongoMungple, Integer> countMap = new HashMap<>();
         for(MongoMungple mungple : mungpleList) {
-            int count = certRepository.countOfCertByMungple(mungple.getMungpleId());
+            int count = certRepository.countOfCorrectCertByMungple(mungple.getMungpleId());
             countMap.put(mungple, count);
         }
 
