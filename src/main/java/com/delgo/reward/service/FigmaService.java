@@ -134,24 +134,24 @@ public class FigmaService {
         return imageUrlMap;
     }
 
-    private void processImages(Map<String, String> imageMap, Map<String, ArrayList<String>> listMap) throws UnsupportedEncodingException {
+    private void processImages(Map<String, String> imageMap, Map<String, ArrayList<String>> typeListMap) throws UnsupportedEncodingException {
         for (String fileName : imageMap.keySet()) {
             if (StringUtils.isNotEmpty(imageMap.get(fileName))) {
                 String image = imageMap.get(fileName);
-                String encodedFileNmae = photoService.convertWebpFromUrl(fileName, image);
+                String encodedFileName = photoService.convertWebpFromUrl(fileName, image);
+                String encodedFilePath = DIR + encodedFileName + ".webp";
 
                 try {
                     String type = checkType(fileName);
                     BucketName bucketName = BucketName.fromFigma(type);
-                    log.info("encodedFileNmae: {}", encodedFileNmae);
-                    String webpFileName = URLDecoder.decode(encodedFileNmae, StandardCharsets.UTF_8);
-                    log.info("decoding webpFileName: {}", webpFileName);
-                    objectStorageService.uploadObjects(bucketName, webpFileName, DIR + encodedFileNmae + ".webp");
-                    String savedImage = bucketName.getUrl() + webpFileName;
 
-                    new File(DIR + encodedFileNmae + ".webp").delete();
+                    String decodedFileName = URLDecoder.decode(encodedFileName, StandardCharsets.UTF_8) + ".webp";
+                    objectStorageService.uploadObjects(bucketName, decodedFileName, encodedFilePath);
+                    String ncpImageUrl = bucketName.getUrl() + decodedFileName;
 
-                    listMap.get(type).add(savedImage);
+                    new File(encodedFilePath).delete();
+
+                    typeListMap.get(type).add(ncpImageUrl);
                 } catch (IllegalArgumentException e) {
                     e.printStackTrace();
                     throw new FigmaException(e.getMessage());
