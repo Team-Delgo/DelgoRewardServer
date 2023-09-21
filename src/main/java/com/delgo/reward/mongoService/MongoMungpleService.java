@@ -182,5 +182,14 @@ public class MongoMungpleService {
             }
         }
     }
+
+    public void resetMungpleCache(){
+        // Cache 전부 삭제
+        mungpleCacheService.deleteAllCacheData();
+        // Active Mongo Mungple 조회
+        List<MongoMungple> mungpleList = mongoMungpleRepository.findByIsActive(true);
+        // Cache 설정
+        mungpleList.forEach(m -> mungpleCacheService.updateCacheData(m.getMungpleId(), m));
+    }
 }
 

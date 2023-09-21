@@ -20,7 +20,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
-import java.util.*;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 
 @Slf4j
@@ -128,21 +134,24 @@ public class FigmaService {
         return imageUrlMap;
     }
 
-    private void processImages(Map<String, String> imageMap, Map<String, ArrayList<String>> listMap) {
+    private void processImages(Map<String, String> imageMap, Map<String, ArrayList<String>> typeListMap) throws UnsupportedEncodingException {
         for (String fileName : imageMap.keySet()) {
             if (StringUtils.isNotEmpty(imageMap.get(fileName))) {
                 String image = imageMap.get(fileName);
-                String webpFileName = photoService.convertWebpFromUrl(fileName, image);
+                String encodedFileName = photoService.convertWebpFromUrl(fileName, image);
+                String encodedFilePath = DIR + encodedFileName + ".webp";
 
                 try {
                     String type = checkType(fileName);
                     BucketName bucketName = BucketName.fromFigma(type);
-                    objectStorageService.uploadObjects(bucketName, webpFileName, DIR + webpFileName);
-                    String savedImage = bucketName.getUrl() + webpFileName;
 
-                    new File(DIR + webpFileName).delete();
+                    String decodedFileName = URLDecoder.decode(encodedFileName, StandardCharsets.UTF_8) + ".webp";
+                    objectStorageService.uploadObjects(bucketName, decodedFileName, encodedFilePath);
+                    String ncpImageUrl = bucketName.getUrl() + decodedFileName;
 
-                    listMap.get(type).add(savedImage);
+                    new File(encodedFilePath).delete();
+
+                    typeListMap.get(type).add(ncpImageUrl);
                 } catch (IllegalArgumentException e) {
                     e.printStackTrace();
                     throw new FigmaException(e.getMessage());
