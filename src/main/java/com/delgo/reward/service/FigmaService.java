@@ -75,7 +75,7 @@ public class FigmaService {
         return new RestTemplate(httpRequestFactory);
     }
 
-    private Map<String, String> getImageIdFromFigma(String nodeId) {
+    public Map<String, String> getImageIdFromFigma(String nodeId) {
         RestTemplate restTemplate = createRestTemplate();
         HttpHeaders headers = createHeaders();
 
@@ -100,7 +100,7 @@ public class FigmaService {
         return imageIdMap;
     }
 
-    private Map<String,String> getImageUrlFromFigma(Map<String,String> imageIdMap) {
+    public Map<String,String> getImageUrlFromFigma(Map<String,String> imageIdMap) {
         RestTemplate restTemplate = createRestTemplate();
         HttpHeaders headers = createHeaders();
 
