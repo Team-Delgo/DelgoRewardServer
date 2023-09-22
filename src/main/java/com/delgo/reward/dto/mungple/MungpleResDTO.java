@@ -12,7 +12,8 @@ import lombok.ToString;
 public class MungpleResDTO {
     // mongo
     private int mungpleId;
-    private String categoryCode; // 카테고리 코드 ( ex. 카페, 음식점 .. )
+
+    private CategoryCode categoryCode;
 
     private String placeName;
     private String placeNameEn;

@@ -1,20 +1,23 @@
 package com.delgo.reward.dto.mungple.detail;
 
 import com.delgo.reward.comm.code.BusinessHourCode;
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.DetailCode;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.ToString;
 
 import java.util.List;
 import java.util.Map;
 
+@Schema
 @Getter
 @ToString
 public class MungpleDetailResDTO {
     private final int mungpleId;
     private final String phoneNo; // 매장 번호
-    private final String categoryCode; // 카테고리 코드 ( ex. 카페, 음식점 .. )
+    private final CategoryCode categoryCode; // 카테고리 코드 ( ex. 카페, 음식점 .. )
     private final String placeName;
     private final String placeNameEn;
     private final String address; // 주소

@@ -225,7 +225,7 @@ public class MongoMungpleService {
         boolean isBookmarked = (userId != 0 && bookmarkService.hasBookmarkByIsBookmarked(userId, mungpleId, true));
         int bookmarkCount = bookmarkService.getActiveBookmarkCount(mungpleId);
 
-        switch (CategoryCode.valueOf(mongoMungple.getCategoryCode())) {
+        switch (mongoMungple.getCategoryCode()) {
             case CA0002, CA0003 -> {
                 return new MungpleDetailByMenuResDTO(mongoMungple, certCount, bookmarkCount, isBookmarked);
             }

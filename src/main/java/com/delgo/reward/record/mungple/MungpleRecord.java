@@ -1,5 +1,6 @@
 package com.delgo.reward.record.mungple;
 
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 
@@ -9,7 +10,7 @@ import javax.validation.constraints.NotNull;
 public record MungpleRecord(
         @NotNull String address,
         @NotNull String phoneNo,
-        @NotNull String categoryCode,
+        @NotNull CategoryCode categoryCode,
         @NotNull String placeName,
         String placeNameEn) {
 
