@@ -110,7 +110,12 @@ public class MongoMungpleService {
                 ? mongoMungpleRepository.findByCategoryCodeAndIsActive(categoryCode, true)
                 : mongoMungpleRepository.findByIsActive(true);
 
-        return mungpleList.stream().map(MungpleResDTO::new).collect(Collectors.toList());
+        return mungpleList.stream().map(m ->{
+            int certCount = certRepository.countOfCorrectCertByMungple(m.getMungpleId());
+            int bookmarkCount = bookmarkService.getActiveBookmarkCount(m.getMungpleId());
+
+            return new MungpleResDTO(m, certCount, bookmarkCount);
+        }).toList();
     }
 
     /**
