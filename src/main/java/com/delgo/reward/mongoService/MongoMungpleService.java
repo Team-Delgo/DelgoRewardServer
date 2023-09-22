@@ -76,6 +76,14 @@ public class MongoMungpleService {
     }
 
     /**
+     * Active Mungple 전체 조회
+     */
+    @Cacheable(cacheNames = MUNGPLE_CACHE_STORE)
+    public List<MungpleResDTO> getAllActiveMungple() {
+        return mongoMungpleRepository.findByIsActive(true).stream().map(MungpleResDTO::new).toList();
+    }
+
+    /**
      * [mungpleId] Mungple 조회
      */
     public MongoMungple getMungpleByMungpleId(int mungpleId) {
@@ -101,6 +109,7 @@ public class MongoMungpleService {
 
         return mungpleList.stream().map(MungpleResDTO::new).collect(Collectors.toList());
     }
+
     /**
      * [categoryCode] Active Mungple 조회 [TODO: Deprecated]
      */
