@@ -101,9 +101,8 @@ public class MongoMungpleService {
 
         return mungpleList.stream().map(MungpleResDTO::new).collect(Collectors.toList());
     }
-
     /**
-     * [categoryCode] Active Mungple 조회
+     * [categoryCode] Active Mungple 조회 [TODO: Deprecated]
      */
     public List<MungpleResDTO> getActiveMungpleByCategoryCode(CategoryCode categoryCode) {
         List<MongoMungple> mungpleList = !categoryCode.equals(CategoryCode.CA0000)
@@ -111,6 +110,30 @@ public class MongoMungpleService {
                 : mongoMungpleRepository.findByIsActive(true);
 
         return mungpleList.stream().map(m ->{
+            int certCount = certRepository.countOfCorrectCertByMungple(m.getMungpleId());
+            int bookmarkCount = bookmarkService.getActiveBookmarkCount(m.getMungpleId());
+
+            return new MungpleResDTO(m, certCount, bookmarkCount);
+        }).toList();
+    }
+
+    /**
+     * [categoryCode] Active Mungple 조회
+     */
+    public List<MungpleResDTO> getActiveMungpleByCategoryCode(CategoryCode categoryCode, MungpleSort sort, String latitude, String longitude) {
+        List<MongoMungple> mungpleList = !categoryCode.equals(CategoryCode.CA0000)
+                ? mongoMungpleRepository.findByCategoryCodeAndIsActive(categoryCode, true)
+                : mongoMungpleRepository.findByIsActive(true);
+
+        // 조건에 맞게 정렬
+        MungpleSortingStrategy sortingStrategy = switch (sort) {
+            case DISTANCE -> new DistanceSorting(latitude, longitude);
+            case BOOKMARK -> bookmarkCountSorting;
+            case CERT -> certCountSorting;
+        };
+
+        // DTO로 변환
+        return sortingStrategy.sort(mungpleList).stream().map(m -> {
             int certCount = certRepository.countOfCorrectCertByMungple(m.getMungpleId());
             int bookmarkCount = bookmarkService.getActiveBookmarkCount(m.getMungpleId());
 
