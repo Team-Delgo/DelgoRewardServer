@@ -3,6 +3,7 @@ package com.delgo.reward.controller;
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.service.CodeService;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.stream.Collectors;
 
-
+@Hidden
 @Slf4j
 @RestController
 @RequiredArgsConstructor

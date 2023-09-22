@@ -17,6 +17,7 @@ import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.LikeListService;
 import com.delgo.reward.service.ReactionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +25,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,6 +34,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
+@Hidden
 @Slf4j
 @RestController
 @RequiredArgsConstructor

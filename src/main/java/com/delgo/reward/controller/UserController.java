@@ -15,6 +15,7 @@ import com.delgo.reward.record.signup.SignUpRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
 import com.delgo.reward.service.SmsAuthService;
 import com.delgo.reward.service.UserService;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
  * 해당 Controller는 권한 체크 없이 호출이 가능하다.
  */
 
+@Hidden
 @Slf4j
 @RestController
 @RequiredArgsConstructor

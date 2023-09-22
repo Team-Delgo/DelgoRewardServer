@@ -6,6 +6,7 @@ import com.delgo.reward.domain.WardOffice;
 import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.service.CodeService;
 import com.delgo.reward.service.WardOfficeService;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
+@Hidden
 @Slf4j
 @RestController
 @RequiredArgsConstructor
