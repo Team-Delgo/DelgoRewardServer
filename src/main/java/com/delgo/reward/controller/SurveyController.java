@@ -3,12 +3,14 @@ package com.delgo.reward.controller;
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.record.survey.SurveyRecord;
 import com.delgo.reward.service.SurveyService;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+@Hidden
 @Slf4j
 @RestController
 @RequiredArgsConstructor
