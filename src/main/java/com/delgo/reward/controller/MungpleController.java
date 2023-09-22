@@ -35,14 +35,29 @@ public class MungpleController extends CommController {
     }
 
     /**
-     * [Category] Mungple 조회 - (CA0000: 전체 조회)
+     * [Category] Mungple 조회 - (CA0000: 전체 조회) [TODO Deprecated]
      * @param categoryCode
      * @return List<MungpleResDTO>
      *
      */
-    @GetMapping(value={"/category/{categoryCode}","/category"})
-    public ResponseEntity getMungplesByCategory(@PathVariable CategoryCode categoryCode) {
+    @GetMapping("/category/{categoryCode}")
+    public ResponseEntity getMungplesByCategoryDeprecated(@PathVariable CategoryCode categoryCode) {
         return SuccessReturn(mongoMungpleService.getActiveMungpleByCategoryCode(categoryCode));
+    }
+
+    /**
+     * [Category] Mungple 조회 - (CA0000: 전체 조회)
+     *
+     * @param categoryCode. sort, latitude, longitude
+     * @return List<MungpleResDTO>
+     */
+    @GetMapping("/category")
+    public ResponseEntity getMungplesByCategory(
+            @RequestParam CategoryCode categoryCode,
+            @RequestParam MungpleSort sort,
+            @RequestParam(required = false) String latitude,
+            @RequestParam(required = false) String longitude) {
+        return SuccessReturn(mongoMungpleService.getActiveMungpleByCategoryCode(categoryCode, sort, latitude, longitude));
     }
 
     /**
@@ -56,8 +71,7 @@ public class MungpleController extends CommController {
             @RequestParam int userId,
             @RequestParam MungpleSort sort,
             @RequestParam(required = false) String latitude,
-            @RequestParam(required = false) String longitude
-            ) {
+            @RequestParam(required = false) String longitude) {
         return SuccessReturn(mongoMungpleService.getActiveMungpleByBookMark(userId, sort, latitude, longitude));
     }
 
