@@ -35,6 +35,16 @@ public class MungpleController extends CommController {
     }
 
     /**
+     * 모든 멍플 조회 [ 지도, 검색 리스트 생성 ]
+     *
+     * @return List<MungpleResDTO>
+     */
+    @GetMapping
+    public ResponseEntity getMungples() {
+        return SuccessReturn(mongoMungpleService.getAllActiveMungple());
+    }
+
+    /**
      * [Category] Mungple 조회 - (CA0000: 전체 조회) [TODO Deprecated]
      * @param categoryCode
      * @return List<MungpleResDTO>
