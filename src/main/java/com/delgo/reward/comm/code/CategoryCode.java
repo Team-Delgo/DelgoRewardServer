@@ -1,9 +1,23 @@
 package com.delgo.reward.comm.code;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
 
 import java.util.EnumSet;
 
+@Getter
+@Schema(enumAsRef = true, description =
+        "카테고리 코드: \n" +
+                "* `CA0000` - 전체\n" +
+                "* `CA0001` - 산책\n" +
+                "* `CA0002` - 카페\n" +
+                "* `CA0003` - 식당\n" +
+                "* `CA0004` - 목욕\n" +
+                "* `CA0005` - 미용\n" +
+                "* `CA0006` - 병원\n" +
+                "* `CA0007` - 유치원\n" +
+                "* `CA9999` - 기타\n")
 public enum CategoryCode {
     CA0000("CA0000","전체",0,""),
     CA0001("CA0001","산책",10,"CA0001_List"), // 산책
@@ -25,22 +39,6 @@ public enum CategoryCode {
         this.value = value;
         this.point = point;
         this.sheetName = sheetName;
-    }
-
-    public String getCode(){
-        return this.code;
-    }
-
-    public String getValue(){
-        return this.value;
-    }
-
-    public String getSheetName(){
-        return this.sheetName;
-    }
-
-    public Integer getPoint(){
-        return this.point;
     }
 
     public static final EnumSet<CategoryCode> MENU_CODES = EnumSet.of(CA0002, CA0003);
