@@ -2,15 +2,15 @@ package com.delgo.reward.mongoDomain.mungple;
 
 
 import com.delgo.reward.comm.code.BusinessHourCode;
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.DetailCode;
 import lombok.*;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import javax.persistence.FetchType;
+import javax.persistence.EnumType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -32,7 +32,7 @@ public class MongoMungple {
     @Id private String id;
 
     @Field("mungple_id") private Integer mungpleId;
-    @Field("category_code")private String categoryCode; // 카테고리 코드 ( ex. 카페, 음식점 .. )
+    @Field("category_code")private CategoryCode categoryCode; // 카테고리 코드 ( ex. 카페, 음식점 .. )
 
     @Field("phone_no")private String phoneNo;
     @Field("place_name")private String placeName;
