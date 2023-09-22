@@ -27,7 +27,7 @@ public class CertCountSorting implements MungpleSortingStrategy {
 
         // 인증 개수에 따라 mungpleId 리스트 정렬
         return mungpleList.stream()
-                .sorted(Comparator.comparing(countMap::get))
+                .sorted(Comparator.comparing(countMap::get).reversed())
                 .collect(Collectors.toList());
     }
 }
