@@ -40,7 +40,8 @@ public class AccountController extends CommController {
                 userService.getUserById(userId),
                 certService.getCertCountByUser(userId),
                 certService.getCertCountByMungpleOfSpecificUser(userId),
-                userService.getCategoryCountByUserId(userId)));
+                userService.getCategoryCountByUserId(userId),
+                userService.getActivityByUserId(userId)));
     }
 
 

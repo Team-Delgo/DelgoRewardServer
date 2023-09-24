@@ -1,6 +1,7 @@
 package com.delgo.reward.dto.user;
 
 
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Map;
 
 @Getter
 @Slf4j
@@ -31,7 +33,10 @@ public class OtherUserResDTO {
     private int yearOfPetAge;
     private int monthOfPetAge;
 
-    public OtherUserResDTO(User user){
+    // Activity
+    private Map<CategoryCode, Integer> activityMapByCategoryCode;
+
+    public OtherUserResDTO(User user, Map<CategoryCode, Integer> activityMapByCategoryCode){
         // User
         userId = user.getUserId();
         nickname = user.getName();
@@ -47,5 +52,7 @@ public class OtherUserResDTO {
         Period period = Period.between(user.getPet().getBirthday(), LocalDate.now());
         yearOfPetAge = period.getYears();
         monthOfPetAge = period.getMonths();
+
+        this.activityMapByCategoryCode = activityMapByCategoryCode;
     }
 }

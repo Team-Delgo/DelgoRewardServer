@@ -1,6 +1,9 @@
 package com.delgo.reward.service;
 
 
+import com.delgo.reward.cache.ActivityCache;
+import com.delgo.reward.cacheService.ActivityCacheService;
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.comm.oauth.KakaoService;
@@ -10,12 +13,15 @@ import com.delgo.reward.domain.user.User;
 import com.delgo.reward.domain.user.UserSocial;
 import com.delgo.reward.dto.comm.PageResDTO;
 import com.delgo.reward.dto.user.SearchUserResDTO;
+import com.delgo.reward.mongoDomain.Classification;
+import com.delgo.reward.mongoRepository.ClassificationRepository;
 import com.delgo.reward.record.signup.OAuthSignUpRecord;
 import com.delgo.reward.record.signup.SignUpRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
 import com.delgo.reward.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,8 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @Slf4j
@@ -50,6 +55,10 @@ public class UserService {
     private final CertRepository certRepository;
     private final LikeListRepository likeListRepository;
     private final CategoryCountRepository categoryCountRepository;
+    private final ClassificationRepository classificationRepository;
+
+    // Cache
+    private final ActivityCacheService activityCacheService;
 
     // JDBC Templates
     private final JDBCTemplatePointRepository jdbcTemplatePointRepository;
@@ -60,11 +69,12 @@ public class UserService {
 
     // DB 저장
     public User save(User user) {
-       return userRepository.save(user);
+        return userRepository.save(user);
     }
 
     /**
      * 회원가입
+     *
      * @param signUpRecord
      * @param profile
      * @return 가입한 회원 정보 반환
@@ -93,6 +103,7 @@ public class UserService {
 
     /**
      * OAuth 회원가입
+     *
      * @param oAuthSignUpRecord
      * @param profile
      * @return 가입한 회원 정보 반환
@@ -120,6 +131,7 @@ public class UserService {
 
     /**
      * 회원탈퇴
+     *
      * @param userId
      * @throws Exception
      */
@@ -143,6 +155,7 @@ public class UserService {
 
     /**
      * 로그아웃
+     *
      * @param userId
      * @throws Exception
      */
@@ -156,6 +169,7 @@ public class UserService {
 
     /**
      * 비밀번호 변경
+     *
      * @param checkedEmail
      * @param newPassword
      */
@@ -167,6 +181,7 @@ public class UserService {
 
     /**
      * 전화번호 존재 여부 확인
+     *
      * @param phoneNo
      * @return 존재 여부 반환
      */
@@ -176,6 +191,7 @@ public class UserService {
 
     /**
      * 이메일 존재 여부 확인
+     *
      * @param email
      * @return 존재 여부 반환
      */
@@ -185,6 +201,7 @@ public class UserService {
 
     /**
      * 이름 존재 여부 확인
+     *
      * @param name
      * @return 존재 여부 반환
      */
@@ -194,6 +211,7 @@ public class UserService {
 
     /**
      * 애플 유저인지 판단
+     *
      * @param appleUniqueNo
      * @return 애플 유저 여부 반환
      */
@@ -204,10 +222,11 @@ public class UserService {
 
     /**
      * 알림 동의 여부 수정
+     *
      * @param userId
      * @return 수정된 알람 동의 여부 반환
      */
-    public boolean changeNotify(int userId){
+    public boolean changeNotify(int userId) {
         return getUserById(userId).setNotify();
     }
 
@@ -231,12 +250,13 @@ public class UserService {
                 .orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
     }
 
-    public User changePhoto(int userId, String ncpLink){
+    public User changePhoto(int userId, String ncpLink) {
         return getUserById(userId).setProfile(ncpLink);
     }
 
     /**
      * 유저 정보 수정
+     *
      * @param modifyUserRecord
      * @return 수정된 유저 정보 반환
      */
@@ -264,19 +284,21 @@ public class UserService {
 
     /**
      * 유저별 카테고리 카운트 조회
+     *
      * @param userId
      * @return 카테고리 카운트 반환
      */
-    public CategoryCount getCategoryCountByUserId(int userId){
+    public CategoryCount getCategoryCountByUserId(int userId) {
         return categoryCountRepository.findByUserId(userId).orElseThrow(() -> new NullPointerException("NOT FOUND CategoryCount userId: " + userId));
     }
 
     /**
      * 카테고리 카운트 DB저장
+     *
      * @param categoryCount
      * @return 저장된 카테고리 카운트
      */
-    public CategoryCount categoryCountSave(CategoryCount categoryCount){
+    public CategoryCount categoryCountSave(CategoryCount categoryCount) {
         return categoryCountRepository.save(categoryCount);
     }
 
@@ -287,7 +309,32 @@ public class UserService {
         return new PageResDTO<>(resDTOs, users.getSize(), users.getNumber(), users.isLast());
     }
 
-    public void increaseViewCount(int userId){
+    public void increaseViewCount(int userId) {
         userRepository.increaseViewCount(userId);
+    }
+
+    public Map<CategoryCode, Integer> getActivityByUserId(Integer userId) {
+        ActivityCache activityCache = activityCacheService.getCacheData(userId);
+
+        if(!activityCacheService.isValidation(activityCache)){
+            Map<CategoryCode, Integer> activityMapByCategoryCode = new HashMap<>();
+
+            List<Classification> classificationList = classificationRepository.findAllByUser_UserId(userId);
+
+            for(Classification classification: classificationList){
+                Set<String> keySet = classification.getCategory().keySet();
+                for(String key: keySet){
+                    CategoryCode categoryCode = CategoryCode.valueOf(key);
+                    if(activityMapByCategoryCode.containsKey(categoryCode)){
+                        activityMapByCategoryCode.put(categoryCode, activityMapByCategoryCode.get(categoryCode) + 1);
+                    } else {
+                        activityMapByCategoryCode.put(categoryCode, 1);
+                    }
+                }
+            }
+            activityCache = activityCacheService.updateCacheData(userId, activityMapByCategoryCode);
+        }
+
+        return activityCache.getActivityMapByCategoryCode();
     }
 }
