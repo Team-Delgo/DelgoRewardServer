@@ -1,5 +1,6 @@
 package com.delgo.reward.comm.googlesheet;
 
+import com.delgo.reward.cacheService.MungpleCacheService;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.ncp.GeoService;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
@@ -33,6 +34,7 @@ public class GoogleSheetService {
 
     private final GeoService geoService;
     private final FigmaService figmaService;
+    private final MungpleCacheService mungpleCacheService;
     private final MongoMungpleService mongoMungpleService;
 
     private Sheets sheets;
@@ -110,6 +112,10 @@ public class GoogleSheetService {
 
                     // Figma 사진 저장 까지 완료 후 저장
                     MongoMungple savedMongoMungple = mongoMungpleService.save(mongoMungple);
+
+                    // Cache Update
+                    mungpleCacheService.updateCacheData(savedMongoMungple.getMungpleId(), savedMongoMungple);
+
                     placeNames.add("[" + savedMongoMungple.getPlaceName() + "] 등록 되었습니다.");
                     // Sheet IsRegist Data update [ false -> true ]
                     checkSaveConfirm(categoryCode, rowNum + 1);

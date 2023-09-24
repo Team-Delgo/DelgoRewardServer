@@ -20,7 +20,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
-import java.util.*;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 
 @Slf4j
@@ -75,7 +81,7 @@ public class FigmaService {
         return new RestTemplate(httpRequestFactory);
     }
 
-    private Map<String, String> getImageIdFromFigma(String nodeId) {
+    public Map<String, String> getImageIdFromFigma(String nodeId) {
         RestTemplate restTemplate = createRestTemplate();
         HttpHeaders headers = createHeaders();
 
@@ -88,8 +94,9 @@ public class FigmaService {
             JsonNode childrNodes = rootNode.get("nodes").get(nodeId).get("document").get("children");
 
             for (JsonNode childNode : childrNodes) {
-                String imageId = childNode.get("id").asText(); // 4935:43532
-                String fileName = childNode.get("name").asText(); // 강동구_애견동반식당_담금_thumbnail_5// 강동구_애견동반식당_담금_thumbnail_5
+                String imageId = childNode.get("id").asText(); // ex) 4935:43532
+                // 사람에 의한 실수 없애기 위해 공백문자 제거 코드 추가
+                String fileName = childNode.get("name").asText().replaceAll("\\s", "");  // ex) 강동구_애견동반식당_담금_5
                 imageIdMap.put(imageId, fileName);
             }
         } catch (JsonProcessingException e) {
@@ -100,7 +107,7 @@ public class FigmaService {
         return imageIdMap;
     }
 
-    private Map<String,String> getImageUrlFromFigma(Map<String,String> imageIdMap) {
+    public Map<String,String> getImageUrlFromFigma(Map<String,String> imageIdMap) {
         RestTemplate restTemplate = createRestTemplate();
         HttpHeaders headers = createHeaders();
 
@@ -128,21 +135,24 @@ public class FigmaService {
         return imageUrlMap;
     }
 
-    private void processImages(Map<String, String> imageMap, Map<String, ArrayList<String>> listMap) {
+    private void processImages(Map<String, String> imageMap, Map<String, ArrayList<String>> typeListMap) throws UnsupportedEncodingException {
         for (String fileName : imageMap.keySet()) {
             if (StringUtils.isNotEmpty(imageMap.get(fileName))) {
                 String image = imageMap.get(fileName);
-                String webpFileName = photoService.convertWebpFromUrl(fileName, image);
+                String encodedFileName = photoService.convertWebpFromUrl(fileName, image);
+                String encodedFilePath = DIR + encodedFileName + ".webp";
 
                 try {
                     String type = checkType(fileName);
                     BucketName bucketName = BucketName.fromFigma(type);
-                    objectStorageService.uploadObjects(bucketName, webpFileName, DIR + webpFileName);
-                    String savedImage = bucketName.getUrl() + webpFileName;
 
-                    new File(DIR + webpFileName).delete();
+                    String decodedFileName = URLDecoder.decode(encodedFileName, StandardCharsets.UTF_8) + ".webp";
+                    objectStorageService.uploadObjects(bucketName, decodedFileName, encodedFilePath);
+                    String ncpImageUrl = bucketName.getUrl() + decodedFileName;
 
-                    listMap.get(type).add(savedImage);
+                    new File(encodedFilePath).delete();
+
+                    typeListMap.get(type).add(ncpImageUrl);
                 } catch (IllegalArgumentException e) {
                     e.printStackTrace();
                     throw new FigmaException(e.getMessage());

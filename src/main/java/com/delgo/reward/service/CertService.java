@@ -255,10 +255,10 @@ public class CertService {
     }
 
     /**
-     * [Mungple] 인증 개수 조회
+     * [Mungple] 올바른 인증 개수 조회
      */
-    public int getCertCountByMungple(int mungpleId) {
-        return certRepository.countOfCertByMungple(mungpleId);
+    public int getCorrectCertCountByMungple(int mungpleId) {
+        return certRepository.countOfCorrectCertByMungple(mungpleId);
     }
 
     /**
