@@ -6,6 +6,7 @@ import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.dto.SmsAuthDTO;
 import com.delgo.reward.service.SmsAuthService;
 import com.delgo.reward.service.UserService;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Objects;
 import java.util.Optional;
 
+@Hidden
 @Slf4j
 @RestController
 @RequiredArgsConstructor

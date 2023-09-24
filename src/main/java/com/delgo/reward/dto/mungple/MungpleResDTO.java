@@ -1,6 +1,8 @@
 package com.delgo.reward.dto.mungple;
 
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
@@ -10,22 +12,28 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 public class MungpleResDTO {
-    // mongo
-    private int mungpleId;
-    private String categoryCode; // 카테고리 코드 ( ex. 카페, 음식점 .. )
-
-    private String placeName;
-    private String placeNameEn;
-    private String address; // 지번 주소
-
-    private String latitude; // 위도
-    private String longitude; // 경도
-
-    private String photoUrl; // 사진 url
-    private String detailUrl; // 상세 페이지 url
-
-    private int certCount; // 인증 개수
-    private int bookmarkCount; // 저장 개수
+    @Schema(description = "멍플 고유 아이디")
+    protected int mungpleId;
+    @Schema(description = "카테고리 코드", enumAsRef = true)
+    protected CategoryCode categoryCode;
+    @Schema(description = "장소 명")
+    protected String placeName;
+    @Schema(description = "영문 장소 명")
+    protected String placeNameEn;
+    @Schema(description = "지번 주소")
+    protected String address;
+    @Schema(description = "위도")
+    protected String latitude;
+    @Schema(description = "경도")
+    protected String longitude;
+    @Schema(description = "사진 url")
+    protected String photoUrl;
+    @Schema(description = "상세 페이지 url")
+    protected String detailUrl;
+    @Schema(description = "인증 개수")
+    protected int certCount;
+    @Schema(description = "저장 개수")
+    protected int bookmarkCount;
 
     // 지도 생성자
     public MungpleResDTO(MongoMungple mungple) {

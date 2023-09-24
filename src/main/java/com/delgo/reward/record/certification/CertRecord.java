@@ -1,5 +1,6 @@
 package com.delgo.reward.record.certification;
 
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.domain.user.User;
@@ -11,7 +12,7 @@ import javax.validation.constraints.NotNull;
 
 public record CertRecord(
         @NotNull Integer userId,
-        @NotBlank String categoryCode,
+        @NotNull CategoryCode categoryCode,
         @NotNull Integer mungpleId,
         @NotNull String placeName,
         @NotBlank String description,

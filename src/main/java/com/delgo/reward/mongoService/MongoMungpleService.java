@@ -14,21 +14,17 @@ import com.delgo.reward.dto.mungple.detail.MungpleDetailByMenuResDTO;
 import com.delgo.reward.dto.mungple.detail.MungpleDetailByPriceTagResDTO;
 import com.delgo.reward.dto.mungple.detail.MungpleDetailResDTO;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
-import com.delgo.reward.mongoDomain.mungple.MungpleDetail;
 import com.delgo.reward.mongoRepository.MongoMungpleRepository;
-import com.delgo.reward.mongoRepository.MungpleDetailRepository;
 import com.delgo.reward.service.strategy.BookmarkCountSorting;
 import com.delgo.reward.service.strategy.CertCountSorting;
 import com.delgo.reward.service.strategy.DistanceSorting;
 import com.delgo.reward.service.strategy.MungpleSortingStrategy;
-import com.delgo.reward.record.mungple.MungpleDetailRecord;
 import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.service.BookmarkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.geo.Circle;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -60,17 +56,14 @@ public class MongoMungpleService {
     // Repository
     private final CertRepository certRepository;
     private final MongoMungpleRepository mongoMungpleRepository;
-    private final MungpleDetailRepository mungpleDetailRepository;
 
     // strategy
     private final CertCountSorting certCountSorting;
     private final BookmarkCountSorting bookmarkCountSorting;
 
-
     /**
      * Mungple 생성
      */
-
     public MongoMungple save(MongoMungple mongoMungple) {
         return mongoMungpleRepository.save(mongoMungple);
     }
@@ -176,19 +169,6 @@ public class MongoMungpleService {
         return mongoMungpleRepository.existsByLatitudeAndLongitude(location.getLatitude(), location.getLongitude());
     }
 
-    public List<MungpleResDTO> getMungpleOfMostCertCount(int count) {
-        List<MongoMungple> mungpleList = mongoMungpleRepository.findByMungpleIdIn(certRepository.findCertOrderByMungpleCount(PageRequest.of(0, count)));
-
-        return mungpleList.stream().map(MungpleResDTO::new).collect(Collectors.toList());
-    }
-
-    /**
-     * Mungple Photo 수정
-     */
-//    public MongoMungple modifyPhoto(int mungpleId, MultipartFile photo){
-//         TODO: 고도화 시켜야 함.
-//    }
-
     /**
      * Mungple 삭제
      * NCP Object Storage 도 삭제 해줘야 함.
@@ -199,14 +179,6 @@ public class MongoMungpleService {
         mungpleCacheService.deleteCacheData(mungpleId);
         objectStorageService.deleteObject(BucketName.MUNGPLE,mungpleId + "_mungple.webp"); // Thumbnail delete
         objectStorageService.deleteObject(BucketName.MUNGPLE_NOTE,mungpleId + "_mungplenote.webp"); // mungpleNote delete
-    }
-
-    public Boolean isExist(int mungpleId) {
-        return mongoMungpleRepository.existsByMungpleId(mungpleId);
-    }
-
-    public MungpleDetail createMungpleDetail(MungpleDetailRecord record) {
-        return mungpleDetailRepository.save(record.makeDetailData());
     }
 
     public List<MongoMungple> findWithin3Km(String latitude, String longitude) {
@@ -225,7 +197,7 @@ public class MongoMungpleService {
         boolean isBookmarked = (userId != 0 && bookmarkService.hasBookmarkByIsBookmarked(userId, mungpleId, true));
         int bookmarkCount = bookmarkService.getActiveBookmarkCount(mungpleId);
 
-        switch (CategoryCode.valueOf(mongoMungple.getCategoryCode())) {
+        switch (mongoMungple.getCategoryCode()) {
             case CA0002, CA0003 -> {
                 return new MungpleDetailByMenuResDTO(mongoMungple, certCount, bookmarkCount, isBookmarked);
             }

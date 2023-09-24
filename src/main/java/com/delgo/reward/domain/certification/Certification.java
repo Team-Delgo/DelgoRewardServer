@@ -1,6 +1,7 @@
 package com.delgo.reward.domain.certification;
 
 
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.common.BaseTimeEntity;
 import com.delgo.reward.domain.like.LikeList;
 import com.delgo.reward.domain.user.User;
@@ -20,7 +21,8 @@ public class Certification extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer certificationId;
-    private String categoryCode;
+    @Enumerated(EnumType.STRING)
+    private CategoryCode categoryCode;
 
     private Integer mungpleId; // mungpleId == 0이면 mungple 장소 아님.
     private String placeName; // 장소 명

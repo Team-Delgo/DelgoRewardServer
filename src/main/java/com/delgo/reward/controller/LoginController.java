@@ -8,6 +8,7 @@ import com.delgo.reward.comm.security.jwt.JwtToken;
 import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
 import com.delgo.reward.dto.user.UserResDTO;
 import com.delgo.reward.service.UserService;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
+@Hidden
 @Slf4j
 @RestController
 @RequiredArgsConstructor

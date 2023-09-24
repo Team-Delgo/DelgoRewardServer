@@ -1,10 +1,10 @@
 package com.delgo.reward.dto.cert;
 
 
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.ReactionCode;
 import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.domain.certification.Reaction;
 import com.delgo.reward.domain.like.LikeList;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +44,7 @@ public class CertResDTO {
 
     private List<String> photos;
 
-    private String categoryCode;
+    private CategoryCode categoryCode;
 
     @JsonFormat(pattern = "yyyy.MM.dd/HH:mm/E")
     private LocalDateTime registDt;
