@@ -4,8 +4,10 @@ package com.delgo.reward.dto.user;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.user.CategoryCount;
 import com.delgo.reward.domain.user.User;
+import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import lombok.*;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -27,8 +29,10 @@ public class UserByCertCountResDTO extends UserResDTO {
 
     // Activity
     private Map<CategoryCode, Integer> activityMapByCategoryCode;
+    // 가장 많이 방문 한 멍플(최대 3개)
+    private List<MongoMungple> top3VisitedMungpleList;
 
-    public UserByCertCountResDTO(User user, int totalCount, int totalCountByMungple, CategoryCount categoryCount, Map<CategoryCode, Integer> activityMapByCategoryCode) {
+    public UserByCertCountResDTO(User user, int totalCount, int totalCountByMungple, CategoryCount categoryCount, Map<CategoryCode, Integer> activityMapByCategoryCode, List<MongoMungple> top3VisitedMungpleList) {
         super(user);
         this.totalCount = totalCount;
         this.totalCountByMungple = totalCountByMungple;
@@ -41,5 +45,6 @@ public class UserByCertCountResDTO extends UserResDTO {
         CA0007Count = categoryCount.getCA0007();
         CA9999Count = categoryCount.getCA9999();
         this.activityMapByCategoryCode = activityMapByCategoryCode;
+        this.top3VisitedMungpleList = top3VisitedMungpleList;
     }
 }

@@ -3,6 +3,7 @@ package com.delgo.reward.dto.user;
 
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.user.User;
+import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -35,8 +37,9 @@ public class OtherUserResDTO {
 
     // Activity
     private Map<CategoryCode, Integer> activityMapByCategoryCode;
+    private List<MongoMungple> top3VisitedMungpleList;
 
-    public OtherUserResDTO(User user, Map<CategoryCode, Integer> activityMapByCategoryCode){
+    public OtherUserResDTO(User user, Map<CategoryCode, Integer> activityMapByCategoryCode, List<MongoMungple> top3VisitedMungpleList){
         // User
         userId = user.getUserId();
         nickname = user.getName();
@@ -54,5 +57,6 @@ public class OtherUserResDTO {
         monthOfPetAge = period.getMonths();
 
         this.activityMapByCategoryCode = activityMapByCategoryCode;
+        this.top3VisitedMungpleList = top3VisitedMungpleList;
     }
 }

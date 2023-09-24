@@ -16,6 +16,7 @@ import com.delgo.reward.dto.cert.CertByAchvResDTO;
 import com.delgo.reward.dto.cert.CertByMungpleResDTO;
 import com.delgo.reward.dto.cert.CertResDTO;
 import com.delgo.reward.dto.comm.PageResDTO;
+import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
@@ -245,6 +246,14 @@ public class CertService {
      */
     public int getCorrectCertCountByUserId(int userId) {
         return certRepository.countByUserUserIdAndIsCorrect(userId, true);
+    }
+
+    /**
+     * 유저 인증 중 가장 많이 방문한 멍플 조회
+     */
+    public List<MongoMungple> getVisitedMungpleIdListTop3ByUserId(int userId){
+        List<Integer> mungpleIdList = certRepository.findVisitTop3MungpleIdByUserId(userId);
+        return mongoMungpleService.getTop3VisitMungpleByMungpleIdList(mungpleIdList);
     }
 
     /**

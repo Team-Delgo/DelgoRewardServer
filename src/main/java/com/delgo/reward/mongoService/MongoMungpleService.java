@@ -161,6 +161,13 @@ public class MongoMungpleService {
     }
 
     /**
+     * [User] 가장 많이 방문한 3개의 멍플 조회
+     */
+    public List<MongoMungple> getTop3VisitMungpleByMungpleIdList(List<Integer> mungpleIdList){
+        return mongoMungpleRepository.findByMungpleIdIn(mungpleIdList);
+    }
+
+    /**
      * [address] Mungple 중복 체크
      * NCP - 위도, 경도 구해야 함.
      */
