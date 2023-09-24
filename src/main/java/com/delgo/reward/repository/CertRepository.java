@@ -84,6 +84,12 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
 
     @Query(value = "select c from Certification c where c.user.userId = :userId and c.isCorrect = true")
     List<Certification> findCorrectCertByUserId(@Param("userId") int userId);
+
+//    @Query(value = "select c.mungpleId, count(mungpleId) from Certification c where c.user.userId = :userId group by mungpleId having count(mungpleId) > 0 and c.isCorrect = true limit 3")
+//    List<Integer> findVisitTop3MungpleIdByUserId(@Param("userId") int userId);
+
+    @Query(value = "select mungple_id, count(mungple_id) from certification c where user_id = ? and mungple_id > 0 group by mungple_id having count(mungple_id) > 0 order by count(mungple_id) desc limit 3", nativeQuery = true)
+    List<Integer> findVisitTop3MungpleIdByUserId(Integer userId);
   
     // ---------------------------------------- Map TEST ----------------------------------------
 
