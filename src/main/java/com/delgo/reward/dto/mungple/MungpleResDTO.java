@@ -24,6 +24,10 @@ public class MungpleResDTO {
     private String photoUrl; // 사진 url
     private String detailUrl; // 상세 페이지 url
 
+    private int certCount; // 인증 개수
+    private int bookmarkCount; // 저장 개수
+
+    // 지도 생성자
     public MungpleResDTO(MongoMungple mungple) {
         mungpleId = mungple.getMungpleId();
         categoryCode = mungple.getCategoryCode();
@@ -37,5 +41,24 @@ public class MungpleResDTO {
 
         photoUrl = mungple.getPhotoUrls().get(0);
         detailUrl = mungple.getDetailUrl();
+    }
+
+    // 목록 생성자
+    public MungpleResDTO(MongoMungple mungple, int certCount, int bookmarkCount) {
+        mungpleId = mungple.getMungpleId();
+        categoryCode = mungple.getCategoryCode();
+
+        placeName = mungple.getPlaceName();
+        placeNameEn = mungple.getPlaceNameEn();
+        address = mungple.getJibunAddress();
+
+        latitude = mungple.getLatitude();
+        longitude = mungple.getLongitude();
+
+        photoUrl = mungple.getPhotoUrls().get(0);
+        detailUrl = mungple.getDetailUrl();
+
+        this.certCount = certCount;
+        this.bookmarkCount = bookmarkCount;
     }
 }

@@ -57,8 +57,8 @@ public class BookmarkService {
     /**
      * [userId] 북마크 가져오기
      */
-    public List<Bookmark> getBookmarkByUserId(int userId) {
-        return bookmarkRepository.findByUserId(userId);
+    public List<Bookmark> getActiveBookmarkByUserId(int userId) {
+        return bookmarkRepository.findActiveBookmarkByUserId(userId);
     }
 
     /**
