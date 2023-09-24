@@ -1,5 +1,7 @@
 package com.delgo.reward.mongoService;
 
+import com.delgo.reward.cacheService.ActivityCacheService;
+import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.user.CategoryCount;
 import com.delgo.reward.mongoDomain.Classification;
@@ -23,10 +25,9 @@ import java.util.*;
 public class ClassificationService {
     private final UserService userService;
     private final ClassificationRepository classificationRepository;
+    private final ActivityCacheService activityCacheService;
 
     private final static String CATEGORY_CLASSIFICATION_DATA_SET_DIR = "classification_data_set/classification_category.json";
-    private final static String CATEGORY_CODE = "CA9999";
-    private final static String CATEGORY_NAME = "기타";
 
     public Classification runClassification(Certification certification) {
         ClassPathResource categoryClassificationResource = new ClassPathResource(CATEGORY_CLASSIFICATION_DATA_SET_DIR);
@@ -62,19 +63,27 @@ public class ClassificationService {
             classificationCriteriaMap.put(categoryCode, (List<String>) jsonObject.get("classification"));
         }
 
-        return classificationRepository.save(classificationCert(certification, categoryCodeList, categoryMap, classificationCriteriaMap));
+        Classification classification = classificationRepository.save(classificationCert(certification, categoryCodeList, categoryMap, classificationCriteriaMap));
+        userService.makeActivityCacheValue(certification.getUser().getUserId());
+
+        return classification;
     }
 
     public Classification classificationCert(Certification certification, List<String> categoryCodeList, Map<String, String> categoryMap, Map<String, List<String>> classificationCriteriaMap) {
         String text = certification.getDescription();
+        String defaultCategory = certification.getMungpleId() != 0 ? certification.getCategoryCode().getCode() : CategoryCode.CA9999.getCode();
 
         List<String> outputCategoryCodeList = new ArrayList<>();
         for (String categoryCode : categoryCodeList) {
-            List<String> classificationCriteriaList = classificationCriteriaMap.get(categoryCode);
-            for (String classificationCriteria : classificationCriteriaList) {
-                if (text.contains(classificationCriteria)) {
-                    outputCategoryCodeList.add(categoryCode);
-                    break;
+            if(defaultCategory.equalsIgnoreCase(categoryCode)){
+                outputCategoryCodeList.add(categoryCode);
+            } else {
+                List<String> classificationCriteriaList = classificationCriteriaMap.get(categoryCode);
+                for (String classificationCriteria : classificationCriteriaList) {
+                    if (text.contains(classificationCriteria)) {
+                        outputCategoryCodeList.add(categoryCode);
+                        break;
+                    }
                 }
             }
         }
@@ -84,9 +93,6 @@ public class ClassificationService {
             outputCategory.put(outputCategoryCode, categoryMap.get(outputCategoryCode));
         }
 
-        if (outputCategory.isEmpty()) {
-            outputCategory.put(CATEGORY_CODE, CATEGORY_NAME);
-        }
 
         String address[] = certification.getAddress().split(" ");
         String sido = null;
@@ -114,6 +120,8 @@ public class ClassificationService {
             for(String categoryCode: classification.getCategory().keySet()){
                 userService.categoryCountSave(categoryCount.minusOne(categoryCode));
             }
+
+            userService.makeActivityCacheValue(certification.getUser().getUserId());
 
             classificationRepository.delete(classification);
         });
