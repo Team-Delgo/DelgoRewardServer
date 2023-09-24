@@ -15,10 +15,7 @@ import com.delgo.reward.dto.mungple.detail.MungpleDetailByPriceTagResDTO;
 import com.delgo.reward.dto.mungple.detail.MungpleDetailResDTO;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoRepository.MongoMungpleRepository;
-import com.delgo.reward.service.strategy.BookmarkCountSorting;
-import com.delgo.reward.service.strategy.CertCountSorting;
-import com.delgo.reward.service.strategy.DistanceSorting;
-import com.delgo.reward.service.strategy.MungpleSortingStrategy;
+import com.delgo.reward.service.strategy.*;
 import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.service.BookmarkService;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +55,8 @@ public class MongoMungpleService {
     private final MongoMungpleRepository mongoMungpleRepository;
 
     // strategy
+    private final NewestSorting newestSorting;
+    private final OldestSorting oldestSorting;
     private final CertCountSorting certCountSorting;
     private final BookmarkCountSorting bookmarkCountSorting;
 
@@ -129,9 +128,10 @@ public class MongoMungpleService {
 
         // 조건에 맞게 정렬
         MungpleSortingStrategy sortingStrategy = switch (sort) {
-            case DISTANCE -> new DistanceSorting(latitude, longitude);
+            case DISTANCE -> new DistanceSorting(mongoMungpleRepository, latitude, longitude);
             case BOOKMARK -> bookmarkCountSorting;
             case CERT -> certCountSorting;
+            default -> throw new IllegalArgumentException("Unknown sorting type: " + sort);
         };
 
         // DTO로 변환
@@ -148,16 +148,16 @@ public class MongoMungpleService {
      */
     public List<MungpleResDTO> getActiveMungpleByBookMark(int userId, MungpleSort sort, String latitude, String longitude) {
         List<Bookmark> bookmarks = bookmarkService.getActiveBookmarkByUserId(userId);
-        List<Integer> mungpleIdList = bookmarks.stream().map(Bookmark::getMungpleId).toList();
-        List<MongoMungple> mungpleList = mongoMungpleRepository.findByMungpleIdIn(mungpleIdList);
 
         MungpleSortingStrategy sortingStrategy = switch (sort) {
-            case DISTANCE -> new DistanceSorting(latitude, longitude);
-            case BOOKMARK -> bookmarkCountSorting;
-            case CERT -> certCountSorting;
+            case NEWEST -> newestSorting;
+            case OLDEST -> oldestSorting;
+            case DISTANCE -> new DistanceSorting(mongoMungpleRepository, latitude, longitude);
+            default -> throw new IllegalArgumentException("Unknown sorting type: " + sort);
         };
 
-        return sortingStrategy.sort(mungpleList).stream().map(MungpleResDTO::new).collect(Collectors.toList());
+        return sortingStrategy.sortByBookmark(bookmarks)
+                .stream().map(MungpleResDTO::new).collect(Collectors.toList());
     }
 
     /**
