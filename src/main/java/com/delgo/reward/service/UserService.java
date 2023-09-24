@@ -316,25 +316,29 @@ public class UserService {
     public Map<CategoryCode, Integer> getActivityByUserId(Integer userId) {
         ActivityCache activityCache = activityCacheService.getCacheData(userId);
 
-        if(!activityCacheService.isValidation(activityCache)){
-            Map<CategoryCode, Integer> activityMapByCategoryCode = new HashMap<>();
-
-            List<Classification> classificationList = classificationRepository.findAllByUser_UserId(userId);
-
-            for(Classification classification: classificationList){
-                Set<String> keySet = classification.getCategory().keySet();
-                for(String key: keySet){
-                    CategoryCode categoryCode = CategoryCode.valueOf(key);
-                    if(activityMapByCategoryCode.containsKey(categoryCode)){
-                        activityMapByCategoryCode.put(categoryCode, activityMapByCategoryCode.get(categoryCode) + 1);
-                    } else {
-                        activityMapByCategoryCode.put(categoryCode, 1);
-                    }
-                }
-            }
-            activityCache = activityCacheService.updateCacheData(userId, activityMapByCategoryCode);
+        if (!activityCacheService.isValidation(activityCache)) {
+            activityCache = makeActivityCacheValue(userId);
         }
 
         return activityCache.getActivityMapByCategoryCode();
+    }
+
+    public ActivityCache makeActivityCacheValue(Integer userId) {
+        Map<CategoryCode, Integer> activityMapByCategoryCode = new HashMap<>();
+
+        List<Classification> classificationList = classificationRepository.findAllByUser_UserId(userId);
+
+        for (Classification classification : classificationList) {
+            Set<String> keySet = classification.getCategory().keySet();
+            for (String key : keySet) {
+                CategoryCode categoryCode = CategoryCode.valueOf(key);
+                if (activityMapByCategoryCode.containsKey(categoryCode)) {
+                    activityMapByCategoryCode.put(categoryCode, activityMapByCategoryCode.get(categoryCode) + 1);
+                } else {
+                    activityMapByCategoryCode.put(categoryCode, 1);
+                }
+            }
+        }
+        return activityCacheService.updateCacheData(userId, activityMapByCategoryCode);
     }
 }
