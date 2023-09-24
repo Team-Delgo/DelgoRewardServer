@@ -21,6 +21,14 @@ public class MungpleDetailByMenuResDTO extends MungpleDetailResDTO {
         residentDogPhoto = mongoMungple.getResidentDogPhoto();
 
         representMenuTitle = mongoMungple.getRepresentMenuTitle();
-        representMenuPhotoUrls = mongoMungple.getRepresentMenuPhotoUrls();
+
+        List<String> representMenuBoardPhotoUrls = mongoMungple.getRepresentMenuBoardPhotoUrls();
+        List<String> representMenuPhotoUrls = mongoMungple.getRepresentMenuPhotoUrls();
+        if (representMenuBoardPhotoUrls == null || representMenuBoardPhotoUrls.isEmpty()) {
+            this.representMenuPhotoUrls = representMenuPhotoUrls;
+        } else {
+            representMenuBoardPhotoUrls.addAll(representMenuPhotoUrls);
+            this.representMenuPhotoUrls = representMenuBoardPhotoUrls;
+        }
     }
 }

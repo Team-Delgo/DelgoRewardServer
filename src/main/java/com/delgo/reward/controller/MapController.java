@@ -19,7 +19,7 @@ public class MapController extends CommController {
     private final MongoMungpleService mongoMungpleService;
 
     /*
-     * Map 멍플,인증 장소 리스트 조회
+     * Map 멍플,인증 장소 리스트 조회 TODO: 멍플이랑 인증이랑 구분
      * Request Data : userId
      * - 멍플, 일반 인증 장소, 멍플 인증 장소 구분 필요
      * Response Data : 멍플 List, 일반 인증 List, 멍플 인증 List

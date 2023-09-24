@@ -81,7 +81,7 @@ public class FigmaService {
         return new RestTemplate(httpRequestFactory);
     }
 
-    private Map<String, String> getImageIdFromFigma(String nodeId) {
+    public Map<String, String> getImageIdFromFigma(String nodeId) {
         RestTemplate restTemplate = createRestTemplate();
         HttpHeaders headers = createHeaders();
 
@@ -94,8 +94,9 @@ public class FigmaService {
             JsonNode childrNodes = rootNode.get("nodes").get(nodeId).get("document").get("children");
 
             for (JsonNode childNode : childrNodes) {
-                String imageId = childNode.get("id").asText(); // 4935:43532
-                String fileName = childNode.get("name").asText(); // 강동구_애견동반식당_담금_thumbnail_5// 강동구_애견동반식당_담금_thumbnail_5
+                String imageId = childNode.get("id").asText(); // ex) 4935:43532
+                // 사람에 의한 실수 없애기 위해 공백문자 제거 코드 추가
+                String fileName = childNode.get("name").asText().replaceAll("\\s", "");  // ex) 강동구_애견동반식당_담금_5
                 imageIdMap.put(imageId, fileName);
             }
         } catch (JsonProcessingException e) {
@@ -106,7 +107,7 @@ public class FigmaService {
         return imageIdMap;
     }
 
-    private Map<String,String> getImageUrlFromFigma(Map<String,String> imageIdMap) {
+    public Map<String,String> getImageUrlFromFigma(Map<String,String> imageIdMap) {
         RestTemplate restTemplate = createRestTemplate();
         HttpHeaders headers = createHeaders();
 

@@ -3,6 +3,7 @@ package com.delgo.reward.controller;
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.code.CategoryCode;
+import com.delgo.reward.comm.code.MungpleSort;
 import com.delgo.reward.comm.googlesheet.GoogleSheetService;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.record.mungple.MungpleDetailRecord;
@@ -34,14 +35,39 @@ public class MungpleController extends CommController {
     }
 
     /**
-     * [Category] Mungple 조회 - (CA0000: 전체 조회)
+     * 모든 멍플 조회 [ 지도, 검색 리스트 생성 ]
+     *
+     * @return List<MungpleResDTO>
+     */
+    @GetMapping
+    public ResponseEntity getMungples() {
+        return SuccessReturn(mongoMungpleService.getAllActiveMungple());
+    }
+
+    /**
+     * [Category] Mungple 조회 - (CA0000: 전체 조회) [TODO Deprecated]
      * @param categoryCode
      * @return List<MungpleResDTO>
      *
      */
-    @GetMapping(value={"/category/{categoryCode}","/category"})
-    public ResponseEntity getMungplesByCategory(@PathVariable CategoryCode categoryCode) {
+    @GetMapping("/category/{categoryCode}")
+    public ResponseEntity getMungplesByCategoryDeprecated(@PathVariable CategoryCode categoryCode) {
         return SuccessReturn(mongoMungpleService.getActiveMungpleByCategoryCode(categoryCode));
+    }
+
+    /**
+     * [Category] Mungple 조회 - (CA0000: 전체 조회)
+     *
+     * @param categoryCode. sort, latitude, longitude
+     * @return List<MungpleResDTO>
+     */
+    @GetMapping("/category")
+    public ResponseEntity getMungplesByCategory(
+            @RequestParam CategoryCode categoryCode,
+            @RequestParam MungpleSort sort,
+            @RequestParam(required = false) String latitude,
+            @RequestParam(required = false) String longitude) {
+        return SuccessReturn(mongoMungpleService.getActiveMungpleByCategoryCode(categoryCode, sort, latitude, longitude));
     }
 
     /**
@@ -51,8 +77,12 @@ public class MungpleController extends CommController {
      *
      */
     @GetMapping("/bookmark")
-    public ResponseEntity getMungplesByBookmark(@RequestParam int userId) {
-        return SuccessReturn(mongoMungpleService.getActiveMungpleByBookMark(userId));
+    public ResponseEntity getMungplesByBookmark(
+            @RequestParam int userId,
+            @RequestParam MungpleSort sort,
+            @RequestParam(required = false) String latitude,
+            @RequestParam(required = false) String longitude) {
+        return SuccessReturn(mongoMungpleService.getActiveMungpleByBookMark(userId, sort, latitude, longitude));
     }
 
     /**
