@@ -10,6 +10,7 @@ import com.delgo.reward.record.user.ResetPasswordRecord;
 import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.PetService;
 import com.delgo.reward.service.UserService;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
+@Hidden
 @Slf4j
 @RestController
 @RequiredArgsConstructor

@@ -1,12 +1,17 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.MungpleSort;
 import com.delgo.reward.comm.googlesheet.GoogleSheetService;
+import com.delgo.reward.dto.mungple.MungpleResDTO;
+import com.delgo.reward.dto.mungple.detail.MungpleDetailResDTO;
 import com.delgo.reward.mongoService.MongoMungpleService;
-import com.delgo.reward.record.mungple.MungpleDetailRecord;
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +30,8 @@ public class MungpleController extends CommController {
 
     /**
      * Mungple 등록 From GoogleSheet, Figma
-     * @return MungpleDetailResDTO
      */
+    @Hidden
     @GetMapping("/parsing")
     public ResponseEntity parsingGoogleSheetMungple() {
         List<String> placeNames = googleSheetService.saveSheetsDataToDB();
@@ -35,32 +40,20 @@ public class MungpleController extends CommController {
     }
 
     /**
-     * 모든 멍플 조회 [ 지도, 검색 리스트 생성 ]
-     *
-     * @return List<MungpleResDTO>
+     * 모든 멍플 조회 [ 지도, 검색 리스트 생성 ] [Cache]
      */
+    @Operation(summary = "ALL Active Mungple 조회 [Cache]", description = "모든 활성화 된 멍플 조회 [지도, 검색 리스트 생성에 사용]")
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MungpleResDTO.class))})
     @GetMapping
     public ResponseEntity getMungples() {
         return SuccessReturn(mongoMungpleService.getAllActiveMungple());
     }
 
     /**
-     * [Category] Mungple 조회 - (CA0000: 전체 조회) [TODO Deprecated]
-     * @param categoryCode
-     * @return List<MungpleResDTO>
-     *
+     * [Category] Mungple 조회
      */
-    @GetMapping("/category/{categoryCode}")
-    public ResponseEntity getMungplesByCategoryDeprecated(@PathVariable CategoryCode categoryCode) {
-        return SuccessReturn(mongoMungpleService.getActiveMungpleByCategoryCode(categoryCode));
-    }
-
-    /**
-     * [Category] Mungple 조회 - (CA0000: 전체 조회)
-     *
-     * @param categoryCode. sort, latitude, longitude
-     * @return List<MungpleResDTO>
-     */
+    @Operation(summary = "[Category] Mungple 조회", description = "Category 별로 Mungple 조회 [목록 조회 에서 사용]")
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MungpleResDTO.class))})
     @GetMapping("/category")
     public ResponseEntity getMungplesByCategory(
             @RequestParam CategoryCode categoryCode,
@@ -72,10 +65,9 @@ public class MungpleController extends CommController {
 
     /**
      * [Bookmark] Mungple 조회
-     * @param userId
-     * @return List<MungpleResDTO>
-     *
      */
+    @Operation(summary = "[Bookmark] Mungple 조회", description = "특정 사용자가 저장한 멍플 조회 [ 목록 조회 에서 사용 ]")
+    @ApiResponse(responseCode = "200", description = "", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MungpleResDTO.class))})
     @GetMapping("/bookmark")
     public ResponseEntity getMungplesByBookmark(
             @RequestParam int userId,
@@ -86,57 +78,45 @@ public class MungpleController extends CommController {
     }
 
     /**
-     * [인증 개수 많은 순] Mungple 조회 - (추후 광고 관련 코드 넣을 예정)
-     * @param count
-     * @return List<MungpleResDTO>
-     *
+     * Mungple 삭제
      */
-    @GetMapping("/top")
-    public ResponseEntity getMungpleOfMostCertCount(@RequestParam Integer count) {
-        return SuccessReturn(mongoMungpleService.getMungpleOfMostCertCount(count));
+    @Operation(summary = "Mungple 삭제", description = "멍플 삭제 API")
+    @DeleteMapping("/{mungpleId}")
+    public ResponseEntity deleteMungple(@PathVariable Integer mungpleId) {
+        mongoMungpleService.deleteMungple(mungpleId);
+        return SuccessReturn();
     }
 
     /**
-     * Mungple 삭제
-     * @param mungpleId
+     * Mungple Cache Reset
      */
-    @DeleteMapping(value={"/{mungpleId}",""})
-    public ResponseEntity deleteMungple(@PathVariable Integer mungpleId) {
-        mongoMungpleService.deleteMungple(mungpleId);
+    @Operation(summary = "Reset Mungple Cache", description = "멍플 등록 시, 혹은 업데이트 시 적용이 안될 때 Cache 업데이트를 위해 사용한다.")
+    @PutMapping("/cache")
+    public ResponseEntity resetMungpleCache() {
+        mongoMungpleService.resetMungpleCache();
         return SuccessReturn();
     }
 
     // -------------------------------------- DETAIL --------------------------------------
 
     /**
-     * Mungple Detail 등록
-     * @param record
-     * @return MungpleDetailResDTO
-     */
-    @PostMapping("/detail")
-    public ResponseEntity createMungpleDetail(@RequestBody MungpleDetailRecord record){
-        if(mongoMungpleService.isExist(record.mungpleId()))
-            return ErrorReturn(APICode.MUNGPLE_DUPLICATE_ERROR);
-
-        return SuccessReturn(mongoMungpleService.createMungpleDetail(record));
-    }
-
-    /**
      * [MungpleId] Mungple Detail 조회
-     * @param mungpleId
-     * @return MungpleDetailResDTO
      */
+    @Operation(summary = "[MungpleId] Mungple Detail 조회", description = "멍플 상세 조회 [특정 사용자가 저장 했는지 여부 체크를 위해 UserId도 받는다]")
+    @ApiResponse(responseCode = "200", description = "", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MungpleDetailResDTO.class))})
     @GetMapping("/detail")
     public ResponseEntity getMungpleDetailByMungpleIdAndUserId(@RequestParam int mungpleId, @RequestParam int userId) {
         return SuccessReturn(mongoMungpleService.getMungpleDetailByMungpleIdAndUserId(mungpleId, userId));
     }
 
+    // -------------------------------------- Deprecated --------------------------------------
+
     /**
-     * Mungple Cache Reset
+     * TODO: [Deprecated] Category Mungple 조회
      */
-    @PutMapping("/cache")
-    public ResponseEntity resetMungpleCache() {
-        mongoMungpleService.resetMungpleCache();
-        return SuccessReturn();
+    @Hidden
+    @GetMapping("/category/{categoryCode}")
+    public ResponseEntity getMungplesByCategoryDeprecated(@PathVariable CategoryCode categoryCode) {
+        return SuccessReturn(mongoMungpleService.getActiveMungpleByCategoryCode(categoryCode));
     }
 }

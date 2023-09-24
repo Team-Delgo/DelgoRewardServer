@@ -58,7 +58,7 @@ public class GoogleSheetDTO {
 
     public MongoMungple toMongoEntity(CategoryCode categoryCode, Location location) {
         MongoMungple mongoMungple = MongoMungple.builder()
-                .categoryCode(categoryCode.getCode())
+                .categoryCode(categoryCode)
                 .phoneNo(phoneNo)
                 .placeName(placeName)
                 .placeNameEn(placeNameEn)
