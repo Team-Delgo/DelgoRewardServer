@@ -1,6 +1,8 @@
 package com.delgo.reward.service.strategy;
 
+import com.delgo.reward.domain.user.Bookmark;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
+import com.delgo.reward.mongoRepository.MongoMungpleRepository;
 import com.delgo.reward.repository.BookmarkRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BookmarkCountSorting implements MungpleSortingStrategy {
     private final BookmarkRepository bookmarkRepository;
+    private final MongoMungpleRepository mongoMungpleRepository;
 
     @Override
     public List<MongoMungple> sort(List<MongoMungple> mungpleList) {
@@ -29,5 +32,13 @@ public class BookmarkCountSorting implements MungpleSortingStrategy {
         return mungpleList.stream()
                 .sorted(Comparator.comparing(countMap::get).reversed())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MongoMungple> sortByBookmark(List<Bookmark> bookmarkList) {
+        List<Integer> mungpleIdList = bookmarkList.stream().map(Bookmark::getMungpleId).toList();
+        List<MongoMungple> mungpleList = mongoMungpleRepository.findByMungpleIdIn(mungpleIdList);
+
+        return sort(mungpleList);
     }
 }
