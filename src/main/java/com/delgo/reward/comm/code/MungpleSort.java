@@ -6,6 +6,8 @@ import lombok.Getter;
 
 @Getter
 public enum MungpleSort {
+    NEWEST("NEWEST","최신 순"),
+    OLDEST("OLDEST","오래된 순"),
     DISTANCE("DISTANCE","거리 순"),
     CERT("CERT","인증 많은 순"),
     BOOKMARK("BOOKMARK","저장 많은 순");
