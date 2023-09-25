@@ -2,30 +2,29 @@ package com.delgo.reward.service.strategy;
 
 import com.delgo.reward.domain.user.Bookmark;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
-import com.delgo.reward.mongoRepository.MongoMungpleRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Service
-@RequiredArgsConstructor
-public class OldestSorting implements MungpleSortingStrategy {
-    private final MongoMungpleRepository mongoMungpleRepository;
 
+public class OldestSorting implements MungpleSortingStrategy {
+    private final List<MongoMungple> mungpleList;
+    private final List<Bookmark> bookmarkList;
+
+    public OldestSorting(List<MongoMungple> mungpleList, List<Bookmark> bookmarkList){
+        this.mungpleList = mungpleList;
+        this.bookmarkList = bookmarkList;
+    }
     @Override
-    public List<MongoMungple> sortByBookmark(List<Bookmark> bookmarkList) {
+    public List<MongoMungple> sort() {
         // 1. 북마크를 등록일의 오래된 순으로 정렬하고, 그에 해당하는 Mungple ID들을 가져온다.
         List<Integer> sortedMungpleIds = bookmarkList.stream()
                 .sorted(Comparator.comparing(Bookmark::getRegistDt))
                 .map(Bookmark::getMungpleId)
                 .toList();
 
-        // 2. ID 기반으로 MongoDB에서 해당 Mungple 목록을 가져온다.
-        List<MongoMungple> mungpleList = mongoMungpleRepository.findByMungpleIdIn(sortedMungpleIds);
 
         // 3. 가져온 Mungple 목록을 ID를 키로 하는 맵으로 변환.
         Map<Integer, MongoMungple> mungpleIdToMungpleMap = mungpleList.stream()
@@ -36,10 +35,4 @@ public class OldestSorting implements MungpleSortingStrategy {
                 .map(mungpleIdToMungpleMap::get)
                 .toList();
     }
-
-    @Override
-    public List<MongoMungple> sort(List<MongoMungple> mungpleList) {
-        return null;
-    }
-
 }

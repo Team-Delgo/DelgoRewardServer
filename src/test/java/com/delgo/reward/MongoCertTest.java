@@ -39,7 +39,7 @@ public class MongoCertTest {
         reactionUserList.put(ReactionCode.CUTE, null);
 
         MongoCert mongoCert = MongoCert.builder()
-                .categoryCode(certification.getCategoryCode())
+                .categoryCode(String.valueOf(certification.getCategoryCode()))
                 .mungpleId(certification.getMungpleId())
                 .placeName(certification.getPlaceName())
                 .description(certification.getDescription())
@@ -69,5 +69,4 @@ public class MongoCertTest {
         System.out.println(mongoCert.getReactionCount());
         System.out.println(mongoCert.getReactionUserList());
     }
-
 }
