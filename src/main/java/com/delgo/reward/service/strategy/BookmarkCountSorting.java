@@ -1,44 +1,30 @@
 package com.delgo.reward.service.strategy;
 
-import com.delgo.reward.domain.user.Bookmark;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
-import com.delgo.reward.mongoRepository.MongoMungpleRepository;
-import com.delgo.reward.repository.BookmarkRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import java.util.*;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-@Service
-@RequiredArgsConstructor
 public class BookmarkCountSorting implements MungpleSortingStrategy {
-    private final BookmarkRepository bookmarkRepository;
-    private final MongoMungpleRepository mongoMungpleRepository;
+    private final List<MongoMungple> mungpleList;
+    private final  Map<Integer,Integer> sortedMungpleId;
 
-    @Override
-    public List<MongoMungple> sort(List<MongoMungple> mungpleList) {
-        // MariaDB에서 각 mungpleId별 Bookmark 개수 조회
-        Map<MongoMungple, Integer> countMap = new HashMap<>();
-        for(MongoMungple mungple : mungpleList) {
-            int count = bookmarkRepository.countOfActiveBookmarkByMungple(mungple.getMungpleId());
-            countMap.put(mungple, count);
-        }
-
-        // 저장 개수에 따라 mungpleId 리스트 정렬
-        return mungpleList.stream()
-                .sorted(Comparator.comparing(countMap::get).reversed())
-                .collect(Collectors.toList());
+    public BookmarkCountSorting(List<MongoMungple> mungpleList, Map<Integer,Integer> sortedMungpleId){
+        this.mungpleList = mungpleList;
+        this.sortedMungpleId = sortedMungpleId;
     }
 
     @Override
-    public List<MongoMungple> sortByBookmark(List<Bookmark> bookmarkList) {
-        List<Integer> mungpleIdList = bookmarkList.stream().map(Bookmark::getMungpleId).toList();
-        List<MongoMungple> mungpleList = mongoMungpleRepository.findByMungpleIdIn(mungpleIdList);
+    public List<MongoMungple> sort() {
+        mungpleList.sort((m1, m2) -> {
+            int index1 = sortedMungpleId.getOrDefault(m1.getMungpleId(), -1);
+            int index2 = sortedMungpleId.getOrDefault(m2.getMungpleId(), -1);
 
-        return sort(mungpleList);
+            if (index1 == index2) return 0; // 둘 다 없을 때 (-1 == -1)
+            if (index1 == -1) return 1;     // m1이 없을 때
+            if (index2 == -1) return -1;    // m2가 없을 때
+
+            return Integer.compare(index1, index2);
+        });
+
+        return mungpleList;
     }
 }

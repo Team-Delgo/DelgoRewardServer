@@ -3,6 +3,7 @@ package com.delgo.reward.repository;
 
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.certification.Certification;
+import com.delgo.reward.dto.mungple.MungpleCountDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -84,6 +85,9 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
 
     @Query(value = "select c from Certification c where c.user.userId = :userId and c.isCorrect = true")
     List<Certification> findCorrectCertByUserId(@Param("userId") int userId);
+
+    @Query(value = "select new com.delgo.reward.dto.mungple.MungpleCountDTO(c.mungpleId, count(c)) from Certification c where c.isCorrect = true group by c.mungpleId order by count(c) desc")
+    List<MungpleCountDTO> countCertsGroupedByMungpleId();
   
     // ---------------------------------------- Map TEST ----------------------------------------
 
