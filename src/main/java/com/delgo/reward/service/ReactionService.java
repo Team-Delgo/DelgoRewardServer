@@ -8,8 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.HashMap;
-import java.util.Map;
+
 
 @Slf4j
 @Service
@@ -47,6 +46,10 @@ public class ReactionService {
     public Reaction getReaction(int userId, int certId, ReactionCode reactionCode) {
         return reactionRepository.findByUserIdAndCertificationIdAndReactionCode(userId, certId, reactionCode)
                 .orElseThrow(() -> new NullPointerException("NOT FOUND Reaction userId : " + userId + " certificationId: " + certId + " reactionCode: " + reactionCode.getCode()));
+    }
+
+    public void deleteCertRelatedReactions(int certId){
+        reactionRepository.deleteByCertificationId(certId);
     }
 
 }
