@@ -5,20 +5,42 @@ import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 
 public record CertRecord(
-        @NotNull Integer userId,
-        @NotNull CategoryCode categoryCode,
-        @NotNull Integer mungpleId,
-        @NotNull String placeName,
-        @NotBlank String description,
+        @Schema(description = "유저 고유 아이디")
+        @NotNull
+        Integer userId,
+
+        @Schema(description = "인증 카테고리 코드")
+        @NotNull
+        CategoryCode categoryCode,
+
+        @Schema(description = "멍플 고유 아이디 (안 멍플일 경우 = 0 )")
+        @NotNull
+        Integer mungpleId,
+
+        @Schema(description = "장소 명")
+        @NotNull
+        String placeName,
+
+        @Schema(description = "인증 내용")
+        @NotBlank
+        String description,
+
+        @Schema(description = "위도")
         String latitude,
+
+        @Schema(description = "경도")
         String longitude,
-        @NotNull Boolean isHideAddress) {
+
+        @Schema(description = "주소 숨김 여부")
+        @NotNull
+        Boolean isHideAddress) {
 
     public Certification toEntity(Location location, User user) {
         return Certification.builder()
