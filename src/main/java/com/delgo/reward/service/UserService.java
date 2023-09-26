@@ -10,8 +10,8 @@ import com.delgo.reward.comm.oauth.KakaoService;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.CategoryCount;
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.domain.user.UserSocial;
-import com.delgo.reward.dto.comm.PageResDTO;
+import com.delgo.reward.comm.code.UserSocial;
+import com.delgo.reward.dto.comm.PageSearchUserDTO;
 import com.delgo.reward.dto.user.SearchUserResDTO;
 import com.delgo.reward.mongoDomain.Classification;
 import com.delgo.reward.mongoRepository.ClassificationRepository;
@@ -21,7 +21,6 @@ import com.delgo.reward.record.user.ModifyUserRecord;
 import com.delgo.reward.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -303,10 +302,14 @@ public class UserService {
     }
 
 
-    public PageResDTO<SearchUserResDTO> getSearchUsers(String searchWord, Pageable pageable) {
+    /**
+     * 유저 검색 결과 반환
+     */
+    public PageSearchUserDTO getSearchUsers(String searchWord, Pageable pageable) {
         Slice<User> users = userRepository.searchByName(searchWord, pageable);
         List<SearchUserResDTO> resDTOs = users.getContent().stream().map(SearchUserResDTO::new).toList();
-        return new PageResDTO<>(resDTOs, users.getSize(), users.getNumber(), users.isLast());
+
+        return new PageSearchUserDTO(resDTOs, users.getSize(), users.getNumber(), users.isLast());
     }
 
     public void increaseViewCount(int userId) {

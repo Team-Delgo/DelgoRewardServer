@@ -89,7 +89,7 @@ public class GoogleSheetDTO {
     private String getValueOrThrow(List<Object> row, int index, String fieldName) {
         if (index < row.size() && StringUtils.hasText((CharSequence) row.get(index))) {
             String value = (String) row.get(index);
-            value = value.replace("\"", ""); // 큰따옴표 제거
+            value = value.replace("\"", "").trim(); // 큰따옴표 제거, 앞 뒤 공백 제거
 
             return value;
         }
@@ -99,7 +99,7 @@ public class GoogleSheetDTO {
     private String getValue(List<Object> row, int index) {
         if (index < row.size() && StringUtils.hasText((CharSequence) row.get(index))) {
             String value = (String) row.get(index);
-            value = value.replace("\"", ""); // 큰따옴표 제거
+            value = value.replace("\"", "").trim(); // 큰따옴표 제거 , 앞 뒤 공백 제거
 
             return value;
         }

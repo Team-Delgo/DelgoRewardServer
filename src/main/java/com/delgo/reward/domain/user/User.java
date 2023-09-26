@@ -1,5 +1,6 @@
 package com.delgo.reward.domain.user;
 
+import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.domain.common.BaseTimeEntity;
 import com.delgo.reward.domain.pet.Pet;
 import lombok.*;
