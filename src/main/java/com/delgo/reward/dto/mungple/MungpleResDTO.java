@@ -5,10 +5,12 @@ import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 
 @Getter
+@Setter
 @ToString
 @AllArgsConstructor
 public class MungpleResDTO {
@@ -34,6 +36,8 @@ public class MungpleResDTO {
     protected int certCount;
     @Schema(description = "저장 개수")
     protected int bookmarkCount;
+    @Schema(description = "유저가 저장했는지 여부")
+    protected Boolean isBookmarked;
 
     // 지도 생성자
     public MungpleResDTO(MongoMungple mungple) {
@@ -52,6 +56,26 @@ public class MungpleResDTO {
     }
 
     // 목록 생성자
+    public MungpleResDTO(MongoMungple mungple, int certCount, int bookmarkCount, boolean isBookmarked) {
+        mungpleId = mungple.getMungpleId();
+        categoryCode = mungple.getCategoryCode();
+
+        placeName = mungple.getPlaceName();
+        placeNameEn = mungple.getPlaceNameEn();
+        address = mungple.getJibunAddress();
+
+        latitude = mungple.getLatitude();
+        longitude = mungple.getLongitude();
+
+        photoUrl = mungple.getPhotoUrls().get(0);
+        detailUrl = mungple.getDetailUrl();
+
+        this.certCount = certCount;
+        this.bookmarkCount = bookmarkCount;
+        this.isBookmarked = isBookmarked;
+    }
+
+    // [Deprecated]
     public MungpleResDTO(MongoMungple mungple, int certCount, int bookmarkCount) {
         mungpleId = mungple.getMungpleId();
         categoryCode = mungple.getCategoryCode();

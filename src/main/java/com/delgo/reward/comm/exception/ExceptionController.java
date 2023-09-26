@@ -25,7 +25,7 @@ public class ExceptionController extends CommController {
     @ExceptionHandler
     public ResponseEntity exception(Exception e) {
         e.printStackTrace();
-        return ErrorReturn(APICode.SERVER_ERROR);
+        return ErrorReturnSetMessage(APICode.SERVER_ERROR, e.getMessage());
     }
 
     // @RequestParam Param Error Check

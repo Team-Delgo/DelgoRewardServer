@@ -56,11 +56,12 @@ public class MungpleController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MungpleResDTO.class))})
     @GetMapping("/category")
     public ResponseEntity getMungplesByCategory(
+            @RequestParam int userId, // isBookmarked 체크 필요
             @RequestParam CategoryCode categoryCode,
             @RequestParam MungpleSort sort,
             @RequestParam(required = false) String latitude,
             @RequestParam(required = false) String longitude) {
-        return SuccessReturn(mongoMungpleService.getActiveMungpleByCategoryCode(categoryCode, sort, latitude, longitude));
+        return SuccessReturn(mongoMungpleService.getActiveMungpleByCategoryCode(userId, categoryCode, sort, latitude, longitude));
     }
 
     /**

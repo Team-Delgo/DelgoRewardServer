@@ -2,7 +2,7 @@ package com.delgo.reward.comm.oauth;
 
 
 import com.delgo.reward.comm.code.APICode;
-import com.delgo.reward.domain.user.UserSocial;
+import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.dto.OAuthDTO;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;

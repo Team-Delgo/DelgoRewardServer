@@ -6,17 +6,19 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import java.util.Comparator;
 import java.util.List;
 
-public class DistanceSorting implements MungpleSortingStrategy {
+public class DistanceSorting implements MungpleSortingStrategy{
+    private final List<MongoMungple> mungpleList;
     private final double latitude;
     private final double longitude;
 
-    public DistanceSorting(String latitude, String longitude) {
+    public DistanceSorting(List<MongoMungple> mungpleList, String latitude, String longitude) {
+        this.mungpleList = mungpleList;
         this.latitude = Double.parseDouble(latitude);
         this.longitude = Double.parseDouble(longitude);
     }
 
     @Override
-    public List<MongoMungple> sort(List<MongoMungple> mungpleList) {
+    public List<MongoMungple> sort() {
         // 거리 순 정렬 구현
         GeoJsonPoint targetPoint = new GeoJsonPoint(longitude, latitude);
         return mungpleList.stream()

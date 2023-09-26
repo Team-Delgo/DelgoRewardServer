@@ -18,9 +18,9 @@ public class MungpleDetailResDTO extends MungpleResDTO {
     protected String phoneNo;
     @Schema(description = "강아지 동반 안내 매장 설명문")
     protected String enterDesc;
-    @Schema(description = "허용 크기 설정 key:[S, M, L] value: DetailCode ", implementation = DetailCode.class)
+    @Schema(description = "허용 크기 설정 | key:[S, M, L] | value: DetailCode ", implementation = DetailCode.class)
     protected Map<String, DetailCode> acceptSize;
-    @Schema(description = "운영 시간 (요일 별로 표시)")
+    @Schema(description = "운영 시간 | key: BusinessHourCode | value: 입력 값", implementation = BusinessHourCode.class)
     protected Map<BusinessHourCode, String> businessHour;
     @Schema(description = "Insta Id")
     protected String instaId;
@@ -32,11 +32,9 @@ public class MungpleDetailResDTO extends MungpleResDTO {
     protected Boolean isParking;
     @Schema(description = "주차 정보")
     protected String parkingInfo;
-    @Schema(description = "유저가 저장했는지 여부")
-    protected Boolean isBookmarked;
 
     public MungpleDetailResDTO(MongoMungple mongoMungple, int certCount, int bookmarkCount, boolean isBookmarked){
-        super(mongoMungple, certCount, bookmarkCount);
+        super(mongoMungple, certCount, bookmarkCount, isBookmarked);
 
         this.phoneNo = mongoMungple.getPhoneNo();
         this.enterDesc = mongoMungple.getEnterDesc();
@@ -47,6 +45,5 @@ public class MungpleDetailResDTO extends MungpleResDTO {
         this.editorNoteUrl = mongoMungple.getDetailUrl();
         this.isParking = mongoMungple.getIsParking();
         this.parkingInfo = mongoMungple.getParkingInfo();
-        this.isBookmarked = isBookmarked;
     }
 }
