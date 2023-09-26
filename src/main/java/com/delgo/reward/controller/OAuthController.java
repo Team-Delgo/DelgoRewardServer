@@ -8,7 +8,7 @@ import com.delgo.reward.comm.oauth.NaverService;
 import com.delgo.reward.comm.security.jwt.JwtService;
 import com.delgo.reward.comm.security.jwt.JwtToken;
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.domain.user.UserSocial;
+import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.dto.OAuthDTO;
 import com.delgo.reward.dto.user.UserResDTO;
 import com.delgo.reward.service.UserService;

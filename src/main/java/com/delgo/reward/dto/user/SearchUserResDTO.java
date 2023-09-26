@@ -2,6 +2,7 @@ package com.delgo.reward.dto.user;
 
 
 import com.delgo.reward.domain.user.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,17 +16,23 @@ import java.time.Period;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SearchUserResDTO {
-    // User
+    @Schema(description = "유저 고유 아이디", required = true)
     private int userId;
+    @Schema(description = "유저 이름", required = true)
     private String nickname;
+    @Schema(description = "유저 사진 URL")
     private String profile;
-
-    // Pet
+    @Schema(description = "펫 고유 아이디", required = true)
     private int petId;
+    @Schema(description = "펫 이름", required = true)
     private String petName;
+    @Schema(description = "품종 코드")
     private String breed;
+    @Schema(description = "품종 명")
     private String breedName;
+    @Schema(description = "펫 나이(년)")
     private int yearOfPetAge;
+    @Schema(description = "펫 나이(월)")
     private int monthOfPetAge;
 
     public SearchUserResDTO(User user){
