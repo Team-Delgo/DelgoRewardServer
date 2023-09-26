@@ -1,7 +1,7 @@
 package com.delgo.reward.comm.oauth;
 
 
-import com.delgo.reward.domain.user.UserSocial;
+import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.dto.OAuthDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;

@@ -1,6 +1,6 @@
 package com.delgo.reward.dto;
 
-import com.delgo.reward.domain.user.UserSocial;
+import com.delgo.reward.comm.code.UserSocial;
 import lombok.Data;
 
 @Data

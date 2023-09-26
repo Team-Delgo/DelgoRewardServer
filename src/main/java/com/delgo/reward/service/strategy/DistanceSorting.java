@@ -1,39 +1,29 @@
 package com.delgo.reward.service.strategy;
 
-import com.delgo.reward.domain.user.Bookmark;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
-import com.delgo.reward.mongoRepository.MongoMungpleRepository;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 import java.util.Comparator;
 import java.util.List;
 
-public class DistanceSorting implements MungpleSortingStrategy {
-    private final MongoMungpleRepository mongoMungpleRepository;
+public class DistanceSorting implements MungpleSortingStrategy{
+    private final List<MongoMungple> mungpleList;
     private final double latitude;
     private final double longitude;
 
-    public DistanceSorting(MongoMungpleRepository mongoMungpleRepository, String latitude, String longitude) {
-        this.mongoMungpleRepository = mongoMungpleRepository;
+    public DistanceSorting(List<MongoMungple> mungpleList, String latitude, String longitude) {
+        this.mungpleList = mungpleList;
         this.latitude = Double.parseDouble(latitude);
         this.longitude = Double.parseDouble(longitude);
     }
 
     @Override
-    public List<MongoMungple> sort(List<MongoMungple> mungpleList) {
+    public List<MongoMungple> sort() {
         // 거리 순 정렬 구현
         GeoJsonPoint targetPoint = new GeoJsonPoint(longitude, latitude);
         return mungpleList.stream()
                 .sorted(Comparator.comparingDouble(mungple -> hversineCalculate(mungple.getLocation(), targetPoint)))
                 .toList();
-    }
-
-    @Override
-    public List<MongoMungple> sortByBookmark(List<Bookmark> bookmarkList) {
-        List<Integer> mungpleIdList = bookmarkList.stream().map(Bookmark::getMungpleId).toList();
-        List<MongoMungple> mungpleList = mongoMungpleRepository.findByMungpleIdIn(mungpleIdList);
-
-        return sort(mungpleList);
     }
 
     // 2차 평면 거리 계산 함수
