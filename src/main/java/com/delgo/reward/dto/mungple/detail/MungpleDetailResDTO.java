@@ -32,11 +32,9 @@ public class MungpleDetailResDTO extends MungpleResDTO {
     protected Boolean isParking;
     @Schema(description = "주차 정보")
     protected String parkingInfo;
-    @Schema(description = "유저가 저장했는지 여부")
-    protected Boolean isBookmarked;
 
     public MungpleDetailResDTO(MongoMungple mongoMungple, int certCount, int bookmarkCount, boolean isBookmarked){
-        super(mongoMungple, certCount, bookmarkCount);
+        super(mongoMungple, certCount, bookmarkCount, isBookmarked);
 
         this.phoneNo = mongoMungple.getPhoneNo();
         this.enterDesc = mongoMungple.getEnterDesc();
@@ -47,6 +45,5 @@ public class MungpleDetailResDTO extends MungpleResDTO {
         this.editorNoteUrl = mongoMungple.getDetailUrl();
         this.isParking = mongoMungple.getIsParking();
         this.parkingInfo = mongoMungple.getParkingInfo();
-        this.isBookmarked = isBookmarked;
     }
 }

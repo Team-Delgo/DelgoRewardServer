@@ -31,9 +31,9 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -122,7 +122,7 @@ public class MongoMungpleService {
     /**
      * [categoryCode] Active Mungple 조회
      */
-    public List<MungpleResDTO> getActiveMungpleByCategoryCode(CategoryCode categoryCode, MungpleSort sort, String latitude, String longitude) {
+    public List<MungpleResDTO> getActiveMungpleByCategoryCode(int userId, CategoryCode categoryCode, MungpleSort sort, String latitude, String longitude) {
         List<MongoMungple> mungpleList = !categoryCode.equals(CategoryCode.CA0000)
                 ? mongoMungpleRepository.findByCategoryCodeAndIsActive(categoryCode, true)
                 : mongoMungpleRepository.findByIsActive(true);
@@ -139,8 +139,15 @@ public class MongoMungpleService {
             default -> throw new IllegalArgumentException("Unknown sorting type: " + sort);
         };
 
-        // DTO로 변환 (저장 개수, 인증 개수)
-        return convertToMungpleResDTOs(sortingStrategy.sort());
+        List<MungpleResDTO> mungpleResDTOS = convertToMungpleResDTOs(sortingStrategy.sort());
+        Set<Integer> bookmarkedMungpleIds = bookmarkRepository.findBookmarkedMungpleIds(userId);
+
+        // IsBookmarked 값 설정
+        mungpleResDTOS.forEach(m -> {
+            if (bookmarkedMungpleIds.contains(m.getMungpleId())) m.setIsBookmarked(true);
+        });
+
+        return mungpleResDTOS;
     }
 
     /**
@@ -175,7 +182,7 @@ public class MongoMungpleService {
             int bookmarkCount = bookmarkCountsMap.getOrDefault(m.getMungpleId(), new MungpleCountDTO(0, 0)).getCount();
             int certCount = certCountsMap.getOrDefault(m.getMungpleId(), new MungpleCountDTO(0, 0)).getCount();
 
-            return new MungpleResDTO(m, certCount, bookmarkCount);
+            return new MungpleResDTO(m, certCount, bookmarkCount, false);
         }).toList();
     }
 

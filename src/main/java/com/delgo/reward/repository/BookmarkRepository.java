@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface BookmarkRepository extends JpaRepository<Bookmark, Integer> {
     Boolean existsByUserIdAndMungpleId(Integer userId, Integer mungpleId);
@@ -15,6 +16,9 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Integer> {
 
     @Query("SELECT b FROM Bookmark b WHERE b.userId = :userId and b.isBookmarked = true")
     List<Bookmark> findActiveBookmarkByUserId(Integer userId);
+
+    @Query("SELECT b.mungpleId FROM Bookmark b WHERE b.userId = :userId and b.isBookmarked = true")
+    Set<Integer> findBookmarkedMungpleIds(Integer userId);
 
     @Query(value = "select count(b) from Bookmark b where b.mungpleId = :mungpleId and b.isBookmarked = true")
     int countOfActiveBookmarkByMungple(int mungpleId);
