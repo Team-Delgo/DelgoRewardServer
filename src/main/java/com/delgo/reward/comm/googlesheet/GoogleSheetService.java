@@ -95,7 +95,9 @@ public class GoogleSheetService {
                 // Mongo Mungple Setting & Save
                 MongoMungple mongoMungple = sheet.toMongoEntity(categoryCode, geoService.getGeoData(sheet.getAddress()));
 
-                if(mongoMungpleService.isMungpleExisting(mongoMungple.getJibunAddress())) {
+                // 중복 이중 체크 ( 주소, 이름 )
+                if(mongoMungpleService.isMungpleExisting(mongoMungple.getJibunAddress())
+                        && mongoMungpleService.isMungpleExistingByPlaceName(mongoMungple.getPlaceName())) {
                     log.info("이미 등록된 멍플입니다. : {}", mongoMungple.getPlaceName());
                     placeNames.add("[" + mongoMungple.getPlaceName() + "]은 중복 데이터입니다.");
                     continue;

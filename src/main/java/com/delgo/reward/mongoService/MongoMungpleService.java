@@ -196,6 +196,13 @@ public class MongoMungpleService {
     }
 
     /**
+     * [PlaceName] Mungple 중복 체크
+     */
+    public boolean isMungpleExistingByPlaceName(String placeName) {
+        return mongoMungpleRepository.existsByPlaceName(placeName);
+    }
+
+    /**
      * Mungple 삭제
      * NCP Object Storage 도 삭제 해줘야 함.
      * 캐시도 삭제해줘야함

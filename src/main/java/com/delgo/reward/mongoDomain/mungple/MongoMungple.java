@@ -130,12 +130,9 @@ public class MongoMungple {
             businessHour.put(key, value);
         }
 
+        // Default 값 설정
         Arrays.stream(BusinessHourCode.values())
                 .forEach(code -> businessHour.computeIfAbsent(code, BusinessHourCode::getDefaultValue));
-
-        businessHour.forEach((key, value) -> {
-            System.out.println(key + ": " + value);
-        });
     }
 
     public void setFigmaPhotoData(Map<String, ArrayList<String>> listMap) {
