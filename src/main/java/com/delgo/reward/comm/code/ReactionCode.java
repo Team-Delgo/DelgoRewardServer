@@ -2,11 +2,17 @@ package com.delgo.reward.comm.code;
 
 import com.delgo.reward.domain.certification.Reaction;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Schema(enumAsRef = true, description = """
+        리액션 유형:
+        * `HELPER` - 도움돼요
+        * `CUTE` - 귀여워요
+        """)
 public enum ReactionCode {
     HELPER("HELPER", "도움돼요"),
     CUTE("CUTE", "귀여워요");

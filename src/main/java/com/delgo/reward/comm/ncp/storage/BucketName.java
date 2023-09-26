@@ -60,10 +60,10 @@ public enum BucketName {
             "https://kr.object.ncloudstorage.com/reward-detail-thumbnail/",
             "thumbnail"),
     DETAIL_DOG(
-            "reward-detail-dog",
-            "reward-detail-dog",
-            "https://kr.object.ncloudstorage.com/reward-detail-dog/",
-            "https://kr.object.ncloudstorage.com/reward-detail-dog/",
+            "reward-detail-resident-dog",
+            "reward-detail-resident-dog",
+            "https://kr.object.ncloudstorage.com/reward-detail-resident-dog/",
+            "https://kr.object.ncloudstorage.com/reward-detail-resident-dog/",
             "dog");
 
     private final String name;

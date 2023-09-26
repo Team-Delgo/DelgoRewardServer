@@ -7,16 +7,14 @@ import com.delgo.reward.comm.code.PGeoCode;
 import com.delgo.reward.comm.ncp.ReverseGeoService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
-import com.delgo.reward.domain.achievements.Achievements;
 import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.dto.cert.CertByAchvResDTO;
 import com.delgo.reward.dto.cert.CertByMungpleResDTO;
 import com.delgo.reward.dto.cert.CertResDTO;
-import com.delgo.reward.dto.comm.PageResDTO;
-import com.delgo.reward.mongoDomain.mungple.MongoMungple;
+import com.delgo.reward.dto.comm.PageCertByMungpleResDTO;
+import com.delgo.reward.dto.comm.PageCertResDTO;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
@@ -50,11 +48,10 @@ public class CertService {
     // Service
     private final UserService userService;
     private final PhotoService photoService;
-    private final ArchiveService archiveService;
     private final MongoMungpleService mongoMungpleService;
     private final LikeListService likeListService;
+    private final ReactionService reactionService;
     private final ReverseGeoService reverseGeoService;
-    private final AchievementsService achievementsService;
     private final ObjectStorageService objectStorageService;
 
     // Repository
@@ -66,7 +63,7 @@ public class CertService {
      * 인증 생성
      * 일반 인증 - (위도,경도)로 NCP에서 주소 조회 필요
      */
-    public CertByAchvResDTO createCert(CertRecord record, List<MultipartFile> photos) {
+    public CertResDTO createCert(CertRecord record, List<MultipartFile> photos) {
         User user = userService.getUserById(record.userId());
         Certification certification = saveCert(
                 (record.mungpleId() == 0)
@@ -83,17 +80,17 @@ public class CertService {
         certPhotoRepository.saveAll(certPhotos);
         certification.setPhotos(certPhotos);
 
-        CertByAchvResDTO resDto = new CertByAchvResDTO(certification, record.userId());
-        // 획득 가능한 업적 Check
-        List<Achievements> earnAchievements = achievementsService.checkEarnedAchievements(record.userId(),
-                record.mungpleId() != 0);
-        if (!earnAchievements.isEmpty()) {
-            archiveService.registerArchives(earnAchievements.stream()
-                    .map(achievement -> achievement.toArchive(record.userId())).collect(Collectors.toList()));
-            resDto.setAchievements(earnAchievements);
-        }
+//        CertByAchvResDTO resDto = new CertByAchvResDTO(certification, record.userId());
+//        // 획득 가능한 업적 Check
+//        List<Achievements> earnAchievements = achievementsService.checkEarnedAchievements(record.userId(),
+//                record.mungpleId() != 0);
+//        if (!earnAchievements.isEmpty()) {
+//            archiveService.registerArchives(earnAchievements.stream()
+//                    .map(achievement -> achievement.toArchive(record.userId())).collect(Collectors.toList()));
+//            resDto.setAchievements(earnAchievements);
+//        }
 
-        return resDto;
+        return new CertResDTO(certification, record.userId());
     }
 
     /**
@@ -174,57 +171,56 @@ public class CertService {
      * 2. CertId로 (EntityGraph) 실제 객체 조회. ( [ids] 인증 조회 )
      *   - Paging, EntityGraph 같이 사용시 메모리 과부하
      */
-    public PageResDTO<CertResDTO> getAllCert(int userId, Pageable pageable) {
+    public PageCertResDTO getAllCert(int userId, Pageable pageable) {
         Slice<Integer> slice = certRepository.findAllCertIdByPaging(userId, pageable);
         List<CertResDTO> certs = getCertsByIds(slice.getContent()).stream().map(cert -> new CertResDTO(cert, userId)).toList();
 
-        return new PageResDTO<>(certs, slice.getSize(), slice.getNumber(), slice.isLast());
+        return new PageCertResDTO(certs, slice.getSize(), slice.getNumber(), slice.isLast());
     }
 
     /**
      * 전체 인증 조회 (특정 인증 제외)
      * 클라이언트에서 특정 인증글을 맨 위로 올렸을 때 중복을 방지하기 위해 해당 인증글은 반환 리스트에서 제거한다.
      */
-    public PageResDTO<CertResDTO> getAllCertExcludeSpecificCert(int userId, int certificationId, Pageable pageable) {
+    public PageCertResDTO getAllCertExcludeSpecificCert(int userId, int certificationId, Pageable pageable) {
         Slice<Integer> slice = certRepository.findAllExcludeSpecificCert(userId, certificationId, pageable);
         List<CertResDTO> certs = getCertsByIds(slice.getContent()).stream().map(cert -> new CertResDTO(cert, userId)).toList();
 
-        return new PageResDTO<>(certs, slice.getSize(), slice.getNumber(), slice.isLast());
+        return new PageCertResDTO(certs, slice.getSize(), slice.getNumber(), slice.isLast());
     }
 
     /**
      * [Mungple] 인증 조회
      */
-    public PageResDTO<CertByMungpleResDTO> getCertsByMungpleId(int userId, int mungpleId, Pageable pageable) {
+    public PageCertByMungpleResDTO getCertsByMungpleId(int userId, int mungpleId, Pageable pageable) {
         Slice<Integer> slice = certRepository.findCertByMungple(mungpleId, pageable);
         List<CertByMungpleResDTO> certs = getCertsByIds(slice.getContent()).stream().map(cert -> new CertByMungpleResDTO(cert, userId)).toList();
 
-        return new PageResDTO<>(certs, slice.getSize(), slice.getNumber(), slice.isLast());
+        return new PageCertByMungpleResDTO(certs, slice.getSize(), slice.getNumber(), slice.isLast());
     }
 
     /**
      * [My] 내가 작성한 인증 조회
      */
-    public PageResDTO<CertResDTO> getMyCerts(int userId, CategoryCode categoryCode, Pageable pageable) {
+    public PageCertResDTO getMyCerts(int userId, CategoryCode categoryCode, Pageable pageable) {
         Slice<Integer> slice = categoryCode.equals(CategoryCode.CA0000)
                 ? certRepository.findCertIdByUserId(userId, pageable)
                 : certRepository.findCertIdByUserIdAndCategoryCode(userId, categoryCode, pageable);
 
-
         List<CertResDTO> certs = getCertsByIds(slice.getContent()).stream().map(cert -> new CertResDTO(cert, userId)).toList();
-        return new PageResDTO<>(certs, slice.getSize(), slice.getNumber(), slice.isLast(), getCertCountByUser(userId));
+        return new PageCertResDTO(certs, slice.getSize(), slice.getNumber(), slice.isLast(), getCertCountByUser(userId));
     }
 
     /**
      *  [Other] 다른 사용자가 작성한 인증 조회
      */
-    public PageResDTO<CertResDTO> getOtherCerts(int userId, CategoryCode categoryCode, Pageable pageable) {
+    public PageCertResDTO getOtherCerts(int userId, CategoryCode categoryCode, Pageable pageable) {
         Slice<Integer> slice = !categoryCode.equals(CategoryCode.CA0000)
                 ? certRepository.findCorrectCertIdByUserId(userId, pageable)
-                :certRepository.findCorrectCertIdByUserIdAndCategoryCode(userId, categoryCode, pageable);
+                : certRepository.findCorrectCertIdByUserIdAndCategoryCode(userId, categoryCode, pageable);
 
         List<CertResDTO> certs = getCertsByIds(slice.getContent()).stream().map(cert -> new CertResDTO(cert, userId)).toList();
-        return new PageResDTO<>(certs, slice.getSize(), slice.getNumber(), slice.isLast(), getCorrectCertCountByUserId(userId));
+        return new PageCertResDTO(certs, slice.getSize(), slice.getNumber(), slice.isLast(), getCorrectCertCountByUserId(userId));
     }
 
     /**
@@ -278,13 +274,6 @@ public class CertService {
     }
 
     /**
-     * 인증 사진 수정
-     */
-    public Certification changeCertPhotoUrl(Certification certification, String text) {
-        return certification.setPhotoUrl(text);
-    }
-
-    /**
      * isCorrect 수정
      */
     public void changeIsCorrect(int certId, boolean isCorrect) {
@@ -299,6 +288,7 @@ public class CertService {
     public void deleteCert(int certificationId) {
         certRepository.deleteById(certificationId);
         likeListService.deleteCertificationRelatedLike(certificationId);
+        reactionService.deleteCertRelatedReactions(certificationId);
         objectStorageService.deleteObject(BucketName.CERTIFICATION,certificationId + "_cert.webp");
     }
 
@@ -326,17 +316,4 @@ public class CertService {
 
         return certByPGeoCode;
     }
-
-    //    /**
-//     * [Category] 인증 개수 조회
-//     */
-//    public Map<String, Long> getCertCountByCategory(int userId) {
-//        Map<String, Long> map = getCertsByUserId(userId).stream().collect(groupingBy(cert -> CategoryCode.valueOf(cert.getCategoryCode()).getValue(),counting()));
-//        //*** putIfAbsent
-//        //- Key 값이 존재하는 경우 Map의 Value의 값을 반환하고, Key값이 존재하지 않는 경우 Key와 Value를 Map에 저장하고 Null을 반환합니다.
-//        for (CategoryCode categoryCode : CategoryCode.values())
-//            map.putIfAbsent(categoryCode.getValue(), 0L);
-//        return map;
-//    }
-
 }

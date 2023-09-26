@@ -38,7 +38,7 @@ public class FigmaService {
 
     private final String API_URL = "https://api.figma.com/v1/";
     private final String figmaToken = "figd_r19ArRmULsFDOcl1Mim1B7zpphHYgqYM-YT84yfI";
-    private final String figmaFileKey = "Lrcjf0B8Up9Zp2fdHK2EnN";
+    private final String figmaFileKey = "yzrVwMDiG6uU8LM57RUfN0";
 
     @Value("${config.photoDir}")
     String DIR;
@@ -96,7 +96,7 @@ public class FigmaService {
             for (JsonNode childNode : childrNodes) {
                 String imageId = childNode.get("id").asText(); // ex) 4935:43532
                 // 사람에 의한 실수 없애기 위해 공백문자 제거 코드 추가
-                String fileName = childNode.get("name").asText().replaceAll("\\s", "");  // ex) 강동구_애견동반식당_담금_5
+                String fileName = childNode.get("name").asText().replaceAll("\\s+", "");  // ex) 강동구_애견동반식당_담금_5
                 imageIdMap.put(imageId, fileName);
             }
         } catch (JsonProcessingException e) {

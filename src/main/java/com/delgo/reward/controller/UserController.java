@@ -7,7 +7,8 @@ import com.delgo.reward.comm.security.jwt.JwtService;
 import com.delgo.reward.comm.security.jwt.JwtToken;
 import com.delgo.reward.domain.SmsAuth;
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.domain.user.UserSocial;
+import com.delgo.reward.comm.code.UserSocial;
+import com.delgo.reward.dto.comm.PageSearchUserDTO;
 import com.delgo.reward.dto.user.OtherUserResDTO;
 import com.delgo.reward.dto.user.UserResDTO;
 import com.delgo.reward.record.signup.OAuthSignUpRecord;
@@ -16,7 +17,10 @@ import com.delgo.reward.record.user.ResetPasswordRecord;
 import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.SmsAuthService;
 import com.delgo.reward.service.UserService;
-import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +38,6 @@ import javax.servlet.http.HttpServletResponse;
  * 해당 Controller는 권한 체크 없이 호출이 가능하다.
  */
 
-@Hidden
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -51,6 +54,8 @@ public class UserController extends CommController {
      * @param userId
      * @return 성공 OtherUserResDTO / 실패 여부
      */
+    @Operation(summary = "다른 User 정보 조회", description = "다른 User 정보 조회 API [Other 페이지에서 사용]")
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = OtherUserResDTO.class))})
     @GetMapping("/other")
     public ResponseEntity<?> getOtherUser(@RequestParam int userId) {
         return SuccessReturn(new OtherUserResDTO(userService.getUserById(userId), userService.getActivityByUserId(userId), certService.getVisitedMungpleIdListTop3ByUserId(userId)));
@@ -61,6 +66,8 @@ public class UserController extends CommController {
      * @param searchWord, pageable(페이징) [ page, size ]
      * @return 성공 List<SearchUserResDTO> / 실패 여부
      */
+    @Operation(summary = "User 검색", description = "User 검색 API [Search Page 에서 사용] \n 유저 이름, 펫 이름 검색 ")
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageSearchUserDTO.class))})
     @GetMapping("/search")
     public ResponseEntity<?> getSearchUser(@RequestParam String searchWord, @PageableDefault Pageable pageable) {
         if (!StringUtils.hasText(searchWord))
@@ -74,6 +81,7 @@ public class UserController extends CommController {
      * @param resetPasswordRecord
      * @return 성공 / 실패 여부
      */
+    @Operation(summary = "비밀번호 재설정", description = "비밀번호 재설정 API")
     @PutMapping("/password")
     public ResponseEntity<?> resetPassword(@Validated @RequestBody ResetPasswordRecord resetPasswordRecord) {
         User user = userService.getUserByEmail(resetPasswordRecord.email()); // 유저 조회
@@ -90,6 +98,8 @@ public class UserController extends CommController {
      * Request Data : OAuthSignUpDTO, MultipartFile (프로필 사진)
      * Response Data : 등록한 인증 데이터 반환
      */
+    @Operation(summary = "OAuth 회원가입", description = "소셜 회원가입 ( Kakao, Naver, Apple ) \n Apple, Kakao는 고유 Id 보내야 함.")
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResDTO.class))})
     @PostMapping(value = "/oauth",consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> registerUserByOAuth(@Validated @RequestPart(value = "data") OAuthSignUpRecord oAuthSignUpRecord, @RequestPart(required = false) MultipartFile profile, HttpServletResponse response) {
         // Apple 회원가입 시 appleUniqueNo 넣어주어야 함.
@@ -109,6 +119,8 @@ public class UserController extends CommController {
      * Request Data : SignUpDTO, MultipartFile (프로필 사진)
      * Response Data : 등록한 인증 데이터 반환
      */
+    @Operation(summary = "일반 회원가입", description = "일반 회원가입")
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResDTO.class))})
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> registerUser(@Validated @RequestPart(value = "data") SignUpRecord signUpRecord, @RequestPart(required = false) MultipartFile profile, HttpServletResponse response) {
         if (userService.isEmailExisting(signUpRecord.email())) // Email 중복확인
@@ -125,6 +137,7 @@ public class UserController extends CommController {
      * Map View Count
      * @param userId
      */
+    @Operation(summary = "지도 조회 수 증가", description = "다른 사용자가 내 지도 조회 시 조회 수 증가 시키는 API")
     @PostMapping(value = {"/view/{userId}", "/view/"})
     public ResponseEntity increaseViewCount(@PathVariable Integer userId) {
         userService.increaseViewCount(userId);
