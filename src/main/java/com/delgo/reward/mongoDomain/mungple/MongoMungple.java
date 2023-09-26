@@ -4,6 +4,7 @@ package com.delgo.reward.mongoDomain.mungple;
 import com.delgo.reward.comm.code.BusinessHourCode;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.DetailCode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -108,8 +109,8 @@ public class MongoMungple {
     }
 
     public void setAcceptSize(String input) {
-        acceptSize = Arrays.stream(input.replaceAll("[\n\"]", "").split(","))
-                .map(s -> s.split(": "))
+        acceptSize = Arrays.stream(input.replaceAll("\\s+", "").split(","))
+                .map(s -> s.split(":"))
                 .collect(Collectors.toMap(
                         arr -> arr[0],
                         arr -> DetailCode.valueOf(arr[1])
@@ -117,14 +118,24 @@ public class MongoMungple {
     }
 
     public void setBusinessHour(String input) {
-        businessHour = Arrays.stream(input.replaceAll("[\n\"]", "").split(","))
-                .map(s -> s.split(": "))
-                .collect(Collectors.toMap(
-                        arr -> BusinessHourCode.valueOf(arr[0]),
-                        arr -> arr[1]));
-        // Default 값 세팅
+        businessHour = new HashMap<>();
+
+        // 정규식 으로 Key, Value 체크
+        Pattern pattern = Pattern.compile("([A-Z_]+): ([^\\n]+),?");
+        Matcher matcher = pattern.matcher(input);
+
+        while (matcher.find()) {
+            BusinessHourCode key = BusinessHourCode.valueOf(matcher.group(1));
+            String value = matcher.group(2).trim().replaceAll(",$", ""); // 앞 뒤 공백, 마지막 콤마 제거
+            businessHour.put(key, value);
+        }
+
         Arrays.stream(BusinessHourCode.values())
                 .forEach(code -> businessHour.computeIfAbsent(code, BusinessHourCode::getDefaultValue));
+
+        businessHour.forEach((key, value) -> {
+            System.out.println(key + ": " + value);
+        });
     }
 
     public void setFigmaPhotoData(Map<String, ArrayList<String>> listMap) {
