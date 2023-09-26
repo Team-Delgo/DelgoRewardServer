@@ -5,11 +5,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 @Getter
-@Schema(enumAsRef = true, description =
-        "허용 상태: \n" +
-                "* `ALLOW` - 허용\n" +
-                "* `DENY` - 금지\n" +
-                "* `OUTDOOR` - 야외 허용\n")
+@Schema(enumAsRef = true, description = """
+        허용 상태:
+        * `ALLOW` - 허용
+        * `DENY` - 금지
+        * `OUTDOOR` - 야외 허용
+        """)
 public enum DetailCode {
     ALLOW("ALLOW", "허용"),
     DENY("DENY", "금지"),
