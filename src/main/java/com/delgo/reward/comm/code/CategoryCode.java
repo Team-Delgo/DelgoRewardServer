@@ -7,17 +7,18 @@ import lombok.Getter;
 import java.util.EnumSet;
 
 @Getter
-@Schema(enumAsRef = true, description =
-        "카테고리 코드: \n" +
-                "* `CA0000` - 전체\n" +
-                "* `CA0001` - 산책\n" +
-                "* `CA0002` - 카페\n" +
-                "* `CA0003` - 식당\n" +
-                "* `CA0004` - 목욕\n" +
-                "* `CA0005` - 미용\n" +
-                "* `CA0006` - 병원\n" +
-                "* `CA0007` - 유치원\n" +
-                "* `CA9999` - 기타\n")
+@Schema(enumAsRef = true, description = """
+        카테고리 코드:
+        * `CA0000` - 전체
+        * `CA0001` - 산책
+        * `CA0002` - 카페
+        * `CA0003` - 식당
+        * `CA0004` - 목욕
+        * `CA0005` - 미용
+        * `CA0006` - 병원
+        * `CA0007` - 유치원
+        * `CA9999` - 기타
+        """)
 public enum CategoryCode {
     CA0000("CA0000","전체",0,""),
     CA0001("CA0001","산책",10,"CA0001_List"), // 산책
