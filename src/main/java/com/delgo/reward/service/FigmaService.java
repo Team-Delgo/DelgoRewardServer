@@ -111,7 +111,7 @@ public class FigmaService {
         RestTemplate restTemplate = createRestTemplate();
         HttpHeaders headers = createHeaders();
 
-        String requestURL = API_URL + "images/" + figmaFileKey +"?format=png&ids=" + String.join(",", imageIdMap.keySet());
+        String requestURL = API_URL + "images/" + figmaFileKey +"?format=png&scale=3&ids=" + String.join(",", imageIdMap.keySet());
         ResponseEntity<String> responseEntity = restTemplate.exchange(requestURL, HttpMethod.GET, new HttpEntity<>(headers), String.class);
 
         Map<String,String> imageUrlMap = new HashMap<>();
