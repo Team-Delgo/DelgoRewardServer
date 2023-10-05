@@ -2,6 +2,7 @@ package com.delgo.reward;
 
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.dto.mungple.MungpleResDTO;
+import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoRepository.MongoMungpleRepository;
 import com.delgo.reward.mongoService.MongoMungpleService;
@@ -11,6 +12,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
@@ -28,21 +31,29 @@ public class Top3MungpleTest {
 
     @Test
     public void getTop3MungpleTest() {
-        int userId = 300;
-        Map<MongoMungple, Integer> visitMungpleCountMap = new HashMap<>();
+        int userId = 276;
 
-        List<Integer> mungpleIdList = certRepository.findVisitTop3MungpleIdByUserId(userId);
+        Pageable pageable = PageRequest.of(0, 3);
+
+        List<UserVisitMungpleCountDTO> userVisitMungpleCountDTOList = certRepository.findVisitTop3MungpleIdByUserId(userId, pageable);
 
         System.out.println("[getTop3MungpleTest] mungpleIdList =========");
-        for(int mungpleId: mungpleIdList){
-            System.out.println("[mungpleId]: " + mungpleId);
+        System.out.println("[getTop3MungpleTest] userVisitMungpleCountDTOList size: " + userVisitMungpleCountDTOList.size());
+        for(UserVisitMungpleCountDTO userVisitMungpleCountDTO: userVisitMungpleCountDTOList){
+            System.out.println("[mungpleId]: " + userVisitMungpleCountDTO.getMungpleId());
+            System.out.println("[visitCount]: " + userVisitMungpleCountDTO.getVisitCount());
         }
 
-        List<MongoMungple> mungpleList = mongoMungpleRepository.findByMungpleIdIn(mungpleIdList);
-        List<MungpleResDTO> mungpleResDTOList = mungpleList.stream().map(MungpleResDTO::new).collect(Collectors.toList());
+        List<MongoMungple> mongoMungpleList = mongoMungpleRepository.findByMungpleIdIn(userVisitMungpleCountDTOList.stream().map(UserVisitMungpleCountDTO::getMungpleId).collect(Collectors.toList()));
 
-        for(MungpleResDTO mungpleResDTO: mungpleResDTOList){
-            System.out.println(mungpleResDTO.getPlaceName());
+        for(MongoMungple mongoMungple: mongoMungpleList){
+            userVisitMungpleCountDTOList.replaceAll(e -> e.getMungpleId() == mongoMungple.getMungpleId() ? e.setMongoMungple(mongoMungple) : e);
+        }
+
+        for(UserVisitMungpleCountDTO userVisitMungpleCountDTO: userVisitMungpleCountDTOList){
+            System.out.println("[mungpleId]: " + userVisitMungpleCountDTO.getMungpleId());
+            System.out.println("[visitCount]: " + userVisitMungpleCountDTO.getVisitCount());
+            System.out.println("[mungple]: " + userVisitMungpleCountDTO.getMongoMungple().getPlaceName());
         }
 
     }
