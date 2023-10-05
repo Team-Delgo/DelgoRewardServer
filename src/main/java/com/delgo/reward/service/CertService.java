@@ -15,6 +15,7 @@ import com.delgo.reward.dto.cert.CertByMungpleResDTO;
 import com.delgo.reward.dto.cert.CertResDTO;
 import com.delgo.reward.dto.comm.PageCertByMungpleResDTO;
 import com.delgo.reward.dto.comm.PageCertResDTO;
+import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
@@ -249,7 +250,7 @@ public class CertService {
      */
     public List<MongoMungple> getVisitedMungpleIdListTop3ByUserId(int userId){
         List<Integer> mungpleIdList = certRepository.findVisitTop3MungpleIdByUserId(userId);
-        return mongoMungpleService.getTop3VisitMungpleByMungpleIdList(mungpleIdList);
+        return mongoMungpleService.getMungpleListByIds(mungpleIdList);
     }
 
     /**

@@ -187,9 +187,9 @@ public class MongoMungpleService {
     }
 
     /**
-     * [User] 가장 많이 방문한 3개의 멍플 조회
+     * [User] 멍플 아이디 리스트로 멍플 리스트 조회
      */
-    public List<MongoMungple> getTop3VisitMungpleByMungpleIdList(List<Integer> mungpleIdList){
+    public List<MongoMungple> getMungpleListByIds(List<Integer> mungpleIdList){
         return mongoMungpleRepository.findByMungpleIdIn(mungpleIdList);
     }
 
