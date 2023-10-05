@@ -15,6 +15,7 @@ import com.delgo.reward.dto.cert.CertByMungpleResDTO;
 import com.delgo.reward.dto.cert.CertResDTO;
 import com.delgo.reward.dto.comm.PageCertByMungpleResDTO;
 import com.delgo.reward.dto.comm.PageCertResDTO;
+import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.record.certification.CertRecord;
@@ -248,9 +249,11 @@ public class CertService {
     /**
      * 유저 인증 중 가장 많이 방문한 멍플 조회
      */
-    public List<MongoMungple> getVisitedMungpleIdListTop3ByUserId(int userId){
-        List<Integer> mungpleIdList = certRepository.findVisitTop3MungpleIdByUserId(userId);
-        return mongoMungpleService.getMungpleListByIds(mungpleIdList);
+    public List<UserVisitMungpleCountDTO> getVisitedMungpleIdListTop3ByUserId(int userId){
+        Pageable pageable = PageRequest.of(0, 3);
+
+        List<UserVisitMungpleCountDTO> userVisitMungpleCountDTOList = certRepository.findVisitTop3MungpleIdByUserId(userId, pageable);
+        return mongoMungpleService.getMungpleListByIds(userVisitMungpleCountDTOList);
     }
 
     /**

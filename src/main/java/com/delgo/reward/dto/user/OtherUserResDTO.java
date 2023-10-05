@@ -44,9 +44,9 @@ public class OtherUserResDTO {
     private int monthOfPetAge;
     @Schema(description = "카테고리별 활동 값")
     private Map<CategoryCode, Integer> activityMapByCategoryCode;
-    private List<MongoMungple> top3VisitedMungpleList;
+    private List<UserVisitMungpleCountDTO> top3VisitedMungpleList;
   
-    public OtherUserResDTO(User user, Map<CategoryCode, Integer> activityMapByCategoryCode, List<MongoMungple> top3VisitedMungpleList){
+    public OtherUserResDTO(User user, Map<CategoryCode, Integer> activityMapByCategoryCode, List<UserVisitMungpleCountDTO> top3VisitedMungpleList){
         // User
         userId = user.getUserId();
         nickname = user.getName();

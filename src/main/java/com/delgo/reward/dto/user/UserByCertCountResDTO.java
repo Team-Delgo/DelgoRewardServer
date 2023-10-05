@@ -30,9 +30,9 @@ public class UserByCertCountResDTO extends UserResDTO {
     // Activity
     private Map<CategoryCode, Integer> activityMapByCategoryCode;
     // 가장 많이 방문 한 멍플(최대 3개)
-    private List<MongoMungple> top3VisitedMungpleList;
+    private List<UserVisitMungpleCountDTO> top3VisitedMungpleList;
 
-    public UserByCertCountResDTO(User user, int totalCount, int totalCountByMungple, CategoryCount categoryCount, Map<CategoryCode, Integer> activityMapByCategoryCode, List<MongoMungple> top3VisitedMungpleList) {
+    public UserByCertCountResDTO(User user, int totalCount, int totalCountByMungple, CategoryCount categoryCount, Map<CategoryCode, Integer> activityMapByCategoryCode, List<UserVisitMungpleCountDTO> top3VisitedMungpleList) {
         super(user);
         this.totalCount = totalCount;
         this.totalCountByMungple = totalCountByMungple;
