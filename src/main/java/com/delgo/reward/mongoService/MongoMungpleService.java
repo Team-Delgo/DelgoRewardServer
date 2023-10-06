@@ -32,10 +32,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -195,7 +192,13 @@ public class MongoMungpleService {
         List<MongoMungple> mongoMungpleList = mongoMungpleRepository.findByMungpleIdIn(userVisitMungpleCountDTOList.stream().map(UserVisitMungpleCountDTO::getMungpleId).collect(Collectors.toList()));
 
         for(MongoMungple mongoMungple: mongoMungpleList){
-            userVisitMungpleCountDTOList.replaceAll(e -> e.getMungpleId() == mongoMungple.getMungpleId() ? e.setMongoMungple(mongoMungple) : e);
+            userVisitMungpleCountDTOList.replaceAll(e -> {
+                if(Objects.equals(e.getMungpleId(), mongoMungple.getMungpleId())){
+                    return e.setMungpleData(mongoMungple.getPlaceName(), mongoMungple.getPhotoUrls().get(0));
+                } else {
+                    return e;
+                }
+            });
         }
         return userVisitMungpleCountDTOList;
     }

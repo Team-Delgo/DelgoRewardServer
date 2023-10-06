@@ -9,15 +9,17 @@ import lombok.extern.slf4j.Slf4j;
 public class UserVisitMungpleCountDTO {
     private Integer mungpleId;
     private Long visitCount;
-    private MongoMungple mongoMungple;
+    private String mungplePlaceName;
+    private String mungplePhotoUrl;
 
     public UserVisitMungpleCountDTO(Integer mungpleId, Long visitCount){
         this.mungpleId = mungpleId;
         this.visitCount = visitCount;
     }
 
-    public UserVisitMungpleCountDTO setMongoMungple(MongoMungple mongoMungple){
-        this.mongoMungple = mongoMungple;
+    public UserVisitMungpleCountDTO setMungpleData(String mungplePlaceName, String mungplePhotoUrl){
+        this.mungplePlaceName = mungplePlaceName;
+        this.mungplePhotoUrl = mungplePhotoUrl;
         return this;
     }
 }
