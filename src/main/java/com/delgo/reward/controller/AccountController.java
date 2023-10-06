@@ -4,6 +4,7 @@ import com.delgo.reward.comm.CommController;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.user.UserByCertCountResDTO;
 import com.delgo.reward.dto.user.UserResDTO;
+import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.record.user.ModifyPetRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
@@ -43,7 +44,8 @@ public class AccountController extends CommController {
                 certService.getCertCountByUser(userId),
                 certService.getCertCountByMungpleOfSpecificUser(userId),
                 userService.getCategoryCountByUserId(userId),
-                userService.getActivityByUserId(userId)));
+                userService.getActivityByUserId(userId),
+                certService.getVisitedMungpleIdListTop3ByUserId(userId)));
     }
 
 

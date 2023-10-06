@@ -3,6 +3,7 @@ package com.delgo.reward.dto.user;
 
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.user.User;
+import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -42,8 +44,10 @@ public class OtherUserResDTO {
     private int monthOfPetAge;
     @Schema(description = "카테고리별 활동 값")
     private Map<CategoryCode, Integer> activityMapByCategoryCode;
-
-    public OtherUserResDTO(User user, Map<CategoryCode, Integer> activityMapByCategoryCode){
+    private List<UserVisitMungpleCountDTO> top3VisitedMungpleList;
+  
+    public OtherUserResDTO(User user, Map<CategoryCode, Integer> activityMapByCategoryCode, List<UserVisitMungpleCountDTO> top3VisitedMungpleList){
+        // User
         userId = user.getUserId();
         nickname = user.getName();
         profile = user.getProfile();
@@ -58,5 +62,6 @@ public class OtherUserResDTO {
         monthOfPetAge = period.getMonths();
 
         this.activityMapByCategoryCode = activityMapByCategoryCode;
+        this.top3VisitedMungpleList = top3VisitedMungpleList;
     }
 }
