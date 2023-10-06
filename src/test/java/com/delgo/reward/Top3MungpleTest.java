@@ -19,6 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
@@ -47,13 +48,20 @@ public class Top3MungpleTest {
         List<MongoMungple> mongoMungpleList = mongoMungpleRepository.findByMungpleIdIn(userVisitMungpleCountDTOList.stream().map(UserVisitMungpleCountDTO::getMungpleId).collect(Collectors.toList()));
 
         for(MongoMungple mongoMungple: mongoMungpleList){
-            userVisitMungpleCountDTOList.replaceAll(e -> e.getMungpleId() == mongoMungple.getMungpleId() ? e.setMongoMungple(mongoMungple) : e);
+            userVisitMungpleCountDTOList.replaceAll(e -> {
+                if(Objects.equals(e.getMungpleId(), mongoMungple.getMungpleId())){
+                    return e.setMungpleData(mongoMungple.getPlaceName(), mongoMungple.getPhotoUrls().get(0));
+                } else {
+                    return e;
+                }
+            });
         }
 
         for(UserVisitMungpleCountDTO userVisitMungpleCountDTO: userVisitMungpleCountDTOList){
             System.out.println("[mungpleId]: " + userVisitMungpleCountDTO.getMungpleId());
             System.out.println("[visitCount]: " + userVisitMungpleCountDTO.getVisitCount());
-            System.out.println("[mungple]: " + userVisitMungpleCountDTO.getMongoMungple().getPlaceName());
+            System.out.println("[mungplePlaceName]: " + userVisitMungpleCountDTO.getMungplePlaceName());
+            System.out.println("[mungplePhotoUrl]: " + userVisitMungpleCountDTO.getMungplePhotoUrl());
         }
 
     }
