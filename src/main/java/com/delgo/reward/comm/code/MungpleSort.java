@@ -8,6 +8,7 @@ import lombok.Getter;
 @Getter
 @Schema(enumAsRef = true, description = """
         멍플 정렬 옵션:
+        * `NOT` - 정렬 하지 않음
         * `NEWEST` - 최신 순
         * `OLDEST` - 오래된 순
         * `DISTANCE` - 거리 순
@@ -15,6 +16,7 @@ import lombok.Getter;
         * `BOOKMARK` - 저장 많은 순
         """)
 public enum MungpleSort {
+    NOT("NOT","정렬 하지 않음."),
     NEWEST("NEWEST","최신 순"),
     OLDEST("OLDEST","오래된 순"),
     DISTANCE("DISTANCE","거리 순"),

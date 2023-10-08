@@ -9,6 +9,7 @@ import com.delgo.reward.dto.mungple.detail.MungpleDetailResDTO;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -43,7 +44,7 @@ public class MungpleController extends CommController {
      * 모든 멍플 조회 [ 지도, 검색 리스트 생성 ] [Cache]
      */
     @Operation(summary = "ALL Active Mungple 조회 [Cache]", description = "모든 활성화 된 멍플 조회 [지도, 검색 리스트 생성에 사용]")
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MungpleResDTO.class))})
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = MungpleResDTO.class)))})
     @GetMapping
     public ResponseEntity getMungples() {
         return SuccessReturn(mongoMungpleService.getAllActiveMungple());
@@ -52,7 +53,7 @@ public class MungpleController extends CommController {
     /**
      * [Category] Mungple 조회
      */
-    @Operation(summary = "[Category] Mungple 조회", description = "Category 별로 Mungple 조회 [목록 조회 에서 사용]")
+    @Operation(summary = "[Category] Mungple 조회", description = "Category 별로 Mungple 조회 [지도, 목록 조회 에서 사용]")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MungpleResDTO.class))})
     @GetMapping("/category")
     public ResponseEntity getMungplesByCategory(
