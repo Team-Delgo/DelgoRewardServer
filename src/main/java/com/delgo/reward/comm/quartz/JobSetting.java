@@ -1,23 +1,24 @@
-//package com.delgo.reward.comm.quartz;
-//
-//import lombok.extern.slf4j.Slf4j;
-//import org.quartz.*;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.context.annotation.Configuration;
-//
-//import javax.annotation.PostConstruct;
-//import java.util.HashMap;
-//import java.util.Map;
-//
-//import static org.quartz.JobBuilder.newJob;
-//
-//@Slf4j
-//@Configuration
-//public class JobSetting {
-//
-//    @Autowired
-//    private Scheduler scheduler;
-//
+package com.delgo.reward.comm.quartz;
+
+import com.delgo.reward.comm.quartz.job.BirthdayPush;
+import lombok.extern.slf4j.Slf4j;
+import org.quartz.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.quartz.JobBuilder.newJob;
+
+@Slf4j
+@Configuration
+public class JobSetting {
+
+    @Autowired
+    private Scheduler scheduler;
+
 //    @PostConstruct
 //    public void start_refreshDailyRankingJob(){
 //        JobDetail jobDetail = buildJobDetail(RefreshDailyRanking.class, new HashMap());
@@ -51,16 +52,27 @@
 //        }
 //
 //    }
-//
-//    public Trigger buildJobTrigger(String scheduleExp){
-//        return TriggerBuilder.newTrigger()
-//                .withSchedule(CronScheduleBuilder.cronSchedule(scheduleExp)).build();
-//    }
-//
-//    public JobDetail buildJobDetail(Class job, Map params){
-//        JobDataMap jobDataMap = new JobDataMap();
-//        jobDataMap.putAll(params);
-//
-//        return newJob(job).usingJobData(jobDataMap).build();
-//    }
-//}
+
+    @PostConstruct
+    public void start_birthdayPush(){
+        JobDetail jobDetail = buildJobDetail(BirthdayPush.class, new HashMap());
+        try {
+            scheduler.scheduleJob(jobDetail, buildJobTrigger("0 0 9 * * ?"));
+        } catch (SchedulerException e){
+            e.printStackTrace();
+        }
+
+    }
+
+    public Trigger buildJobTrigger(String scheduleExp){
+        return TriggerBuilder.newTrigger()
+                .withSchedule(CronScheduleBuilder.cronSchedule(scheduleExp)).build();
+    }
+
+    public JobDetail buildJobDetail(Class job, Map params){
+        JobDataMap jobDataMap = new JobDataMap();
+        jobDataMap.putAll(params);
+
+        return newJob(job).usingJobData(jobDataMap).build();
+    }
+}
