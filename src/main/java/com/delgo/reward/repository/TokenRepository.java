@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface TokenRepository extends JpaRepository<Token, Integer> {
     Optional<Token> findByUserId(int userId);
-
+    List<Token> findAllByUserIdIn(List<Integer> userIdList);
     @Transactional
     @Modifying(clearAutomatically = true)
     @Query(value = "update token set fcm_token = :fcmToken where user_id = :userId", nativeQuery = true)
