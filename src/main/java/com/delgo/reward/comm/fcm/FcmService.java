@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -67,6 +68,22 @@ public class FcmService {
         }
         else
             return ;
+    }
+
+    public void birthdayPush(Map<Integer, String> userIdAndPetNameMap, String notifyMsg) {
+        List<Integer> userIdList = userIdAndPetNameMap.keySet().stream().toList();
+        Map<Integer, String> userFcmTokenMap = tokenService.getFcmToken(userIdList);
+
+        userFcmTokenMap.forEach((userId, fcmToken) -> {
+            if(checkNotify(userId) && !fcmToken.isEmpty()){
+                try {
+                    sendMessageTo(fcmToken, userIdAndPetNameMap.get(userId) + notifyMsg);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
     }
 
     private String makeMessage(String targetToken, String body) throws JsonParseException, JsonProcessingException {
