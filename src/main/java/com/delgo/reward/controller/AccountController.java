@@ -2,9 +2,8 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.dto.user.UserByCertCountResDTO;
+import com.delgo.reward.dto.user.AccountResDTO;
 import com.delgo.reward.dto.user.UserResDTO;
-import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.record.user.ModifyPetRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
@@ -12,6 +11,10 @@ import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.PetService;
 import com.delgo.reward.service.UserService;
 import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -21,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
-@Hidden
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -37,13 +40,12 @@ public class AccountController extends CommController {
      * @param userId
      * @return 유저 정보 반환
      */
+    @Operation(summary = "내 정보 조회 ", description = "My Page, 및 활동 페이지에서 필요한 모든 Data를 반환한다.")
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AccountResDTO.class))})
     @GetMapping
     public ResponseEntity<?> getAccount(@RequestParam Integer userId){
-        return SuccessReturn(new UserByCertCountResDTO(
+        return SuccessReturn(new AccountResDTO(
                 userService.getUserById(userId),
-                certService.getCertCountByUser(userId),
-                certService.getCertCountByMungpleOfSpecificUser(userId),
-                userService.getCategoryCountByUserId(userId),
                 userService.getActivityByUserId(userId),
                 certService.getVisitedMungpleIdListTop3ByUserId(userId)));
     }
@@ -54,6 +56,7 @@ public class AccountController extends CommController {
      * @param userId
      * @return 수정된 데이터 반환
      */
+    @Hidden
     @PutMapping(value = {"/notify/{userId}", "/notify"})
     public ResponseEntity<?> changeNotify(@PathVariable Integer userId){
         return SuccessReturn(userService.changeNotify(userId));
@@ -64,10 +67,12 @@ public class AccountController extends CommController {
      * @param modifyUserRecord
      * @return 성공 / 실패 여부
      */
+    @Operation(summary = "유저 정보 수정", description = "수정 된 유저 정보를 반환한다. \n profile은 multipart로 받는다. (RequestBody 체크 필요)")
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResDTO.class))})
     @PutMapping(value = "/user", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> changeUserInfo(@Validated @RequestPart(value = "data") ModifyUserRecord modifyUserRecord, @RequestPart(required = false) MultipartFile profile) {
         User user = userService.changeUserInfo(modifyUserRecord, profile);
-        // 랭킹 실시간으로 집계
+//        랭킹 실시간으로 집계
 //        rankingService.rankingByPoint();
         return SuccessReturn(new UserResDTO(user));
     }
@@ -77,6 +82,7 @@ public class AccountController extends CommController {
      * @param modifyPetRecord
      * @return 성공 / 실패 여부
      */
+    @Operation(summary = "펫 정보 수정", description = "성공 여부만 반환 한다.")
     @PutMapping("/pet")
     public ResponseEntity<?> changePetInfo(@Validated @RequestBody ModifyPetRecord modifyPetRecord) {
         petService.changePetInfo(modifyPetRecord, userService.getUserByEmail(modifyPetRecord.email()));
@@ -88,6 +94,7 @@ public class AccountController extends CommController {
      * @param resetPasswordRecord
      * @return 성공 / 실패 여부
      */
+    @Operation(summary = "비밀번호 변경", description = "성공 여부만 반환 한다.")
     @PutMapping("/password")
     public ResponseEntity<?> changePassword(@Validated @RequestBody ResetPasswordRecord resetPasswordRecord) {
         // 사용자 확인 - 토큰 사용
@@ -101,6 +108,7 @@ public class AccountController extends CommController {
      * @return 성공 / 실패 여부
      * @throws Exception
      */
+    @Operation(summary = "회원 탈퇴", description = "성공 여부만 반환 한다.")
     @DeleteMapping("/user/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable Integer userId) throws Exception {
         userService.deleteUser(userId); // USER DELETE
@@ -114,6 +122,7 @@ public class AccountController extends CommController {
      * @param userId
      * @return 성공 / 실패 여부
      */
+    @Operation(summary = "로그아웃", description = "성공 여부만 반환 한다.")
     @PostMapping(value = {"/logout/{userId}","/logout"})
     public ResponseEntity<?> logout(@PathVariable Integer userId) throws Exception {
         userService.logout(userId);
