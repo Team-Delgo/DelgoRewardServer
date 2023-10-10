@@ -58,6 +58,11 @@ public class CertResDTO {
     @Schema(description = "리액션 별 개수")
     protected Map<ReactionCode, Integer> reactionCountMap;
 
+    @Schema(description = "위도")
+    protected String latitude;
+    @Schema(description = "경도")
+    protected String longitude;
+
     @JsonFormat(pattern = "yyyy.MM.dd/HH:mm/E")
     @Schema(description = "등록 날짜")
     protected LocalDateTime registDt;
@@ -101,6 +106,10 @@ public class CertResDTO {
         userName = cert.getUser().getName();
         userProfile = cert.getUser().getProfile();
         commentCount = cert.getCommentCount();
+
+        latitude = cert.getLatitude();
+        longitude = cert.getLongitude();
+
         registDt = cert.getRegistDt();
     }
 }

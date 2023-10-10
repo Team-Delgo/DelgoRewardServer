@@ -135,6 +135,7 @@ public class MongoMungpleService {
             case DISTANCE -> new DistanceSorting(mungpleList, latitude, longitude);
             case BOOKMARK -> new BookmarkCountSorting(mungpleList, countByBookmark.stream().map(MungpleCountDTO::getMungpleId).collect(Collectors.toMap(Function.identity(), Function.identity())));
             case CERT -> new CertCountSorting(mungpleList, countByCert.stream().map(MungpleCountDTO::getMungpleId).collect(Collectors.toMap(Function.identity(), Function.identity())));
+            case NOT -> new NotSorting(mungpleList);
             default -> throw new IllegalArgumentException("Unknown sorting type: " + sort);
         };
 
