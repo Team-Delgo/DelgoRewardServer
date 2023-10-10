@@ -29,6 +29,10 @@ public class Pet extends BaseTimeEntity {
     @JoinColumn(name = "userId")
     private User user;
 
+    public Integer getUserId(){
+        return this.user.getUserId();
+    }
+
     public Pet setName(String name) {
         this.name = name;
 
