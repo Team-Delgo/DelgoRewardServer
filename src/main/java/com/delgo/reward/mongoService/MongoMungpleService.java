@@ -140,12 +140,7 @@ public class MongoMungpleService {
         };
 
         List<MungpleResDTO> mungpleResDTOS = convertToMungpleResDTOs(sortingStrategy.sort());
-        Set<Integer> bookmarkedMungpleIds = bookmarkRepository.findBookmarkedMungpleIds(userId);
-
-        // IsBookmarked 값 설정
-        mungpleResDTOS.forEach(m -> {
-            if (bookmarkedMungpleIds.contains(m.getMungpleId())) m.setIsBookmarked(true);
-        });
+        setIsBookmarked(userId, mungpleResDTOS);
 
         return mungpleResDTOS;
     }
@@ -167,13 +162,23 @@ public class MongoMungpleService {
             default -> throw new IllegalArgumentException("Unknown sorting type: " + sort);
         };
 
-        // DTO로 변환 (저장 개수, 인증 개수)
-        return convertToMungpleResDTOs(sortingStrategy.sort());
+        List<MungpleResDTO> mungpleResDTOS = convertToMungpleResDTOs(sortingStrategy.sort());
+        setIsBookmarked(userId, mungpleResDTOS);
+
+        return mungpleResDTOS;
     }
 
     /**
-     * MongoMungple -> MungpleResDTO 로 변환
+     * IsBookmarked 값 설정
      */
+    public void setIsBookmarked(int userId, List<MungpleResDTO> mungpleResDTOS){
+        Set<Integer> bookmarkedMungpleIds = bookmarkRepository.findBookmarkedMungpleIds(userId);
+        mungpleResDTOS.forEach(m -> {
+            if (bookmarkedMungpleIds.contains(m.getMungpleId())) m.setIsBookmarked(true);
+        });
+    }
+
+
     private List<MungpleResDTO> convertToMungpleResDTOs(List<MongoMungple> mungples) {
         Map<Integer, MungpleCountDTO> bookmarkCountsMap = bookmarkRepository.countBookmarksGroupedByMungpleId().stream().collect(Collectors.toMap(MungpleCountDTO::getMungpleId, Function.identity()));
         Map<Integer, MungpleCountDTO> certCountsMap = certRepository.countCertsGroupedByMungpleId().stream().collect(Collectors.toMap(MungpleCountDTO::getMungpleId, Function.identity()));
