@@ -54,6 +54,9 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId")
     Slice<Integer> findCertIdByUserId(@Param("userId") int userId, Pageable pageable);
 
+    @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId")
+    List<Integer> findAllCertIdByUserId(@Param("userId") int userId);
+
     @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId and c.categoryCode = :categoryCode")
     Slice<Integer> findCertIdByUserIdAndCategoryCode(@Param("userId")int userId, @Param("categoryCode") CategoryCode categoryCode, Pageable pageable);
 
