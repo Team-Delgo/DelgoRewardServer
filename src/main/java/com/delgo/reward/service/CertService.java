@@ -16,7 +16,6 @@ import com.delgo.reward.dto.cert.CertResDTO;
 import com.delgo.reward.dto.comm.PageCertByMungpleResDTO;
 import com.delgo.reward.dto.comm.PageCertResDTO;
 import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
-import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
@@ -211,6 +210,14 @@ public class CertService {
 
         List<CertResDTO> certs = getCertsByIds(slice.getContent()).stream().map(cert -> new CertResDTO(cert, userId)).toList();
         return new PageCertResDTO(certs, slice.getSize(), slice.getNumber(), slice.isLast(), getCertCountByUser(userId));
+    }
+
+    /**
+     * [My] 내가 작성한 모든 인증 조회
+     */
+    public List<CertResDTO> getAllMyCerts(int userId) {
+        List<Integer> certIdList = certRepository.findAllCertIdByUserId(userId);
+        return getCertsByIds(certIdList).stream().map(cert -> new CertResDTO(cert, userId)).toList();
     }
 
     /**
