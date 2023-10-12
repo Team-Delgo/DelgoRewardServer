@@ -155,7 +155,7 @@ public class CertController extends CommController {
      * @param userId, categoryCode, pageable
      * @return PageResDTO<CertResDTO, Integer>
      */
-    @Operation(summary = "[My] 내가 작성한 인증 조회 [paging]", description = "내가 작성한 모든 인증글 조회 \n isCorrect = false 여도 조회.")
+    @Operation(summary = "[My] 내가 작성한 인증 조회 [paging]", description = "내가 작성한 모든 인증글 조회 [ \n isCorrect = false 여도 조회.")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCertResDTO.class))})
     @GetMapping("/my")
     public ResponseEntity getMyCerts(
@@ -163,6 +163,18 @@ public class CertController extends CommController {
             @RequestParam CategoryCode categoryCode,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
         return SuccessReturn(certService.getMyCerts(userId, categoryCode, pageable));
+    }
+
+    /**
+     * [My]내가 작성한 인증 전체 조회
+     * @param userId, categoryCode, pageable
+     * @return PageResDTO<CertResDTO, Integer>
+     */
+    @Operation(summary = "[My] 내가 작성한 인증 전체 조회", description = "내가 작성한 모든 인증글 조회 \n isCorrect = false 여도 조회.")
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCertResDTO.class))})
+    @GetMapping("/my/all")
+    public ResponseEntity getAllMyCerts(@RequestParam Integer userId) {
+        return SuccessReturn(certService.getAllMyCerts(userId));
     }
 
     /**
