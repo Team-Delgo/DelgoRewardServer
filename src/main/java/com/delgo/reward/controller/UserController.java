@@ -101,13 +101,17 @@ public class UserController extends CommController {
     @Operation(summary = "OAuth 회원가입", description = "소셜 회원가입 ( Kakao, Naver, Apple ) \n Apple, Kakao는 고유 Id 보내야 함.")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResDTO.class))})
     @PostMapping(value = "/oauth",consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<?> registerUserByOAuth(@Validated @RequestPart(value = "data") OAuthSignUpRecord oAuthSignUpRecord, @RequestPart(required = false) MultipartFile profile, HttpServletResponse response) {
+    public ResponseEntity<?> registerUserByOAuth(
+            @Validated @RequestPart(value = "data") OAuthSignUpRecord oAuthSignUpRecord,
+            @RequestPart(required = false) MultipartFile profile,
+            @RequestHeader("version") String version,
+            HttpServletResponse response) {
         // Apple 회원가입 시 appleUniqueNo 넣어주어야 함.
         if ((oAuthSignUpRecord.appleUniqueNo() == null || oAuthSignUpRecord.appleUniqueNo().isBlank())
                 && oAuthSignUpRecord.userSocial() == UserSocial.A)
             return ErrorReturn(APICode.PARAM_ERROR);
 
-        User user = userService.oAuthSignup(oAuthSignUpRecord, profile);
+        User user = userService.oAuthSignup(oAuthSignUpRecord, profile, version);
         JwtToken jwt = jwtService.createToken(user.getUserId());
         jwtService.publishToken(response, jwt);
 
@@ -122,11 +126,15 @@ public class UserController extends CommController {
     @Operation(summary = "일반 회원가입", description = "일반 회원가입")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResDTO.class))})
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<?> registerUser(@Validated @RequestPart(value = "data") SignUpRecord signUpRecord, @RequestPart(required = false) MultipartFile profile, HttpServletResponse response) {
+    public ResponseEntity<?> registerUser(
+            @Validated @RequestPart(value = "data") SignUpRecord signUpRecord,
+            @RequestPart(required = false) MultipartFile profile,
+            @RequestHeader("version") String version,
+            HttpServletResponse response) {
         if (userService.isEmailExisting(signUpRecord.email())) // Email 중복확인
             return ErrorReturn(APICode.EMAIL_DUPLICATE_ERROR);
 
-        User user = userService.signup(signUpRecord, profile);
+        User user = userService.signup(signUpRecord, profile, version);
         JwtToken jwt = jwtService.createToken(user.getUserId());
         jwtService.publishToken(response, jwt);
 

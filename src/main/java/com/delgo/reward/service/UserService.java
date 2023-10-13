@@ -79,7 +79,7 @@ public class UserService {
      * @return 가입한 회원 정보 반환
      */
     @Transactional
-    public User signup(SignUpRecord signUpRecord, MultipartFile profile) {
+    public User signup(SignUpRecord signUpRecord, MultipartFile profile, String version) {
         // 주소 설정
         String address = (signUpRecord.geoCode().equals("0"))  // 세종시는 구가 없음.
                 ? codeService.getAddress(signUpRecord.pGeoCode(), true)
@@ -93,6 +93,7 @@ public class UserService {
         jdbcTemplatePointRepository.createUserPoint(user); // Point 생성
         categoryCountRepository.save(new CategoryCount().create(user.getUserId()));
 
+        user.setVersion(version);
 //        rankingService.rankingByPoint(); // 랭킹 업데이트
         return user.setPet(pet).setProfile( // User Profile 등록
                 profile.isEmpty()
@@ -107,7 +108,7 @@ public class UserService {
      * @param profile
      * @return 가입한 회원 정보 반환
      */
-    public User oAuthSignup(OAuthSignUpRecord oAuthSignUpRecord, MultipartFile profile) {
+    public User oAuthSignup(OAuthSignUpRecord oAuthSignUpRecord, MultipartFile profile, String version) {
         // 주소 설정
         String address = (oAuthSignUpRecord.geoCode().equals("0"))  // 세종시는 구가 없음.
                 ? codeService.getAddress(oAuthSignUpRecord.pGeoCode(), true)
@@ -122,6 +123,7 @@ public class UserService {
         categoryCountRepository.save(new CategoryCount().create(oAuthUser.getUserId()));
 
 //        rankingService.rankingByPoint(); // 랭킹 업데이트
+        oAuthUser.setVersion(version);
         return oAuthUser.setPet(pet).setProfile( // User Profile 등록
                 profile.isEmpty()
                         ? DEFAULT_PROFILE
