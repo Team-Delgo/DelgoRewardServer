@@ -224,7 +224,7 @@ public class CertService {
      *  [Other] 다른 사용자가 작성한 인증 조회
      */
     public PageCertResDTO getOtherCerts(int userId, CategoryCode categoryCode, Pageable pageable) {
-        Slice<Integer> slice = !categoryCode.equals(CategoryCode.CA0000)
+        Slice<Integer> slice = categoryCode.equals(CategoryCode.CA0000)
                 ? certRepository.findCorrectCertIdByUserId(userId, pageable)
                 : certRepository.findCorrectCertIdByUserIdAndCategoryCode(userId, categoryCode, pageable);
 
