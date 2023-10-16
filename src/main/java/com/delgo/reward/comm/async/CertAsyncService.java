@@ -2,6 +2,7 @@ package com.delgo.reward.comm.async;
 
 import com.delgo.reward.comm.ncp.greeneye.GreenEyeService;
 import com.delgo.reward.domain.certification.CertPhoto;
+import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.repository.CertPhotoRepository;
 import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.PhotoService;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.util.List;
@@ -28,6 +30,7 @@ public class CertAsyncService {
     private final CertPhotoRepository certPhotoRepository;
 
     @Async
+    @Transactional
     public void doSomething(Integer certificationId) throws JsonProcessingException {
         List<CertPhoto> certPhotos = certPhotoRepository.findPhotosByCertificationId(certificationId);
         for(CertPhoto photo : certPhotos) {
@@ -42,7 +45,8 @@ public class CertAsyncService {
             boolean isCorrect = greenEyeService.checkHarmfulPhoto(jpgUrl);
             photo.setIsCorrect(isCorrect);
             if(!isCorrect){
-                certService.changeIsCorrect(certificationId, false);
+                Certification cert = certService.getById(certificationId);
+                cert.setIsCorrect(false);
             }
 
             String ncpLink = photoService.uploadCertPhotoWithWebp(fileName, file);

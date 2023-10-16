@@ -1,6 +1,5 @@
 package com.delgo.reward;
 
-import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.user.CategoryCount;
 import com.delgo.reward.domain.user.User;
@@ -19,7 +18,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.security.core.parameters.P;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.StopWatch;
 
@@ -146,7 +144,7 @@ public class ClassificationTest {
             classificationCriteriaMap.put(categoryCode, (List<String>) jsonObject.get("classification"));
         }
 
-        List<Certification> certificationList = certService.getCertsByDateWithoutUser(LocalDate.of(2023, 2, 14));
+        List<Certification> certificationList = certService.getListByDate(LocalDate.of(2023, 2, 14));
 
         for (Certification certification : certificationList) {
             Classification classification = classificationRepository.save(classificationService.classificationCert(certification, categoryCodeList, categoryMap, classificationCriteriaMap));

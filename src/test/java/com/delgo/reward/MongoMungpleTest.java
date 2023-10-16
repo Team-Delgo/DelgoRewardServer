@@ -91,7 +91,7 @@ public class MongoMungpleTest {
         List<MongoMungple> mungpleList = mongoMungpleRepository.findByIsActive(true);
 
         // DB Data 조회
-        List<MungpleCountDTO> countByCert = certRepository.countCertsGroupedByMungpleId();
+        List<MungpleCountDTO> countByCert = certRepository.countGroupedByMungpleId();
 
         // 조건에 맞게 정렬
         MungpleSortingStrategy sortingStrategy = new CertCountSorting(mungpleList, countByCert);

@@ -111,7 +111,7 @@ public class MongoMungpleService {
                 : mongoMungpleRepository.findByIsActive(true);
 
         return mungpleList.stream().map(m ->{
-            int certCount = certRepository.countOfCorrectCertByMungple(m.getMungpleId());
+            int certCount = certRepository.countOfCorrectByMungpleId(m.getMungpleId());
             int bookmarkCount = bookmarkService.getActiveBookmarkCount(m.getMungpleId());
 
             return new MungpleResDTO(m, certCount, bookmarkCount);
@@ -128,7 +128,7 @@ public class MongoMungpleService {
 
         // DB Data 조회
         List<MungpleCountDTO> countByBookmark = bookmarkRepository.countBookmarksGroupedByMungpleId();
-        List<MungpleCountDTO> countByCert = certRepository.countCertsGroupedByMungpleId();
+        List<MungpleCountDTO> countByCert = certRepository.countGroupedByMungpleId();
 
         // 조건에 맞게 정렬
         MungpleSortingStrategy sortingStrategy = switch (sort) {
@@ -181,7 +181,7 @@ public class MongoMungpleService {
 
     public List<MungpleResDTO> convertToMungpleResDTOs(List<MongoMungple> mungples) {
         Map<Integer, MungpleCountDTO> bookmarkCountsMap = bookmarkRepository.countBookmarksGroupedByMungpleId().stream().collect(Collectors.toMap(MungpleCountDTO::getMungpleId, Function.identity()));
-        Map<Integer, MungpleCountDTO> certCountsMap = certRepository.countCertsGroupedByMungpleId().stream().collect(Collectors.toMap(MungpleCountDTO::getMungpleId, Function.identity()));
+        Map<Integer, MungpleCountDTO> certCountsMap = certRepository.countGroupedByMungpleId().stream().collect(Collectors.toMap(MungpleCountDTO::getMungpleId, Function.identity()));
 
         return mungples.stream().map(m -> {
             int bookmarkCount = bookmarkCountsMap.getOrDefault(m.getMungpleId(), new MungpleCountDTO(0, 0)).getCount();
@@ -248,7 +248,7 @@ public class MongoMungpleService {
 
     public MungpleDetailResDTO getMungpleDetailByMungpleIdAndUserId(int mungpleId, int userId) {
         MongoMungple mongoMungple = getMungpleByMungpleId(mungpleId);
-        int certCount = certRepository.countOfCorrectCertByMungple(mungpleId);
+        int certCount = certRepository.countOfCorrectByMungpleId(mungpleId);
 
         boolean isBookmarked = (userId != 0 && bookmarkService.hasBookmarkByIsBookmarked(userId, mungpleId, true));
         int bookmarkCount = bookmarkService.getActiveBookmarkCount(mungpleId);

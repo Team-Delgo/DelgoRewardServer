@@ -5,7 +5,6 @@ import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.ReactionCode;
 import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.domain.like.LikeList;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -46,10 +45,6 @@ public class CertResDTO {
     protected String userProfile;
     @Schema(description = "작성자 인지 여부")
     protected Boolean isOwner;
-    @Schema(description = "조회한 유저의 좋아요 여부 [Deprecated] - reaction 대체 됨")
-    protected Boolean isLike;
-    @Schema(description = "좋아요 개수 [Deprecated] - reaction 대체 됨")
-    protected int likeCount;
     @Schema(description = "댓글 개수")
     protected int commentCount;
 
@@ -67,18 +62,9 @@ public class CertResDTO {
     @Schema(description = "등록 날짜")
     protected LocalDateTime registDt;
 
-
     public CertResDTO(Certification certification, Integer ownerId) {
         this(certification);
         isOwner = certification.getUser().getUserId() == ownerId;
-
-        if (certification.getLikeLists() != null) {
-            isLike = certification.getLikeLists().stream().anyMatch(likeList -> likeList.getUserId().equals(ownerId) && likeList.isLike());
-            likeCount = (int) certification.getLikeLists().stream().filter(LikeList::isLike).count();
-        } else {
-            isLike = false;
-            likeCount = 0;
-        }
 
         if (reactionMap == null) {
             reactionMap = ReactionCode.initializeReactionMap();

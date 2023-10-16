@@ -21,7 +21,7 @@ public class ClassificationAsyncService {
 
     @Async
     public void doClassification(int certificationId){
-        Certification certification = certService.getCertById(certificationId);
+        Certification certification = certService.getById(certificationId);
         Classification classification = classificationService.runClassification(certification);
         CategoryCount categoryCount = userService.getCategoryCountByUserId(certification.getUser().getUserId());
 

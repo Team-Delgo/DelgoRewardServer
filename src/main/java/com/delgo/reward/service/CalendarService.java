@@ -5,6 +5,7 @@ import com.delgo.reward.dto.cert.CertByAchvResDTO;
 import com.delgo.reward.record.calendar.CalendarRecord;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +23,7 @@ public class CalendarService {
     private final CertService certService;
 
     public List<CalendarRecord> getCalendar(int userId) {
-        List<CertByAchvResDTO> certifications = certService.getCertsByUserId(userId).stream().map(c -> new CertByAchvResDTO(c, userId)).toList();
+        List<CertByAchvResDTO> certifications = certService.getListByUserId(userId, Pageable.unpaged()).stream().map(c -> new CertByAchvResDTO(c, userId)).toList();
 
         return certifications.stream()
                 .sorted(Comparator.comparing(CertByAchvResDTO::getRegistDt)) // 등록 순으로 정렬
