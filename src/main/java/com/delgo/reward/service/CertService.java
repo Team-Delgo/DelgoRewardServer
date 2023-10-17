@@ -209,7 +209,8 @@ public class CertService {
                 : certRepository.findCertIdByUserIdAndCategoryCode(userId, categoryCode, pageable);
 
         List<CertResDTO> certs = getCertsByIds(slice.getContent()).stream().map(cert -> new CertResDTO(cert, userId)).toList();
-        return new PageCertResDTO(certs, slice.getSize(), slice.getNumber(), slice.isLast(), getCertCountByUser(userId));
+        User user = userService.getUserById(userId);
+        return new PageCertResDTO(certs, slice.getSize(), slice.getNumber(), slice.isLast(), getCertCountByUser(userId), user.getViewCount());
     }
 
     /**
@@ -229,7 +230,8 @@ public class CertService {
                 : certRepository.findCorrectCertIdByUserIdAndCategoryCode(userId, categoryCode, pageable);
 
         List<CertResDTO> certs = getCertsByIds(slice.getContent()).stream().map(cert -> new CertResDTO(cert, userId)).toList();
-        return new PageCertResDTO(certs, slice.getSize(), slice.getNumber(), slice.isLast(), getCorrectCertCountByUserId(userId));
+        User user = userService.getUserById(userId);
+        return new PageCertResDTO(certs, slice.getSize(), slice.getNumber(), slice.isLast(), getCorrectCertCountByUserId(userId),user.getViewCount());
     }
 
     /**
