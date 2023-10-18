@@ -12,12 +12,10 @@ import java.util.Map;
         리액션 유형:
         * `HELPER` - 도움돼요
         * `CUTE` - 귀여워요
-        * `LIKE` - 좋아요
         """)
 public enum ReactionCode {
     HELPER("HELPER", "도움돼요"),
-    CUTE("CUTE", "귀여워요"),
-    LIKE("LIKE", "귀여워요");
+    CUTE("CUTE", "귀여워요");
 
     private final String code;
     private final String desc;
