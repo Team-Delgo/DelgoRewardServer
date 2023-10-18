@@ -1,30 +1,41 @@
 package com.delgo.reward.service.strategy;
 
+import com.delgo.reward.dto.mungple.MungpleCountDTO;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
-import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+@Slf4j
 public class BookmarkCountSorting implements MungpleSortingStrategy {
     private final List<MongoMungple> mungpleList;
-    private final  Map<Integer,Integer> sortedMungpleId;
+    private final  List<MungpleCountDTO> countByBookmark;
 
-    public BookmarkCountSorting(List<MongoMungple> mungpleList, Map<Integer,Integer> sortedMungpleId){
+    public BookmarkCountSorting(List<MongoMungple> mungpleList, List<MungpleCountDTO> countByBookmark){
         this.mungpleList = mungpleList;
-        this.sortedMungpleId = sortedMungpleId;
+        this.countByBookmark = countByBookmark;
     }
 
     @Override
     public List<MongoMungple> sort() {
-        mungpleList.sort((m1, m2) -> {
-            int index1 = sortedMungpleId.getOrDefault(m1.getMungpleId(), -1);
-            int index2 = sortedMungpleId.getOrDefault(m2.getMungpleId(), -1);
+        Map<Integer, MongoMungple> mungpleMap = mungpleList.stream()
+                .collect(Collectors.toMap(
+                        MongoMungple::getMungpleId, // 키로 사용할 함수
+                        Function.identity()        // 값으로 사용할 함수
+                ));
 
-            if (index1 == index2) return 0; // 둘 다 없을 때 (-1 == -1)
-            if (index1 == -1) return 1;     // m1이 없을 때
-            if (index2 == -1) return -1;    // m2가 없을 때
-
-            return Integer.compare(index1, index2);
-        });
-
-        return mungpleList;
+        return Stream.concat(
+                        countByBookmark.stream()
+                                .map(MungpleCountDTO::getMungpleId)
+                                .map(mungpleMap::get), // 해당 부분에서 Null 생성될 수 있음.
+                        mungpleList.stream())
+                .filter(Objects::nonNull) // null 값 제거 // isActive = false인 멍플의 인증이 존재할 경우 NullException 발생
+                .distinct()
+                .toList();
     }
 }

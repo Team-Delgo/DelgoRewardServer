@@ -133,8 +133,8 @@ public class MongoMungpleService {
         // 조건에 맞게 정렬
         MungpleSortingStrategy sortingStrategy = switch (sort) {
             case DISTANCE -> new DistanceSorting(mungpleList, latitude, longitude);
-            case BOOKMARK -> new BookmarkCountSorting(mungpleList, countByBookmark.stream().map(MungpleCountDTO::getMungpleId).collect(Collectors.toMap(Function.identity(), Function.identity())));
-            case CERT -> new CertCountSorting(mungpleList, countByCert.stream().map(MungpleCountDTO::getMungpleId).collect(Collectors.toMap(Function.identity(), Function.identity())));
+            case BOOKMARK -> new BookmarkCountSorting(mungpleList, countByBookmark);
+            case CERT -> new CertCountSorting(mungpleList, countByCert);
             case NOT -> new NotSorting(mungpleList);
             default -> throw new IllegalArgumentException("Unknown sorting type: " + sort);
         };
@@ -179,7 +179,7 @@ public class MongoMungpleService {
     }
 
 
-    private List<MungpleResDTO> convertToMungpleResDTOs(List<MongoMungple> mungples) {
+    public List<MungpleResDTO> convertToMungpleResDTOs(List<MongoMungple> mungples) {
         Map<Integer, MungpleCountDTO> bookmarkCountsMap = bookmarkRepository.countBookmarksGroupedByMungpleId().stream().collect(Collectors.toMap(MungpleCountDTO::getMungpleId, Function.identity()));
         Map<Integer, MungpleCountDTO> certCountsMap = certRepository.countCertsGroupedByMungpleId().stream().collect(Collectors.toMap(MungpleCountDTO::getMungpleId, Function.identity()));
 
