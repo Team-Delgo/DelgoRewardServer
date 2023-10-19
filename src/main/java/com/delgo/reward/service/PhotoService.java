@@ -78,23 +78,24 @@ public class PhotoService extends CommService {
 
         for (MultipartFile photo : photos) {
             String fileName = certificationId + "_cert_" + i++ + "." + getExtension(photo);
-            String url = switch (profiles) {
-                case "real" -> "https://www.reward.delgo.pet/images/" + fileName;
-                case "qa" -> "https://www.qa.delgo.pet/images/" + fileName;
-                default -> "https://www.test.delgo.pet/images/" + fileName;
-            };
-
             try {
                 File file = new File(DIR + fileName);
                 photo.transferTo(file); // 서버에 저장
 
                 // 파일 권한 변경
-                Path filePath = file.toPath();
-                Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(filePath);
-                permissions.add(PosixFilePermission.OTHERS_READ);
+                if (!profiles.equals("local")) {
+                    Path filePath = file.toPath();
+                    Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(filePath);
+                    permissions.add(PosixFilePermission.OTHERS_READ);
 
-                Files.setPosixFilePermissions(filePath, permissions);
-
+                    Files.setPosixFilePermissions(filePath, permissions);
+                }
+                String url = switch (profiles) {
+                    case "real" -> "https://www.reward.delgo.pet/images/" + fileName;
+                    case "qa" -> "https://www.qa.delgo.pet/images/" + fileName;
+                    case "dev" -> "https://www.test.delgo.pet/images/" + fileName;
+                    default -> DIR + fileName;
+                };
                 urls.add(url);
             } catch (Exception e) {
                 e.printStackTrace();
