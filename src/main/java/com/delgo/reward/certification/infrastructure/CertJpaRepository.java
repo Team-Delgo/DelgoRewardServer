@@ -1,7 +1,7 @@
-package com.delgo.reward.repository.certification;
+package com.delgo.reward.certification.infrastructure;
 
 
-import com.delgo.reward.domain.certification.Certification;
+import com.delgo.reward.certification.domain.Certification;
 import com.delgo.reward.dto.mungple.MungpleCountDTO;
 import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
 import org.springframework.data.domain.Pageable;

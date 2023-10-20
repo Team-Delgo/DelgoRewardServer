@@ -1,11 +1,12 @@
-package com.delgo.reward.repository.certification;
+package com.delgo.reward.certification.infrastructure;
 
-import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.dto.comm.PageResDTO;
+import com.delgo.reward.certification.domain.CertCondition;
+import com.delgo.reward.certification.domain.Certification;
+import com.delgo.reward.certification.service.port.CertRepository;
+import com.delgo.reward.dto.comm.Page;
 import com.delgo.reward.dto.mungple.MungpleCountDTO;
 import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
@@ -19,9 +20,9 @@ public class CertRepositoryImpl implements CertRepository {
     private final CertJpaRepository certJpaRepository;
 
     @Override
-    public PageResDTO<Certification> findListByCondition(CertCondition certCondition) {
-        Page<Certification> page = certJpaRepository.findListByCondition(certCondition);
-        return PageResDTO.<Certification>builder()
+    public Page<Certification> findListByCondition(CertCondition certCondition) {
+        org.springframework.data.domain.Page<Certification> page = certJpaRepository.findListByCondition(certCondition);
+        return Page.<Certification>builder()
                 .number(page.getNumber())
                 .size(page.getSize())
                 .last(page.isLast())

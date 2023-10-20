@@ -1,7 +1,7 @@
 package com.delgo.reward.mongoDomain;
 
-import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.dto.cert.CertResDTO;
+import com.delgo.reward.certification.domain.Certification;
+import com.delgo.reward.certification.controller.res.CertResponse;
 import com.delgo.reward.dto.user.UserResDTO;
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -23,7 +23,7 @@ public class Classification {
     @Field("user")
     private UserResDTO user;
     @Field("certification")
-    private CertResDTO certification;
+    private CertResponse certification;
     @Field("category")
     private Map<String, String> category;
     @Field("address_sido")
@@ -38,7 +38,7 @@ public class Classification {
     public Classification toEntity(Certification certification, Map<String, String> category, String SIDO, String SIGUGUN, String DONG){
         return Classification.builder()
                 .user(new UserResDTO(certification.getUser()))
-                .certification(new CertResDTO(certification))
+                .certification(new CertResponse(certification))
                 .category(category)
                 .sido(SIDO)
                 .sigugun(SIGUGUN)

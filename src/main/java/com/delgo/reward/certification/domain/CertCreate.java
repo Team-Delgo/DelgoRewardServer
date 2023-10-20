@@ -1,7 +1,6 @@
-package com.delgo.reward.record.certification;
+package com.delgo.reward.certification.domain;
 
 import com.delgo.reward.comm.code.CategoryCode;
-import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
@@ -11,7 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 
-public record CertRecord(
+public record CertCreate(
         @Schema(description = "유저 고유 아이디")
         @NotNull
         Integer userId,

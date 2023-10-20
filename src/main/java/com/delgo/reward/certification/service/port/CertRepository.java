@@ -1,7 +1,8 @@
-package com.delgo.reward.repository.certification;
+package com.delgo.reward.certification.service.port;
 
-import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.dto.comm.PageResDTO;
+import com.delgo.reward.certification.domain.CertCondition;
+import com.delgo.reward.certification.domain.Certification;
+import com.delgo.reward.dto.comm.Page;
 import com.delgo.reward.dto.mungple.MungpleCountDTO;
 import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
 import org.springframework.data.domain.Pageable;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CertRepository {
-    PageResDTO<Certification> findListByCondition(CertCondition certCondition);
+    Page<Certification> findListByCondition(CertCondition certCondition);
 
     //-----------------------------------------------------------
 

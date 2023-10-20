@@ -1,4 +1,4 @@
-package com.delgo.reward.repository.certification;
+package com.delgo.reward.certification.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

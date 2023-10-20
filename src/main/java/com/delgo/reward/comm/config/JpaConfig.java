@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @Configuration
 @EnableJpaAuditing
-@EnableJpaRepositories(basePackages = "com.delgo.reward.repository")
+@EnableJpaRepositories(basePackages = "com.delgo.reward")
 @EnableMongoRepositories(basePackages = "com.delgo.reward.mongoRepository")
 public class JpaConfig {
 }

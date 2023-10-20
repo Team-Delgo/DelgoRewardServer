@@ -1,21 +1,25 @@
-package com.delgo.reward.service;
+package com.delgo.reward.certification.service;
 
 
+import com.delgo.reward.certification.service.port.CertRepository;
 import com.delgo.reward.comm.ncp.ReverseGeoService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.certification.CertPhoto;
-import com.delgo.reward.domain.certification.Certification;
+import com.delgo.reward.certification.domain.Certification;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.dto.comm.PageResDTO;
+import com.delgo.reward.dto.comm.Page;
 import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
+import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoService.MongoMungpleService;
-import com.delgo.reward.record.certification.CertRecord;
-import com.delgo.reward.record.certification.ModifyCertRecord;
+import com.delgo.reward.certification.domain.CertCreate;
+import com.delgo.reward.certification.domain.CertUpdate;
 import com.delgo.reward.repository.CertPhotoRepository;
-import com.delgo.reward.repository.certification.CertCondition;
-import com.delgo.reward.repository.certification.CertRepository;
+import com.delgo.reward.certification.domain.CertCondition;
+import com.delgo.reward.service.PhotoService;
+import com.delgo.reward.service.ReactionService;
+import com.delgo.reward.service.UserService;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,20 +55,32 @@ public class CertService {
      * 인증 생성
      * 일반 인증 - (위도,경도)로 NCP에서 주소 조회 필요
      */
-    public Certification create(CertRecord record, List<MultipartFile> photos) {
+    public Certification create(CertCreate record, List<MultipartFile> photos) {
+        // User 조회
         User user = userService.getUserById(record.userId());
-        Certification certification = certRepository.save(
-                (record.mungpleId() == 0)
-                        ? record.toEntity(reverseGeoService.getReverseGeoData(new Location(record.latitude(), record.longitude())), user)
-                        : record.toEntity(mongoMungpleService.getMungpleByMungpleId(record.mungpleId()),user));
 
+        Certification certification;
+        if(record.mungpleId() == 0) {
+            // 위도 , 경도로 주소 조회
+            Location location = reverseGeoService.getReverseGeoData(new Location(record.latitude(), record.longitude()));
+            certification = certRepository.save(record.toEntity(location, user));
+        } else {
+            // 멍플 조회
+            MongoMungple mungple = mongoMungpleService.getMungpleByMungpleId(record.mungpleId());
+            certification = certRepository.save(record.toEntity(mungple, user));
+        }
+
+        // 인증 사진 서버 업로드 및 URL 반환
         List<String> photoUrls = photoService.uploadCertPhotos(certification.getCertificationId(), photos);
+
+        // URL -> CertPhoto 변환
         List<CertPhoto> certPhotoList = photoUrls.stream().map(photoUrl -> CertPhoto.builder()
                 .certificationId(certification.getCertificationId())
                 .url(photoUrl)
                 .isCorrect(true)
                 .build()).toList();
 
+        // CertPhoto 저장
         certPhotoRepository.saveAll(certPhotoList);
         certification.setPhotos(certPhotoList);
 
@@ -82,7 +98,7 @@ public class CertService {
     /**
      *  List 조건 조회 - TODO: CertPhoto, Reaction 넣어 주는 작업 추가
      */
-    public PageResDTO<Certification> getListByCondition(CertCondition certCondition) {
+    public Page<Certification> getListByCondition(CertCondition certCondition) {
         return certRepository.findListByCondition(certCondition);
     }
 
@@ -90,7 +106,7 @@ public class CertService {
     /**
      * 인증 수정
      */
-    public Certification modifyCert(Certification certification, ModifyCertRecord record) {
+    public Certification modifyCert(Certification certification, CertUpdate record) {
         return certification.modify(record);
     }
 

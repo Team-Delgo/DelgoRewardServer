@@ -3,7 +3,7 @@ package com.delgo.reward;
 import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoRepository.MongoMungpleRepository;
-import com.delgo.reward.repository.certification.CertRepository;
+import com.delgo.reward.certification.service.port.CertRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

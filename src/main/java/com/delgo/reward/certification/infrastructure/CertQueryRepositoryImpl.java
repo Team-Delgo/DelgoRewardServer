@@ -1,6 +1,7 @@
-package com.delgo.reward.repository.certification;
+package com.delgo.reward.certification.infrastructure;
 
-import com.delgo.reward.domain.certification.Certification;
+import com.delgo.reward.certification.domain.CertCondition;
+import com.delgo.reward.certification.domain.Certification;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;

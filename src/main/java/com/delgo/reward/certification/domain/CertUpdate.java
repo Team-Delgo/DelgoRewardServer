@@ -1,4 +1,4 @@
-package com.delgo.reward.record.certification;
+package com.delgo.reward.certification.domain;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-public record ModifyCertRecord(
+public record CertUpdate(
         @Schema(description = "유저 고유 아이디")
         @NotNull Integer userId,
 

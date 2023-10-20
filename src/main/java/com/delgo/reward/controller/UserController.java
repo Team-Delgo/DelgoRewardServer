@@ -14,7 +14,7 @@ import com.delgo.reward.dto.user.UserResDTO;
 import com.delgo.reward.record.signup.OAuthSignUpRecord;
 import com.delgo.reward.record.signup.SignUpRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
-import com.delgo.reward.service.CertService;
+import com.delgo.reward.certification.service.CertService;
 import com.delgo.reward.service.SmsAuthService;
 import com.delgo.reward.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;

@@ -1,10 +1,10 @@
-package com.delgo.reward.dto.cert;
+package com.delgo.reward.certification.controller.res;
 
 
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.ReactionCode;
 import com.delgo.reward.domain.certification.CertPhoto;
-import com.delgo.reward.domain.certification.Certification;
+import com.delgo.reward.certification.domain.Certification;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -20,7 +20,7 @@ import java.util.Map;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class CertResDTO {
+public class CertResponse {
     @Schema(description = "인증 고유 번호")
     protected Integer certificationId;
     @Schema(description = "카테고리 코드", enumAsRef = true)
@@ -62,7 +62,7 @@ public class CertResDTO {
     @Schema(description = "등록 날짜")
     protected LocalDateTime registDt;
 
-    public CertResDTO(Certification certification, Integer ownerId) {
+    public CertResponse(Certification certification, Integer ownerId) {
         this(certification);
         isOwner = certification.getUser().getUserId() == ownerId;
 
@@ -79,7 +79,7 @@ public class CertResDTO {
         }
     }
 
-    public CertResDTO(Certification cert) {
+    public CertResponse(Certification cert) {
         certificationId = cert.getCertificationId();
         categoryCode = cert.getCategoryCode();
         mungpleId = cert.getMungpleId();

@@ -1,4 +1,4 @@
-package com.delgo.reward.controller;
+package com.delgo.reward.certification.controller;
 
 
 import com.delgo.reward.comm.CommController;
@@ -6,17 +6,16 @@ import com.delgo.reward.comm.async.CertAsyncService;
 import com.delgo.reward.comm.async.ClassificationAsyncService;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.code.ReactionCode;
-import com.delgo.reward.domain.certification.Certification;
+import com.delgo.reward.certification.domain.Certification;
 import com.delgo.reward.domain.certification.Reaction;
-import com.delgo.reward.dto.cert.CertResDTO;
-import com.delgo.reward.dto.comm.PageCertByMungpleResDTO;
-import com.delgo.reward.dto.comm.PageCertResDTO;
-import com.delgo.reward.dto.comm.PageResDTO;
+import com.delgo.reward.certification.controller.res.CertResponse;
+import com.delgo.reward.certification.controller.res.PageCertResponse;
+import com.delgo.reward.dto.comm.Page;
 import com.delgo.reward.mongoService.ClassificationService;
-import com.delgo.reward.record.certification.CertRecord;
-import com.delgo.reward.record.certification.ModifyCertRecord;
-import com.delgo.reward.repository.certification.CertCondition;
-import com.delgo.reward.service.CertService;
+import com.delgo.reward.certification.domain.CertCreate;
+import com.delgo.reward.certification.domain.CertUpdate;
+import com.delgo.reward.certification.domain.CertCondition;
+import com.delgo.reward.certification.service.CertService;
 import com.delgo.reward.service.ReactionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -58,15 +57,15 @@ public class CertController extends CommController {
      * @return PageCertResDTO
      */
     @Operation(summary = "인증 List 조회 [Paging]", description = "모든 isCorrect = true인 인증 조회")
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCertResDTO.class))})
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCertResponse.class))})
     @GetMapping("/all")
     public ResponseEntity getAllCert(@RequestParam Integer userId, @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        PageResDTO<Certification> page = certService.getListByCondition(CertCondition.builder()
+        Page<Certification> page = certService.getListByCondition(CertCondition.builder()
                         .isCorrect(true)
                         .pageable(pageable)
                         .build());
 
-        return SuccessReturn(new PageCertResDTO(page, userId));
+        return SuccessReturn(new PageCertResponse(page, userId));
     }
 
     /**
@@ -75,17 +74,17 @@ public class CertController extends CommController {
      * @return PageCertResDTO
      */
     @Operation(summary = "다른 사용자 작성 인증 조회 [Paging]", description = "다른 사용자가 작성한 인증 조회 [권한 필요 없음]")
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCertResDTO.class))})
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCertResponse.class))})
     @GetMapping("/other")
     public ResponseEntity getOtherCerts(@RequestParam Integer userId, @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        PageResDTO<Certification> page = certService.getListByCondition(
+        Page<Certification> page = certService.getListByCondition(
                 CertCondition.builder()
                         .userId(userId)
                         .isCorrect(true)
                         .pageable(pageable)
                         .build());
 
-        return SuccessReturn(new PageCertResDTO(page, userId));
+        return SuccessReturn(new PageCertResponse(page, userId));
     }
 
     /**
@@ -94,20 +93,20 @@ public class CertController extends CommController {
      * @return PageResDTO<CertByMungpleResDTO, Integer>
      */
     @Operation(summary = "[Mungple] 인증 조회 [Paging]", description ="mungpleId로 멍플 인증 조회 [권한 필요 없음]")
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCertByMungpleResDTO.class))})
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCertResponse.class))})
     @GetMapping("/mungple")
     public ResponseEntity getCertsByMungple(
             @RequestParam Integer userId,
             @RequestParam Integer mungpleId,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        PageResDTO<Certification> page = certService.getListByCondition(
+        Page<Certification> page = certService.getListByCondition(
                 CertCondition.builder()
                         .mungpleId(mungpleId)
                         .isCorrect(true)
                         .pageable(pageable)
                         .build());
 
-        return SuccessReturn(new PageCertResDTO(page, userId));
+        return SuccessReturn(new PageCertResponse(page, userId));
     }
 
     /**
@@ -116,12 +115,12 @@ public class CertController extends CommController {
      * @return List<CertResDTO>
      */
     @Operation(summary = "[certId] 인증 조회", description ="고유 ID로 인증 데이터 조회  \n  단 건이지만 Front 요청으로 LIST로 반환")
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CertResDTO.class)))})
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CertResponse.class)))})
     @GetMapping("/id")
     public ResponseEntity getCertsByCertId(@RequestParam Integer userId, @RequestParam Integer certificationId) {
         Certification certification = certService.getById(certificationId);
 
-        return SuccessReturn(Collections.singletonList(new CertResDTO(certification, userId)));
+        return SuccessReturn(Collections.singletonList(new CertResponse(certification, userId)));
     }
 
     // ---------------------------------권한 필요--------------------------------------------
@@ -132,9 +131,9 @@ public class CertController extends CommController {
      * @return CertByAchvResDTO
      */
     @Operation(summary = "인증 생성", description ="인증 생성")
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = CertResDTO.class))})
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = CertResponse.class))})
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<?> createCert(@Validated @RequestPart(value = "data") CertRecord record, @RequestPart(required = false) List<MultipartFile> photos) throws JsonProcessingException {
+    public ResponseEntity<?> createCert(@Validated @RequestPart(value = "data") CertCreate record, @RequestPart(required = false) List<MultipartFile> photos) throws JsonProcessingException {
         if (photos.isEmpty()) ErrorReturn(APICode.PARAM_ERROR);
 
         Certification cert = certService.create(record, photos);
@@ -143,7 +142,7 @@ public class CertController extends CommController {
         certAsyncService.doSomething(cert.getCertificationId());
         classificationAsyncService.doClassification(cert.getCertificationId());
 
-        return SuccessReturn(new CertResDTO(cert, record.userId()));
+        return SuccessReturn(new CertResponse(cert, record.userId()));
     }
 
     /**
@@ -152,16 +151,16 @@ public class CertController extends CommController {
      * @return List<CertResDTO>
      */
     @Operation(summary = "[Date] 인증 조회", description ="특정 날짜에 인증한 모든 인증글 조회 [캘린더] \n  ex) 2023.07.10에 등록한 인증")
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CertResDTO.class)))})
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CertResponse.class)))})
     @GetMapping("/date")
     public ResponseEntity getCertsByDate(@RequestParam Integer userId, @RequestParam String date) {
-        PageResDTO<Certification> page = certService.getListByCondition(CertCondition.builder()
+        Page<Certification> page = certService.getListByCondition(CertCondition.builder()
                 .userId(userId)
                 .date(LocalDate.parse(date))
                 .pageable(Pageable.unpaged())
                 .build());
 
-        return SuccessReturn(page.getContent().stream().map(c -> new CertResDTO(c, userId)).toList());
+        return SuccessReturn(page.getContent().stream().map(c -> new CertResponse(c, userId)).toList());
     }
 
     /**
@@ -170,19 +169,19 @@ public class CertController extends CommController {
      * @return PageResDTO<CertResDTO, Integer>
      */
     @Operation(summary = "[My] 내가 작성한 인증 조회 [paging]", description = "내가 작성한 모든 인증글 조회 [ \n isCorrect = false 여도 조회.")
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCertResDTO.class))})
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCertResponse.class))})
     @GetMapping("/my")
     public ResponseEntity getMyCerts(
             @RequestParam Integer userId,
             @RequestParam(required = false) boolean unPaged,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        PageResDTO<Certification> page = certService.getListByCondition(
+        Page<Certification> page = certService.getListByCondition(
                 CertCondition.builder()
                         .userId(userId)
                         .pageable(unPaged? Pageable.unpaged() :pageable)
                         .build());
 
-        return SuccessReturn(new PageCertResDTO(page, userId));
+        return SuccessReturn(new PageCertResponse(page, userId));
     }
 
 
@@ -192,9 +191,9 @@ public class CertController extends CommController {
      * @return CertResDTO
      */
     @Operation(summary = "인증 수정", description = "인증 수정 - 내용, 주소 숨김 여부만 수정 가능")
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = CertResDTO.class))})
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = CertResponse.class))})
     @PutMapping
-    public ResponseEntity modifyCert(@Validated @RequestBody ModifyCertRecord record) {
+    public ResponseEntity modifyCert(@Validated @RequestBody CertUpdate record) {
         Certification certification = certService.getById(record.certificationId());
         if (record.userId() != certification.getUser().getUserId())
             return ErrorReturn(APICode.INVALID_USER_ERROR);
@@ -205,7 +204,7 @@ public class CertController extends CommController {
 
         // 비동기적 실행
         classificationAsyncService.doClassification(updatedCertification.getCertificationId());
-        return SuccessReturn(new CertResDTO(updatedCertification));
+        return SuccessReturn(new CertResponse(updatedCertification));
     }
 
     /**
@@ -242,18 +241,18 @@ public class CertController extends CommController {
      * @return List<CertResDTO>
      */
     @Operation(summary = "[Recent] 인증 조회", description = "param count 만큼 최근 인증 조회")
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CertResDTO.class)))})
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CertResponse.class)))})
     @GetMapping("/recent")
     public ResponseEntity getRecentCerts(@RequestParam Integer userId, @RequestParam Integer count) {
         PageRequest pageable = PageRequest.of(0, count, Sort.by(Sort.Direction.DESC, "registDt"));
-        PageResDTO<Certification> page = certService.getListByCondition(
+        Page<Certification> page = certService.getListByCondition(
                 CertCondition.builder()
                         .isCorrect(true)
                         .pageable(pageable)
                         .build());
 
         return SuccessReturn(page.getContent().stream()
-                .map(cert -> new CertResDTO(cert, userId))
+                .map(cert -> new CertResponse(cert, userId))
                 .toList());
     }
 }

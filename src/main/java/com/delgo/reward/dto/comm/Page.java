@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @ToString
 @AllArgsConstructor
-public class PageResDTO<T> {
+public class Page<T> {
     @Schema(description = "한 페이지에 보여줄 개수")
     private int size;
     @Schema(description = "현재 페이지 번호")
@@ -24,7 +24,7 @@ public class PageResDTO<T> {
     @Schema(description = "데이터 리스트")
     private List<T> content;
 
-    public PageResDTO(List<T> data, int size, int number, boolean last) {
+    public Page(List<T> data, int size, int number, boolean last) {
         this.content = data;
         this.size = size;
         this.number = number;
@@ -32,7 +32,7 @@ public class PageResDTO<T> {
     }
 
     // [/certification/my] , [certification/other] 의 경우 totalCount가 필요함.
-    public PageResDTO(List<T> data, int size, int number, boolean last, long totalCount) {
+    public Page(List<T> data, int size, int number, boolean last, long totalCount) {
         this.content = data;
         this.size = size;
         this.number = number;

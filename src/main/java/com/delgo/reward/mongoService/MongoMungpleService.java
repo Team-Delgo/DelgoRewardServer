@@ -19,7 +19,7 @@ import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoRepository.MongoMungpleRepository;
 import com.delgo.reward.repository.BookmarkRepository;
 import com.delgo.reward.service.strategy.*;
-import com.delgo.reward.repository.certification.CertRepository;
+import com.delgo.reward.certification.service.port.CertRepository;
 import com.delgo.reward.service.BookmarkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

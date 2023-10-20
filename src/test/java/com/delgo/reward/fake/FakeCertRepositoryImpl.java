@@ -1,12 +1,11 @@
 package com.delgo.reward.fake;
 
-import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.dto.comm.PageResDTO;
+import com.delgo.reward.certification.domain.Certification;
+import com.delgo.reward.dto.comm.Page;
 import com.delgo.reward.dto.mungple.MungpleCountDTO;
 import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
-import com.delgo.reward.repository.certification.CertCondition;
-import com.delgo.reward.repository.certification.CertRepository;
-import org.springframework.data.domain.Page;
+import com.delgo.reward.certification.domain.CertCondition;
+import com.delgo.reward.certification.service.port.CertRepository;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
@@ -26,7 +25,7 @@ public class FakeCertRepositoryImpl implements CertRepository {
     }
 
     @Override
-    public PageResDTO<Certification> findListByCondition(CertCondition certCondition) {
+    public Page<Certification> findListByCondition(CertCondition certCondition) {
         System.out.println("certCondition = " + certCondition);
         Stream<Certification> stream = certList.stream()
                 .filter(cert -> certCondition.getUserId() == 0 || certCondition.getUserId() == cert.getUser().getUserId())
@@ -36,7 +35,7 @@ public class FakeCertRepositoryImpl implements CertRepository {
 //                .sorted(Comparator.comparing(Certification::getRegistDt).reversed()); TODO 해결해야 함.
 
         List<Certification> filteredList = stream.collect(Collectors.toList());
-        Page<Certification> page;
+        org.springframework.data.domain.Page<Certification> page;
         if (certCondition.getPageable().isPaged()) {
             int start = (int) certCondition.getPageable().getOffset();
             int end = Math.min((start + certCondition.getPageable().getPageSize()), filteredList.size());
@@ -47,7 +46,7 @@ public class FakeCertRepositoryImpl implements CertRepository {
             page = new PageImpl<>(filteredList, certCondition.getPageable(), filteredList.size());
         }
 
-        return PageResDTO.<Certification>builder()
+        return Page.<Certification>builder()
                 .number(page.getNumber())
                 .size(page.getSize())
                 .last(page.isLast())

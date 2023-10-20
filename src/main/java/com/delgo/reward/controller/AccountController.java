@@ -7,7 +7,7 @@ import com.delgo.reward.dto.user.UserResDTO;
 import com.delgo.reward.record.user.ModifyPetRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
-import com.delgo.reward.service.CertService;
+import com.delgo.reward.certification.service.CertService;
 import com.delgo.reward.service.PetService;
 import com.delgo.reward.service.UserService;
 import io.swagger.v3.oas.annotations.Hidden;
