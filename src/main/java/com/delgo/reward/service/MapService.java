@@ -5,11 +5,13 @@ import com.delgo.reward.comm.code.GeoCode;
 import com.delgo.reward.comm.code.PGeoCode;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.dto.cert.CertByMungpleResDTO;
+import com.delgo.reward.dto.comm.PageResDTO;
 import com.delgo.reward.dto.map.OtherMapDTO;
 import com.delgo.reward.dto.mungple.MungpleResDTO;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoRepository.MongoMungpleRepository;
-import com.delgo.reward.repository.CertRepository;
+import com.delgo.reward.repository.certification.CertCondition;
+import com.delgo.reward.repository.certification.CertRepository;
 import com.google.api.client.util.ArrayMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +38,12 @@ public class MapService {
     private final MongoMungpleRepository mongoMungpleRepository;
 
     public Map<String, Object> getMap(int userId) {
-        List<CertByMungpleResDTO> certs = certService.getListByUserId(userId, Pageable.unpaged()).stream().map(c -> new CertByMungpleResDTO(c,userId)).toList();  // 인증 리스트 조회
+        CertCondition condition = CertCondition.builder()
+                .userId(userId)
+                .pageable(Pageable.unpaged())
+                .build();
+        List<CertByMungpleResDTO> certs = certService.getListByCondition(condition).getContent()
+                .stream().map(c -> new CertByMungpleResDTO(c,userId)).toList();  // 인증 리스트 조회
 
         List<MongoMungple > mungples = mongoMungpleRepository.findByIsActive(true);
         List<MungpleResDTO > mungpleResDTOS = mungples.stream().map(MungpleResDTO::new).toList();
@@ -48,11 +55,16 @@ public class MapService {
     }
 
     public OtherMapDTO getOtherMap(int userId) {
+        CertCondition condition = CertCondition.builder()
+                .userId(userId)
+                .isCorrect(true)
+                .pageable(Pageable.unpaged())
+                .build();
+        PageResDTO<Certification> page = certService.getListByCondition(condition);
         return new OtherMapDTO(
                 userService.getUserById(userId),
-                certService.getCorrectListByUserId(userId, Pageable.unpaged()).stream().map(c -> new CertByMungpleResDTO(c,userId)).toList(),  // 인증 리스트 조회
-                certService.getCorrectCountByUserId(userId)
-        );
+                page.getContent().stream().map(c -> new CertByMungpleResDTO(c,userId)).toList(),  // 인증 리스트 조회
+                page.getTotalCount());
     }
 
     /**

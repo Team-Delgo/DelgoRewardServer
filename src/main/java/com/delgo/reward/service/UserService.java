@@ -19,6 +19,7 @@ import com.delgo.reward.record.signup.OAuthSignUpRecord;
 import com.delgo.reward.record.signup.SignUpRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
 import com.delgo.reward.repository.*;
+import com.delgo.reward.repository.certification.CertRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -141,7 +142,7 @@ public class UserService {
         if (user.getUserSocial().equals(UserSocial.K))
             kakaoService.logout(user.getKakaoId()); // kakao 로그아웃 , Naver는 로그아웃 지원 X
 
-        certRepository.deleteAllByUserUserId(userId);
+        certRepository.deleteByUserId(userId);
         likeListRepository.deleteByUserId(userId); // USER가 좋아요 누른 DATA 삭제
         categoryCountRepository.deleteByUserId(userId);
 

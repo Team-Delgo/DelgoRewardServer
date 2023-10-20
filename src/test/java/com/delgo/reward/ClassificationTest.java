@@ -8,6 +8,7 @@ import com.delgo.reward.mongoRepository.ClassificationRepository;
 import com.delgo.reward.mongoService.ClassificationService;
 import com.delgo.reward.repository.CategoryCountRepository;
 import com.delgo.reward.repository.UserRepository;
+import com.delgo.reward.repository.certification.CertCondition;
 import com.delgo.reward.service.CertService;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -18,6 +19,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.StopWatch;
 
@@ -144,7 +146,11 @@ public class ClassificationTest {
             classificationCriteriaMap.put(categoryCode, (List<String>) jsonObject.get("classification"));
         }
 
-        List<Certification> certificationList = certService.getListByDate(LocalDate.of(2023, 2, 14));
+        CertCondition condition = CertCondition.builder()
+                .date(LocalDate.of(2023, 2, 14))
+                .pageable(Pageable.unpaged())
+                .build();
+        List<Certification> certificationList = certService.getListByCondition(condition).getContent();
 
         for (Certification certification : certificationList) {
             Classification classification = classificationRepository.save(classificationService.classificationCert(certification, categoryCodeList, categoryMap, classificationCriteriaMap));

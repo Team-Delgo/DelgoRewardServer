@@ -8,27 +8,29 @@ import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.domain.user.User;
+import com.delgo.reward.dto.comm.PageResDTO;
 import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
 import com.delgo.reward.repository.CertPhotoRepository;
-import com.delgo.reward.repository.CertRepository;
+import com.delgo.reward.repository.certification.CertCondition;
+import com.delgo.reward.repository.certification.CertRepository;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
 import java.util.List;
 
 
 @Slf4j
 @Service
+@Builder
 @Transactional
 @RequiredArgsConstructor
 public class CertService {
@@ -36,9 +38,9 @@ public class CertService {
     // Service
     private final UserService userService;
     private final PhotoService photoService;
-    private final MongoMungpleService mongoMungpleService;
     private final ReactionService reactionService;
     private final ReverseGeoService reverseGeoService;
+    private final MongoMungpleService mongoMungpleService;
     private final ObjectStorageService objectStorageService;
 
     // Repository
@@ -78,95 +80,12 @@ public class CertService {
     }
 
     /**
-     * [date, userId] List 조회
+     *  List 조건 조회 - TODO: CertPhoto, Reaction 넣어 주는 작업 추가
      */
-    public List<Certification> getListByDate(int userId, LocalDate date) {
-        return certRepository.findListByDateAndUserId(userId, date.atStartOfDay(), date.atTime(23, 59, 59));
+    public PageResDTO<Certification> getListByCondition(CertCondition certCondition) {
+        return certRepository.findListByCondition(certCondition);
     }
 
-    /**
-     * [date] List 조회 - ClassificationCategory 사용
-     */
-    public List<Certification> getListByDate(LocalDate localDate){
-        return certRepository.findListByDate(localDate.minusDays(1).atStartOfDay(), localDate.atStartOfDay());
-    }
-    
-    /**
-     * [ids] 인증 조회
-     */
-    public List<Certification> getListByIds(List<Integer> ids){
-        return certRepository.findListByIds(ids);
-    }
-
-    /**
-     * List 조회 - Paging
-     * 1. Paging CertIds 조회
-     * 2. CertId로 (EntityGraph) 실제 객체 조회. ( [ids] 인증 조회 )
-     * - Paging, EntityGraph 같이 사용시 메모리 과부하
-     */
-    public List<Certification> getCorrectListByPaging(Pageable pageable) {
-        Slice<Integer> slice = certRepository.findCorrectIds(pageable);
-        return getListByIds(slice.getContent());
-    }
-
-    /**
-     * Slice 조회 - Paging
-    */
-    public Slice<Integer> getCorrectSliceByPaging(Pageable pageable){
-        return certRepository.findCorrectIds(pageable);
-    }
-
-    /**
-     * [MungpleId] List 조회 - Paging
-     */
-    public List<Certification> getCorrectListByMungpleId(int mungpleId, Pageable pageable) {
-        Slice<Integer> slice = certRepository.findCorrectIdsByMungpleId(mungpleId, pageable);
-        return getListByIds(slice.getContent());
-    }
-
-    /**
-     * [MungpleId] Slice 조회
-     */
-    public Slice<Integer> getSliceByMungpleId(int mungpleId, Pageable pageable) {
-        return certRepository.findCorrectIdsByMungpleId(mungpleId, pageable);
-    }
-
-    /**
-     * [userId] List 조회 - Paging
-     */
-    public List<Certification> getListByUserId(int userId, Pageable pageable) {
-        Slice<Integer> slice = certRepository.findIdsByUserId(userId, pageable);
-        return getListByIds(slice.getContent());
-    }
-
-    /**
-     * [userId] Slice 조회 - Paging
-     */
-    public Slice<Integer> getSliceByUserId(int userId, Pageable pageable) {
-        return certRepository.findIdsByUserId(userId, pageable);
-    }
-
-    /**
-     * [userId] Correct List 조회 - Paging
-     */
-    public List<Certification> getCorrectListByUserId(int userId, Pageable pageable) {
-        Slice<Integer> slice = certRepository.findCorrectIdsByUserId(userId, pageable);
-        return getListByIds(slice.getContent());
-    }
-
-    /**
-     * [userId] Correct Slice 조회 - Paging
-     */
-    public Slice<Integer> getCorrectSliceByUserId(int userId, Pageable pageable) {
-        return certRepository.findCorrectIdsByUserId(userId, pageable);
-    }
-
-    /**
-     * [userId] Correct Count 조회
-     */
-    public int getCorrectCountByUserId(int userId) {
-        return certRepository.countOfCorrectByUserId(userId);
-    }
 
     /**
      * 인증 수정

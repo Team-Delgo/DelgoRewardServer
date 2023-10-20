@@ -1,13 +1,9 @@
 package com.delgo.reward;
 
-import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.dto.mungple.MungpleResDTO;
 import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoRepository.MongoMungpleRepository;
-import com.delgo.reward.mongoService.MongoMungpleService;
-import com.delgo.reward.repository.CertRepository;
-import com.delgo.reward.service.CertService;
+import com.delgo.reward.repository.certification.CertRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -60,8 +54,8 @@ public class Top3MungpleTest {
         for(UserVisitMungpleCountDTO userVisitMungpleCountDTO: userVisitMungpleCountDTOList){
             System.out.println("[mungpleId]: " + userVisitMungpleCountDTO.getMungpleId());
             System.out.println("[visitCount]: " + userVisitMungpleCountDTO.getVisitCount());
-            System.out.println("[mungplePlaceName]: " + userVisitMungpleCountDTO.getMungplePlaceName());
-            System.out.println("[mungplePhotoUrl]: " + userVisitMungpleCountDTO.getMungplePhotoUrl());
+            System.out.println("[mungplePlaceName]: " + userVisitMungpleCountDTO.getPlaceName());
+            System.out.println("[mungplePhotoUrl]: " + userVisitMungpleCountDTO.getPhotoUrl());
         }
 
     }

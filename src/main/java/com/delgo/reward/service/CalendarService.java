@@ -3,6 +3,7 @@ package com.delgo.reward.service;
 
 import com.delgo.reward.dto.cert.CertByAchvResDTO;
 import com.delgo.reward.record.calendar.CalendarRecord;
+import com.delgo.reward.repository.certification.CertCondition;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +24,11 @@ public class CalendarService {
     private final CertService certService;
 
     public List<CalendarRecord> getCalendar(int userId) {
-        List<CertByAchvResDTO> certifications = certService.getListByUserId(userId, Pageable.unpaged()).stream().map(c -> new CertByAchvResDTO(c, userId)).toList();
+        CertCondition condition = CertCondition.builder()
+                .userId(userId)
+                .pageable(Pageable.unpaged())
+                .build();
+        List<CertByAchvResDTO> certifications = certService.getListByCondition(condition).getContent().stream().map(c -> new CertByAchvResDTO(c, userId)).toList();
 
         return certifications.stream()
                 .sorted(Comparator.comparing(CertByAchvResDTO::getRegistDt)) // 등록 순으로 정렬

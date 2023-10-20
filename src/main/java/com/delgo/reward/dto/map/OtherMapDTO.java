@@ -19,10 +19,10 @@ public class OtherMapDTO {
     private int viewCount;
 
     List<CertByMungpleResDTO> certs;
-    int totalCount;
+    long totalCount;
 
 
-    public OtherMapDTO(User user, List<CertByMungpleResDTO> certs, int totalCount){
+    public OtherMapDTO(User user, List<CertByMungpleResDTO> certs, long totalCount){
         userId = user.getUserId();
         nickname = user.getName();
         viewCount = user.getViewCount();

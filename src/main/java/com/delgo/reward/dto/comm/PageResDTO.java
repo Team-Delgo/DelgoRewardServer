@@ -2,12 +2,14 @@ package com.delgo.reward.dto.comm;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
 import java.util.List;
 
 @Getter
+@Builder
 @ToString
 @AllArgsConstructor
 public class PageResDTO<T> {
@@ -18,7 +20,7 @@ public class PageResDTO<T> {
     @Schema(description = "마지막 페이지인지 여부")
     private boolean last;
     @Schema(description = "전체 개수")
-    private int totalCount;
+    private long totalCount;
     @Schema(description = "데이터 리스트")
     private List<T> content;
 
@@ -30,7 +32,7 @@ public class PageResDTO<T> {
     }
 
     // [/certification/my] , [certification/other] 의 경우 totalCount가 필요함.
-    public PageResDTO(List<T> data, int size, int number, boolean last, int totalCount) {
+    public PageResDTO(List<T> data, int size, int number, boolean last, long totalCount) {
         this.content = data;
         this.size = size;
         this.number = number;

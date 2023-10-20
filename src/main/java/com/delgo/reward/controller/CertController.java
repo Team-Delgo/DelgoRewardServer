@@ -11,9 +11,11 @@ import com.delgo.reward.domain.certification.Reaction;
 import com.delgo.reward.dto.cert.CertResDTO;
 import com.delgo.reward.dto.comm.PageCertByMungpleResDTO;
 import com.delgo.reward.dto.comm.PageCertResDTO;
+import com.delgo.reward.dto.comm.PageResDTO;
 import com.delgo.reward.mongoService.ClassificationService;
 import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
+import com.delgo.reward.repository.certification.CertCondition;
 import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.ReactionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,7 +28,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
@@ -60,13 +61,12 @@ public class CertController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCertResDTO.class))})
     @GetMapping("/all")
     public ResponseEntity getAllCert(@RequestParam Integer userId, @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        Slice<Integer> slice = certService.getCorrectSliceByPaging(pageable); // certIds
-        List<Certification> certList = certService.getCorrectListByPaging(pageable);
-        List<CertResDTO> resDTOList = certList.stream()
-                .map(cert -> new CertResDTO(cert, userId))
-                .toList();
+        PageResDTO<Certification> page = certService.getListByCondition(CertCondition.builder()
+                        .isCorrect(true)
+                        .pageable(pageable)
+                        .build());
 
-        return SuccessReturn(new PageCertResDTO(resDTOList, slice.getSize(), slice.getNumber(), slice.isLast()));
+        return SuccessReturn(new PageCertResDTO(page, userId));
     }
 
     /**
@@ -78,13 +78,14 @@ public class CertController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCertResDTO.class))})
     @GetMapping("/other")
     public ResponseEntity getOtherCerts(@RequestParam Integer userId, @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        Slice<Integer> slice = certService.getCorrectSliceByUserId(userId, pageable);
-        List<Certification> certList = certService.getCorrectListByUserId(userId, pageable);
-        List<CertResDTO> resDTOList = certList.stream()
-                .map(cert -> new CertResDTO(cert, userId))
-                .toList();
+        PageResDTO<Certification> page = certService.getListByCondition(
+                CertCondition.builder()
+                        .userId(userId)
+                        .isCorrect(true)
+                        .pageable(pageable)
+                        .build());
 
-        return SuccessReturn(new PageCertResDTO(resDTOList, slice.getSize(), slice.getNumber(), slice.isLast()));
+        return SuccessReturn(new PageCertResDTO(page, userId));
     }
 
     /**
@@ -99,11 +100,14 @@ public class CertController extends CommController {
             @RequestParam Integer userId,
             @RequestParam Integer mungpleId,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        Slice<Integer> slice = certService.getSliceByMungpleId(mungpleId, pageable);
-        List<Certification> certList = certService.getCorrectListByMungpleId(mungpleId, pageable);
-        List<CertResDTO> resDTOList = certList.stream().map(cert -> new CertResDTO(cert, userId)).toList();
+        PageResDTO<Certification> page = certService.getListByCondition(
+                CertCondition.builder()
+                        .mungpleId(mungpleId)
+                        .isCorrect(true)
+                        .pageable(pageable)
+                        .build());
 
-        return SuccessReturn(new PageCertResDTO(resDTOList, slice.getSize(), slice.getNumber(), slice.isLast()));
+        return SuccessReturn(new PageCertResDTO(page, userId));
     }
 
     /**
@@ -151,9 +155,13 @@ public class CertController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CertResDTO.class)))})
     @GetMapping("/date")
     public ResponseEntity getCertsByDate(@RequestParam Integer userId, @RequestParam String date) {
-        List<Certification> certList = certService.getListByDate(userId, LocalDate.parse(date));
+        PageResDTO<Certification> page = certService.getListByCondition(CertCondition.builder()
+                .userId(userId)
+                .date(LocalDate.parse(date))
+                .pageable(Pageable.unpaged())
+                .build());
 
-        return SuccessReturn(certList.stream().map(c -> new CertResDTO(c, userId)).toList());
+        return SuccessReturn(page.getContent().stream().map(c -> new CertResDTO(c, userId)).toList());
     }
 
     /**
@@ -168,16 +176,15 @@ public class CertController extends CommController {
             @RequestParam Integer userId,
             @RequestParam(required = false) boolean unPaged,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        if (unPaged) pageable = Pageable.unpaged();
+        PageResDTO<Certification> page = certService.getListByCondition(
+                CertCondition.builder()
+                        .userId(userId)
+                        .pageable(unPaged? Pageable.unpaged() :pageable)
+                        .build());
 
-        Slice<Integer> slice = certService.getSliceByUserId(userId, pageable);
-        List<Certification> certList = certService.getListByUserId(userId, pageable);
-        List<CertResDTO> resDTOList = certList.stream()
-                .map(cert -> new CertResDTO(cert, userId))
-                .toList();
-
-        return SuccessReturn(new PageCertResDTO(resDTOList, slice.getSize(), slice.getNumber(), slice.isLast()));
+        return SuccessReturn(new PageCertResDTO(page, userId));
     }
+
 
     /**
      * 인증 수정
@@ -239,11 +246,14 @@ public class CertController extends CommController {
     @GetMapping("/recent")
     public ResponseEntity getRecentCerts(@RequestParam Integer userId, @RequestParam Integer count) {
         PageRequest pageable = PageRequest.of(0, count, Sort.by(Sort.Direction.DESC, "registDt"));
-        List<Certification> certList = certService.getCorrectListByPaging(pageable);
+        PageResDTO<Certification> page = certService.getListByCondition(
+                CertCondition.builder()
+                        .isCorrect(true)
+                        .pageable(pageable)
+                        .build());
 
-        return SuccessReturn(certList.stream()
+        return SuccessReturn(page.getContent().stream()
                 .map(cert -> new CertResDTO(cert, userId))
                 .toList());
     }
-
 }

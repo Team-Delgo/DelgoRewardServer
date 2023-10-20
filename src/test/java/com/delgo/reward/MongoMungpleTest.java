@@ -7,7 +7,7 @@ import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoRepository.MongoMungpleRepository;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.repository.BookmarkRepository;
-import com.delgo.reward.repository.CertRepository;
+import com.delgo.reward.repository.certification.CertRepository;
 import com.delgo.reward.service.strategy.BookmarkCountSorting;
 import com.delgo.reward.service.strategy.CertCountSorting;
 import com.delgo.reward.service.strategy.MungpleSortingStrategy;
