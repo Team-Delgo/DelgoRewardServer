@@ -34,9 +34,8 @@ public class ReactionService {
         } else {
             int ownerId = certService.getCertById(certId).getUser().getUserId();
             if (userId != ownerId) { // 자신의 반응 에는 알람 X
-                String notifyMsg = userService.getUserById(userId).getName() + "님이 회원님의 게시물에 반응했습니다.";
-                NotifyType notifyType = (reactionCode.equals(ReactionCode.CUTE)) ? NotifyType.CUTE : NotifyType.HELPER;
-                notifyService.saveNotify(ownerId, notifyType, notifyMsg);
+                String notifyMsg = userService.getUserById(userId).getName() + "님이 회원님의 게시물에 " + reactionCode.getDesc() + " 로 반응했습니다.";
+                notifyService.saveNotify(ownerId, NotifyType.REACTION, notifyMsg);
                 fcmService.likePush(ownerId, notifyMsg);
             }
             return reactionRepository.save(Reaction.builder()
