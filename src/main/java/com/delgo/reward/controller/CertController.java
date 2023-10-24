@@ -235,7 +235,7 @@ public class CertController extends CommController {
     @Operation(summary = "인증 Reaction", description = "Reaction 등록 및 수정 - 인증에 대한 반응을 등록 및 수정")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Reaction.class))})
     @PostMapping(value = {"/reaction/{userId}/{certificationId}/{reactionCode}"})
-    public ResponseEntity reaction(@PathVariable Integer userId, @PathVariable Integer certificationId, @PathVariable String reactionCode){
+    public ResponseEntity reaction(@PathVariable Integer userId, @PathVariable Integer certificationId, @PathVariable String reactionCode) throws IOException {
         return SuccessReturn(reactionService.reaction(userId, certificationId, ReactionCode.from(reactionCode)));
     }
 
