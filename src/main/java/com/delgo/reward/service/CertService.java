@@ -21,6 +21,7 @@ import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
 import com.delgo.reward.repository.CertPhotoRepository;
 import com.delgo.reward.repository.CertRepository;
+import com.delgo.reward.repository.ReactionRepository;
 import com.google.api.client.util.ArrayMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,12 +52,12 @@ public class CertService {
     private final PhotoService photoService;
     private final MongoMungpleService mongoMungpleService;
     private final LikeListService likeListService;
-    private final ReactionService reactionService;
     private final ReverseGeoService reverseGeoService;
     private final ObjectStorageService objectStorageService;
 
     // Repository
     private final CertRepository certRepository;
+    private final ReactionRepository reactionRepository;
     private final CertPhotoRepository certPhotoRepository;
 //    private final JDBCTemplateRankingRepository jdbcTemplateRankingRepository;
 
@@ -301,7 +302,7 @@ public class CertService {
     public void deleteCert(int certificationId) {
         certRepository.deleteById(certificationId);
         likeListService.deleteCertificationRelatedLike(certificationId);
-        reactionService.deleteCertRelatedReactions(certificationId);
+        reactionRepository.deleteByCertificationId(certificationId);
         objectStorageService.deleteObject(BucketName.CERTIFICATION,certificationId + "_cert.webp");
     }
 
