@@ -1,8 +1,7 @@
 package com.delgo.reward.mongoDomain;
 
 import com.delgo.reward.certification.domain.Certification;
-import com.delgo.reward.certification.controller.res.CertResponse;
-import com.delgo.reward.dto.user.UserResDTO;
+import com.delgo.reward.domain.user.User;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -21,9 +20,9 @@ public class Classification {
     @Id
     private String id;
     @Field("user")
-    private UserResDTO user;
+    private User user;
     @Field("certification")
-    private CertResponse certification;
+    private Certification certification;
     @Field("category")
     private Map<String, String> category;
     @Field("address_sido")
@@ -37,8 +36,8 @@ public class Classification {
 
     public Classification toEntity(Certification certification, Map<String, String> category, String SIDO, String SIGUGUN, String DONG){
         return Classification.builder()
-                .user(new UserResDTO(certification.getUser()))
-                .certification(new CertResponse(certification))
+                .user(certification.getUser())
+                .certification(certification) // TODO: CertResponse 로 하는 이유가 뭔가
                 .category(category)
                 .sido(SIDO)
                 .sigugun(SIGUGUN)

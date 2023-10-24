@@ -4,15 +4,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 import java.util.List;
 
 @Getter
 @Builder
-@ToString
 @AllArgsConstructor
-public class Page<T> {
+public class PageCustom<T> {
     @Schema(description = "한 페이지에 보여줄 개수")
     private int size;
     @Schema(description = "현재 페이지 번호")
@@ -24,7 +22,7 @@ public class Page<T> {
     @Schema(description = "데이터 리스트")
     private List<T> content;
 
-    public Page(List<T> data, int size, int number, boolean last) {
+    public PageCustom(List<T> data, int size, int number, boolean last) {
         this.content = data;
         this.size = size;
         this.number = number;
@@ -32,7 +30,7 @@ public class Page<T> {
     }
 
     // [/certification/my] , [certification/other] 의 경우 totalCount가 필요함.
-    public Page(List<T> data, int size, int number, boolean last, long totalCount) {
+    public PageCustom(List<T> data, int size, int number, boolean last, long totalCount) {
         this.content = data;
         this.size = size;
         this.number = number;

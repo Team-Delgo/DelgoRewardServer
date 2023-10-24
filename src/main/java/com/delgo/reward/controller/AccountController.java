@@ -1,5 +1,6 @@
 package com.delgo.reward.controller;
 
+import com.delgo.reward.certification.controller.port.CertService;
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.user.AccountResDTO;
@@ -7,7 +8,6 @@ import com.delgo.reward.dto.user.UserResDTO;
 import com.delgo.reward.record.user.ModifyPetRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
-import com.delgo.reward.certification.service.CertService;
 import com.delgo.reward.service.PetService;
 import com.delgo.reward.service.UserService;
 import io.swagger.v3.oas.annotations.Hidden;

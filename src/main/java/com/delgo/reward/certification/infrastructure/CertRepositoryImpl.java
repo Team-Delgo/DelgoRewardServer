@@ -2,43 +2,45 @@ package com.delgo.reward.certification.infrastructure;
 
 import com.delgo.reward.certification.domain.CertCondition;
 import com.delgo.reward.certification.domain.Certification;
+import com.delgo.reward.certification.infrastructure.entity.CertificationEntity;
+import com.delgo.reward.certification.infrastructure.jpa.CertJpaRepository;
 import com.delgo.reward.certification.service.port.CertRepository;
-import com.delgo.reward.dto.comm.Page;
+import com.delgo.reward.dto.comm.PageCustom;
 import com.delgo.reward.dto.mungple.MungpleCountDTO;
 import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
 public class CertRepositoryImpl implements CertRepository {
-
     private final CertJpaRepository certJpaRepository;
 
     @Override
-    public Page<Certification> findListByCondition(CertCondition certCondition) {
-        org.springframework.data.domain.Page<Certification> page = certJpaRepository.findListByCondition(certCondition);
-        return Page.<Certification>builder()
+    public PageCustom<Certification> findListByCondition(CertCondition certCondition) {
+        Page<CertificationEntity> page = certJpaRepository.findListByCondition(certCondition);
+        List<Certification> content = page.getContent().stream().map(CertificationEntity::toModel).toList();
+        return PageCustom.<Certification>builder()
                 .number(page.getNumber())
                 .size(page.getSize())
                 .last(page.isLast())
                 .totalCount(page.getTotalElements())
-                .content(page.getContent())
+                .content(content)
                 .build();
     }
 
     @Override
     public Certification save(Certification certification) {
-        return certJpaRepository.save(certification);
+        return certJpaRepository.save(CertificationEntity.from(certification)).toModel();
     }
 
     @Override
-    public void deleteById(int certId) {
-        certJpaRepository.deleteById(certId);
+    public void deleteById(int certificationId) {
+        certJpaRepository.deleteById(certificationId);
     }
 
     @Override
@@ -47,17 +49,17 @@ public class CertRepositoryImpl implements CertRepository {
     }
 
 
-    //------------------------------------------------------------
-
-
     @Override
     public Integer countOfCorrectByMungpleId(int mungpleId) {
         return certJpaRepository.countOfCorrectByMungpleId(mungpleId);
     }
 
     @Override
-    public Optional<Certification> findByCertId(Integer certId) {
-        return certJpaRepository.findByCertId(certId);
+    public Certification findByCertId(Integer certificationId) {
+        CertificationEntity entity = certJpaRepository.findByCertId(certificationId)
+                .orElseThrow(() -> new NullPointerException("[getById] NOT FOUND Certification Id : " + certificationId));
+
+        return entity.toModel();
     }
 
     @Override
@@ -68,20 +70,5 @@ public class CertRepositoryImpl implements CertRepository {
     @Override
     public List<MungpleCountDTO> countGroupedByMungpleId() {
         return certJpaRepository.countGroupedByMungpleId();
-    }
-
-    @Override
-    public List<Certification> findCertByGeoCode(String geoCode, Pageable pageable) {
-        return certJpaRepository.findCertByGeoCode(geoCode, pageable);
-    }
-
-    @Override
-    public List<Certification> findCertByPGeoCode(String pGeoCode, Pageable pageable) {
-        return certJpaRepository.findCertByPGeoCode(pGeoCode, pageable);
-    }
-
-    @Override
-    public List<Certification> findCertByPGeoCodeExceptGeoCode(String pGeoCode, String geoCode, Pageable pageable) {
-        return certJpaRepository.findCertByPGeoCodeExceptGeoCode(pGeoCode, geoCode, pageable);
     }
 }

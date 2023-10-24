@@ -11,7 +11,7 @@ import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.CategoryCount;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.comm.code.UserSocial;
-import com.delgo.reward.dto.comm.PageSearchUserDTO;
+import com.delgo.reward.dto.comm.PageCustomSearchUserDTO;
 import com.delgo.reward.dto.user.SearchUserResDTO;
 import com.delgo.reward.mongoDomain.Classification;
 import com.delgo.reward.mongoRepository.ClassificationRepository;
@@ -308,11 +308,11 @@ public class UserService {
     /**
      * 유저 검색 결과 반환
      */
-    public PageSearchUserDTO getSearchUsers(String searchWord, Pageable pageable) {
+    public PageCustomSearchUserDTO getSearchUsers(String searchWord, Pageable pageable) {
         Slice<User> users = userRepository.searchByName(searchWord, pageable);
         List<SearchUserResDTO> resDTOs = users.getContent().stream().map(SearchUserResDTO::new).toList();
 
-        return new PageSearchUserDTO(resDTOs, users.getSize(), users.getNumber(), users.isLast());
+        return new PageCustomSearchUserDTO(resDTOs, users.getSize(), users.getNumber(), users.isLast());
     }
 
     public void increaseViewCount(int userId) {

@@ -1,6 +1,6 @@
 package com.delgo.reward.record.calendar;
 
-import com.delgo.reward.certification.controller.res.CertResponse;
+import com.delgo.reward.certification.controller.response.CertResponse;
 
 import java.time.LocalDate;
 import java.util.List;

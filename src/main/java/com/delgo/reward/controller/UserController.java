@@ -1,6 +1,7 @@
 package com.delgo.reward.controller;
 
 
+import com.delgo.reward.certification.controller.port.CertService;
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.security.jwt.JwtService;
@@ -8,13 +9,12 @@ import com.delgo.reward.comm.security.jwt.JwtToken;
 import com.delgo.reward.domain.SmsAuth;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.comm.code.UserSocial;
-import com.delgo.reward.dto.comm.PageSearchUserDTO;
+import com.delgo.reward.dto.comm.PageCustomSearchUserDTO;
 import com.delgo.reward.dto.user.OtherUserResDTO;
 import com.delgo.reward.dto.user.UserResDTO;
 import com.delgo.reward.record.signup.OAuthSignUpRecord;
 import com.delgo.reward.record.signup.SignUpRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
-import com.delgo.reward.certification.service.CertService;
 import com.delgo.reward.service.SmsAuthService;
 import com.delgo.reward.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -67,7 +67,7 @@ public class UserController extends CommController {
      * @return 성공 List<SearchUserResDTO> / 실패 여부
      */
     @Operation(summary = "User 검색", description = "User 검색 API [Search Page 에서 사용] \n 유저 이름, 펫 이름 검색 ")
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageSearchUserDTO.class))})
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCustomSearchUserDTO.class))})
     @GetMapping("/search")
     public ResponseEntity<?> getSearchUser(@RequestParam String searchWord, @PageableDefault Pageable pageable) {
         if (!StringUtils.hasText(searchWord))

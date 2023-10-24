@@ -1,10 +1,12 @@
 package com.delgo.reward.comm.async;
 
+import com.delgo.reward.certification.controller.port.CertService;
+import com.delgo.reward.certification.service.port.CertPhotoRepository;
+import com.delgo.reward.certification.service.port.CertRepository;
 import com.delgo.reward.comm.ncp.greeneye.GreenEyeService;
-import com.delgo.reward.domain.certification.CertPhoto;
+import com.delgo.reward.certification.domain.CertPhoto;
 import com.delgo.reward.certification.domain.Certification;
-import com.delgo.reward.repository.CertPhotoRepository;
-import com.delgo.reward.certification.service.CertService;
+import com.delgo.reward.certification.service.CertServiceImpl;
 import com.delgo.reward.service.PhotoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +34,7 @@ public class CertAsyncService {
     @Async
     @Transactional
     public void doSomething(Integer certificationId) throws JsonProcessingException {
-        List<CertPhoto> certPhotos = certPhotoRepository.findPhotosByCertificationId(certificationId);
+        List<CertPhoto> certPhotos = certPhotoRepository.findListByCertId(certificationId);
         for(CertPhoto photo : certPhotos) {
             String jpgUrl = photo.getUrl();
             String[] jpgPath = jpgUrl.split("/");
@@ -51,10 +53,11 @@ public class CertAsyncService {
 
             String ncpLink = photoService.uploadCertPhotoWithWebp(fileName, file);
             photo.setUrl(photoService.setCacheInvalidation(ncpLink));
-            certPhotoRepository.save(photo);
 
             // 안 쓰는 jpg 파일 삭제
             file.delete();
         }
+        // 결과 저장.
+        certPhotoRepository.saveAll(certPhotos);
     }
 }

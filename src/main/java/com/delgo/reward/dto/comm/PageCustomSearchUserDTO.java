@@ -8,8 +8,8 @@ import java.util.List;
 
 @Getter
 @ToString
-public class PageSearchUserDTO extends Page<SearchUserResDTO> {
-    public PageSearchUserDTO(List<SearchUserResDTO> data, int size, int number, boolean last) {
+public class PageCustomSearchUserDTO extends PageCustom<SearchUserResDTO> {
+    public PageCustomSearchUserDTO(List<SearchUserResDTO> data, int size, int number, boolean last) {
         super(data, size, number, last);
     }
 }

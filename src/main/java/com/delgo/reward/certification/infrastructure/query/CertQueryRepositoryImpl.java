@@ -1,7 +1,7 @@
-package com.delgo.reward.certification.infrastructure;
+package com.delgo.reward.certification.infrastructure.query;
 
 import com.delgo.reward.certification.domain.CertCondition;
-import com.delgo.reward.certification.domain.Certification;
+import com.delgo.reward.certification.infrastructure.entity.CertificationEntity;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.delgo.reward.domain.certification.QCertification.certification;
+import static com.delgo.reward.certification.infrastructure.entity.QCertificationEntity.certificationEntity;
 import static com.delgo.reward.domain.user.QUser.user;
 import static com.delgo.reward.domain.pet.QPet.pet;
 
@@ -26,10 +26,10 @@ public class CertQueryRepositoryImpl implements CertQueryRepository {
         queryFactory = new JPAQueryFactory(em);
     }
 
-    public Page<Certification> findListByCondition(CertCondition certCondition) {
-        JPAQuery<Certification> query = queryFactory
-                .selectFrom(certification)
-                .innerJoin(certification.user, user).fetchJoin()
+    public Page<CertificationEntity> findListByCondition(CertCondition certCondition) {
+        JPAQuery<CertificationEntity> query = queryFactory
+                .selectFrom(certificationEntity)
+                .innerJoin(certificationEntity.user, user).fetchJoin()
                 .innerJoin(user.pet, pet).fetchJoin()
                 .where(
                         userIdEq(certCondition.getUserId()),
@@ -37,7 +37,7 @@ public class CertQueryRepositoryImpl implements CertQueryRepository {
                         isCorrectEq(certCondition.getIsCorrect()),
                         registDtBetween(certCondition.getDate())
                 )
-                .orderBy(certification.registDt.desc());
+                .orderBy(certificationEntity.registDt.desc());
 
 
         if (certCondition.getPageable().isPaged()) {
@@ -45,26 +45,26 @@ public class CertQueryRepositoryImpl implements CertQueryRepository {
                     .limit(certCondition.getPageable().getPageSize());
         }
 
-        List<Certification> certList = query.fetch();
+        List<CertificationEntity> certList = query.fetch();
 
         JPAQuery<Long> countQuery = queryFactory
-                .select(certification.count())
-                .from(certification)
+                .select(certificationEntity.count())
+                .from(certificationEntity)
                 .where(userIdEq(certCondition.getUserId()));
 
         return PageableExecutionUtils.getPage(certList, certCondition.getPageable(), countQuery::fetchOne);
     }
 
     private Predicate userIdEq(int userId) {
-        return userId == 0 ? null : certification.user.userId.eq(userId);
+        return userId == 0 ? null : certificationEntity.user.userId.eq(userId);
     }
 
     private Predicate mungpleIdEq(int mungpleId) {
-        return mungpleId == 0 ? null : certification.mungpleId.eq(mungpleId);
+        return mungpleId == 0 ? null : certificationEntity.mungpleId.eq(mungpleId);
     }
 
     private Predicate isCorrectEq(Boolean isCorrect) {
-        return isCorrect == null ? null : certification.isCorrect.eq(isCorrect);
+        return isCorrect == null ? null : certificationEntity.isCorrect.eq(isCorrect);
     }
 
     private Predicate registDtBetween(LocalDate localDate) {
@@ -73,6 +73,6 @@ public class CertQueryRepositoryImpl implements CertQueryRepository {
         }
         LocalDateTime startDateTime = localDate.atStartOfDay();
         LocalDateTime endDateTime = localDate.atTime(23, 59, 59);
-        return certification.registDt.between(startDateTime, endDateTime);
+        return certificationEntity.registDt.between(startDateTime, endDateTime);
     }
 }

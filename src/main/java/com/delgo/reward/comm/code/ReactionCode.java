@@ -1,13 +1,15 @@
 package com.delgo.reward.comm.code;
 
-import com.delgo.reward.domain.certification.Reaction;
+import com.delgo.reward.certification.domain.Reaction;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Getter
 @Schema(enumAsRef = true, description = """
         리액션 유형:
         * `HELPER` - 도움돼요
@@ -23,14 +25,6 @@ public enum ReactionCode {
     ReactionCode(String code, String desc) {
         this.code = code;
         this.desc = desc;
-    }
-
-    public String getCode() {
-        return this.code;
-    }
-
-    public String getDesc() {
-        return this.desc;
     }
 
     public static Map<ReactionCode, Boolean> initializeReactionMap() {
