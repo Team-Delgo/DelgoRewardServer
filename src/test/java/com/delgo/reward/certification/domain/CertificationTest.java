@@ -43,6 +43,8 @@ public class CertificationTest {
         Certification certification = Certification.from(certCreate, address, geoCode, user);
 
         // then
+        assertThat(certification.getCertificationId()).isNull(); // Jpa에서 자동생성.
+        assertThat(certification.getRegistDt()).isNull(); // Jpa에서 자동생성.
         assertThat(certification.getUser().getUserId()).isEqualTo(userId);
         assertThat(certification.getPlaceName()).isEqualTo(placeName);
         assertThat(certification.getDescription()).isEqualTo(description);
@@ -96,6 +98,8 @@ public class CertificationTest {
         Certification certification = Certification.from(certCreate, mungple, user);
 
         // then
+        assertThat(certification.getCertificationId()).isNull(); // Jpa에서 자동생성.
+        assertThat(certification.getRegistDt()).isNull(); // Jpa에서 자동생성.
         assertThat(certification.getUser().getUserId()).isEqualTo(userId);
         assertThat(certification.getPlaceName()).isEqualTo(mungple.getPlaceName());
         assertThat(certification.getDescription()).isEqualTo(description);

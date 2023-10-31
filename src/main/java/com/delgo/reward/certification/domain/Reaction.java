@@ -11,12 +11,12 @@ public class Reaction {
     private Integer certificationId;
     private ReactionCode reactionCode;
     private Integer userId;
-    private boolean isReaction;
+    private Boolean isReaction;
 
-    public static Reaction from(int userId, int certId, ReactionCode reactionCode){
+    public static Reaction from(int userId, int certificationId, ReactionCode reactionCode){
         return Reaction.builder()
                 .userId(userId)
-                .certificationId(certId)
+                .certificationId(certificationId)
                 .reactionCode(reactionCode)
                 .isReaction(true)
                 .build();

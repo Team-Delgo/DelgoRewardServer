@@ -40,7 +40,7 @@ public class ReactionEntity extends BaseTimeEntity {
                 .certificationId(reaction.getCertificationId())
                 .reactionCode(reaction.getReactionCode())
                 .userId(reaction.getReactionId())
-                .isReaction(reaction.isReaction())
+                .isReaction(reaction.getIsReaction())
                 .build();
     }
 }
