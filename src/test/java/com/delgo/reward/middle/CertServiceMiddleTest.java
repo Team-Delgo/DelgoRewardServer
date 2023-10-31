@@ -33,7 +33,7 @@ public class CertServiceMiddleTest {
 
     @Test
     @Transactional
-    public void create를_이용하여_일반인증을_등록할_수_있다() {
+    public void create를_이용하여_인증을_등록할_수_있다() {
         //given
         int userId = 434;
         String latitude = "37.5101562";
@@ -53,7 +53,6 @@ public class CertServiceMiddleTest {
         //when
         Certification savedCertification = certService.create(certCreate);
 
-
         //then
         assertThat(savedCertification.getUser().getUserId()).isEqualTo(434);
         assertThat(savedCertification.getPlaceName()).isEqualTo(testPlaceName);
@@ -63,7 +62,7 @@ public class CertServiceMiddleTest {
 
     @Test
     @Transactional
-    public void create를_이용하여_멍플인증을_등록할_수_있다() {
+    public void createByMungple를_이용하여_인증을_등록할_수_있다() {
         //given
         int userId = 434;
         int mungpleId = 20;
@@ -79,8 +78,7 @@ public class CertServiceMiddleTest {
                 .build();
 
         //when
-        Certification savedCertification = certService.create(certCreate);
-
+        Certification savedCertification = certService.createByMungple(certCreate);
 
         //then
         assertThat(savedCertification.getMungpleId()).isEqualTo(mungpleId);
