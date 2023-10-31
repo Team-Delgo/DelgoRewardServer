@@ -116,8 +116,7 @@ public class CertController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = CertResponse.class))})
     @PutMapping
     public ResponseEntity update(@Validated @RequestBody CertUpdate certUpdate) {
-        Certification cert = certService.getById(certUpdate.certificationId());
-        if (certUpdate.userId() != cert.getUser().getUserId())
+        if(certService.validate(certUpdate.userId(), certUpdate.certificationId()))
             return ErrorReturn(APICode.INVALID_USER_ERROR);
 
         // 인증 분류 삭제
@@ -168,7 +167,7 @@ public class CertController extends CommController {
     @Operation(summary = "인증 삭제")
     @DeleteMapping(value = {"/{userId}/{certificationId}"})
     public ResponseEntity delete(@PathVariable Integer userId, @PathVariable Integer certificationId) {
-        if (!Objects.equals(userId, certService.getById(certificationId).getUser().getUserId()))
+        if(certService.validate(userId, certificationId))
             return ErrorReturn(APICode.INVALID_USER_ERROR);
 
         // 인증 분류 삭제

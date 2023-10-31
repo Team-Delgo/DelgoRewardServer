@@ -17,5 +17,6 @@ public interface CertService {
     Certification getById(int certificationId);
     PageCustom<Certification> getListByCondition(CertCondition condition);
     void delete(int certificationId);
+    Boolean validate(int userId, int certificationId);
     List<UserVisitMungpleCountDTO> getVisitedMungpleIdListTop3ByUserId(int userId);
 }

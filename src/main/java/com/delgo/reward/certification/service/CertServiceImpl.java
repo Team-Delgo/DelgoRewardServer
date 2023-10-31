@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
+import java.util.Objects;
 
 
 @Builder
@@ -113,5 +113,14 @@ public class CertServiceImpl implements CertService {
 
         List<UserVisitMungpleCountDTO> userVisitMungpleCountDTOList = certRepository.findVisitTop3MungpleIdByUserId(userId, pageable);
         return mongoMungpleService.getMungpleListByIds(userVisitMungpleCountDTOList);
+    }
+
+    /**
+     * 권한 인증
+     */
+    @Override
+    public Boolean validate(int userId, int certificationId) {
+        int ownerId = certRepository.findByCertId(certificationId).getUser().getUserId();
+        return Objects.equals(userId, ownerId);
     }
 }
