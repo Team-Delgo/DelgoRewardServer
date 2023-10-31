@@ -4,13 +4,11 @@ package com.delgo.reward.mongoDomain.mungple;
 import com.delgo.reward.comm.code.BusinessHourCode;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.DetailCode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import javax.persistence.EnumType;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.time.LocalDateTime;
@@ -161,5 +159,10 @@ public class MongoMungple {
                     return matcher.find() ? Integer.parseInt(matcher.group(1)) : 0;
                 }))
                 .collect(Collectors.toList());
+    }
+
+    public String formattedAddress(){
+        String[] arr = jibunAddress.split(" ");
+        return arr[0] + " " + arr[1] + " " + arr[2];
     }
 }

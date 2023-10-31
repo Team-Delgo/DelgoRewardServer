@@ -7,7 +7,7 @@ import com.delgo.reward.certification.service.port.GeoDataPort;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.certification.domain.Certification;
-import com.delgo.reward.domain.common.Location;
+import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.comm.PageCustom;
 import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
@@ -17,6 +17,7 @@ import com.delgo.reward.certification.domain.request.CertCreate;
 import com.delgo.reward.certification.domain.request.CertUpdate;
 import com.delgo.reward.certification.infrastructure.jpa.CertPhotoJpaRepository;
 import com.delgo.reward.certification.domain.CertCondition;
+import com.delgo.reward.service.CodeService;
 import com.delgo.reward.service.PhotoService;
 import com.delgo.reward.service.UserService;
 import lombok.Builder;
@@ -26,6 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,6 +38,7 @@ import java.util.Objects;
 public class CertServiceImpl implements CertService {
 
     private final UserService userService;
+    private final CodeService codeService;
     private final PhotoService photoService;
     private final MongoMungpleService mongoMungpleService;
     private final ObjectStorageService objectStorageService;
@@ -52,8 +55,9 @@ public class CertServiceImpl implements CertService {
     @Transactional
     public Certification create(CertCreate certCreate) {
         User user = userService.getUserById(certCreate.userId());
-        Location location = geoDataPort.getReverseGeoData(certCreate.latitude(), certCreate.longitude());
-        return certRepository.save(Certification.from(certCreate, location, user));
+        String address = geoDataPort.getReverseGeoData(certCreate.latitude(), certCreate.longitude());
+        Code geoCode = codeService.getGeoByAddress(address);
+        return certRepository.save(Certification.from(certCreate, address, geoCode, user));
     }
 
     /**

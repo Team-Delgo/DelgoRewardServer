@@ -4,7 +4,7 @@ package com.delgo.reward.certification.domain;
 import com.delgo.reward.certification.domain.request.CertCreate;
 import com.delgo.reward.certification.domain.request.CertUpdate;
 import com.delgo.reward.comm.code.CategoryCode;
-import com.delgo.reward.domain.common.Location;
+import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import lombok.*;
@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-@ToString
 @AllArgsConstructor
 public class Certification {
     private Integer certificationId;
@@ -38,16 +37,16 @@ public class Certification {
 
     private LocalDateTime registDt;
 
-    public static Certification from(CertCreate certCreate, Location location, User user) {
+    public static Certification from(CertCreate certCreate, String address, Code code, User user) {
             return Certification.builder()
                     .user(user)
                     .categoryCode(certCreate.categoryCode())
                     .mungpleId(certCreate.mungpleId())
                     .placeName(certCreate.placeName())
                     .description(certCreate.description())
-                    .address(location.getSIDO() + " " + location.getSIGUGUN() + " " + location.getDONG())
-                    .geoCode(location.getGeoCode())
-                    .pGeoCode(location.getPGeoCode())
+                    .address(address)
+                    .geoCode(code.getCode())
+                    .pGeoCode(code.getPCode())
                     .latitude(certCreate.latitude())
                     .longitude(certCreate.longitude())
                     .isCorrect(true)
@@ -57,15 +56,13 @@ public class Certification {
         }
 
     public static Certification from(CertCreate certCreate, MongoMungple mongoMungple, User user) {
-        String[] arr = mongoMungple.getJibunAddress().split(" ");
-        String address = arr[0] + " " + arr[1] + " " + arr[2];
         return Certification.builder()
                 .user(user)
                 .categoryCode(mongoMungple.getCategoryCode())
                 .mungpleId(certCreate.mungpleId())
                 .placeName(mongoMungple.getPlaceName())
                 .description(certCreate.description())
-                .address(address)
+                .address(mongoMungple.formattedAddress())
                 .geoCode(mongoMungple.getGeoCode())
                 .pGeoCode(mongoMungple.getPGeoCode())
                 .latitude(mongoMungple.getLatitude())
