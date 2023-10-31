@@ -11,12 +11,12 @@ import java.util.List;
 
 public interface CertRepository {
     PageCustom<Certification> findListByCondition(CertCondition certCondition);
-    Certification findByCertId(Integer certId);
+    Certification findByCertId(Integer certificationId);
 
     //-----------------------------------------------------------
 
     Certification save(Certification certification);
-    void deleteById(int certId);
+    void deleteById(int certificationId);
     void deleteByUserId(int userId);
     List<MungpleCountDTO> countGroupedByMungpleId();
     Integer countOfCorrectByMungpleId(int mungpleId);

@@ -15,10 +15,8 @@ import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.certification.domain.request.CertCreate;
 import com.delgo.reward.certification.domain.request.CertUpdate;
-import com.delgo.reward.certification.infrastructure.jpa.CertPhotoJpaRepository;
 import com.delgo.reward.certification.domain.CertCondition;
 import com.delgo.reward.service.CodeService;
-import com.delgo.reward.service.PhotoService;
 import com.delgo.reward.service.UserService;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +25,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -39,13 +36,10 @@ public class CertServiceImpl implements CertService {
 
     private final UserService userService;
     private final CodeService codeService;
-    private final PhotoService photoService;
     private final MongoMungpleService mongoMungpleService;
     private final ObjectStorageService objectStorageService;
 
     private final CertRepository certRepository;
-    private final CertPhotoJpaRepository certPhotoJpaRepository;
-
     private final GeoDataPort geoDataPort;
 
     /**
