@@ -111,17 +111,17 @@ public class ClassificationService {
         return new Classification().toEntity(certification, outputCategory, sido, sigugun, dong);
     }
 
-    public void deleteClassificationWhenModifyCert(Certification certification){
-        Optional<Classification> optional = classificationRepository.findClassificationByCertification_CertificationId(certification.getCertificationId());
+    public void deleteClassificationWhenModifyCert(int certificationId, int userId){
+        Optional<Classification> optional = classificationRepository.findClassificationByCertification_CertificationId(certificationId);
 
         optional.ifPresent(classification -> {
-            CategoryCount categoryCount = userService.getCategoryCountByUserId(certification.getUser().getUserId());
+            CategoryCount categoryCount = userService.getCategoryCountByUserId(userId);
 
             for(String categoryCode: classification.getCategory().keySet()){
                 userService.categoryCountSave(categoryCount.minusOne(categoryCode));
             }
 
-            userService.makeActivityCacheValue(certification.getUser().getUserId());
+            userService.makeActivityCacheValue(userId);
 
             classificationRepository.delete(classification);
         });

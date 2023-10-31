@@ -12,6 +12,7 @@ import java.util.List;
 
 public interface CertService {
     Certification create(CertCreate certCreate);
+    Certification createByMungple(CertCreate certCreate);
     Certification update(CertUpdate certUpdate);
     Certification getById(int certificationId);
     PageCustom<Certification> getListByCondition(CertCondition condition);

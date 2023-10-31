@@ -3,12 +3,10 @@ package com.delgo.reward.certification.domain;
 
 import com.delgo.reward.certification.domain.request.CertCreate;
 import com.delgo.reward.certification.domain.request.CertUpdate;
-import com.delgo.reward.certification.service.port.GeoDataPort;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
-import com.delgo.reward.mongoService.MongoMungpleService;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -40,8 +38,7 @@ public class Certification {
 
     private LocalDateTime registDt;
 
-    public static Certification from(CertCreate certCreate, GeoDataPort geoDataPort, User user) {
-        Location location = geoDataPort.getReverseGeoData(certCreate.latitude(), certCreate.longitude());
+    public static Certification from(CertCreate certCreate, Location location, User user) {
             return Certification.builder()
                     .user(user)
                     .categoryCode(certCreate.categoryCode())
@@ -59,8 +56,7 @@ public class Certification {
                     .build();
         }
 
-    public static Certification from(CertCreate certCreate, MongoMungpleService mongoMungpleService, User user) {
-        MongoMungple mongoMungple = mongoMungpleService.getMungpleByMungpleId(certCreate.mungpleId());
+    public static Certification from(CertCreate certCreate, MongoMungple mongoMungple, User user) {
         String[] arr = mongoMungple.getJibunAddress().split(" ");
         String address = arr[0] + " " + arr[1] + " " + arr[2];
         return Certification.builder()

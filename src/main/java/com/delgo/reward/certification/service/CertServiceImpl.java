@@ -7,9 +7,11 @@ import com.delgo.reward.certification.service.port.GeoDataPort;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.certification.domain.Certification;
+import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.comm.PageCustom;
 import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
+import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.certification.domain.request.CertCreate;
 import com.delgo.reward.certification.domain.request.CertUpdate;
@@ -44,16 +46,25 @@ public class CertServiceImpl implements CertService {
     private final GeoDataPort geoDataPort;
 
     /**
-     * 인증 생성 (일반, 멍플 구분)
+     * 일반 인증 생성
      */
     @Override
     @Transactional
     public Certification create(CertCreate certCreate) {
-        // User 조회
         User user = userService.getUserById(certCreate.userId());
-        return (certCreate.mungpleId() == 0)
-                ? certRepository.save(Certification.from(certCreate, geoDataPort, user)) // 일반 인증
-                : certRepository.save(Certification.from(certCreate, mongoMungpleService, user));  // 멍플 인증
+        Location location = geoDataPort.getReverseGeoData(certCreate.latitude(), certCreate.longitude());
+        return certRepository.save(Certification.from(certCreate, location, user));
+    }
+
+    /**
+     * 멍플 인증 생성
+     */
+    @Override
+    @Transactional
+    public Certification createByMungple(CertCreate certCreate) {
+        User user = userService.getUserById(certCreate.userId());
+        MongoMungple mongoMungple = mongoMungpleService.getMungpleByMungpleId(certCreate.mungpleId());
+        return certRepository.save(Certification.from(certCreate, mongoMungple, user));
     }
 
     /**

@@ -4,22 +4,18 @@ package com.delgo.reward.certification.controller;
 import com.delgo.reward.certification.controller.port.CertPhotoService;
 import com.delgo.reward.certification.controller.port.CertService;
 import com.delgo.reward.certification.controller.port.ReactionService;
-import com.delgo.reward.certification.domain.CertCondition;
-import com.delgo.reward.certification.domain.CertPhoto;
+import com.delgo.reward.certification.domain.*;
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.async.CertAsyncService;
 import com.delgo.reward.comm.async.ClassificationAsyncService;
 import com.delgo.reward.comm.code.APICode;
-import com.delgo.reward.comm.code.ReactionCode;
-import com.delgo.reward.certification.domain.Certification;
-import com.delgo.reward.certification.domain.Reaction;
 import com.delgo.reward.certification.controller.response.CertResponse;
 import com.delgo.reward.certification.controller.response.PageCertResponse;
+import com.delgo.reward.comm.code.ReactionCode;
 import com.delgo.reward.dto.comm.PageCustom;
 import com.delgo.reward.mongoService.ClassificationService;
 import com.delgo.reward.certification.domain.request.CertCreate;
 import com.delgo.reward.certification.domain.request.CertUpdate;
-import com.delgo.reward.certification.service.ReactionServiceImpl;
 import com.delgo.reward.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -103,7 +99,10 @@ public class CertController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = CertResponse.class))})
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> create(@Validated @RequestPart(value = "data") CertCreate certCreate, @RequestPart List<MultipartFile> photos) throws JsonProcessingException {
-        Certification cert = certService.create(certCreate);
+        Certification cert = (certCreate.mungpleId() == 0)
+                ? certService.createByMungple(certCreate)
+                : certService.create(certCreate);
+
         List<CertPhoto> photoList = certPhotoService.create(cert.getCertificationId(), photos);
 
         // 비동기 실행
@@ -122,10 +121,11 @@ public class CertController extends CommController {
             return ErrorReturn(APICode.INVALID_USER_ERROR);
 
         // 인증 분류 삭제
-        classificationService.deleteClassificationWhenModifyCert(cert);
+        classificationService.deleteClassificationWhenModifyCert(certUpdate.certificationId(), certUpdate.userId());
+
         Certification updatedCert = certService.update(certUpdate);
-        List<CertPhoto> photoList = certPhotoService.getListByCertId(cert.getCertificationId());
-        List<Reaction> reactionList = reactionService.getListByCertId(cert.getCertificationId());
+        List<CertPhoto> photoList = certPhotoService.getListByCertId(certUpdate.certificationId());
+        List<Reaction> reactionList = reactionService.getListByCertId(certUpdate.certificationId());
 
         // 비동기적 실행
         classificationAsyncService.doClassification(updatedCert.getCertificationId());
@@ -172,7 +172,7 @@ public class CertController extends CommController {
             return ErrorReturn(APICode.INVALID_USER_ERROR);
 
         // 인증 분류 삭제
-        classificationService.deleteClassificationWhenModifyCert(certService.getById(certificationId));
+        classificationService.deleteClassificationWhenModifyCert(certificationId, userId);
 
         certService.delete(certificationId);
         reactionService.deleteByCertId(certificationId);
