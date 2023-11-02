@@ -1,10 +1,10 @@
 package com.delgo.reward.certification.controller;
 
 
-import com.delgo.reward.certification.controller.port.CertPhotoService;
-import com.delgo.reward.certification.controller.port.CertService;
-import com.delgo.reward.certification.controller.port.ReactionService;
 import com.delgo.reward.certification.domain.*;
+import com.delgo.reward.certification.service.CertPhotoService;
+import com.delgo.reward.certification.service.CertService;
+import com.delgo.reward.certification.service.ReactionService;
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.async.CertAsyncService;
 import com.delgo.reward.comm.async.ClassificationAsyncService;

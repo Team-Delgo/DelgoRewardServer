@@ -1,12 +1,14 @@
 package com.delgo.reward.middle;
 
-import com.delgo.reward.certification.controller.port.CertService;
 import com.delgo.reward.certification.domain.CertCondition;
 import com.delgo.reward.certification.domain.Certification;
 import com.delgo.reward.certification.domain.request.CertCreate;
 import com.delgo.reward.certification.domain.request.CertUpdate;
+import com.delgo.reward.certification.service.CertService;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.dto.comm.PageCustom;
+import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
+import com.delgo.reward.mongoService.MongoMungpleService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -27,6 +30,9 @@ public class CertServiceMiddleTest {
 
     @Autowired
     private CertService certService;
+
+    @Autowired
+    private MongoMungpleService mongoMungpleService;
 
     public String testPlaceName = "Test Place Name";
     public String testDescription = "Test Description";
@@ -431,5 +437,20 @@ public class CertServiceMiddleTest {
         //then
         assertThatThrownBy(() -> certService.getById(certificationId))
                 .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    public void findVisitTop3MungpleIdByUserId_테스트() {
+        //given
+        int userId = 332;
+
+        //when
+        List<UserVisitMungpleCountDTO> dtoList = certService.getVisitedMungpleIdListTop3ByUserId(userId);
+        for(UserVisitMungpleCountDTO dto : dtoList) {
+            System.out.println("dto = " + dto);
+        }
+        
+        //then
+        assertThat(dtoList.size()).isEqualTo(3);
     }
 }

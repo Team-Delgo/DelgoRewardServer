@@ -1,12 +1,10 @@
 package com.delgo.reward.comm.async;
 
-import com.delgo.reward.certification.controller.port.CertService;
+import com.delgo.reward.certification.service.CertService;
 import com.delgo.reward.certification.service.port.CertPhotoRepository;
-import com.delgo.reward.certification.service.port.CertRepository;
 import com.delgo.reward.comm.ncp.greeneye.GreenEyeService;
 import com.delgo.reward.certification.domain.CertPhoto;
 import com.delgo.reward.certification.domain.Certification;
-import com.delgo.reward.certification.service.CertServiceImpl;
 import com.delgo.reward.service.PhotoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;

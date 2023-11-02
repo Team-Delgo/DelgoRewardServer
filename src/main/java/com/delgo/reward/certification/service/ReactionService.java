@@ -1,6 +1,5 @@
 package com.delgo.reward.certification.service;
 
-import com.delgo.reward.certification.controller.port.ReactionService;
 import com.delgo.reward.certification.domain.Certification;
 import com.delgo.reward.certification.service.port.ReactionRepository;
 import com.delgo.reward.comm.code.ReactionCode;
@@ -16,13 +15,12 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ReactionServiceImpl implements ReactionService {
+public class ReactionService {
     private final ReactionRepository reactionRepository;
 
     /**
      * 생성
      */
-    @Override
     @Transactional
     public Reaction create(int userId, int certificationId, ReactionCode reactionCode) {
         return reactionRepository.save(Reaction.from(userId, certificationId, reactionCode));
@@ -31,7 +29,6 @@ public class ReactionServiceImpl implements ReactionService {
     /**
      * 수정
      */
-    @Override
     @Transactional
     public Reaction update(int userId, int certificationId, ReactionCode reactionCode) {
         Reaction reaction = reactionRepository.findReaction(userId, certificationId, reactionCode);
@@ -40,7 +37,6 @@ public class ReactionServiceImpl implements ReactionService {
         return reactionRepository.save(reaction);
     }
 
-    @Override
     public List<Reaction> getListByCertId(int certificationId) {
         return reactionRepository.findActiveListByCertId(certificationId);
     }
@@ -49,7 +45,6 @@ public class ReactionServiceImpl implements ReactionService {
     /**
      * [cert] 리스트 조회
      */
-    @Override
     public Map<Integer,List<Reaction>> getMapByCertList(List<Certification> certList) {
         List<Integer> certIdList = certList.stream().map(Certification::getCertificationId).toList();
         List<Reaction> reactionList = reactionRepository.findActiveListByCertIdList(certIdList);
@@ -59,7 +54,6 @@ public class ReactionServiceImpl implements ReactionService {
     /**
      * exist 여부 반환
      */
-    @Override
     public Boolean hasReaction(int userId, int certificationId, ReactionCode reactionCode) {
         return reactionRepository.existsReaction(userId, certificationId, reactionCode);
     }
@@ -67,7 +61,6 @@ public class ReactionServiceImpl implements ReactionService {
     /**
      * [certId] 삭제
      */
-    @Override
     @Transactional
     public void deleteByCertId(int certificationId) {
         reactionRepository.deleteByCertId(certificationId);

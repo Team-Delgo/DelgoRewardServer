@@ -1,5 +1,6 @@
 package com.delgo.reward.controller;
 
+import com.delgo.reward.certification.service.CertService;
 import com.delgo.reward.comm.config.WebConfig;
 import com.delgo.reward.comm.fcm.FcmService;
 import com.delgo.reward.comm.security.SecurityConfig;
@@ -8,7 +9,6 @@ import com.delgo.reward.certification.domain.Certification;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.comment.CommentResDTO;
 import com.delgo.reward.record.comment.CommentRecord;
-import com.delgo.reward.certification.service.CertService;
 import com.delgo.reward.service.CommentService;
 import com.delgo.reward.service.NotifyService;
 import com.delgo.reward.service.UserService;
@@ -70,7 +70,6 @@ public class CommentControllerTest {
                 .certificationId(10)
                 .placeName("Test Place")
                 .description("Test Description")
-                .photoUrl("https://example.com/photo.jpg")
                 .mungpleId(0)
                 .isHideAddress(false)
                 .address("Seoul, South Korea")

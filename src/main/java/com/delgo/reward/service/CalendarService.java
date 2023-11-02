@@ -1,14 +1,14 @@
 package com.delgo.reward.service;
 
 
-import com.delgo.reward.certification.controller.port.CertPhotoService;
-import com.delgo.reward.certification.controller.port.CertService;
-import com.delgo.reward.certification.controller.port.ReactionService;
 import com.delgo.reward.certification.domain.CertCondition;
 import com.delgo.reward.certification.domain.CertPhoto;
 import com.delgo.reward.certification.domain.Certification;
 import com.delgo.reward.certification.domain.Reaction;
 import com.delgo.reward.certification.controller.response.CertResponse;
+import com.delgo.reward.certification.service.CertPhotoService;
+import com.delgo.reward.certification.service.CertService;
+import com.delgo.reward.certification.service.ReactionService;
 import com.delgo.reward.dto.comm.PageCustom;
 import com.delgo.reward.record.calendar.CalendarRecord;
 import lombok.RequiredArgsConstructor;

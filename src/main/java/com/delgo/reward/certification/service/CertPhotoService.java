@@ -1,7 +1,6 @@
 package com.delgo.reward.certification.service;
 
 
-import com.delgo.reward.certification.controller.port.CertPhotoService;
 import com.delgo.reward.certification.domain.CertPhoto;
 import com.delgo.reward.certification.domain.Certification;
 import com.delgo.reward.certification.service.port.CertPhotoRepository;
@@ -18,14 +17,13 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class CertPhotoServiceImpl implements CertPhotoService {
+public class CertPhotoService {
     private final PhotoService photoService;
     private final CertPhotoRepository certPhotoRepository;
 
     /**
      * 인증 사진 저장
      */
-    @Override
     @Transactional
     public List<CertPhoto> create(int certificationId, List<MultipartFile> photos) {
         List<String> urlList = photoService.uploadCertPhotos(certificationId, photos);
@@ -36,7 +34,6 @@ public class CertPhotoServiceImpl implements CertPhotoService {
     /**
      *  단 건 인증 사진 조회
      */
-    @Override
     public List<CertPhoto> getListByCertId(int certificationId) {
         return certPhotoRepository.findListByCertId(certificationId);
     }
@@ -44,7 +41,6 @@ public class CertPhotoServiceImpl implements CertPhotoService {
     /**
      *  인증 List 사진 조회
      */
-    @Override
     public Map<Integer, List<CertPhoto>> getMapByCertList(List<Certification> certList) {
         List<Integer> certIdList = certList.stream().map(Certification::getCertificationId).toList();
         List<CertPhoto> certPhotoList = certPhotoRepository.findListByCertIdList(certIdList);

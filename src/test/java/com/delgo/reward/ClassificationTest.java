@@ -1,6 +1,7 @@
 package com.delgo.reward;
 
 import com.delgo.reward.certification.domain.Certification;
+import com.delgo.reward.certification.service.CertService;
 import com.delgo.reward.domain.user.CategoryCount;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.mongoDomain.Classification;
@@ -9,7 +10,6 @@ import com.delgo.reward.mongoService.ClassificationService;
 import com.delgo.reward.repository.CategoryCountRepository;
 import com.delgo.reward.repository.UserRepository;
 import com.delgo.reward.certification.domain.CertCondition;
-import com.delgo.reward.certification.service.CertService;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;

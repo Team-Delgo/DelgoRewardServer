@@ -1,7 +1,6 @@
 package com.delgo.reward.certification.service;
 
 
-import com.delgo.reward.certification.controller.port.CertService;
 import com.delgo.reward.certification.service.port.CertRepository;
 import com.delgo.reward.certification.service.port.GeoDataPort;
 import com.delgo.reward.comm.ncp.storage.BucketName;
@@ -32,7 +31,7 @@ import java.util.Objects;
 @Builder
 @Service
 @RequiredArgsConstructor
-public class CertServiceImpl implements CertService {
+public class CertService {
 
     private final UserService userService;
     private final CodeService codeService;
@@ -45,7 +44,6 @@ public class CertServiceImpl implements CertService {
     /**
      * 일반 인증 생성
      */
-    @Override
     @Transactional
     public Certification create(CertCreate certCreate) {
         User user = userService.getUserById(certCreate.userId());
@@ -57,7 +55,6 @@ public class CertServiceImpl implements CertService {
     /**
      * 멍플 인증 생성
      */
-    @Override
     @Transactional
     public Certification createByMungple(CertCreate certCreate) {
         User user = userService.getUserById(certCreate.userId());
@@ -68,7 +65,6 @@ public class CertServiceImpl implements CertService {
     /**
      * [certId] 단 건 조회
      */
-    @Override
     public Certification getById(int certificationId) {
         return certRepository.findByCertId(certificationId);
     }
@@ -76,7 +72,6 @@ public class CertServiceImpl implements CertService {
     /**
      * [Condition] List 조회 - TODO Reaction 넣어 주는 작업 추가
      */
-    @Override
     public PageCustom<Certification> getListByCondition(CertCondition condition) {
         return certRepository.findListByCondition(condition);
     }
@@ -84,7 +79,6 @@ public class CertServiceImpl implements CertService {
     /**
      * 인증 수정
      */
-    @Override
     @Transactional
     public Certification update(CertUpdate certUpdate) {
         Certification cert = certRepository.findByCertId(certUpdate.certificationId());
@@ -94,31 +88,27 @@ public class CertServiceImpl implements CertService {
     /**
      * 인증 삭제
      */
-    @Override
     @Transactional
     public void delete(int certificationId) {
         certRepository.deleteById(certificationId);
         objectStorageService.deleteObject(BucketName.CERTIFICATION,certificationId + "_cert.webp");
     }
 
+    /**
+     * 권한 인증
+     */
+    public Boolean validate(int userId, int certificationId) {
+        int ownerId = certRepository.findByCertId(certificationId).getUser().getUserId();
+        return Objects.equals(userId, ownerId);
+    }
 
     /**
-     * 유저 인증 중 가장 많이 방문한 멍플 조회
+     * 유저 인증 중 가장 많이 방문한 멍플 조회 TODO: MunpgleService로 옮겨야 됨.
      */
-    @Override
     public List<UserVisitMungpleCountDTO> getVisitedMungpleIdListTop3ByUserId(int userId){
         Pageable pageable = PageRequest.of(0, 3);
 
         List<UserVisitMungpleCountDTO> userVisitMungpleCountDTOList = certRepository.findVisitTop3MungpleIdByUserId(userId, pageable);
         return mongoMungpleService.getMungpleListByIds(userVisitMungpleCountDTOList);
-    }
-
-    /**
-     * 권한 인증
-     */
-    @Override
-    public Boolean validate(int userId, int certificationId) {
-        int ownerId = certRepository.findByCertId(certificationId).getUser().getUserId();
-        return Objects.equals(userId, ownerId);
     }
 }

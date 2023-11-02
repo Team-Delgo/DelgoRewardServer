@@ -1,6 +1,5 @@
 package com.delgo.reward.certification.service;
 
-import com.delgo.reward.certification.controller.port.CertService;
 import com.delgo.reward.certification.domain.Certification;
 import com.delgo.reward.certification.domain.request.CertUpdate;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
@@ -65,7 +64,7 @@ public class CertServiceTest {
         initCertList.add(createCertification(7, user2, 2, true, LocalDate.now().plusDays(1)));
         initCertList.add(createCertification(8, user2, 2, false, LocalDate.now().plusDays(1)));
 
-        certService = CertServiceImpl.builder()
+        certService = CertService.builder()
                 .certRepository(new FakeCertRepositoryImpl(initCertList))
                 .objectStorageService(Mockito.mock(ObjectStorageService.class))
 //        .UserService()

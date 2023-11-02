@@ -1,7 +1,7 @@
 package com.delgo.reward.controller;
 
 
-import com.delgo.reward.certification.controller.port.CertService;
+import com.delgo.reward.certification.service.CertService;
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.security.jwt.JwtService;
