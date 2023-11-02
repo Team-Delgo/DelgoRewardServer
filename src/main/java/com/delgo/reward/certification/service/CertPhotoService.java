@@ -5,6 +5,7 @@ import com.delgo.reward.certification.domain.CertPhoto;
 import com.delgo.reward.certification.domain.Certification;
 import com.delgo.reward.certification.service.port.CertPhotoRepository;
 import com.delgo.reward.service.PhotoService;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 
 
 @Service
+@Builder
 @RequiredArgsConstructor
 public class CertPhotoService {
     private final PhotoService photoService;
