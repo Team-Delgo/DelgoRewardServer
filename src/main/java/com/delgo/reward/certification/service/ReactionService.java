@@ -4,6 +4,7 @@ import com.delgo.reward.certification.domain.Certification;
 import com.delgo.reward.certification.service.port.ReactionRepository;
 import com.delgo.reward.comm.code.ReactionCode;
 import com.delgo.reward.certification.domain.Reaction;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 
 @Service
+@Builder
 @RequiredArgsConstructor
 public class ReactionService {
     private final ReactionRepository reactionRepository;
@@ -27,23 +29,25 @@ public class ReactionService {
     }
 
     /**
-     * 수정
+     * isReaction 수정 (true -> false, false -> true)
      */
     @Transactional
     public Reaction update(int userId, int certificationId, ReactionCode reactionCode) {
-        Reaction reaction = reactionRepository.findReaction(userId, certificationId, reactionCode);
+        Reaction reaction = reactionRepository.findByUserIdAndCertIdAndCode(userId, certificationId, reactionCode);
         reaction.update();
 
         return reactionRepository.save(reaction);
     }
 
+    /**
+     * [certId] 리스트 조회
+     */
     public List<Reaction> getListByCertId(int certificationId) {
         return reactionRepository.findActiveListByCertId(certificationId);
     }
 
-
     /**
-     * [cert] 리스트 조회
+     * [List<Certification>] 리스트 조회
      */
     public Map<Integer,List<Reaction>> getMapByCertList(List<Certification> certList) {
         List<Integer> certIdList = certList.stream().map(Certification::getCertificationId).toList();

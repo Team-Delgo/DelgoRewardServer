@@ -35,7 +35,7 @@ public class ReactionRepositoryImpl implements ReactionRepository {
 
 
     @Override
-    public Reaction findReaction(Integer userId, Integer certId, ReactionCode reactionCode) {
+    public Reaction findByUserIdAndCertIdAndCode(Integer userId, Integer certId, ReactionCode reactionCode) {
         ReactionEntity entity = reactionJpaRepository.findByUserIdAndCertificationIdAndReactionCode(userId, certId, reactionCode)
                 .orElseThrow(() -> new NullPointerException("NOT FOUND REACTION userId: " + userId + ", certId : " + certId));
 
