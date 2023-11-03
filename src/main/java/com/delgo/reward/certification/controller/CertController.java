@@ -1,6 +1,7 @@
 package com.delgo.reward.certification.controller;
 
 
+import com.delgo.reward.certification.controller.response.CalendarResponse;
 import com.delgo.reward.certification.domain.*;
 import com.delgo.reward.certification.service.CertPhotoService;
 import com.delgo.reward.certification.service.CertService;
@@ -58,7 +59,9 @@ public class CertController extends CommController {
     @GetMapping("/all")
     public ResponseEntity getList(@RequestParam Integer userId, @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
         PageCustom<Certification> page = certService.getListByCondition(CertCondition.from(true, pageable));
-        return SuccessReturn(PageCertResponse.from(userId, page, certPhotoService, reactionService));
+        List<CertResponse> responseList = CertResponse.fromList(userId, page.getContent(), certPhotoService, reactionService);
+
+        return SuccessReturn(PageCertResponse.from(page, responseList));
     }
 
     @Operation(summary = "[Other] 다른 사용자 작성 인증 조회 [Paging]", description = "다른 사용자가 작성한 인증 조회 [권한 필요 없음]")
@@ -66,7 +69,9 @@ public class CertController extends CommController {
     @GetMapping("/other")
     public ResponseEntity getCorrectListByUser(@RequestParam Integer userId, @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
         PageCustom<Certification> page = certService.getListByCondition(CertCondition.byUser(userId,true, pageable));
-        return SuccessReturn(PageCertResponse.from(userId, page, certPhotoService, reactionService)
+        List<CertResponse> responseList = CertResponse.fromList(userId, page.getContent(), certPhotoService, reactionService);
+
+        return SuccessReturn(PageCertResponse.from(page, responseList)
                 .setViewCount(userService.getUserById(userId).getViewCount())); // viewCount 설정
     }
 
@@ -78,7 +83,9 @@ public class CertController extends CommController {
             @RequestParam Integer mungpleId,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
         PageCustom<Certification> page = certService.getListByCondition(CertCondition.byMungple(mungpleId,true, pageable));
-        return SuccessReturn(PageCertResponse.from(userId, page, certPhotoService, reactionService));
+        List<CertResponse> responseList = CertResponse.fromList(userId, page.getContent(), certPhotoService, reactionService);
+
+        return SuccessReturn(PageCertResponse.from(page, responseList));
     }
 
     @Operation(summary = "[certId] 인증 조회", description ="고유 ID로 인증 데이터 조회  \n  단 건이지만 Front 요청으로 LIST로 반환")
@@ -137,15 +144,8 @@ public class CertController extends CommController {
     @GetMapping("/date")
     public ResponseEntity getListByDateAndUser(@RequestParam Integer userId, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         PageCustom<Certification> page = certService.getListByCondition(CertCondition.byDateAndUser(date, userId, true, Pageable.unpaged()));
-        Map<Integer,List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(page.getContent());
-        Map<Integer,List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
 
-        return SuccessReturn(page.getContent().stream().map(cert -> {
-            List<CertPhoto> photoList = photoMap.get(cert.getCertificationId());
-            List<Reaction> reactionList = reactionMap.get(cert.getCertificationId());
-
-            return CertResponse.from(userId, cert, photoList, reactionList);
-        }).toList());
+        return SuccessReturn(CertResponse.fromList(userId, page.getContent(), certPhotoService, reactionService));
     }
 
     @Operation(summary = "[My] 내가 작성한 인증 조회 [paging]", description = "내가 작성한 모든 인증글 조회 [ \n isCorrect = false 여도 조회.")
@@ -156,12 +156,10 @@ public class CertController extends CommController {
             @RequestParam(required = false) boolean unPaged,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
         PageCustom<Certification> page = certService.getListByCondition(CertCondition.byUser(userId, null, unPaged ? Pageable.unpaged() : pageable));
-        PageCertResponse response = PageCertResponse.from(userId, page, certPhotoService, reactionService);
+        List<CertResponse> responseList = CertResponse.fromList(userId, page.getContent(), certPhotoService, reactionService);
 
-        int viewCount = userService.getUserById(userId).getViewCount();
-        response.setViewCount(viewCount);
-
-        return SuccessReturn(viewCount);
+        return SuccessReturn(PageCertResponse.from(page, responseList)
+                .setViewCount(userService.getUserById(userId).getViewCount())); // viewCount 설정
     }
 
     @Operation(summary = "인증 삭제")
@@ -185,5 +183,15 @@ public class CertController extends CommController {
         return SuccessReturn((reactionService.hasReaction(userId, certificationId, reactionCode))
                 ? reactionService.update(userId, certificationId, reactionCode)
                 : reactionService.create(userId, certificationId, reactionCode));
+    }
+
+    @Operation(summary = "Calendar Data 조회", description = "모든 날짜별 인증 리스트 조회")
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Reaction.class))})
+    @PostMapping("/calendar")
+    public ResponseEntity getCalendar(@RequestParam int userId){
+        PageCustom<Certification> page = certService.getListByCondition(CertCondition.byUser(userId, null, Pageable.unpaged()));
+        List<CertResponse> certResponseList = CertResponse.fromList(userId, page.getContent(), certPhotoService, reactionService);
+
+        return SuccessReturn(CalendarResponse.from(certResponseList));
     }
 }

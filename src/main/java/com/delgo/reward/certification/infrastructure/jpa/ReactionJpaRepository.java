@@ -13,6 +13,4 @@ public interface ReactionJpaRepository extends JpaRepository<ReactionEntity, Int
     Optional<ReactionEntity> findByUserIdAndCertificationIdAndReactionCode(Integer userId, Integer certId, ReactionCode reactionCode);
     Boolean existsByUserIdAndCertificationIdAndReactionCode(Integer userId, Integer certificationId, ReactionCode reactionCode);
     void deleteByCertificationId(Integer certificationId);
-
-
 }

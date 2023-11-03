@@ -1,10 +1,6 @@
 package com.delgo.reward.certification.controller.response;
 
-import com.delgo.reward.certification.domain.CertPhoto;
 import com.delgo.reward.certification.domain.Certification;
-import com.delgo.reward.certification.domain.Reaction;
-import com.delgo.reward.certification.service.CertPhotoService;
-import com.delgo.reward.certification.service.ReactionService;
 import com.delgo.reward.dto.comm.PageCustom;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -12,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @Builder
@@ -31,18 +26,7 @@ public class PageCertResponse {
     @Schema(description = "데이터 리스트")
     private List<CertResponse> content;
 
-    public static PageCertResponse from(Integer ownerId, PageCustom<Certification> page,
-                                        CertPhotoService certPhotoService, ReactionService reactionService) {
-        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(page.getContent());
-        Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
-
-        List<CertResponse> content = page.getContent().stream().map(cert -> {
-            List<CertPhoto> photoList = photoMap.get(cert.getCertificationId());
-            List<Reaction> reactionList = reactionMap.get(cert.getCertificationId());
-
-            return CertResponse.from(ownerId, cert, photoList, reactionList);
-        }).toList();
-
+    public static PageCertResponse from(PageCustom<Certification> page, List<CertResponse> content) {
         return PageCertResponse.builder().
                 size(page.getSize())
                 .number(page.getNumber())
