@@ -1,9 +1,9 @@
 package com.delgo.reward.ncp.service.port;
 
-import com.delgo.reward.domain.common.Location;
+import com.delgo.reward.domain.common.GeoData;
 
 
 public interface GeoDataPort {
-    Location getGeoData(String address);
+    GeoData getGeoData(String address);
     String getReverseGeoData(String latitude, String longitude);
 }

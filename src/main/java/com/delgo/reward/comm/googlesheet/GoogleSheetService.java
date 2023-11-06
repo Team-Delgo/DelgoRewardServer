@@ -2,9 +2,13 @@ package com.delgo.reward.comm.googlesheet;
 
 import com.delgo.reward.cacheService.MungpleCacheService;
 import com.delgo.reward.comm.code.CategoryCode;
-import com.delgo.reward.comm.ncp.GeoService;
+
+import com.delgo.reward.domain.code.Code;
+import com.delgo.reward.domain.common.GeoData;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoService.MongoMungpleService;
+import com.delgo.reward.ncp.service.port.GeoDataPort;
+import com.delgo.reward.service.CodeService;
 import com.delgo.reward.service.FigmaService;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -32,7 +36,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class GoogleSheetService {
 
-    private final GeoService geoService;
+    private final GeoDataPort geoDataPort;
+    private final CodeService codeService;
     private final FigmaService figmaService;
     private final MungpleCacheService mungpleCacheService;
     private final MongoMungpleService mongoMungpleService;
@@ -93,7 +98,9 @@ public class GoogleSheetService {
                 log.info("sheet PlaceName:{}", sheet.getPlaceName());
 
                 // Mongo Mungple Setting & Save
-                MongoMungple mongoMungple = sheet.toMongoEntity(categoryCode, geoService.getGeoData(sheet.getAddress()));
+                GeoData geoData = geoDataPort.getGeoData(sheet.getAddress());
+                Code geoCode = codeService.getGeoByAddress(sheet.getAddress());
+                MongoMungple mongoMungple = sheet.toMongoEntity(categoryCode, geoData, geoCode);
 
                 // 중복 이중 체크 ( 주소, 이름 )
                 if(mongoMungpleService.isMungpleExisting(mongoMungple.getJibunAddress())
