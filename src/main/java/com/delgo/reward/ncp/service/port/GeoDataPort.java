@@ -1,4 +1,4 @@
-package com.delgo.reward.certification.service.port;
+package com.delgo.reward.ncp.service.port;
 
 import com.delgo.reward.domain.common.Location;
 

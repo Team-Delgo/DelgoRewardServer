@@ -2,7 +2,7 @@ package com.delgo.reward.certification.service;
 
 
 import com.delgo.reward.certification.service.port.CertRepository;
-import com.delgo.reward.certification.service.port.GeoDataPort;
+import com.delgo.reward.ncp.service.port.GeoDataPort;
 import com.delgo.reward.ncp.domain.BucketName;
 import com.delgo.reward.ncp.service.port.ObjectStoragePort;
 import com.delgo.reward.certification.domain.Certification;

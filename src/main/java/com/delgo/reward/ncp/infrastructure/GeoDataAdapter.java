@@ -1,6 +1,6 @@
-package com.delgo.reward.certification.infrastructure;
+package com.delgo.reward.ncp.infrastructure;
 
-import com.delgo.reward.certification.service.port.GeoDataPort;
+import com.delgo.reward.ncp.service.port.GeoDataPort;
 import com.delgo.reward.domain.common.Location;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
