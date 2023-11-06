@@ -6,7 +6,7 @@ import com.delgo.reward.comm.ncp.greeneye.GreenEyeService;
 import com.delgo.reward.certification.domain.CertPhoto;
 import com.delgo.reward.certification.domain.Certification;
 import com.delgo.reward.comm.ncp.storage.BucketName;
-import com.delgo.reward.service.PhotoService;
+import com.delgo.reward.common.service.PhotoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

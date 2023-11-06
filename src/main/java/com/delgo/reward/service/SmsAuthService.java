@@ -1,7 +1,7 @@
 package com.delgo.reward.service;
 
 
-import com.delgo.reward.comm.CommService;
+import com.delgo.reward.common.service.CommService;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.ncp.sms.SmsService;
 import com.delgo.reward.domain.SmsAuth;

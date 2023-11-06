@@ -3,6 +3,7 @@ package com.delgo.reward.service;
 import com.delgo.reward.comm.exception.FigmaException;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
+import com.delgo.reward.common.service.PhotoService;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
