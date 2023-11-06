@@ -1,7 +1,7 @@
 //package com.delgo.reward.service;
 //
 //import com.delgo.reward.comm.code.CategoryCode;
-//import com.delgo.reward.comm.ncp.storage.BucketName;
+//import com.delgo.reward.ncp.domain.BucketName;
 //import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 //import com.delgo.reward.domain.achievements.Achievements;
 //import com.delgo.reward.domain.achievements.AchievementsCondition;
