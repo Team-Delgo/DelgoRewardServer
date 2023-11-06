@@ -4,8 +4,8 @@ package com.delgo.reward.service;
 import com.delgo.reward.cache.ActivityCache;
 import com.delgo.reward.cacheService.ActivityCacheService;
 import com.delgo.reward.comm.code.CategoryCode;
-import com.delgo.reward.comm.ncp.storage.BucketName;
-import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
+import com.delgo.reward.ncp.domain.BucketName;
+import com.delgo.reward.ncp.service.port.ObjectStoragePort;
 import com.delgo.reward.comm.oauth.KakaoService;
 import com.delgo.reward.common.service.PhotoService;
 import com.delgo.reward.domain.pet.Pet;
@@ -48,7 +48,7 @@ public class UserService {
     private final KakaoService kakaoService;
     private final PhotoService photoService;
     private final ArchiveService archiveService;
-    private final ObjectStorageService objectStorageService;
+    private final ObjectStoragePort objectStoragePort;
 
     // Repository
     private final PetRepository petRepository;
@@ -167,7 +167,7 @@ public class UserService {
         petRepository.delete(user.getPet());
         userRepository.delete(user);
 
-        objectStorageService.deleteObject(BucketName.PROFILE, userId + "_profile.webp");
+        objectStoragePort.deleteObject(BucketName.PROFILE, userId + "_profile.webp");
     }
 
     /**

@@ -5,8 +5,8 @@ import com.delgo.reward.cacheService.MungpleCacheService;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.MungpleSort;
 import com.delgo.reward.comm.ncp.GeoService;
-import com.delgo.reward.comm.ncp.storage.BucketName;
-import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
+import com.delgo.reward.ncp.domain.BucketName;
+import com.delgo.reward.ncp.service.port.ObjectStoragePort;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.domain.user.Bookmark;
 import com.delgo.reward.dto.mungple.MungpleCountDTO;
@@ -52,7 +52,7 @@ public class MongoMungpleService {
     // Service
     private final GeoService geoService;
     private final BookmarkService bookmarkService;
-    private final ObjectStorageService objectStorageService;
+    private final ObjectStoragePort objectStoragePort;
 
     // Repository
     private final CertRepository certRepository;
@@ -233,8 +233,8 @@ public class MongoMungpleService {
     public void deleteMungple(int mungpleId){
         mongoMungpleRepository.deleteByMungpleId(mungpleId);
         mungpleCacheService.deleteCacheData(mungpleId);
-        objectStorageService.deleteObject(BucketName.MUNGPLE,mungpleId + "_mungple.webp"); // Thumbnail delete
-        objectStorageService.deleteObject(BucketName.MUNGPLE_NOTE,mungpleId + "_mungplenote.webp"); // mungpleNote delete
+        objectStoragePort.deleteObject(BucketName.MUNGPLE,mungpleId + "_mungple.webp"); // Thumbnail delete
+        objectStoragePort.deleteObject(BucketName.MUNGPLE_NOTE,mungpleId + "_mungplenote.webp"); // mungpleNote delete
     }
 
     public List<MongoMungple> findWithin3Km(String latitude, String longitude) {

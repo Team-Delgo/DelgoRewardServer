@@ -1,7 +1,7 @@
 package com.delgo.reward.common.controller;
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.comm.ncp.storage.BucketName;
+import com.delgo.reward.ncp.domain.BucketName;
 import com.delgo.reward.common.service.PhotoService;
 import com.delgo.reward.service.*;
 import io.swagger.v3.oas.annotations.Hidden;

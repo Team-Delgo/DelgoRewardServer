@@ -2,7 +2,7 @@ package com.delgo.reward.certification.service;
 
 import com.delgo.reward.certification.domain.Certification;
 import com.delgo.reward.certification.domain.request.CertUpdate;
-import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
+import com.delgo.reward.ncp.service.port.ObjectStoragePort;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.comm.PageCustom;
@@ -66,7 +66,7 @@ public class CertServiceTest {
 
         certService = CertService.builder()
                 .certRepository(new FakeCertRepositoryImpl(initCertList))
-                .objectStorageService(Mockito.mock(ObjectStorageService.class))
+                .objectStoragePort(Mockito.mock(ObjectStoragePort.class))
 //        .UserService()
 //        .CodeService()
 //        .MongoMungpleService()

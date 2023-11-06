@@ -2,8 +2,8 @@ package com.delgo.reward.common.service;
 
 
 import com.delgo.reward.comm.exception.FigmaException;
-import com.delgo.reward.comm.ncp.storage.BucketName;
-import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
+import com.delgo.reward.ncp.domain.BucketName;
+import com.delgo.reward.ncp.service.port.ObjectStoragePort;
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.webp.WebpWriter;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class PhotoService extends CommService {
-    private final ObjectStorageService objectStorageService;
+    private final ObjectStoragePort objectStoragePort;
 
     @Value("${config.photo-dir}")
     String PHOTO_DIR;
@@ -48,7 +48,7 @@ public class PhotoService extends CommService {
         File originalFile = new File(PHOTO_DIR + fileName);
         File convertedFile = convertToWebp(getBaseNameFromFileName(fileName), originalFile);
 
-        String url = objectStorageService.uploadObjects(bucketName, convertedFile.getName(), convertedFile.getPath());
+        String url = objectStoragePort.uploadObjects(bucketName, convertedFile.getName(), convertedFile.getPath());
 
         deleteFile(originalFile);
         deleteFile(convertedFile);
@@ -68,7 +68,7 @@ public class PhotoService extends CommService {
             File originalFile = downloadImageFromURL(url);
             File convertedFile = convertToWebp(baseName, originalFile);
 
-            String uploadedURL = objectStorageService.uploadObjects(bucketName, convertedFile.getName(), convertedFile.getPath());
+            String uploadedURL = objectStoragePort.uploadObjects(bucketName, convertedFile.getName(), convertedFile.getPath());
 
             deleteFile(originalFile);
             deleteFile(convertedFile);

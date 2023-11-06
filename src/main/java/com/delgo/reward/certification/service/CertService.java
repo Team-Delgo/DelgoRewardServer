@@ -3,8 +3,8 @@ package com.delgo.reward.certification.service;
 
 import com.delgo.reward.certification.service.port.CertRepository;
 import com.delgo.reward.certification.service.port.GeoDataPort;
-import com.delgo.reward.comm.ncp.storage.BucketName;
-import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
+import com.delgo.reward.ncp.domain.BucketName;
+import com.delgo.reward.ncp.service.port.ObjectStoragePort;
 import com.delgo.reward.certification.domain.Certification;
 import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.domain.user.User;
@@ -36,7 +36,7 @@ public class CertService {
     private final UserService userService;
     private final CodeService codeService;
     private final MongoMungpleService mongoMungpleService;
-    private final ObjectStorageService objectStorageService;
+    private final ObjectStoragePort objectStoragePort;
 
     private final CertRepository certRepository;
     private final GeoDataPort geoDataPort;
@@ -91,7 +91,7 @@ public class CertService {
     @Transactional
     public void delete(int certificationId) {
         certRepository.deleteById(certificationId);
-        objectStorageService.deleteObject(BucketName.CERTIFICATION,certificationId + "_cert.webp");
+        objectStoragePort.deleteObject(BucketName.CERTIFICATION,certificationId + "_cert.webp");
     }
 
     /**

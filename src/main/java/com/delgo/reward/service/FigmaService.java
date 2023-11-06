@@ -1,8 +1,8 @@
 package com.delgo.reward.service;
 
 import com.delgo.reward.comm.exception.FigmaException;
-import com.delgo.reward.comm.ncp.storage.BucketName;
-import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
+import com.delgo.reward.ncp.domain.BucketName;
+import com.delgo.reward.ncp.service.port.ObjectStoragePort;
 import com.delgo.reward.common.service.PhotoService;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,7 +32,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class FigmaService {
     private final PhotoService photoService;
-    private final ObjectStorageService objectStorageService;
+    private final ObjectStoragePort objectStoragePort;
 
     private final String API_URL = "https://api.figma.com/v1/";
     private final String figmaToken = "figd_r19ArRmULsFDOcl1Mim1B7zpphHYgqYM-YT84yfI";
