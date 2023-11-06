@@ -40,7 +40,7 @@ public class FigmaService {
     private final String figmaToken = "figd_r19ArRmULsFDOcl1Mim1B7zpphHYgqYM-YT84yfI";
     private final String figmaFileKey = "yzrVwMDiG6uU8LM57RUfN0";
 
-    @Value("${config.photoDir}")
+    @Value("${config.photo-dir}")
     String DIR;
 
     public void uploadFigmaDataToNCP(String nodeId, MongoMungple mongoMungple) {

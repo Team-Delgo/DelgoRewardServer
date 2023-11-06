@@ -1,6 +1,7 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
+import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.service.*;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
@@ -27,11 +28,13 @@ public class PhotoController extends CommController {
      * - photo : 확장자는 .png를 기본으로 한다. [.jpeg도 가능] [ 따로 확장자를 체크하진 않는다.]
      * Response Data : ApiCode
      */
-    @PostMapping(value={"/upload/profile/{userId}","/upload/profile"})
+    @PostMapping(value = {"/upload/profile/{userId}", "/upload/profile"})
     public ResponseEntity<?> uploadProfile(@PathVariable Integer userId, @RequestPart(required = false) MultipartFile photo) {
         if (photo.isEmpty()) ParamErrorReturn("photo");
 
-        return SuccessReturn(userService.changePhoto(userId, photoService.uploadProfile(userId, photo)));
+        String fileName = photoService.makeProfileFileName(userId, photo);
+        String url = photoService.saveAndUpload(fileName, photo, BucketName.PROFILE);
+        return SuccessReturn(userService.changePhoto(userId, url));
     }
 
     /*

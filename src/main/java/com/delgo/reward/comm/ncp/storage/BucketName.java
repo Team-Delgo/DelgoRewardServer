@@ -5,12 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public enum BucketName {
-    ACHIEVEMENTS(
-            "reward-achievements",
-            "reward-achievements",
-            "https://kr.object.ncloudstorage.com/reward-achievements/",
-            "https://kr.object.ncloudstorage.com/reward-achievements/",
-            ""),
     CERTIFICATION(
             "reward-certification",
             "test-certification",
@@ -21,13 +15,13 @@ public enum BucketName {
             "reward-mungple",
             "reward-mungple",
             "https://kr.object.ncloudstorage.com/reward-mungple/",
-            "https://kr.object.ncloudstorage.com/reward-mungple/",
+            "https://kr.object.ncloudstorage.com/test-mungple/",
             ""), // 카페
     MUNGPLE_NOTE(
             "reward-mungplenote",
             "reward-mungplenote",
             "https://kr.object.ncloudstorage.com/reward-mungplenote/",
-            "https://kr.object.ncloudstorage.com/reward-mungplenote/",
+            "https://kr.object.ncloudstorage.com/test-mungplenote/",
             ""),
     PROFILE(
             "reward-profile",
@@ -39,31 +33,31 @@ public enum BucketName {
             "reward-detail-price-tag",
             "reward-detail-price-tag",
             "https://kr.object.ncloudstorage.com/reward-detail-price-tag/",
-            "https://kr.object.ncloudstorage.com/reward-detail-price_tag/",
+            "https://kr.object.ncloudstorage.com/test-detail-price_tag/",
             "price_tag"),
     DETAIL_MENU(
             "reward-detail-menu",
             "reward-detail-menu",
             "https://kr.object.ncloudstorage.com/reward-detail-menu/",
-            "https://kr.object.ncloudstorage.com/reward-detail-menu/",
+            "https://kr.object.ncloudstorage.com/test-detail-menu/",
             "menu"),
     DETAIL_MENU_BOARD(
             "reward-detail-menu-board",
             "reward-detail-menu-board",
             "https://kr.object.ncloudstorage.com/reward-detail-menu-board/",
-            "https://kr.object.ncloudstorage.com/reward-detail-menu-board/",
+            "https://kr.object.ncloudstorage.com/test-detail-menu-board/",
             "menu_board"),
     DETAIL_THUMBNAIL(
             "reward-detail-thumbnail",
             "reward-detail-thumbnail",
             "https://kr.object.ncloudstorage.com/reward-detail-thumbnail/",
-            "https://kr.object.ncloudstorage.com/reward-detail-thumbnail/",
+            "https://kr.object.ncloudstorage.com/test-detail-thumbnail/",
             "thumbnail"),
     DETAIL_DOG(
             "reward-detail-resident-dog",
             "reward-detail-resident-dog",
             "https://kr.object.ncloudstorage.com/reward-detail-resident-dog/",
-            "https://kr.object.ncloudstorage.com/reward-detail-resident-dog/",
+            "https://kr.object.ncloudstorage.com/test-detail-resident-dog/",
             "dog");
 
     private final String name;

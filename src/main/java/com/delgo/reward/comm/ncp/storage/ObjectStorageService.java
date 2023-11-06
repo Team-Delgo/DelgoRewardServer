@@ -104,32 +104,20 @@ public class ObjectStorageService {
         }
     }
 
-    public void uploadObjects(BucketName bucketName, String objectName, String filePath) {
-        // create folder
-//        String folderName = "sample-folder/";
-//
-//        ObjectMetadata objectMetadata = new ObjectMetadata();
-//        objectMetadata.setContentLength(0L);
-//        objectMetadata.setContentType("application/x-directory");
-//        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, folderName, new ByteArrayInputStream(new byte[0]), objectMetadata);
-//
-//        try {
-//            s3.putObject(putObjectRequest);
-//            System.out.format("Folder %s has been created.\n", folderName);
-//        } catch (SdkClientException e) {
-//            e.printStackTrace();
-//        }
-        // upload local file
-//        String objectName = "sample-object";
-
+    public String uploadObjects(BucketName bucketName, String objectName, String filePath) {
         String name = (profiles.equals("real")) ? bucketName.getName() : bucketName.getTestName();
         try {
             PutObjectRequest putObjectRequest = new PutObjectRequest(name, objectName,
                     new File(filePath)).withCannedAcl(CannedAccessControlList.PublicRead);
             s3.putObject(putObjectRequest);
             System.out.format("Object %s has been created.\n", objectName);
+
+            return (profiles.equals("real"))
+                    ? bucketName.getUrl() + objectName
+                    : bucketName.getTestUrl() + objectName;
         } catch (SdkClientException e) {
             e.printStackTrace();
+            throw new RuntimeException();
         }
     }
 
