@@ -2,7 +2,6 @@ package com.delgo.reward.service;
 
 
 import com.delgo.reward.domain.code.Code;
-import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.repository.CodeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,14 +48,6 @@ public class CodeService {
         Code sidoCode = getGeoBySido(sido);
         return codeRepository.findBypCodeAndCodeName(sidoCode.getCode(), sigugun)
                 .orElseThrow(() -> new NullPointerException("NOT FOUND GEOCODE  SIDO: " + sido + ", SIGUGUN : " + sigugun));
-    }
-
-    // TODO [Deprecated]
-    // SIGUGUNS [codeName]만으로 조회시 중복 발생 ex) 서울특별시 중구, 부산광역시 중구 중복의 경우 -> 서울특별시의 Code와 같이 조회
-    public Code getGeoCodeByLocation(Location location) {
-        Code sidoCode = getGeoBySido(location.getSIDO());
-        return codeRepository.findBypCodeAndCodeName(sidoCode.getCode(), location.getSIGUGUN())
-                .orElseThrow(() -> new NullPointerException("NOT FOUND GEOCODE  SIDO: " + location.getSIDO() + ", SIGUGUN : " + location.getSIGUGUN()));
     }
 
     public Code getGeoBySido(String sido){
