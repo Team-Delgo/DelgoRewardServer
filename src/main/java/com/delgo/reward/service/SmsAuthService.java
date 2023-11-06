@@ -3,8 +3,8 @@ package com.delgo.reward.service;
 
 import com.delgo.reward.common.service.CommService;
 import com.delgo.reward.comm.code.APICode;
-import com.delgo.reward.comm.ncp.sms.SmsService;
 import com.delgo.reward.domain.SmsAuth;
+import com.delgo.reward.ncp.service.port.SmsPort;
 import com.delgo.reward.repository.SmsAuthRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class SmsAuthService extends CommService {
-    private final SmsService smsService;
+    private final SmsPort smsPort;
     private final SmsAuthRepository smsAuthRepository;
 
     public boolean isSmsAuthExisting(String phoneNo) {
@@ -32,7 +32,7 @@ public class SmsAuthService extends CommService {
         String message = "[Delgo] 인증번호 " + randNum;
 
         try{
-            smsService.sendSMS(phoneNo, message);
+            smsPort.send(phoneNo, message);
         } catch (Exception e){
             throw new IllegalStateException();
         }
