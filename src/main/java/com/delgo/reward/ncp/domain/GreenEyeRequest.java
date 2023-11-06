@@ -15,7 +15,7 @@ public class GreenEyeRequest {
     private long timestamp;
     private List<Image> images;
 
-    public static GreenEyeRequest from(List<Image> images){
+    public static GreenEyeRequest create(List<Image> images){
         return GreenEyeRequest.builder()
                 .version("V1")
                 .requestId(String.valueOf(UUID.randomUUID()))

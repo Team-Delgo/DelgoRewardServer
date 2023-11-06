@@ -32,7 +32,7 @@ public class GreenEyeAdapter implements GreenEyePort {
         headers.set("X-GREEN-EYE-SECRET", SECRET_KEY);
 
         List<GreenEyeRequest.Image> images = List.of(new GreenEyeRequest.Image("image", url));
-        GreenEyeRequest request = GreenEyeRequest.from(images);
+        GreenEyeRequest request = GreenEyeRequest.create(images);
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
