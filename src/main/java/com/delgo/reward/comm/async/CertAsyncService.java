@@ -10,7 +10,6 @@ import com.delgo.reward.service.PhotoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,9 +20,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CertAsyncService {
-    @Value("${config.photo-dir}")
-    String PHOTO_DIR;
-
     private final CertService certService;
     private final PhotoService photoService;
     private final GreenEyeService greenEyeService;
