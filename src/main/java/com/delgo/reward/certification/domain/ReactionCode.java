@@ -1,6 +1,5 @@
-package com.delgo.reward.comm.code;
+package com.delgo.reward.certification.domain;
 
-import com.delgo.reward.certification.domain.Reaction;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

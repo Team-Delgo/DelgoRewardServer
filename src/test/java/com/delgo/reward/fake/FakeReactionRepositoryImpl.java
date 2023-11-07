@@ -2,7 +2,7 @@ package com.delgo.reward.fake;
 
 import com.delgo.reward.certification.domain.Reaction;
 import com.delgo.reward.certification.service.port.ReactionRepository;
-import com.delgo.reward.comm.code.ReactionCode;
+import com.delgo.reward.certification.domain.ReactionCode;
 
 import java.util.ArrayList;
 import java.util.List;

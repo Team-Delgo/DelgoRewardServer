@@ -1,7 +1,7 @@
 package com.delgo.reward.certification.infrastructure.jpa;
 
 import com.delgo.reward.certification.infrastructure.entity.ReactionEntity;
-import com.delgo.reward.comm.code.ReactionCode;
+import com.delgo.reward.certification.domain.ReactionCode;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -12,7 +12,7 @@ import com.delgo.reward.comm.async.ClassificationAsyncService;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.certification.controller.response.CertResponse;
 import com.delgo.reward.certification.controller.response.PageCertResponse;
-import com.delgo.reward.comm.code.ReactionCode;
+import com.delgo.reward.certification.domain.ReactionCode;
 import com.delgo.reward.dto.comm.PageCustom;
 import com.delgo.reward.mongoService.ClassificationService;
 import com.delgo.reward.certification.domain.request.CertCreate;

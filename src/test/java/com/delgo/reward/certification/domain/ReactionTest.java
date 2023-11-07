@@ -1,6 +1,5 @@
 package com.delgo.reward.certification.domain;
 
-import com.delgo.reward.comm.code.ReactionCode;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

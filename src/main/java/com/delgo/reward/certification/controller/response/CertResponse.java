@@ -6,7 +6,7 @@ import com.delgo.reward.certification.domain.Reaction;
 import com.delgo.reward.certification.service.CertPhotoService;
 import com.delgo.reward.certification.service.ReactionService;
 import com.delgo.reward.comm.code.CategoryCode;
-import com.delgo.reward.comm.code.ReactionCode;
+import com.delgo.reward.certification.domain.ReactionCode;
 import com.delgo.reward.certification.domain.Certification;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;

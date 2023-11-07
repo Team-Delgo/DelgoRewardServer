@@ -1,6 +1,6 @@
 package com.delgo.reward.mongoService;
 
-import com.delgo.reward.comm.code.ReactionCode;
+import com.delgo.reward.certification.domain.ReactionCode;
 import com.delgo.reward.mongoDomain.MongoCert;
 import com.delgo.reward.mongoRepository.MongoCertRepository;
 import lombok.RequiredArgsConstructor;

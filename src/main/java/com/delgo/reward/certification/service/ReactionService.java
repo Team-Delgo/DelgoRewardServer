@@ -2,7 +2,7 @@ package com.delgo.reward.certification.service;
 
 import com.delgo.reward.certification.domain.Certification;
 import com.delgo.reward.certification.service.port.ReactionRepository;
-import com.delgo.reward.comm.code.ReactionCode;
+import com.delgo.reward.certification.domain.ReactionCode;
 import com.delgo.reward.certification.domain.Reaction;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;

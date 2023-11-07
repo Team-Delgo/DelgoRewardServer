@@ -1,6 +1,5 @@
 package com.delgo.reward.certification.domain;
 
-import com.delgo.reward.comm.code.ReactionCode;
 import lombok.*;
 
 

@@ -2,7 +2,7 @@ package com.delgo.reward.certification.service;
 
 import com.delgo.reward.certification.domain.Certification;
 import com.delgo.reward.certification.domain.Reaction;
-import com.delgo.reward.comm.code.ReactionCode;
+import com.delgo.reward.certification.domain.ReactionCode;
 import com.delgo.reward.fake.FakeReactionRepositoryImpl;
 import org.junit.Before;
 import org.junit.Test;
