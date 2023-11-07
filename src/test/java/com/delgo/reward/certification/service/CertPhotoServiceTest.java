@@ -3,7 +3,7 @@ package com.delgo.reward.certification.service;
 import com.delgo.reward.certification.domain.CertPhoto;
 import com.delgo.reward.certification.domain.Certification;
 import com.delgo.reward.fake.FakeCertPhotoRepositoryImpl;
-import com.delgo.reward.service.PhotoService;
+import com.delgo.reward.common.service.PhotoService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -34,9 +34,10 @@ public class CertPhotoServiceTest {
         initList.add(CertPhoto.from(2, "test10.com"));
 
         PhotoService photoService = Mockito.mock(PhotoService.class);
-        List<String> expectedUrlList = List.of("test_url_1", "test_url_1");
-        Mockito.when(photoService.uploadCertPhotos(Mockito.anyInt(), Mockito.anyList()))
-                .thenReturn(expectedUrlList);
+        String fakeFileName = "fake_file_name.jpg";
+        String fakeUrl = "http://127.0.0.1/fake_file_name.jpg";
+        Mockito.when(photoService.makeCertFileName(Mockito.anyInt(),Mockito.any(MultipartFile.class) ,Mockito.anyInt())).thenReturn(fakeFileName);
+        Mockito.when(photoService.save(Mockito.anyString(), Mockito.any(MultipartFile.class))).thenReturn(fakeUrl);
 
         certPhotoService = CertPhotoService.builder()
                 .certPhotoRepository(new FakeCertPhotoRepositoryImpl(initList))
