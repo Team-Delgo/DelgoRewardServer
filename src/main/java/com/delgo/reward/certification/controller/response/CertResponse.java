@@ -64,11 +64,11 @@ public class CertResponse {
     @Schema(description = "등록 날짜")
     protected LocalDateTime registDt;
 
-    public static CertResponse from(Integer ownerId, Certification cert, List<CertPhoto> photoList, List<Reaction> reactionList) {
+    public static CertResponse from(Integer userId, Certification cert, List<CertPhoto> photoList, List<Reaction> reactionList) {
         Map<ReactionCode, Boolean> reactionMap = ReactionCode.initializeReactionMap();
         Map<ReactionCode, Integer> reactionCountMap = ReactionCode.initializeReactionCountMap();
         if (!reactionList.isEmpty()) {
-            ReactionCode.setReactionMapByUserId(reactionMap, reactionList, ownerId);
+            ReactionCode.setReactionMapByUserId(reactionMap, reactionList, userId);
             ReactionCode.setReactionCountMap(reactionCountMap, reactionList);
         }
 
@@ -88,7 +88,7 @@ public class CertResponse {
                 .latitude(cert.getLatitude())
                 .longitude(cert.getLongitude())
                 .registDt(cert.getRegistDt())
-                .isOwner(cert.getUser().getUserId() == ownerId)
+                .isOwner(cert.getUser().getUserId() == userId)
                 .reactionMap(reactionMap)
                 .reactionCountMap(reactionCountMap)
                 .build();
