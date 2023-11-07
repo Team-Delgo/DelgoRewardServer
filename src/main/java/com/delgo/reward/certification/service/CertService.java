@@ -2,11 +2,11 @@ package com.delgo.reward.certification.service;
 
 
 import com.delgo.reward.certification.service.port.CertRepository;
+import com.delgo.reward.common.domain.Code;
 import com.delgo.reward.ncp.service.port.GeoDataPort;
 import com.delgo.reward.ncp.domain.BucketName;
 import com.delgo.reward.ncp.service.port.ObjectStoragePort;
 import com.delgo.reward.certification.domain.Certification;
-import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.comm.PageCustom;
 import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
@@ -15,7 +15,7 @@ import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.certification.domain.request.CertCreate;
 import com.delgo.reward.certification.domain.request.CertUpdate;
 import com.delgo.reward.certification.domain.CertCondition;
-import com.delgo.reward.service.CodeService;
+import com.delgo.reward.common.service.CodeService;
 import com.delgo.reward.service.UserService;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +48,7 @@ public class CertService {
     public Certification create(CertCreate certCreate) {
         User user = userService.getUserById(certCreate.userId());
         String address = geoDataPort.getReverseGeoData(certCreate.latitude(), certCreate.longitude());
-        Code geoCode = codeService.getGeoByAddress(address);
+        Code geoCode = codeService.getGeoCodeByAddress(address);
         return certRepository.save(Certification.from(certCreate, address, geoCode, user));
     }
 

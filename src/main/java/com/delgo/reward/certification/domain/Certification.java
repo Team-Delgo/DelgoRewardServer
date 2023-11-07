@@ -4,7 +4,7 @@ package com.delgo.reward.certification.domain;
 import com.delgo.reward.certification.domain.request.CertCreate;
 import com.delgo.reward.certification.domain.request.CertUpdate;
 import com.delgo.reward.comm.code.CategoryCode;
-import com.delgo.reward.domain.code.Code;
+import com.delgo.reward.common.domain.Code;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import lombok.*;

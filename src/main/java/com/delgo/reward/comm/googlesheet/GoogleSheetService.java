@@ -3,12 +3,12 @@ package com.delgo.reward.comm.googlesheet;
 import com.delgo.reward.cacheService.MungpleCacheService;
 import com.delgo.reward.comm.code.CategoryCode;
 
-import com.delgo.reward.domain.code.Code;
+import com.delgo.reward.common.domain.Code;
 import com.delgo.reward.domain.common.GeoData;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.ncp.service.port.GeoDataPort;
-import com.delgo.reward.service.CodeService;
+import com.delgo.reward.common.service.CodeService;
 import com.delgo.reward.service.FigmaService;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -99,7 +99,7 @@ public class GoogleSheetService {
 
                 // Mongo Mungple Setting & Save
                 GeoData geoData = geoDataPort.getGeoData(sheet.getAddress());
-                Code geoCode = codeService.getGeoByAddress(sheet.getAddress());
+                Code geoCode = codeService.getGeoCodeByAddress(sheet.getAddress());
                 MongoMungple mongoMungple = sheet.toMongoEntity(categoryCode, geoData, geoCode);
 
                 // 중복 이중 체크 ( 주소, 이름 )

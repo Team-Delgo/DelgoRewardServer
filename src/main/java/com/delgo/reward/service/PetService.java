@@ -1,6 +1,9 @@
 package com.delgo.reward.service;
 
 
+import com.delgo.reward.common.domain.Code;
+import com.delgo.reward.common.domain.CodeCondition;
+import com.delgo.reward.common.service.CodeService;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.record.user.ModifyPetRecord;
@@ -10,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -26,7 +28,10 @@ public class PetService {
     private final PetRepository petRepository;
 
     public Pet register(Pet pet) {
-        return petRepository.save(pet.setBreedName(codeService.getCode(pet.getBreed()).getCodeName()));
+        Code code = codeService.getOneByCondition(CodeCondition.byCode(pet.getBreed()));
+        pet.setBreedName(code.getCodeName());
+
+        return petRepository.save(pet);
     }
 
     @Transactional
@@ -35,15 +40,8 @@ public class PetService {
         Optional.ofNullable(modifyPetRecord.birthday()).ifPresent(user.getPet()::setBirthday);
         Optional.ofNullable(modifyPetRecord.breed()).ifPresent(breed ->{
             user.getPet().setBreed(breed);
-            user.getPet().setBreedName(codeService.getCode(breed).getCodeName());
+            Code code = codeService.getOneByCondition(CodeCondition.byCode(breed));
+            user.getPet().setBreedName(code.getCodeName());
         });
-    }
-
-    // 단순 DB 데이터 적치용
-    public void fillBreedName(){
-        List<Pet> pets = petRepository.findAll();
-        for(Pet pet : pets){
-            pet.setBreedName(codeService.getCode(pet.getBreed()).getCodeName());
-        }
     }
 }
