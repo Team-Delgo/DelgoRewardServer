@@ -2,7 +2,8 @@ package com.delgo.reward.certification.service;
 
 import com.delgo.reward.certification.domain.Certification;
 import com.delgo.reward.certification.domain.request.CertUpdate;
-import com.delgo.reward.ncp.service.port.ObjectStoragePort;
+import com.delgo.reward.fake.FakeGeoDataAdapter;
+import com.delgo.reward.fake.FakeObjectStorageAdapter;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.comm.PageCustom;
@@ -10,7 +11,6 @@ import com.delgo.reward.fake.FakeCertRepositoryImpl;
 import com.delgo.reward.certification.domain.CertCondition;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
@@ -25,7 +25,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 public class CertServiceTest {
     CertService certService;
-
 
     // SetUp에서 사용
     private Certification createCertification(int certificationId, User user, int mungpleId, boolean isCorrect, LocalDate date) {
@@ -66,11 +65,11 @@ public class CertServiceTest {
 
         certService = CertService.builder()
                 .certRepository(new FakeCertRepositoryImpl(initCertList))
-                .objectStoragePort(Mockito.mock(ObjectStoragePort.class))
+                .objectStoragePort(new FakeObjectStorageAdapter())
+                .geoDataPort(new FakeGeoDataAdapter())
 //        .UserService()
 //        .CodeService()
 //        .MongoMungpleService()
-//        .GeoDataPort()
                 .build();
     }
 
