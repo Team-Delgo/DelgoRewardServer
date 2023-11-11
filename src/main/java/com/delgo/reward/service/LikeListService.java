@@ -5,6 +5,7 @@ import com.delgo.reward.comm.fcm.FcmService;
 import com.delgo.reward.domain.like.LikeList;
 import com.delgo.reward.domain.notify.NotifyType;
 import com.delgo.reward.repository.LikeListRepository;
+import com.delgo.reward.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

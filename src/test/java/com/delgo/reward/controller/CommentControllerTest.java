@@ -11,7 +11,7 @@ import com.delgo.reward.dto.comment.CommentResDTO;
 import com.delgo.reward.record.comment.CommentRecord;
 import com.delgo.reward.service.CommentService;
 import com.delgo.reward.service.NotifyService;
-import com.delgo.reward.service.UserService;
+import com.delgo.reward.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

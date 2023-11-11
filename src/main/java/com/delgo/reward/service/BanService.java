@@ -3,6 +3,7 @@ package com.delgo.reward.service;
 import com.delgo.reward.domain.BanList;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.repository.BanListRepository;
+import com.delgo.reward.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

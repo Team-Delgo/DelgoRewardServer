@@ -7,7 +7,7 @@ import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.exception.JwtException;
 import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
 import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
-import com.delgo.reward.service.TokenService;
+import com.delgo.reward.user.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;

@@ -12,6 +12,7 @@ import com.delgo.reward.record.comment.CommentRecord;
 import com.delgo.reward.record.comment.ModifyCommentRecord;
 import com.delgo.reward.record.comment.ReplyRecord;
 import com.delgo.reward.repository.CommentRepository;
+import com.delgo.reward.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

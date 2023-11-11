@@ -5,8 +5,9 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
 import com.delgo.reward.comm.security.services.PrincipalDetails;
-import com.delgo.reward.domain.user.User;
-import com.delgo.reward.repository.UserRepository;
+import com.delgo.reward.user.domain.User;
+import com.delgo.reward.user.infrastructure.entity.UserEntity;
+import com.delgo.reward.user.infrastructure.jpa.UserJpaRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,11 +28,11 @@ import java.io.IOException;
 @Slf4j
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-    private final UserRepository userRepository;
+    private final UserJpaRepository userJpaRepository;
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserRepository userRepository) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserJpaRepository userJpaRepository) {
         super(authenticationManager);
-        this.userRepository = userRepository;
+        this.userJpaRepository = userJpaRepository;
     }
 
     // Token Check
@@ -65,8 +66,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                             .verify(token)
                             .getClaim("userId").asInt();
 
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new NullPointerException("NOT FOUND USER id: " + userId));
+            User user = userJpaRepository.findById(userId)
+                    .orElseThrow(() -> new NullPointerException("NOT FOUND USER id: " + userId)).toModel();
 
             // 유저의 Web Version 체크 및 DB에 저장
             String version = request.getHeader("version");
@@ -75,7 +76,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             if (StringUtils.hasText(version)) {
                 if(!user.getVersion().equals(version)) {
                     user.setVersion(version);
-                    userRepository.save(user);
+                    userJpaRepository.save(UserEntity.from(user));
                 }
             }
 

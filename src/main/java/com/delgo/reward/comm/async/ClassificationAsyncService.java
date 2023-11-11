@@ -5,7 +5,7 @@ import com.delgo.reward.certification.service.CertService;
 import com.delgo.reward.domain.user.CategoryCount;
 import com.delgo.reward.mongoDomain.Classification;
 import com.delgo.reward.mongoService.ClassificationService;
-import com.delgo.reward.service.UserService;
+import com.delgo.reward.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;

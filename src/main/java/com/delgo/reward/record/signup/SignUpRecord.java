@@ -1,8 +1,8 @@
 package com.delgo.reward.record.signup;
 
-import com.delgo.reward.domain.pet.Pet;
-import com.delgo.reward.domain.user.User;
 import com.delgo.reward.comm.code.UserSocial;
+import com.delgo.reward.user.domain.Pet;
+import com.delgo.reward.user.domain.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;

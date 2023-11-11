@@ -7,16 +7,15 @@ import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.certification.domain.Certification;
 import com.delgo.reward.domain.code.Code;
-import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.comm.PageCustom;
-import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.certification.domain.request.CertCreate;
 import com.delgo.reward.certification.domain.request.CertUpdate;
 import com.delgo.reward.certification.domain.CertCondition;
 import com.delgo.reward.service.CodeService;
-import com.delgo.reward.service.UserService;
+import com.delgo.reward.user.service.UserService;
+import com.delgo.reward.user.controller.response.UserVisitMungpleCountResponse;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -105,10 +104,10 @@ public class CertService {
     /**
      * 유저 인증 중 가장 많이 방문한 멍플 조회 TODO: MunpgleService로 옮겨야 됨.
      */
-    public List<UserVisitMungpleCountDTO> getVisitedMungpleIdListTop3ByUserId(int userId){
+    public List<UserVisitMungpleCountResponse> getVisitedMungpleIdListTop3ByUserId(int userId){
         Pageable pageable = PageRequest.of(0, 3);
 
-        List<UserVisitMungpleCountDTO> userVisitMungpleCountDTOList = certRepository.findVisitTop3MungpleIdByUserId(userId, pageable);
+        List<UserVisitMungpleCountResponse> userVisitMungpleCountDTOList = certRepository.findVisitTop3MungpleIdByUserId(userId, pageable);
         return mongoMungpleService.getMungpleListByIds(userVisitMungpleCountDTOList);
     }
 }

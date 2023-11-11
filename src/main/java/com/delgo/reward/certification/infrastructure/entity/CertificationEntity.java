@@ -5,6 +5,7 @@ import com.delgo.reward.certification.domain.Certification;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.common.BaseTimeEntity;
 import com.delgo.reward.domain.user.User;
+import com.delgo.reward.user.infrastructure.entity.UserEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -38,7 +39,7 @@ public class CertificationEntity extends BaseTimeEntity {
 
     @ManyToOne
     @JoinColumn(name = "userId", updatable = false)
-    private User user;
+    private UserEntity userEntity;
 
 
     public Certification toModel() {
@@ -56,7 +57,7 @@ public class CertificationEntity extends BaseTimeEntity {
                 .longitude(longitude)
                 .isCorrect(isCorrect)
                 .commentCount(commentCount)
-                .user(user)
+                .user(userEntity.toModel())
                 .registDt(super.getRegistDt())
                 .build();
     }
@@ -75,7 +76,7 @@ public class CertificationEntity extends BaseTimeEntity {
                 .longitude(certification.getLongitude())
                 .isCorrect(certification.getIsCorrect())
                 .commentCount(certification.getCommentCount())
-                .user(certification.getUser())
+                .userEntity(UserEntity.from(certification.getUser()))
                 .build();
     }
 }

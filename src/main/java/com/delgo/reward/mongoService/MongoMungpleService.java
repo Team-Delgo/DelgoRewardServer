@@ -20,7 +20,8 @@ import com.delgo.reward.mongoRepository.MongoMungpleRepository;
 import com.delgo.reward.repository.BookmarkRepository;
 import com.delgo.reward.service.strategy.*;
 import com.delgo.reward.certification.service.port.CertRepository;
-import com.delgo.reward.service.BookmarkService;
+import com.delgo.reward.user.service.BookmarkService;
+import com.delgo.reward.user.controller.response.UserVisitMungpleCountResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -194,11 +195,11 @@ public class MongoMungpleService {
     /**
      * [User] 멍플 아이디 리스트로 멍플 리스트 조회 후 카운트와 함께 반환
      */
-    public List<UserVisitMungpleCountDTO> getMungpleListByIds(List<UserVisitMungpleCountDTO> userVisitMungpleCountDTOList){
-        List<MongoMungple> mongoMungpleList = mongoMungpleRepository.findByMungpleIdIn(userVisitMungpleCountDTOList.stream().map(UserVisitMungpleCountDTO::getMungpleId).collect(Collectors.toList()));
+    public List<UserVisitMungpleCountResponse> getMungpleListByIds(List<UserVisitMungpleCountResponse> userVisitMungpleCountResponseList){
+        List<MongoMungple> mongoMungpleList = mongoMungpleRepository.findByMungpleIdIn(userVisitMungpleCountResponseList.stream().map(UserVisitMungpleCountResponse::getMungpleId).collect(Collectors.toList()));
 
         for(MongoMungple mongoMungple: mongoMungpleList){
-            userVisitMungpleCountDTOList.replaceAll(e -> {
+            userVisitMungpleCountResponseList.replaceAll(e -> {
                 if(Objects.equals(e.getMungpleId(), mongoMungple.getMungpleId())){
                     return e.setMungpleData(mongoMungple.getPlaceName(), mongoMungple.getPhotoUrls().get(0));
                 } else {
@@ -206,7 +207,7 @@ public class MongoMungpleService {
                 }
             });
         }
-        return userVisitMungpleCountDTOList;
+        return userVisitMungpleCountResponseList;
     }
 
     /**

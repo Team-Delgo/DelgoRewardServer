@@ -3,7 +3,7 @@ package com.delgo.reward.comm.security;
 
 import com.delgo.reward.comm.security.jwt.filter.JwtAuthenticationFilter;
 import com.delgo.reward.comm.security.jwt.filter.JwtAuthorizationFilter;
-import com.delgo.reward.repository.UserRepository;
+import com.delgo.reward.user.infrastructure.jpa.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
-	private final UserRepository userRepository;
+	private final UserJpaRepository userJpaRepository;
 
 	@Value("${config.cors-allow-url}")
 	String CORS_ALLOW_URL;
@@ -70,7 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)) // 403 -> 401로 변경
 				.and()
 				.addFilter(new JwtAuthenticationFilter(authenticationManager()))
-				.addFilter(new JwtAuthorizationFilter(authenticationManager(),userRepository))
+				.addFilter(new JwtAuthorizationFilter(authenticationManager(), userJpaRepository))
 				.authorizeRequests()
 				.antMatchers("/api/oauth/**").permitAll()
 				.antMatchers("/api/auth/**").permitAll()

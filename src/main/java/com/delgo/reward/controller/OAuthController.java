@@ -11,7 +11,7 @@ import com.delgo.reward.domain.user.User;
 import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.dto.OAuthDTO;
 import com.delgo.reward.dto.user.UserResDTO;
-import com.delgo.reward.service.UserService;
+import com.delgo.reward.user.service.UserService;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

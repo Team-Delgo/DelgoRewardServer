@@ -1,6 +1,5 @@
 package com.delgo.reward.certification.controller;
 
-
 import com.delgo.reward.certification.domain.*;
 import com.delgo.reward.certification.service.CertPhotoService;
 import com.delgo.reward.certification.service.CertService;
@@ -16,7 +15,7 @@ import com.delgo.reward.dto.comm.PageCustom;
 import com.delgo.reward.mongoService.ClassificationService;
 import com.delgo.reward.certification.domain.request.CertCreate;
 import com.delgo.reward.certification.domain.request.CertUpdate;
-import com.delgo.reward.service.UserService;
+import com.delgo.reward.user.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
