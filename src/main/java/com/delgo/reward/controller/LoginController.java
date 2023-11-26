@@ -60,12 +60,14 @@ public class LoginController extends CommController {
     @GetMapping("/api/token/reissue")
     public ResponseEntity<?> tokenReissue(@CookieValue(name = RefreshTokenProperties.HEADER_STRING, required = false) String refreshToken, HttpServletResponse response) {
         try {
+            log.info("refresh token :{}", refreshToken);
             int userId = jwtService.getUserIdByRefreshToken(refreshToken);
             JwtToken jwt = jwtService.createToken(userId);
             jwtService.publishToken(response, jwt);
 
             return SuccessReturn();
         } catch (JwtException e) { // Refresh_Toekn 인증 실패 ( 로그인 화면으로 이동 필요 )
+            e.printStackTrace();
             return TokenErrorReturn(e.getStatus());
         }
     }

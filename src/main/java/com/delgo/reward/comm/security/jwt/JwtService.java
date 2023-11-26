@@ -3,6 +3,8 @@ package com.delgo.reward.comm.security.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.exception.JwtException;
 import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
@@ -62,25 +64,27 @@ public class JwtService {
      * @throws JwtException
      */
     public Integer getUserIdByRefreshToken(String refreshToken) throws JwtException {
+        try {
+            // 입력 받은 refreshToken이 null이거나 빈 값인지 체크
+            if (!StringUtils.hasText(refreshToken))
+                throw new JwtException(APICode.TOKEN_ERROR);
 
-        // 입력 받은 refreshToken이 null이거나 빈 값인지 체크
-        if (!StringUtils.hasText(refreshToken))
-            throw new JwtException(APICode.TOKEN_ERROR);
+            int userId = JWT.require(Algorithm.HMAC512(RefreshTokenProperties.SECRET))
+                    .build()
+                    .verify(refreshToken)
+                    .getClaim("userId")
+                    .asInt();
 
-        int userId = JWT.require(Algorithm.HMAC512(RefreshTokenProperties.SECRET))
-                .build()
-                .verify(refreshToken)
-                .getClaim("userId")
-                .asInt();
+            String refreshTokenFromDB = tokenService.getRefreshToken(userId);
+            if (!StringUtils.hasText(refreshToken) || !refreshTokenFromDB.equals(refreshToken))
+                throw new JwtException(APICode.DB_TOKEN_ERROR);
 
-        // 시간 제한을 줘서 1초 안에 여러개의 token 재발행이 들어오면 이전 요청이어도 에러 안나게 할까
-
-
-        String refreshTokenFromDB = tokenService.getRefreshToken(userId);
-        if (!StringUtils.hasText(refreshToken) || !refreshTokenFromDB.equals(refreshToken))
-            throw new JwtException(APICode.DB_TOKEN_ERROR);
-
-        return userId;
+            return userId;
+        } catch (TokenExpiredException e) {
+            throw new JwtException(APICode.TOKEN_EXPIRED);
+        } catch (JWTVerificationException e) {
+            throw new JwtException(APICode.TOKEN_VERIFY_ERROR);
+        }
     }
 
     public HttpServletResponse publishToken(HttpServletResponse response,  JwtToken jwt) {
