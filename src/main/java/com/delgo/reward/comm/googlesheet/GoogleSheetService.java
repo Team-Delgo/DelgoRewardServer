@@ -88,18 +88,18 @@ public class GoogleSheetService {
     private void processResponseValues(CategoryCode categoryCode, List<List<Object>> ResponseValues, List<String> placeNames) {
         for (int rowNum = 1; rowNum < ResponseValues.size(); rowNum++) {
             List<Object> row = ResponseValues.get(rowNum);
-            if (!Boolean.parseBoolean((String) row.get(0))) { // isRegist 체크
+            String activeType = (String) row.get(0); // false, true, update 가 있음
+            if (activeType.equals("FALSE")) { // activeType 체크
                 GoogleSheetDTO sheet = new GoogleSheetDTO(row, categoryCode);
-                log.info("sheet PlaceName:{}", sheet.getPlaceName());
+                log.info("NEW sheet PlaceName:{}", sheet.getPlaceName());
 
                 // Mongo Mungple Setting & Save
                 MongoMungple mongoMungple = sheet.toMongoEntity(categoryCode, geoService.getGeoData(sheet.getAddress()));
 
                 // 중복 이중 체크 ( 주소, 이름 )
-                if(mongoMungpleService.isMungpleExisting(mongoMungple.getJibunAddress())
-                        && mongoMungpleService.isMungpleExistingByPlaceName(mongoMungple.getPlaceName())) {
+                if(mongoMungpleService.isMungpleExisting(mongoMungple.getJibunAddress()) && mongoMungpleService.isMungpleExistingByPlaceName(mongoMungple.getPlaceName())) {
                     log.info("이미 등록된 멍플입니다. : {}", mongoMungple.getPlaceName());
-                    placeNames.add("[" + mongoMungple.getPlaceName() + "]은 중복 데이터입니다.");
+                    placeNames.add("[" + mongoMungple.getPlaceName() + "]은 중복 데이터입니다. \n");
                     continue;
                 }
 
@@ -122,6 +122,36 @@ public class GoogleSheetService {
                     // Sheet IsRegist Data update [ false -> true ]
                     checkSaveConfirm(categoryCode, rowNum + 1);
                 }
+            }
+            if (activeType.equals("UPDATE")){
+                GoogleSheetDTO sheet = new GoogleSheetDTO(row, categoryCode);
+                log.info("UPDATE sheet PlaceName:{}", sheet.getPlaceName());
+
+                MongoMungple mungple =  sheet.toMongoEntity(categoryCode, geoService.getGeoData(sheet.getAddress()));
+
+                if (StringUtils.hasText(sheet.getAcceptSize()))
+                    mungple.setAcceptSize(sheet.getAcceptSize());
+                if (StringUtils.hasText(sheet.getBusinessHour()))
+                    mungple.setBusinessHour(sheet.getBusinessHour());
+
+                // Figma
+                if (StringUtils.hasText(sheet.getFigmaNodeId())) {
+                    figmaService.uploadFigmaDataToNCP(sheet.getFigmaNodeId(), mungple);
+                }
+
+                MongoMungple dbMungple = mongoMungpleService.getByPlaceName(sheet.getPlaceName());
+
+                mungple.setId(dbMungple.getId());
+                mungple.setMungpleId(dbMungple.getMungpleId());
+                MongoMungple savedMongoMungple = mongoMungpleService.save(mungple);
+
+                // Cache Update
+                mungpleCacheService.updateCacheData(savedMongoMungple.getMungpleId(), savedMongoMungple);
+
+                placeNames.add("[" + savedMongoMungple.getPlaceName() + "] 수정 되었습니다.");
+
+                // Sheet IsRegist Data update [ update -> true ]
+                checkSaveConfirm(categoryCode, rowNum + 1);
             }
         }
     }

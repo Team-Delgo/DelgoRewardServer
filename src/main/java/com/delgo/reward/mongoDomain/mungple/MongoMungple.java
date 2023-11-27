@@ -4,13 +4,11 @@ package com.delgo.reward.mongoDomain.mungple;
 import com.delgo.reward.comm.code.BusinessHourCode;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.DetailCode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import javax.persistence.EnumType;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.time.LocalDateTime;
@@ -92,6 +90,11 @@ public class MongoMungple {
     private Boolean isPriceTag; // 가격표 존재 여부
     @Field("price_tag_photo_urls")
     private List<String> priceTagPhotoUrls; // 가격표 사진
+
+    // Sheet Update 시 사용
+    public void setId(String id){
+        this.id = id;
+    }
 
     public void setMungpleId(Integer mungpleId) {
         this.mungpleId = mungpleId;
