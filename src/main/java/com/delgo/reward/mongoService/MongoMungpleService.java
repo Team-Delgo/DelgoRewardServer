@@ -91,6 +91,14 @@ public class MongoMungpleService {
     }
 
     /**
+     * [mungpleId] Mungple 조회
+     */
+    public MongoMungple getByPlaceName(String placeName) {
+        return mongoMungpleRepository.findByPlaceName(placeName)
+                    .orElseThrow(() -> new NullPointerException("NOT FOUND MongoMungple - placeName : " + placeName ));
+    }
+
+    /**
      * [categoryCode] Mungple 조회
      */
     @Cacheable(cacheNames = MUNGPLE_CACHE_STORE)
