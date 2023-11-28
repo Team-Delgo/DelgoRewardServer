@@ -14,6 +14,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "code")
 public class CodeEntity extends BaseTimeEntity {
     @Id
     private String code; // 코드
