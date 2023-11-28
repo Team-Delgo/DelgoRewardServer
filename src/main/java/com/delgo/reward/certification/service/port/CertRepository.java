@@ -8,10 +8,11 @@ import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CertRepository {
     PageCustom<Certification> findListByCondition(CertCondition certCondition);
-    Certification findByCertId(Integer certificationId);
+    Optional<Certification> findByCertId(Integer certificationId);
 
     //-----------------------------------------------------------
 

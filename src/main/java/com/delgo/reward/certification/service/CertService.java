@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 
@@ -42,6 +43,14 @@ public class CertService {
     private final GeoDataPort geoDataPort;
 
     /**
+     * DB에 저장
+     */
+    @Transactional
+    public Certification save(Certification certification) {
+        return certRepository.save(certification);
+    }
+
+    /**
      * 일반 인증 생성
      */
     @Transactional
@@ -56,7 +65,7 @@ public class CertService {
     public Certification createByMungple(CertCreate certCreate) {
         User user = userService.getUserById(certCreate.userId());
         MongoMungple mongoMungple = mongoMungpleService.getMungpleByMungpleId(certCreate.mungpleId());
-        return certRepository.save(Certification.from(certCreate, mongoMungple, user));
+        return save(Certification.from(certCreate, mongoMungple, user));
     }
 
     /**
@@ -67,14 +76,15 @@ public class CertService {
         User user = userService.getUserById(certCreate.userId());
         String address = geoDataPort.getReverseGeoData(certCreate.latitude(), certCreate.longitude());
         Code geoCode = codeService.getGeoCodeByAddress(address);
-        return certRepository.save(Certification.from(certCreate, address, geoCode, user));
+        return save(Certification.from(certCreate, address, geoCode, user));
     }
 
     /**
      * [certId] 단 건 조회
      */
     public Certification getById(int certificationId) {
-        return certRepository.findByCertId(certificationId);
+        return certRepository.findByCertId(certificationId)
+                .orElseThrow(() -> new NoSuchElementException("[getById] NOT FOUND Certification Id : " + certificationId));
     }
 
     /**
@@ -89,7 +99,7 @@ public class CertService {
      */
     @Transactional
     public Certification update(CertUpdate certUpdate) {
-        Certification cert = certRepository.findByCertId(certUpdate.certificationId());
+        Certification cert = getById(certUpdate.certificationId());
         return certRepository.save(cert.update(certUpdate));
     }
 
@@ -106,7 +116,7 @@ public class CertService {
      * 권한 인증
      */
     public Boolean validate(int userId, int certificationId) {
-        int ownerId = certRepository.findByCertId(certificationId).getUser().getUserId();
+        int ownerId = getById(certificationId).getUser().getUserId();
         return Objects.equals(userId, ownerId);
     }
 

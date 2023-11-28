@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -60,11 +61,10 @@ public class FakeCertRepositoryImpl implements CertRepository {
     }
 
     @Override
-    public Certification findByCertId(Integer certificationId) {
+    public Optional<Certification> findByCertId(Integer certificationId) {
         return certifications.stream()
                 .filter(cert -> cert.getCertificationId() == certificationId)
-                .findFirst()
-                .orElseThrow(NoSuchElementException::new);
+                .findFirst();
     }
 
     @Override

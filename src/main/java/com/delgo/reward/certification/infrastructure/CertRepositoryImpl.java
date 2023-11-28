@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -55,11 +56,8 @@ public class CertRepositoryImpl implements CertRepository {
     }
 
     @Override
-    public Certification findByCertId(Integer certificationId) {
-        CertificationEntity entity = certJpaRepository.findByCertId(certificationId)
-                .orElseThrow(() -> new NullPointerException("[getById] NOT FOUND Certification Id : " + certificationId));
-
-        return entity.toModel();
+    public Optional<Certification> findByCertId(Integer certificationId) {
+        return certJpaRepository.findByCertId(certificationId).map(CertificationEntity::toModel);
     }
 
     @Override
