@@ -3,7 +3,6 @@ package com.delgo.reward.certification.domain;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +10,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class ReactionCodeTest {
-
     @Test
     public void ReactionCode의_code_desc_를_호출할_수_있다(){
         // then
@@ -24,6 +22,7 @@ public class ReactionCodeTest {
     @Test
     public void initializeReactionMap으로_ReactionMap을_초기화할_수_있다() {
         // given
+
         // when
         Map<ReactionCode, Boolean> reactionMap = ReactionCode.initializeReactionMap();
 
@@ -35,6 +34,7 @@ public class ReactionCodeTest {
     @Test
     public void initializeReactionCountMap으로_CountMap을_초기화할_수_있다() {
         // given
+
         // when
         Map<ReactionCode, Integer> reactionCountMap = ReactionCode.initializeReactionCountMap();
 

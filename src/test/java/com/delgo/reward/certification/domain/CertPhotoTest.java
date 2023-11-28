@@ -20,7 +20,6 @@ public class CertPhotoTest {
         assertThat(photo.getCertificationId()).isEqualTo(certificationId);
         assertThat(photo.getUrl()).isEqualTo(url);
         assertThat(photo.getIsCorrect()).isEqualTo(true); // 기본값 True
-
     }
 
     @Test

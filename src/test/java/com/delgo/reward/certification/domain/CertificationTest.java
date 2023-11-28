@@ -126,7 +126,7 @@ public class CertificationTest {
         CertUpdate certUpdate = CertUpdate.builder()
                 .userId(userId)
                 .certificationId(certificationId)
-                .description("test description")
+                .description("update description")
                 .isHideAddress(isHideAddress)
                 .build();
 
@@ -137,11 +137,11 @@ public class CertificationTest {
                 .build();
 
         // when
-        Certification post = certification.update(certUpdate);
+        Certification updatedCertification = certification.update(certUpdate);
 
         // then
-        assertThat(post.getDescription()).isEqualTo("test description");
-        assertThat(post.getIsHideAddress()).isEqualTo(isHideAddress);
+        assertThat(updatedCertification.getDescription()).isEqualTo("update description");
+        assertThat(updatedCertification.getIsHideAddress()).isEqualTo(isHideAddress);
     }
 
     @Test

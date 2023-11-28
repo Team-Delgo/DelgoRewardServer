@@ -24,8 +24,8 @@ public class CertConditionTest {
         assertThat(condition.getIsCorrect()).isEqualTo(isCorrect);
         assertThat(condition.getPageable().getPageNumber()).isEqualTo(0);
         assertThat(condition.getPageable().getPageSize()).isEqualTo(3);
-
     }
+
     @Test
     public void byUser로_Cert_조회_조건을_만들_수_있다() {
         // given
@@ -42,6 +42,7 @@ public class CertConditionTest {
         assertThat(condition.getPageable().getPageNumber()).isEqualTo(0);
         assertThat(condition.getPageable().getPageSize()).isEqualTo(3);
     }
+
     @Test
     public void byMungple로_Cert_조회_조건을_만들_수_있다() {
         // given
@@ -58,6 +59,7 @@ public class CertConditionTest {
         assertThat(condition.getPageable().getPageNumber()).isEqualTo(0);
         assertThat(condition.getPageable().getPageSize()).isEqualTo(3);
     }
+
     @Test
     public void byDateAndUser로_Cert_조회_조건을_만들_수_있다() {
         // given
