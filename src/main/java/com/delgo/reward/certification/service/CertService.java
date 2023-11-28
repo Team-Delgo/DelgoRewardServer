@@ -46,10 +46,7 @@ public class CertService {
      */
     @Transactional
     public Certification create(CertCreate certCreate) {
-        User user = userService.getUserById(certCreate.userId());
-        String address = geoDataPort.getReverseGeoData(certCreate.latitude(), certCreate.longitude());
-        Code geoCode = codeService.getGeoCodeByAddress(address);
-        return certRepository.save(Certification.from(certCreate, address, geoCode, user));
+        return (certCreate.mungpleId() == 0) ? createByNormal(certCreate) : createByMungple(certCreate);
     }
 
     /**
@@ -60,6 +57,17 @@ public class CertService {
         User user = userService.getUserById(certCreate.userId());
         MongoMungple mongoMungple = mongoMungpleService.getMungpleByMungpleId(certCreate.mungpleId());
         return certRepository.save(Certification.from(certCreate, mongoMungple, user));
+    }
+
+    /**
+     * 멍플 인증 생성
+     */
+    @Transactional
+    public Certification createByNormal(CertCreate certCreate) {
+        User user = userService.getUserById(certCreate.userId());
+        String address = geoDataPort.getReverseGeoData(certCreate.latitude(), certCreate.longitude());
+        Code geoCode = codeService.getGeoCodeByAddress(address);
+        return certRepository.save(Certification.from(certCreate, address, geoCode, user));
     }
 
     /**

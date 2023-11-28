@@ -109,10 +109,7 @@ public class CertController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = CertResponse.class))})
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> create(@Validated @RequestPart(value = "data") CertCreate certCreate, @RequestPart List<MultipartFile> photos) throws JsonProcessingException {
-        Certification cert = (certCreate.mungpleId() == 0)
-                ? certService.createByMungple(certCreate)
-                : certService.create(certCreate);
-
+        Certification cert = certService.create(certCreate);
         List<CertPhoto> photoList = certPhotoService.create(cert.getCertificationId(), photos);
 
         // 비동기 실행
