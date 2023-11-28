@@ -1,10 +1,15 @@
 package com.delgo.reward.certification.controller.response;
 
 
+import com.delgo.reward.certification.domain.CertPhoto;
+import com.delgo.reward.certification.domain.Certification;
+import com.delgo.reward.certification.domain.Reaction;
+import com.delgo.reward.dto.comm.PageCustom;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -21,9 +26,9 @@ public class CalendarResponse {
     @Schema(description = "인증 리스트")
     private List<CertResponse> responseList;
 
-    public static List<CalendarResponse> from(List<CertResponse> certResponseList) {
+    public static List<CalendarResponse> from(int userId, PageCustom<Certification> page, Map<Integer, List<CertPhoto>> photoMap, Map<Integer, List<Reaction>> reactionMap) {
         // 날짜 별로 그룹화
-        Map<LocalDate, List<CertResponse>> groupedByDate = certResponseList.stream()
+        Map<LocalDate, List<CertResponse>> groupedByDate = CertResponse.fromList(userId, page.getContent(), photoMap, reactionMap).stream()
                 .collect(Collectors.groupingBy(cert -> LocalDate.from(cert.getRegistDt())));
 
         // 각 그룹에 대해 CalendarResponse 객체 생성
@@ -32,7 +37,6 @@ public class CalendarResponse {
                 .map(entry -> {
                     LocalDate date = entry.getKey();
                     List<CertResponse> dateList = entry.getValue();
-//                    dateList.sort(Comparator.comparing(CertResponse::getRegistDt).reversed()); // 등록 순으로 정렬
                     return new CalendarResponse(date, dateList);
                 })
                 .collect(Collectors.toList());

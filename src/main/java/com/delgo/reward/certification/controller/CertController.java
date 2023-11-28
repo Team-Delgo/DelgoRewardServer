@@ -59,9 +59,10 @@ public class CertController extends CommController {
     @GetMapping("/all")
     public ResponseEntity getList(@RequestParam Integer userId, @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
         PageCustom<Certification> page = certService.getListByCondition(CertCondition.from(true, pageable));
-        List<CertResponse> responseList = CertResponse.fromList(userId, page.getContent(), certPhotoService, reactionService);
+        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(page.getContent());
+        Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
 
-        return SuccessReturn(PageCertResponse.from(page, responseList));
+        return SuccessReturn(PageCertResponse.from(userId, page, photoMap, reactionMap));
     }
 
     @Operation(summary = "[Other] 다른 사용자 작성 인증 조회 [Paging]", description = "다른 사용자가 작성한 인증 조회 [권한 필요 없음]")
@@ -69,9 +70,10 @@ public class CertController extends CommController {
     @GetMapping("/other")
     public ResponseEntity getCorrectListByUser(@RequestParam Integer userId, @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
         PageCustom<Certification> page = certService.getListByCondition(CertCondition.byUser(userId,true, pageable));
-        List<CertResponse> responseList = CertResponse.fromList(userId, page.getContent(), certPhotoService, reactionService);
+        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(page.getContent());
+        Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
 
-        return SuccessReturn(PageCertResponse.from(page, responseList)
+        return SuccessReturn(PageCertResponse.from(userId, page, photoMap, reactionMap)
                 .setViewCount(userService.getUserById(userId).getViewCount())); // viewCount 설정
     }
 
@@ -83,9 +85,10 @@ public class CertController extends CommController {
             @RequestParam Integer mungpleId,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
         PageCustom<Certification> page = certService.getListByCondition(CertCondition.byMungple(mungpleId,true, pageable));
-        List<CertResponse> responseList = CertResponse.fromList(userId, page.getContent(), certPhotoService, reactionService);
+        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(page.getContent());
+        Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
 
-        return SuccessReturn(PageCertResponse.from(page, responseList));
+        return SuccessReturn(PageCertResponse.from(userId, page, photoMap, reactionMap));
     }
 
     @Operation(summary = "[certId] 인증 조회", description ="고유 ID로 인증 데이터 조회  \n  단 건이지만 Front 요청으로 LIST로 반환")
@@ -133,8 +136,9 @@ public class CertController extends CommController {
         List<CertPhoto> photoList = certPhotoService.getListByCertId(certUpdate.certificationId());
         List<Reaction> reactionList = reactionService.getListByCertId(certUpdate.certificationId());
 
-        // 비동기적 실행
+        // 비동기 실행
         classificationAsyncService.doClassification(updatedCert.getCertificationId());
+
         return SuccessReturn(CertResponse.from(certUpdate.userId(), updatedCert, photoList, reactionList));
     }
 
@@ -144,8 +148,10 @@ public class CertController extends CommController {
     @GetMapping("/date")
     public ResponseEntity getListByDateAndUser(@RequestParam Integer userId, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         PageCustom<Certification> page = certService.getListByCondition(CertCondition.byDateAndUser(date, userId, true, Pageable.unpaged()));
+        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(page.getContent());
+        Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
 
-        return SuccessReturn(CertResponse.fromList(userId, page.getContent(), certPhotoService, reactionService));
+        return SuccessReturn(CertResponse.fromList(userId, page.getContent(), photoMap, reactionMap));
     }
 
     @Operation(summary = "[My] 내가 작성한 인증 조회 [paging]", description = "내가 작성한 모든 인증글 조회 [ \n isCorrect = false 여도 조회.")
@@ -155,10 +161,12 @@ public class CertController extends CommController {
             @RequestParam Integer userId,
             @RequestParam(required = false) boolean unPaged,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        PageCustom<Certification> page = certService.getListByCondition(CertCondition.byUser(userId, null, unPaged ? Pageable.unpaged() : pageable));
-        List<CertResponse> responseList = CertResponse.fromList(userId, page.getContent(), certPhotoService, reactionService);
+        PageCustom<Certification> page = certService.getListByCondition(CertCondition.byUser(userId, null,
+                unPaged ? Pageable.unpaged() : pageable));
+        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(page.getContent());
+        Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
 
-        return SuccessReturn(PageCertResponse.from(page, responseList)
+        return SuccessReturn(PageCertResponse.from(userId, page, photoMap, reactionMap)
                 .setViewCount(userService.getUserById(userId).getViewCount())); // viewCount 설정
     }
 
@@ -186,12 +194,14 @@ public class CertController extends CommController {
     }
 
     @Operation(summary = "Calendar Data 조회", description = "모든 날짜별 인증 리스트 조회")
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Reaction.class))})
-    @PostMapping("/calendar")
-    public ResponseEntity getCalendar(@RequestParam int userId){
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema =
+    @Schema(implementation = Reaction.class))})
+    @GetMapping("/calendar")
+    public ResponseEntity getCalendar(@RequestParam int userId) {
         PageCustom<Certification> page = certService.getListByCondition(CertCondition.byUser(userId, null, Pageable.unpaged()));
-        List<CertResponse> certResponseList = CertResponse.fromList(userId, page.getContent(), certPhotoService, reactionService);
+        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(page.getContent());
+        Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
 
-        return SuccessReturn(CalendarResponse.from(certResponseList));
+        return SuccessReturn(CalendarResponse.from(userId, page, photoMap, reactionMap));
     }
 }

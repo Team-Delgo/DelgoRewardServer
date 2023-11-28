@@ -3,8 +3,6 @@ package com.delgo.reward.certification.controller.response;
 
 import com.delgo.reward.certification.domain.CertPhoto;
 import com.delgo.reward.certification.domain.Reaction;
-import com.delgo.reward.certification.service.CertPhotoService;
-import com.delgo.reward.certification.service.ReactionService;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.certification.domain.ReactionCode;
 import com.delgo.reward.certification.domain.Certification;
@@ -94,15 +92,12 @@ public class CertResponse {
                 .build();
     }
 
-    public static List<CertResponse> fromList(Integer ownerId, List<Certification> certList, CertPhotoService certPhotoService, ReactionService reactionService) {
-        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(certList);
-        Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(certList);
-
+    public static List<CertResponse> fromList(Integer userId, List<Certification> certList, Map<Integer, List<CertPhoto>> photoMap, Map<Integer, List<Reaction>> reactionMap) {
         return certList.stream().map(cert -> {
             List<CertPhoto> photoList = photoMap.getOrDefault(cert.getCertificationId(), Collections.emptyList());
             List<Reaction> reactionList = reactionMap.getOrDefault(cert.getCertificationId(), Collections.emptyList());
 
-            return CertResponse.from(ownerId, cert, photoList, reactionList);
+            return CertResponse.from(userId, cert, photoList, reactionList);
         }).toList();
     }
 }

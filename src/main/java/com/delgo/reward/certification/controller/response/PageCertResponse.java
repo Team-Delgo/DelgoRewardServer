@@ -1,6 +1,8 @@
 package com.delgo.reward.certification.controller.response;
 
+import com.delgo.reward.certification.domain.CertPhoto;
 import com.delgo.reward.certification.domain.Certification;
+import com.delgo.reward.certification.domain.Reaction;
 import com.delgo.reward.dto.comm.PageCustom;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -8,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Builder
@@ -26,7 +29,8 @@ public class PageCertResponse {
     @Schema(description = "데이터 리스트")
     private List<CertResponse> content;
 
-    public static PageCertResponse from(PageCustom<Certification> page, List<CertResponse> content) {
+    public static PageCertResponse from(Integer userId, PageCustom<Certification> page, Map<Integer, List<CertPhoto>> photoMap,  Map<Integer, List<Reaction>> reactionMap) {
+        List<CertResponse> content = CertResponse.fromList(userId, page.getContent(), photoMap, reactionMap);
         return PageCertResponse.builder().
                 size(page.getSize())
                 .number(page.getNumber())
