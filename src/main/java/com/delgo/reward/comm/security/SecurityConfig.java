@@ -99,6 +99,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.antMatchers("/api/mungple/detail").permitAll()
 				.antMatchers("/api/mungple/parsing").permitAll()
 				.antMatchers("/api/mungple/category").permitAll()
+				.antMatchers("/api/mungple/cache").permitAll()
 
 				.antMatchers("/health-check").permitAll()
 				.antMatchers("/kafka/**").permitAll()

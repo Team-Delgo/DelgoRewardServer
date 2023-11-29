@@ -93,7 +93,7 @@ public class MungpleController extends CommController {
      * Mungple Cache Reset
      */
     @Operation(summary = "Reset Mungple Cache", description = "멍플 등록 시, 혹은 업데이트 시 적용이 안될 때 Cache 업데이트를 위해 사용한다.")
-    @PutMapping("/cache")
+    @GetMapping("/cache")
     public ResponseEntity resetMungpleCache() {
         mongoMungpleService.resetMungpleCache();
         return SuccessReturn();
