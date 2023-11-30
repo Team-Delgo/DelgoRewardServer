@@ -1,6 +1,6 @@
 //package com.delgo.reward.controller;
 //
-//import com.delgo.reward.comm.async.CertAsyncService;
+//import com.delgo.reward.certification.service.CertAsyncService;
 //import com.delgo.reward.comm.async.ClassificationAsyncService;
 //import com.delgo.reward.comm.code.CategoryCode;
 //import com.delgo.reward.comm.config.WebConfig;

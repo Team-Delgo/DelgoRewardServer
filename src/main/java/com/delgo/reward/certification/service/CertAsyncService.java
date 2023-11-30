@@ -1,6 +1,5 @@
-package com.delgo.reward.comm.async;
+package com.delgo.reward.certification.service;
 
-import com.delgo.reward.certification.service.CertService;
 import com.delgo.reward.certification.service.port.CertPhotoRepository;
 import com.delgo.reward.certification.domain.CertPhoto;
 import com.delgo.reward.certification.domain.Certification;
@@ -25,7 +24,7 @@ public class CertAsyncService {
 
     @Async
     @Transactional
-    public void doSomething(Integer certificationId) {
+    public void uploadPhoto(Integer certificationId) {
         List<CertPhoto> certPhotos = certPhotoRepository.findListByCertId(certificationId);
         for(CertPhoto photo : certPhotos) {
             String fileName = photoService.getFileNameFromURL(photo.getUrl()); // ex) 1359_cert_1.png

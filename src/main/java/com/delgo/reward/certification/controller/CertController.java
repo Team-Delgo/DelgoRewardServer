@@ -7,7 +7,7 @@ import com.delgo.reward.certification.service.CertPhotoService;
 import com.delgo.reward.certification.service.CertService;
 import com.delgo.reward.certification.service.ReactionService;
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.comm.async.CertAsyncService;
+import com.delgo.reward.certification.service.CertAsyncService;
 import com.delgo.reward.comm.async.ClassificationAsyncService;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.certification.controller.response.CertResponse;
@@ -113,7 +113,7 @@ public class CertController extends CommController {
         List<CertPhoto> photoList = certPhotoService.create(cert.getCertificationId(), photos);
 
         // 비동기 실행
-        certAsyncService.doSomething(cert.getCertificationId());
+        certAsyncService.uploadPhoto(cert.getCertificationId());
         classificationAsyncService.doClassification(cert.getCertificationId());
 
         return SuccessReturn(CertResponse.from(certCreate.userId(), cert, photoList, new ArrayList<>()));
