@@ -33,10 +33,15 @@ public class ReactionService {
      */
     @Transactional
     public Reaction update(int userId, int certificationId, ReactionCode reactionCode) {
-        Reaction reaction = reactionRepository.findByUserIdAndCertIdAndCode(userId, certificationId, reactionCode);
+        Reaction reaction = getByUserIdAndCertIdAndCode(userId, certificationId, reactionCode);
         reaction.update();
 
         return reactionRepository.save(reaction);
+    }
+
+    public Reaction getByUserIdAndCertIdAndCode(int userId, int certificationId, ReactionCode reactionCode){
+        return reactionRepository.findByUserIdAndCertIdAndCode(userId, certificationId, reactionCode)
+                .orElseThrow(() -> new NullPointerException("NOT FOUND REACTION userId: " + userId + ", certificationId : " + certificationId));
     }
 
     /**

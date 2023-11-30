@@ -4,10 +4,7 @@ import com.delgo.reward.certification.domain.Reaction;
 import com.delgo.reward.certification.service.port.ReactionRepository;
 import com.delgo.reward.certification.domain.ReactionCode;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -54,13 +51,12 @@ public class FakeReactionRepositoryImpl implements ReactionRepository {
     }
 
     @Override
-    public Reaction findByUserIdAndCertIdAndCode(Integer userId, Integer certificationId, ReactionCode reactionCode) {
+    public Optional<Reaction> findByUserIdAndCertIdAndCode(Integer userId, Integer certificationId, ReactionCode reactionCode) {
         return reactions.stream()
                 .filter(reaction -> Objects.equals(reaction.getUserId(), userId))
                 .filter(reaction -> Objects.equals(reaction.getCertificationId(), certificationId))
                 .filter(reaction -> Objects.equals(reaction.getReactionCode(), reactionCode))
-                .findFirst()
-                .orElseThrow(NoSuchElementException::new);
+                .findFirst();
     }
 
     @Override

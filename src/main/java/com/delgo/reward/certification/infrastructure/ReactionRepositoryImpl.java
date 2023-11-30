@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -19,7 +20,6 @@ public class ReactionRepositoryImpl implements ReactionRepository {
     public Reaction save(Reaction reaction) {
         return reactionJpaRepository.save(ReactionEntity.from(reaction)).toModel();
     }
-
 
     @Override
     public List<Reaction> findActiveListByCertId(Integer certificationId) {
@@ -33,13 +33,9 @@ public class ReactionRepositoryImpl implements ReactionRepository {
                 .stream().map(ReactionEntity::toModel).toList();
     }
 
-
     @Override
-    public Reaction findByUserIdAndCertIdAndCode(Integer userId, Integer certId, ReactionCode reactionCode) {
-        ReactionEntity entity = reactionJpaRepository.findByUserIdAndCertificationIdAndReactionCode(userId, certId, reactionCode)
-                .orElseThrow(() -> new NullPointerException("NOT FOUND REACTION userId: " + userId + ", certId : " + certId));
-
-        return entity.toModel();
+    public Optional<Reaction> findByUserIdAndCertIdAndCode(Integer userId, Integer certId, ReactionCode reactionCode) {
+        return reactionJpaRepository.findByUserIdAndCertificationIdAndReactionCode(userId, certId, reactionCode).map(ReactionEntity::toModel);
     }
 
     @Override

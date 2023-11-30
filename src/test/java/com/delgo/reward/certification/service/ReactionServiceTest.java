@@ -49,7 +49,6 @@ public class ReactionServiceTest {
         assertThat(reaction.getReactionCode()).isEqualTo(reactionCode);
     }
 
-
     @Test
     public void update로_isReaction_값을_반전시킬_수_있다() {
         // given
