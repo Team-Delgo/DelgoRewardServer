@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 @Getter
-public class UserVisitMungpleCountDTO {
+public class VisitCountDTO {
     @Schema(description = "멍플 고유 아이디")
     private Integer mungpleId;
     @Schema(description = "방문 횟수")
@@ -14,12 +14,12 @@ public class UserVisitMungpleCountDTO {
     @Schema(description = "사진 URL")
     private String photoUrl;
 
-    public UserVisitMungpleCountDTO(Integer mungpleId, Long visitCount){
+    public VisitCountDTO(Integer mungpleId, Long visitCount){
         this.mungpleId = mungpleId;
         this.visitCount = visitCount;
     }
 
-    public UserVisitMungpleCountDTO setMungpleData(String placeName, String photoUrl){
+    public VisitCountDTO setMungpleData(String placeName, String photoUrl){
         this.placeName = placeName;
         this.photoUrl = photoUrl;
         return this;

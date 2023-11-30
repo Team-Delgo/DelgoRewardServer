@@ -14,7 +14,7 @@ import com.delgo.reward.dto.mungple.MungpleResDTO;
 import com.delgo.reward.dto.mungple.detail.MungpleDetailByMenuResDTO;
 import com.delgo.reward.dto.mungple.detail.MungpleDetailByPriceTagResDTO;
 import com.delgo.reward.dto.mungple.detail.MungpleDetailResDTO;
-import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
+import com.delgo.reward.dto.user.VisitCountDTO;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoRepository.MongoMungpleRepository;
 import com.delgo.reward.repository.BookmarkRepository;
@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.geo.Circle;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -192,22 +193,44 @@ public class MongoMungpleService {
     }
 
     /**
-     * [User] 멍플 아이디 리스트로 멍플 리스트 조회 후 카운트와 함께 반환
+     * [mungpleIds] List 조회
      */
-    public List<UserVisitMungpleCountDTO> getMungpleListByIds(List<UserVisitMungpleCountDTO> userVisitMungpleCountDTOList){
-        List<MongoMungple> mongoMungpleList = mongoMungpleRepository.findByMungpleIdIn(userVisitMungpleCountDTOList.stream().map(UserVisitMungpleCountDTO::getMungpleId).collect(Collectors.toList()));
-
-        for(MongoMungple mongoMungple: mongoMungpleList){
-            userVisitMungpleCountDTOList.replaceAll(e -> {
-                if(Objects.equals(e.getMungpleId(), mongoMungple.getMungpleId())){
-                    return e.setMungpleData(mongoMungple.getPlaceName(), mongoMungple.getPhotoUrls().get(0));
-                } else {
-                    return e;
-                }
-            });
-        }
-        return userVisitMungpleCountDTOList;
+    public List<MongoMungple> getListByIds(List<Integer> mungpleIdList) {
+        return mongoMungpleRepository.findByMungpleIdIn(mungpleIdList);
     }
+
+    /**
+     * 유저 인증 중 가장 많이 방문한 멍플 조회
+     */
+    public List<VisitCountDTO> getMostVisitedList(int userId, int limit) {
+        List<VisitCountDTO> visitCountDTOList = getVisitCountDTOList(userId, limit);
+        List<Integer> mungpleIds = visitCountDTOList.stream().map(VisitCountDTO::getMungpleId).toList();
+
+        List<MongoMungple> mungpleList = getListByIds(mungpleIds);
+        Map<Integer, MongoMungple> mongoMungpleMap = convertListToMap(mungpleList);
+
+        visitCountDTOList.forEach(dto -> {
+            MongoMungple mongoMungple = mongoMungpleMap.get(dto.getMungpleId());
+            dto.setMungpleData(mongoMungple.getPlaceName(), mongoMungple.getPhotoUrls().get(0));
+        });
+
+        return visitCountDTOList;
+    }
+
+    /**
+     * 유저가 가장 많이 방문한 mungpleId, count 조회
+     */
+    public List<VisitCountDTO> getVisitCountDTOList(int userId, int limit) {
+        return  certRepository.findVisitCountDTOList(userId, PageRequest.of(0, limit));
+    }
+
+    /**
+     * List -> Map 변환
+     */
+    public Map<Integer, MongoMungple> convertListToMap(List<MongoMungple> mungpleList){
+        return mungpleList.stream().collect(Collectors.toMap(MongoMungple::getMungpleId, Function.identity()));
+    }
+
 
     /**
      * [address] Mungple 중복 체크

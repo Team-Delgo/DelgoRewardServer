@@ -1,7 +1,6 @@
 package com.delgo.reward.controller;
 
 
-import com.delgo.reward.certification.service.CertService;
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.security.jwt.JwtService;
@@ -12,6 +11,7 @@ import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.dto.comm.PageCustomSearchUserDTO;
 import com.delgo.reward.dto.user.OtherUserResDTO;
 import com.delgo.reward.dto.user.UserResDTO;
+import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.record.signup.OAuthSignUpRecord;
 import com.delgo.reward.record.signup.SignUpRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
@@ -46,8 +46,8 @@ public class UserController extends CommController {
 
     private final JwtService jwtService;
     private final UserService userService;
-    private final CertService certService;
     private final SmsAuthService smsAuthService;
+    private final MongoMungpleService mongoMungpleService;
 
     /**
      * 다른 User 정보 조회
@@ -58,7 +58,10 @@ public class UserController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = OtherUserResDTO.class))})
     @GetMapping("/other")
     public ResponseEntity<?> getOtherUser(@RequestParam int userId) {
-        return SuccessReturn(new OtherUserResDTO(userService.getUserById(userId), userService.getActivityByUserId(userId), certService.getVisitedMungpleIdListTop3ByUserId(userId)));
+        return SuccessReturn(new OtherUserResDTO(
+                userService.getUserById(userId),
+                userService.getActivityByUserId(userId),
+                mongoMungpleService.getMostVisitedList(userId, 3)));
     }
 
     /**

@@ -7,7 +7,7 @@ import com.delgo.reward.certification.infrastructure.jpa.CertJpaRepository;
 import com.delgo.reward.certification.service.port.CertRepository;
 import com.delgo.reward.dto.comm.PageCustom;
 import com.delgo.reward.dto.mungple.MungpleCountDTO;
-import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
+import com.delgo.reward.dto.user.VisitCountDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -61,7 +61,7 @@ public class CertRepositoryImpl implements CertRepository {
     }
 
     @Override
-    public List<UserVisitMungpleCountDTO> findVisitTop3MungpleIdByUserId(int userId, Pageable pageable) {
+    public List<VisitCountDTO> findVisitCountDTOList(int userId, Pageable pageable) {
         return certJpaRepository.findVisitTop3MungpleIdByUserId(userId, pageable);
     }
 

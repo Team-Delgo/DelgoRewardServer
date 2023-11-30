@@ -3,13 +3,14 @@ package com.delgo.reward.certification.service;
 
 import com.delgo.reward.certification.service.port.CertRepository;
 import com.delgo.reward.common.domain.Code;
+import com.delgo.reward.dto.user.VisitCountDTO;
+import com.delgo.reward.mongoRepository.MongoMungpleRepository;
 import com.delgo.reward.ncp.service.port.GeoDataPort;
 import com.delgo.reward.ncp.domain.BucketName;
 import com.delgo.reward.ncp.service.port.ObjectStoragePort;
 import com.delgo.reward.certification.domain.Certification;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.comm.PageCustom;
-import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.certification.domain.request.CertCreate;
@@ -20,7 +21,6 @@ import com.delgo.reward.service.UserService;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +40,7 @@ public class CertService {
     private final ObjectStoragePort objectStoragePort;
 
     private final CertRepository certRepository;
+    private final MongoMungpleRepository mongoMungpleRepository;
     private final GeoDataPort geoDataPort;
 
     /**
@@ -118,15 +119,5 @@ public class CertService {
     public Boolean validate(int userId, int certificationId) {
         int ownerId = getById(certificationId).getUser().getUserId();
         return Objects.equals(userId, ownerId);
-    }
-
-    /**
-     * 유저 인증 중 가장 많이 방문한 멍플 조회 TODO: MunpgleService로 옮겨야 됨.
-     */
-    public List<UserVisitMungpleCountDTO> getVisitedMungpleIdListTop3ByUserId(int userId){
-        Pageable pageable = PageRequest.of(0, 3);
-
-        List<UserVisitMungpleCountDTO> userVisitMungpleCountDTOList = certRepository.findVisitTop3MungpleIdByUserId(userId, pageable);
-        return mongoMungpleService.getMungpleListByIds(userVisitMungpleCountDTOList);
     }
 }

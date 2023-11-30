@@ -1,6 +1,6 @@
 package com.delgo.reward;
 
-import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
+import com.delgo.reward.dto.user.VisitCountDTO;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoRepository.MongoMungpleRepository;
 import com.delgo.reward.certification.service.port.CertRepository;
@@ -30,19 +30,19 @@ public class Top3MungpleTest {
 
         Pageable pageable = PageRequest.of(0, 3);
 
-        List<UserVisitMungpleCountDTO> userVisitMungpleCountDTOList = certRepository.findVisitTop3MungpleIdByUserId(userId, pageable);
+        List<VisitCountDTO> visitCountDTOList = certRepository.findVisitCountDTOList(userId, pageable);
 
         System.out.println("[getTop3MungpleTest] mungpleIdList =========");
-        System.out.println("[getTop3MungpleTest] userVisitMungpleCountDTOList size: " + userVisitMungpleCountDTOList.size());
-        for(UserVisitMungpleCountDTO userVisitMungpleCountDTO: userVisitMungpleCountDTOList){
-            System.out.println("[mungpleId]: " + userVisitMungpleCountDTO.getMungpleId());
-            System.out.println("[visitCount]: " + userVisitMungpleCountDTO.getVisitCount());
+        System.out.println("[getTop3MungpleTest] userVisitMungpleCountDTOList size: " + visitCountDTOList.size());
+        for(VisitCountDTO visitCountDTO : visitCountDTOList){
+            System.out.println("[mungpleId]: " + visitCountDTO.getMungpleId());
+            System.out.println("[visitCount]: " + visitCountDTO.getVisitCount());
         }
 
-        List<MongoMungple> mongoMungpleList = mongoMungpleRepository.findByMungpleIdIn(userVisitMungpleCountDTOList.stream().map(UserVisitMungpleCountDTO::getMungpleId).collect(Collectors.toList()));
+        List<MongoMungple> mongoMungpleList = mongoMungpleRepository.findByMungpleIdIn(visitCountDTOList.stream().map(VisitCountDTO::getMungpleId).collect(Collectors.toList()));
 
         for(MongoMungple mongoMungple: mongoMungpleList){
-            userVisitMungpleCountDTOList.replaceAll(e -> {
+            visitCountDTOList.replaceAll(e -> {
                 if(Objects.equals(e.getMungpleId(), mongoMungple.getMungpleId())){
                     return e.setMungpleData(mongoMungple.getPlaceName(), mongoMungple.getPhotoUrls().get(0));
                 } else {
@@ -51,11 +51,11 @@ public class Top3MungpleTest {
             });
         }
 
-        for(UserVisitMungpleCountDTO userVisitMungpleCountDTO: userVisitMungpleCountDTOList){
-            System.out.println("[mungpleId]: " + userVisitMungpleCountDTO.getMungpleId());
-            System.out.println("[visitCount]: " + userVisitMungpleCountDTO.getVisitCount());
-            System.out.println("[mungplePlaceName]: " + userVisitMungpleCountDTO.getPlaceName());
-            System.out.println("[mungplePhotoUrl]: " + userVisitMungpleCountDTO.getPhotoUrl());
+        for(VisitCountDTO visitCountDTO : visitCountDTOList){
+            System.out.println("[mungpleId]: " + visitCountDTO.getMungpleId());
+            System.out.println("[visitCount]: " + visitCountDTO.getVisitCount());
+            System.out.println("[mungplePlaceName]: " + visitCountDTO.getPlaceName());
+            System.out.println("[mungplePhotoUrl]: " + visitCountDTO.getPhotoUrl());
         }
 
     }

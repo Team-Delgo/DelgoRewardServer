@@ -1,10 +1,10 @@
 package com.delgo.reward.controller;
 
-import com.delgo.reward.certification.service.CertService;
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.user.AccountResDTO;
 import com.delgo.reward.dto.user.UserResDTO;
+import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.record.user.ModifyPetRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
@@ -32,8 +32,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class AccountController extends CommController {
 
     private final PetService petService;
-    private final CertService certService;
     private final UserService userService;
+    private final MongoMungpleService mongoMungpleService;
 
     /**
      * 내 정보 조회
@@ -47,7 +47,7 @@ public class AccountController extends CommController {
         return SuccessReturn(new AccountResDTO(
                 userService.getUserById(userId),
                 userService.getActivityByUserId(userId),
-                certService.getVisitedMungpleIdListTop3ByUserId(userId)));
+                mongoMungpleService.getMostVisitedList(userId, 3)));
     }
 
 

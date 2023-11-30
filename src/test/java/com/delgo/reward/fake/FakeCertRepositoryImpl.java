@@ -4,14 +4,13 @@ import com.delgo.reward.certification.domain.Certification;
 import com.delgo.reward.certification.service.port.CertRepository;
 import com.delgo.reward.dto.comm.PageCustom;
 import com.delgo.reward.dto.mungple.MungpleCountDTO;
-import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
+import com.delgo.reward.dto.user.VisitCountDTO;
 import com.delgo.reward.certification.domain.CertCondition;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -117,7 +116,7 @@ public class FakeCertRepositoryImpl implements CertRepository {
     }
 
     @Override
-    public List<UserVisitMungpleCountDTO> findVisitTop3MungpleIdByUserId(int userId, Pageable pageable) {
+    public List<VisitCountDTO> findVisitCountDTOList(int userId, Pageable pageable) {
         return null;
     }
 }
