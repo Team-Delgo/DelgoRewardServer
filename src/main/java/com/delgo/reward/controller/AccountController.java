@@ -17,11 +17,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 
 
@@ -69,9 +67,10 @@ public class AccountController extends CommController {
      */
     @Operation(summary = "유저 정보 수정", description = "수정 된 유저 정보를 반환한다. \n profile은 multipart로 받는다. (RequestBody 체크 필요)")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResDTO.class))})
-    @PutMapping(value = "/user", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<?> changeUserInfo(@Validated @RequestPart(value = "data") ModifyUserRecord modifyUserRecord, @RequestPart(required = false) MultipartFile profile) {
-        User user = userService.changeUserInfo(modifyUserRecord, profile);
+    @PutMapping(value = "/user")
+    public ResponseEntity<?> changeUserInfo(@Validated @RequestBody ModifyUserRecord modifyUserRecord) {
+        User user = userService.changeUserInfo(modifyUserRecord);
+
 //        랭킹 실시간으로 집계
 //        rankingService.rankingByPoint();
         return SuccessReturn(new UserResDTO(user));
