@@ -26,7 +26,8 @@ public class LogAop {
 
     @Pointcut("@annotation(org.springframework.web.bind.annotation.PostMapping) " +
             "|| @annotation(org.springframework.web.bind.annotation.PutMapping)" +
-            "|| @annotation(org.springframework.web.bind.annotation.DeleteMapping)")
+            "|| @annotation(org.springframework.web.bind.annotation.DeleteMapping)" +
+            "|| @annotation(org.springframework.web.bind.annotation.GetMapping)")
     private void cut() {
     }
 
