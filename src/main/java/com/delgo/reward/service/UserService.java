@@ -261,11 +261,9 @@ public class UserService {
      * @param modifyUserRecord
      * @return 수정된 유저 정보 반환
      */
-    public User changeUserInfo(ModifyUserRecord modifyUserRecord, MultipartFile profile) {
+    public User changeUserInfo(ModifyUserRecord modifyUserRecord) {
         User user = getUserById(modifyUserRecord.userId());
 
-        if (profile != null)
-            user.setProfile(photoService.uploadProfile(user.getUserId(), profile));
         if (modifyUserRecord.geoCode() != null && modifyUserRecord.pGeoCode() != null) {
             user.setGeoCode(modifyUserRecord.geoCode());
             user.setPGeoCode(modifyUserRecord.pGeoCode());
