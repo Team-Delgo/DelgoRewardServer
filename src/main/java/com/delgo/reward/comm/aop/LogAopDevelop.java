@@ -1,5 +1,6 @@
 package com.delgo.reward.comm.aop;
 
+import com.delgo.reward.record.common.ResponseRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
@@ -20,19 +21,37 @@ import java.util.stream.Stream;
 @Aspect
 @Component
 public class LogAopDevelop {
-    @Pointcut("execution(* com.delgo.reward.controller..*.*(..))")
+    @Pointcut("@annotation(org.springframework.web.bind.annotation.GetMapping) ")
+    private void onGetRequest() {
+    }
+
+    @Pointcut("@annotation(org.springframework.web.bind.annotation.PostMapping) " +
+            "|| @annotation(org.springframework.web.bind.annotation.PutMapping)" +
+            "|| @annotation(org.springframework.web.bind.annotation.DeleteMapping)")
     private void onRequest() {
+    }
+
+    @AfterReturning(pointcut = "onGetRequest()", returning = "responseEntity")
+    public void afterReturningAdviceByGet(JoinPoint joinPoint, ResponseEntity<?> responseEntity) {
+        ResponseRecord record = (ResponseRecord) responseEntity.getBody();
+        log.info("{} || Parameter : {} || Response : code = {} msg = {} || HTTP : {}", getRequestUrl(joinPoint), params(joinPoint), record.code(), record.codeMsg(), responseEntity.getStatusCode());
+    }
+
+    @AfterThrowing(pointcut = "onGetRequest()", throwing = "ex")
+    public void afterThrowingAdviceByGet(JoinPoint joinPoint, Throwable ex) {
+        log.info("{} || Exception : {} || Parameter : {}", getRequestUrl(joinPoint), ex.getMessage(), params(joinPoint));
     }
 
     @AfterReturning(pointcut = "onRequest()", returning = "responseEntity")
     public void afterReturningAdvice(JoinPoint joinPoint, ResponseEntity<?> responseEntity) {
-        log.info("{} || Parameter : {} || ResponseCode : {}", getRequestUrl(joinPoint), params(joinPoint), responseEntity.getStatusCode());
-        log.info("ResponseData : {} ",responseEntity.getBody());
+        ResponseRecord record = (ResponseRecord) responseEntity.getBody();
+        log.info("{} || Parameter : {} || HTTP : {}", getRequestUrl(joinPoint), params(joinPoint), responseEntity.getStatusCode());
+        log.info("Response : code = {} msg = {} data = {} ",record.code(), record.codeMsg(), record.codeMsg());
     }
 
     @AfterThrowing(pointcut = "onRequest()", throwing = "ex")
     public void afterThrowingAdvice(JoinPoint joinPoint, Throwable ex) {
-        log.info("{} || Parameter : {} || Exception : {}", getRequestUrl(joinPoint), params(joinPoint), ex.getMessage());
+        log.info("{} || Exception : {} || Parameter : {}", getRequestUrl(joinPoint), ex.getMessage(), params(joinPoint));
     }
 
     private String getRequestUrl(JoinPoint joinPoint) {
