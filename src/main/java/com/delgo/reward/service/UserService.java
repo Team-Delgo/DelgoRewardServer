@@ -323,7 +323,18 @@ public class UserService {
             activityCache = makeActivityCacheValue(userId);
         }
 
-        return activityCache.getActivityMapByCategoryCode();
+        Map<CategoryCode, Integer> activityMapByCategoryCode = activityCache.getActivityMapByCategoryCode();
+        Map<CategoryCode, Integer> result = new HashMap<>();
+        result.put(CategoryCode.CA0001, activityMapByCategoryCode.getOrDefault(CategoryCode.CA0001, 0));
+        result.put(CategoryCode.CA0002, activityMapByCategoryCode.getOrDefault(CategoryCode.CA0002, 0));
+        result.put(CategoryCode.CA0003, activityMapByCategoryCode.getOrDefault(CategoryCode.CA0003, 0));
+        result.put(CategoryCode.CA0004, activityMapByCategoryCode.getOrDefault(CategoryCode.CA0004, 0));
+        result.put(CategoryCode.CA0005, activityMapByCategoryCode.getOrDefault(CategoryCode.CA0005, 0));
+        result.put(CategoryCode.CA0006, activityMapByCategoryCode.getOrDefault(CategoryCode.CA0006, 0));
+        result.put(CategoryCode.CA0007, activityMapByCategoryCode.getOrDefault(CategoryCode.CA0007, 0));
+        result.put(CategoryCode.CA9999, activityMapByCategoryCode.getOrDefault(CategoryCode.CA9999, 0));
+
+        return result;
     }
 
     public ActivityCache makeActivityCacheValue(Integer userId) {
