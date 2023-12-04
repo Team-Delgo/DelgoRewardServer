@@ -24,14 +24,10 @@ public class LogAopDevelop {
     private void onRequest() {
     }
 
-    @Before("onRequest()")
-    public void afterReturningAdvice(JoinPoint joinPoint) {
-        log.info("{} || Parameter : {}", getRequestUrl(joinPoint), params(joinPoint));
-    }
-
     @AfterReturning(pointcut = "onRequest()", returning = "responseEntity")
     public void afterReturningAdvice(JoinPoint joinPoint, ResponseEntity<?> responseEntity) {
-        log.info("{} || Parameter : {} || ResponseCode : {} \n ResponseData : {}", getRequestUrl(joinPoint), params(joinPoint), responseEntity.getStatusCode(), responseEntity.getBody());
+        log.info("{} || Parameter : {} || ResponseCode : {}", getRequestUrl(joinPoint), params(joinPoint), responseEntity.getStatusCode());
+        log.info("ResponseData : {} ",responseEntity.getBody());
     }
 
     @AfterThrowing(pointcut = "onRequest()", throwing = "ex")

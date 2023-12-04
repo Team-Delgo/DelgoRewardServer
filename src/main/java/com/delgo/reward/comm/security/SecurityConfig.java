@@ -1,6 +1,7 @@
 package com.delgo.reward.comm.security;
 
 
+import com.delgo.reward.comm.security.jwt.filter.CustomAuthenticationEntryPoint;
 import com.delgo.reward.comm.security.jwt.filter.JwtAuthenticationFilter;
 import com.delgo.reward.comm.security.jwt.filter.JwtAuthorizationFilter;
 import com.delgo.reward.repository.UserRepository;
@@ -9,13 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -67,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.cors().configurationSource(corsConfigurationSource())
 				.and()
 				.exceptionHandling()
-				.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)) // 403 -> 401로 변경
+				.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
 				.and()
 				.addFilter(new JwtAuthenticationFilter(authenticationManager()))
 				.addFilter(new JwtAuthorizationFilter(authenticationManager(),userRepository))
