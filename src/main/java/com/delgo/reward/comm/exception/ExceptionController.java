@@ -84,4 +84,9 @@ public class ExceptionController extends CommController {
     public ResponseEntity notFoundDataException(NotFoundDataException e) {
         return ErrorReturnSetMessage(APICode.NOT_FOUND_DATA, APICode.NOT_FOUND_DATA.getMsg() + " " + e.getMessage());
     }
+
+    @ExceptionHandler({TokenException.class})
+    public ResponseEntity tokenException(TokenException e) {
+        return TokenErrorReturn(e.getMessage());
+    }
 }
