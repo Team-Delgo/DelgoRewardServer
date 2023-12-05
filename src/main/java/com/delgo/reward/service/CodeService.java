@@ -1,6 +1,7 @@
 package com.delgo.reward.service;
 
 
+import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.repository.CodeRepository;
@@ -44,19 +45,21 @@ public class CodeService {
         if(location.getSIDO().equals("제주특별자치도")) location.setSIDO("제주도");
         if(location.getSIDO().equals("세종특별자치시")) {
             location.setSIDO("세종특별시");
-            return  codeRepository.findByCodeName(location.getSIDO()).orElseThrow(() -> new NullPointerException("NOT FOUND GEOCODE : " + location.getSIDO()));
+            return  codeRepository.findByCodeName(location.getSIDO())
+                    .orElseThrow(() -> new NotFoundDataException("[Code] codeName: " + location.getSIDO()));
         }
 
         // SIGUGUNS [codeName]만으로 조회시 중복 발생 ex) 서울특별시 중구, 부산광역시 중구 중복의 경우 -> 서울특별시의 Code와 같이 조회
-        Code sidoCode = codeRepository.findByCodeName(location.getSIDO()).orElseThrow(() -> new NullPointerException("NOT FOUND GEOCODE : " + location.getSIDO()));
+        Code sidoCode = codeRepository.findByCodeName(location.getSIDO())
+                .orElseThrow(() -> new NotFoundDataException("[Code] : codeName" + location.getSIDO()));
         return codeRepository.findBypCodeAndCodeName(sidoCode.getCode(), location.getSIGUGUN())
-                .orElseThrow(() -> new NullPointerException("NOT FOUND GEOCODE : " + sidoCode.getCode() + ", SIGUGUN : " + location.getSIGUGUN()));
+                .orElseThrow(() -> new NotFoundDataException("[Code] code : " + sidoCode.getCode() + ", codeName : " + location.getSIGUGUN()));
     }
 
     // Code 조회
     public Code getCode(String code) {
         return codeRepository.findByCode(code)
-                .orElseThrow(() -> new NullPointerException("NOT FOUND CODE"));
+                .orElseThrow(() -> new NotFoundDataException("[Code] code : " + code));
     }
 
     // 주소 조회

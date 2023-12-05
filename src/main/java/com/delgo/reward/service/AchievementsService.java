@@ -1,6 +1,7 @@
 package com.delgo.reward.service;
 
 import com.delgo.reward.comm.code.CategoryCode;
+import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.achievements.Achievements;
@@ -17,10 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -55,7 +53,7 @@ public class AchievementsService {
 
     public Achievements getAchievements(int achievementsId){
         return achievementsRepository.findById(achievementsId)
-                .orElseThrow(() -> new NullPointerException("NOT FOUND Achievements"));
+                .orElseThrow(() -> new NotFoundDataException("[Achievements] achievementsId : " + achievementsId));
     }
 
     // Achievements Condition 등록

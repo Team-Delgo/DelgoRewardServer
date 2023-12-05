@@ -4,6 +4,7 @@ import com.delgo.reward.cache.MungpleCache;
 import com.delgo.reward.cacheService.MungpleCacheService;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.MungpleSort;
+import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.comm.ncp.GeoService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
@@ -83,7 +84,7 @@ public class MongoMungpleService {
 
         if (!mungpleCacheService.isValidation(cacheData)) {
             MongoMungple mongoMungple = mongoMungpleRepository.findByMungpleId(mungpleId)
-                    .orElseThrow(() -> new NullPointerException("NOT FOUND MongoMungple - mungpleId : " + mungpleId ));
+                    .orElseThrow(() -> new NotFoundDataException("[Mungple] mungpleId : " + mungpleId ));
             cacheData = mungpleCacheService.updateCacheData(mungpleId, mongoMungple);
         }
 
@@ -95,7 +96,7 @@ public class MongoMungpleService {
      */
     public MongoMungple getByPlaceName(String placeName) {
         return mongoMungpleRepository.findByPlaceName(placeName)
-                    .orElseThrow(() -> new NullPointerException("NOT FOUND MongoMungple - placeName : " + placeName ));
+                    .orElseThrow(() -> new NotFoundDataException("[Mungple] placeName : " + placeName ));
     }
 
     /**
