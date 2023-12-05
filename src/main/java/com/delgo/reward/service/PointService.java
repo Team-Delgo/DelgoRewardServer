@@ -1,5 +1,6 @@
 package com.delgo.reward.service;
 
+import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.domain.Point;
 import com.delgo.reward.repository.JDBCTemplatePointRepository;
 import com.delgo.reward.repository.PointRepository;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @Slf4j
 @Service
@@ -24,6 +26,6 @@ public class PointService {
 
     public Point getPointByUserId(int userId){
         return pointRepository.findByUserId(userId)
-                .orElseThrow(() -> new NullPointerException("NOT FOUND POINT"));
+                .orElseThrow(() -> new NotFoundDataException("[POINT] userId : " + userId));
     }
 }

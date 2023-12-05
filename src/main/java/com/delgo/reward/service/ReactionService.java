@@ -1,6 +1,7 @@
 package com.delgo.reward.service;
 
 import com.delgo.reward.comm.code.ReactionCode;
+import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.comm.fcm.FcmService;
 import com.delgo.reward.domain.certification.Reaction;
 import com.delgo.reward.domain.notify.NotifyType;
@@ -59,6 +60,6 @@ public class ReactionService {
      */
     public Reaction getReaction(int userId, int certId, ReactionCode reactionCode) {
         return reactionRepository.findByUserIdAndCertificationIdAndReactionCode(userId, certId, reactionCode)
-                .orElseThrow(() -> new NullPointerException("NOT FOUND Reaction userId : " + userId + " certificationId: " + certId + " reactionCode: " + reactionCode.getCode()));
+                .orElseThrow(() -> new NotFoundDataException("[Reaction] userId : " + userId + " certificationId: " + certId + " reactionCode: " + reactionCode.getCode()));
     }
 }

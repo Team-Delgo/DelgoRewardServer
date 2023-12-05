@@ -1,5 +1,6 @@
 package com.delgo.reward.service;
 
+import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.domain.user.Bookmark;
 import com.delgo.reward.repository.BookmarkRepository;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +52,7 @@ public class BookmarkService {
      */
     public Bookmark getBookmark(int userId, int mungpleId) {
         return bookmarkRepository.findByUserIdAndMungpleId(userId, mungpleId)
-                .orElseThrow(() -> new NullPointerException("NOT FOUND Bookmark userId : " + userId + " mungpleId: " + mungpleId));
+                .orElseThrow(() -> new NotFoundDataException("[Bookmark] userId : " + userId + " mungpleId: " + mungpleId));
     }
 
     /**

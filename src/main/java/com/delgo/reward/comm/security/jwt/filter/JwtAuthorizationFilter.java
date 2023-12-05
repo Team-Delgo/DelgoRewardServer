@@ -3,6 +3,7 @@ package com.delgo.reward.comm.security.jwt.filter;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
 import com.delgo.reward.comm.security.services.PrincipalDetails;
 import com.delgo.reward.domain.user.User;
@@ -66,7 +67,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                             .getClaim("userId").asInt();
 
             User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new NullPointerException("NOT FOUND USER id: " + userId));
+                    .orElseThrow(() -> new NotFoundDataException("[User] userId : " + userId));
 
             // 유저의 Web Version 체크 및 DB에 저장
             String version = request.getHeader("version");

@@ -4,6 +4,7 @@ package com.delgo.reward.service;
 import com.delgo.reward.cache.ActivityCache;
 import com.delgo.reward.cacheService.ActivityCacheService;
 import com.delgo.reward.comm.code.CategoryCode;
+import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.comm.oauth.KakaoService;
@@ -233,22 +234,22 @@ public class UserService {
 
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
+                .orElseThrow(() -> new NotFoundDataException("[User] email : " + email));
     }
 
     public User getUserById(int userId) {
         return userRepository.findByUserId(userId)
-                .orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
+                .orElseThrow(() -> new NotFoundDataException("[User] userId : " + userId));
     }
 
     public User getUserByPhoneNo(String phoneNo) {
         return userRepository.findByPhoneNo(phoneNo)
-                .orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
+                .orElseThrow(() -> new NotFoundDataException("[User] phoneNo : " + phoneNo));
     }
 
     public User getUserByAppleUniqueNo(String appleUniqueNo) {
         return userRepository.findByAppleUniqueNo(appleUniqueNo)
-                .orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
+                .orElseThrow(() -> new NotFoundDataException("[User] appleUniqueNo : " + appleUniqueNo));
     }
 
     public User changePhoto(int userId, String ncpLink) {
@@ -288,7 +289,8 @@ public class UserService {
      * @return 카테고리 카운트 반환
      */
     public CategoryCount getCategoryCountByUserId(int userId) {
-        return categoryCountRepository.findByUserId(userId).orElseThrow(() -> new NullPointerException("NOT FOUND CategoryCount userId: " + userId));
+        return categoryCountRepository.findByUserId(userId)
+                .orElseThrow(() -> new NotFoundDataException("[CategoryCount] userId : " + userId));
     }
 
     /**
