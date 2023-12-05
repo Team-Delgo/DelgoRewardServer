@@ -46,14 +46,12 @@ public class UserService {
     private final TokenService tokenService;
     private final KakaoService kakaoService;
     private final PhotoService photoService;
-    private final ArchiveService archiveService;
     private final ObjectStorageService objectStorageService;
 
     // Repository
     private final PetRepository petRepository;
     private final UserRepository userRepository;
     private final CertRepository certRepository;
-    private final LikeListRepository likeListRepository;
     private final CategoryCountRepository categoryCountRepository;
     private final ClassificationRepository classificationRepository;
 
@@ -90,7 +88,6 @@ public class UserService {
         User user = save(signUpRecord.makeUser(passwordEncoder.encode(signUpRecord.password()), address));
         Pet pet = petService.register(signUpRecord.makePet(user));
 
-        archiveService.registerWelcome(user.getUserId()); // WELCOME 업적 부여
         jdbcTemplatePointRepository.createUserPoint(user); // Point 생성
         categoryCountRepository.save(new CategoryCount().create(user.getUserId()));
 
@@ -119,7 +116,6 @@ public class UserService {
         User oAuthUser = save(oAuthSignUpRecord.makeUser(oAuthSignUpRecord.userSocial(), address));
         Pet pet = petService.register(oAuthSignUpRecord.makePet(oAuthUser));
 
-        archiveService.registerWelcome(oAuthUser.getUserId()); // WELCOME 업적 부여
         jdbcTemplatePointRepository.createUserPoint(oAuthUser); // Point 생성
         categoryCountRepository.save(new CategoryCount().create(oAuthUser.getUserId()));
 
@@ -143,7 +139,6 @@ public class UserService {
             kakaoService.logout(user.getKakaoId()); // kakao 로그아웃 , Naver는 로그아웃 지원 X
 
         certRepository.deleteAllByUserUserId(userId);
-        likeListRepository.deleteByUserId(userId); // USER가 좋아요 누른 DATA 삭제
         categoryCountRepository.deleteByUserId(userId);
 
         jdbcTemplatePointRepository.deleteAllByUserId(userId);
