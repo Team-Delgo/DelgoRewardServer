@@ -2,7 +2,6 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.APICode;
-import com.delgo.reward.comm.exception.JwtException;
 import com.delgo.reward.comm.security.jwt.JwtService;
 import com.delgo.reward.comm.security.jwt.JwtToken;
 import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
@@ -59,17 +58,11 @@ public class LoginController extends CommController {
      */
     @GetMapping("/api/token/reissue")
     public ResponseEntity<?> tokenReissue(@CookieValue(name = RefreshTokenProperties.HEADER_STRING, required = false) String refreshToken, HttpServletResponse response) {
-        try {
-            log.info("refresh token :{}", refreshToken);
             int userId = jwtService.getUserIdByRefreshToken(refreshToken);
             JwtToken jwt = jwtService.createToken(userId);
             jwtService.publishToken(response, jwt);
 
             return SuccessReturn();
-        } catch (JwtException e) { // Refresh_Toekn 인증 실패 ( 로그인 화면으로 이동 필요 )
-            e.printStackTrace();
-            return TokenErrorReturn(e.getStatus());
-        }
     }
 
     /*
@@ -78,6 +71,6 @@ public class LoginController extends CommController {
      */
     @RequestMapping("/token/error")
     public ResponseEntity<?> tokenError() {
-        return TokenErrorReturn(APICode.TOKEN_ERROR);
+        return TokenErrorReturn(APICode.TOKEN_ERROR.getMsg());
     }
 }
