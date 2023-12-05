@@ -5,7 +5,6 @@ public enum APICode {
     // -------------------------COMMON-------------------------
     SUCCESS("200", "SUCCESS"),
     PARAM_ERROR("301", "PARAM_ERROR"),
-    PARAM_DATE_ERROR("302", "PARAM_DATE_ERROR"),
     INVALID_USER_ERROR("315", "INVALID_USER_ERROR"),
 
     // TOKEN ERROR
@@ -18,8 +17,6 @@ public enum APICode {
     LOGIN_ERROR("304", "LOGIN_ERROR"),
 
     // DB ERROR
-    DB_FAIL("305", "DB FAIL"),
-    DB_DELETE_ERROR("306", "DB DELETE ERROR"),
     NOT_FOUND_DATA("307", "DB NOT_FOUND_DATA"),
 
     // NCP ERROR
@@ -27,12 +24,6 @@ public enum APICode {
 
     // PHOTO ERROR
     PHOTO_ERROR("308", "PHOTO_ERROR"),
-    MUNGPLE_DUPLICATE_ERROR("311", "이미 등록된 멍플입니다."),
-
-    // Certification ERROR
-    TOO_FAR_DISTANCE("312", "인증 가능한 장소에 있지 않습니다."),
-    CERTIFICATION_TIME_ERROR("313", "6시간 이내 같은 장소 인증 불가능"),
-    CERTIFICATION_CATEGPRY_COUNT_ERROR("314", "일별 카테고리 5번 이상 인증 불가능"),
 
     // PHONE NO ERROR
     PHONE_NO_NOT_EXIST("370", "존재하지 않는 전화번호입니다."),
