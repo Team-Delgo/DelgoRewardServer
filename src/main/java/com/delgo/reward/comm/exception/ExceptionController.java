@@ -50,7 +50,7 @@ public class ExceptionController extends CommController {
     // Optional Select Error Check
     @ExceptionHandler({NullPointerException.class})
     public ResponseEntity NullPointerException(NullPointerException e) {
-        if(e.getMessage().equals("PHOTO EXTENSION IS WRONG"))
+        if (e.getMessage().equals("PHOTO EXTENSION IS WRONG"))
             return ResponseEntity.ok().body(
                     new ResponseRecord(APICode.PHOTO_ERROR.getCode(), APICode.PHOTO_ERROR.getMsg(), null));
 
@@ -87,6 +87,6 @@ public class ExceptionController extends CommController {
     // DB NotFoundDataException
     @ExceptionHandler({NotFoundDataException.class})
     public ResponseEntity notFoundDataException(NotFoundDataException e) {
-        return ErrorReturn(APICode.NOT_FOUND_DATA);
+        return ErrorReturnSetMessage(APICode.NOT_FOUND_DATA, APICode.NOT_FOUND_DATA.getMsg() + " " + e.getMessage());
     }
 }
