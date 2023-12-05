@@ -54,8 +54,6 @@ public class LogAopDevelop {
 
     @AfterThrowing(pointcut = "onGetRequest()", throwing = "exception")
     public void afterThrowingAdviceByGet(JoinPoint joinPoint, Throwable exception) {
-        log.info("{} || Exception : {} || Parameter : {}", getRequestUrl(joinPoint), exception.getMessage(),
-                params(joinPoint));
         log.error("\n[LogAop]" +
                 "\n\t" + getRequestUrl(joinPoint) +
                 "\n\tparameter: " + params(joinPoint) +
@@ -140,7 +138,6 @@ public class LogAopDevelop {
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 
-        log.info("object :{}", object);
         String requestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
         return Arrays.stream(requestBody.split("\n"))
                 .map(line -> "\t\t\t" + line) // 각 줄에 탭 두 번 적용
