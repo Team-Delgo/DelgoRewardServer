@@ -16,19 +16,19 @@ public class CommController {
     }
 
     public ResponseEntity ErrorReturn(APICode apiCode) {
-        return ResponseEntity.ok().body(new ResponseRecord(apiCode.getCode(), apiCode.getMsg(), null));
+        return ResponseEntity.badRequest().body(new ResponseRecord(apiCode.getCode(), apiCode.getMsg(), null));
     }
 
     public ResponseEntity ErrorReturnSetMessage(APICode apiCode, String msg) {
-        return ResponseEntity.ok().body(new ResponseRecord(apiCode.getCode(), msg, null));
+        return ResponseEntity.badRequest().body(new ResponseRecord(apiCode.getCode(), msg, null));
     }
 
     public ResponseEntity ErrorReturn(APICode apiCode, Object data) {
-        return ResponseEntity.ok().body(new ResponseRecord(apiCode.getCode(), apiCode.getMsg(), data));
+        return ResponseEntity.badRequest().body(new ResponseRecord(apiCode.getCode(), apiCode.getMsg(), data));
     }
 
     public ResponseEntity ParamErrorReturn(String param) {
-        return ResponseEntity.ok().body(
+        return ResponseEntity.badRequest().body(
                 new ResponseRecord(
                         APICode.PARAM_ERROR.getCode(),
                         APICode.PARAM_ERROR + " : [" + param + "]",
