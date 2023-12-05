@@ -6,7 +6,6 @@ import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.record.common.ResponseRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -72,11 +71,7 @@ public class ExceptionController extends CommController {
 
     @ExceptionHandler({FigmaException.class})
     public ResponseEntity figmaException(FigmaException e) {
-        log.error("FigmaException occurred: {}", e.errorMessage);
-        if (StringUtils.hasText(e.errorMessage))
-            return ErrorReturnSetMessage(APICode.FIGMA_ERROR, e.errorMessage);
-        else
-            return ErrorReturn(APICode.FIGMA_ERROR);
+        return ErrorReturnSetMessage(APICode.FIGMA_ERROR, APICode.FIGMA_ERROR.getMsg() + " " + e.errorMessage);
     }
 
     @ExceptionHandler({PhotoException.class})
