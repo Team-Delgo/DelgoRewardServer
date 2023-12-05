@@ -1,9 +1,11 @@
 package com.delgo.reward.comm.ncp.storage;
 
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Getter
 public enum BucketName {
     ACHIEVEMENTS(
             "reward-achievements",
@@ -78,26 +80,6 @@ public enum BucketName {
         this.url = url;
         this.testUrl = testUrl;
         this.figma = figma;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public String getUrl() {
-        return this.url;
-    }
-
-    public String getTestName() {
-        return this.testName;
-    }
-
-    public String getTestUrl() {
-        return this.testUrl;
-    }
-
-    public String getFigma() {
-        return this.figma;
     }
 
     public static BucketName fromFigma(String figmaValue) {
