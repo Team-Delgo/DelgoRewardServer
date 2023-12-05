@@ -3,6 +3,7 @@ package com.delgo.reward.comm.aop;
 import com.delgo.reward.record.common.ResponseRecord;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -51,7 +54,8 @@ public class LogAopDevelop {
 
     @AfterThrowing(pointcut = "onGetRequest()", throwing = "exception")
     public void afterThrowingAdviceByGet(JoinPoint joinPoint, Throwable exception) {
-        log.info("{} || Exception : {} || Parameter : {}", getRequestUrl(joinPoint), exception.getMessage(), params(joinPoint));
+        log.info("{} || Exception : {} || Parameter : {}", getRequestUrl(joinPoint), exception.getMessage(),
+                params(joinPoint));
         log.error("\n[LogAop]" +
                 "\n\t" + getRequestUrl(joinPoint) +
                 "\n\tparameter: " + params(joinPoint) +
@@ -87,7 +91,7 @@ public class LogAopDevelop {
         Method method = methodSignature.getMethod();
 
         RequestMapping requestMapping = joinPoint.getTarget().getClass().getAnnotation(RequestMapping.class);
-        String classUrl = requestMapping.value()[0];
+        String classUrl = (requestMapping != null) ? requestMapping.value()[0] : "";
 
         return Stream.of(GetMapping.class, PutMapping.class, PostMapping.class, DeleteMapping.class)
                 .filter(method::isAnnotationPresent)
@@ -124,8 +128,8 @@ public class LogAopDevelop {
                             .toList();
                     params.put(parameterNames[i], fileNameList);
                 }
-            } else {
-                params.put(parameterNames[i], args[i]);
+            } else if (!(arg instanceof HttpServletRequest || arg instanceof HttpServletResponse)) {
+                params.put(parameterNames[i], arg);
             }
         }
         return params;
@@ -134,7 +138,9 @@ public class LogAopDevelop {
     public String prettyPrinter(Object object) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 
+        log.info("object :{}", object);
         String requestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
         return Arrays.stream(requestBody.split("\n"))
                 .map(line -> "\t\t\t" + line) // 각 줄에 탭 두 번 적용
