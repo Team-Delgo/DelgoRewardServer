@@ -83,4 +83,10 @@ public class ExceptionController extends CommController {
     public ResponseEntity photoException(PhotoException e) {
         return ErrorReturn(APICode.PHOTO_ERROR);
     }
+
+    // DB NotFoundDataException
+    @ExceptionHandler({NotFoundDataException.class})
+    public ResponseEntity notFoundDataException(NotFoundDataException e) {
+        return ErrorReturn(APICode.NOT_FOUND_DATA);
+    }
 }

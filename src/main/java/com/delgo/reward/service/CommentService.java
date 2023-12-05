@@ -1,5 +1,6 @@
 package com.delgo.reward.service;
 
+import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.comm.fcm.FcmService;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.Comment;
@@ -74,7 +75,7 @@ public class CommentService {
      */
     public Comment getCommentById(int commentId){
         return commentRepository.findCommentsById(commentId)
-                .orElseThrow(() -> new NullPointerException("NOT FOUND Comment ID : " + commentId));
+                .orElseThrow(() -> new NotFoundDataException("[Comment] commentId : " + commentId));
     }
 
     /**
