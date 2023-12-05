@@ -5,8 +5,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.delgo.reward.comm.code.APICode;
-import com.delgo.reward.comm.exception.JwtException;
+import com.delgo.reward.comm.exception.TokenException;
 import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
 import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
 import com.delgo.reward.service.TokenService;
@@ -61,13 +60,11 @@ public class JwtService {
      * JWT에서 userId 추출
      *
      * @return int
-     * @throws JwtException
      */
-    public Integer getUserIdByRefreshToken(String refreshToken) throws JwtException {
+    public Integer getUserIdByRefreshToken(String refreshToken) {
         try {
-            // 입력 받은 refreshToken이 null이거나 빈 값인지 체크
             if (!StringUtils.hasText(refreshToken))
-                throw new JwtException(APICode.TOKEN_ERROR);
+                throw new TokenException("TOKEN IS NULL OR BLANK");
 
             int userId = JWT.require(Algorithm.HMAC512(RefreshTokenProperties.SECRET))
                     .build()
@@ -77,13 +74,13 @@ public class JwtService {
 
             String refreshTokenFromDB = tokenService.getRefreshToken(userId);
             if (!StringUtils.hasText(refreshToken) || !refreshTokenFromDB.equals(refreshToken))
-                throw new JwtException(APICode.DB_TOKEN_ERROR);
+                throw new TokenException("TOKEN DB ERROR");
 
             return userId;
         } catch (TokenExpiredException e) {
-            throw new JwtException(APICode.TOKEN_EXPIRED);
+            throw new TokenException("TOKEN EXPIRED");
         } catch (JWTVerificationException e) {
-            throw new JwtException(APICode.TOKEN_VERIFY_ERROR);
+            throw new TokenException("TOKEN VERIFY ERROR");
         }
     }
 

@@ -2,9 +2,10 @@ package com.delgo.reward.comm.exception;
 
 import lombok.AllArgsConstructor;
 
+
 @AllArgsConstructor
-public class FigmaException extends RuntimeException{
-    String errorMessage;
+public class PhotoException extends RuntimeException {
+    private final String errorMessage;
 
     @Override
     public String getMessage() {

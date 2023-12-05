@@ -1,5 +1,6 @@
 package com.delgo.reward.service;
 
+import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.domain.achievements.Archive;
 import com.delgo.reward.repository.ArchiveRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,7 @@ public class ArchiveService {
     // userId & achievementsId로 Archive 조회
     public Archive getArchive(int userId, int achievementsId) {
         return archiveRepository.findByUserIdAndAchievementsId(userId, achievementsId)
-                .orElseThrow(() -> new NullPointerException("NOT FOUND ARCHIVE"));
+                .orElseThrow(() -> new NotFoundDataException("[Archive] userId : " + userId));
     }
 
     // welcome 업적 등록

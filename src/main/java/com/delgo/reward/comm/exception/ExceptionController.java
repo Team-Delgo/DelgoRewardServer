@@ -6,7 +6,6 @@ import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.record.common.ResponseRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -50,9 +49,9 @@ public class ExceptionController extends CommController {
     // Optional Select Error Check
     @ExceptionHandler({NullPointerException.class})
     public ResponseEntity NullPointerException(NullPointerException e) {
-        if(e.getMessage().equals("PHOTO EXTENSION IS WRONG"))
+        if (e.getMessage().equals("PHOTO EXTENSION IS WRONG"))
             return ResponseEntity.ok().body(
-                    new ResponseRecord(APICode.PHOTO_EXTENSION_ERROR.getCode(), APICode.PHOTO_EXTENSION_ERROR.getMsg(), null));
+                    new ResponseRecord(APICode.PHOTO_ERROR.getCode(), APICode.PHOTO_ERROR.getMsg(), null));
 
         return ResponseEntity.ok().body(
                 new ResponseRecord(APICode.NOT_FOUND_DATA.getCode(), e.getMessage(), null));
@@ -72,10 +71,22 @@ public class ExceptionController extends CommController {
 
     @ExceptionHandler({FigmaException.class})
     public ResponseEntity figmaException(FigmaException e) {
-        log.error("FigmaException occurred: {}", e.errorMessage);
-        if (StringUtils.hasText(e.errorMessage))
-            return ErrorReturnSetMessage(APICode.FIGMA_ERROR, e.errorMessage);
-        else
-            return ErrorReturn(APICode.FIGMA_ERROR);
+        return ErrorReturnSetMessage(APICode.FIGMA_ERROR, APICode.FIGMA_ERROR.getMsg() + " " + e.errorMessage);
+    }
+
+    @ExceptionHandler({PhotoException.class})
+    public ResponseEntity photoException(PhotoException e) {
+        return ErrorReturn(APICode.PHOTO_ERROR);
+    }
+
+    // DB NotFoundDataException
+    @ExceptionHandler({NotFoundDataException.class})
+    public ResponseEntity notFoundDataException(NotFoundDataException e) {
+        return ErrorReturnSetMessage(APICode.NOT_FOUND_DATA, APICode.NOT_FOUND_DATA.getMsg() + " " + e.getMessage());
+    }
+
+    @ExceptionHandler({TokenException.class})
+    public ResponseEntity tokenException(TokenException e) {
+        return TokenErrorReturn(e.getMessage());
     }
 }

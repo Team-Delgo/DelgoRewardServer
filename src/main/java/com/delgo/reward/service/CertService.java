@@ -4,6 +4,7 @@ package com.delgo.reward.service;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.GeoCode;
 import com.delgo.reward.comm.code.PGeoCode;
+import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.comm.ncp.ReverseGeoService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
@@ -33,10 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -107,7 +105,7 @@ public class CertService {
      */
     public Certification getCertById(int certificationId) {
         return certRepository.findCertByCertificationId(certificationId)
-                .orElseThrow(() -> new NullPointerException("NOT FOUND Certification id : " + certificationId));
+                .orElseThrow(() -> new NotFoundDataException("[Certification] certificationId : " + certificationId));
     }
 
     /**
