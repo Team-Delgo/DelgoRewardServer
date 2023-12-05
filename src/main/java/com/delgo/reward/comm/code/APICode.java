@@ -23,11 +23,10 @@ public enum APICode {
     NOT_FOUND_DATA("307", "DB NOT_FOUND_DATA"),
 
     // NCP ERROR
-    PHOTO_UPLOAD_ERROR("308", "NCP PHOTO_UPLOAD_ERROR"),
     SMS_ERROR("309", "NCP SMS ERROR"),
 
     // PHOTO ERROR
-    PHOTO_EXTENSION_ERROR("310", "올바른 확장자가 아닙니다."),
+    PHOTO_ERROR("308", "PHOTO_ERROR"),
     MUNGPLE_DUPLICATE_ERROR("311", "이미 등록된 멍플입니다."),
 
     // Certification ERROR

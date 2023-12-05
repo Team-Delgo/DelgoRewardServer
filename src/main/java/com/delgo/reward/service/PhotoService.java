@@ -3,24 +3,17 @@ package com.delgo.reward.service;
 
 import com.delgo.reward.comm.CommService;
 import com.delgo.reward.comm.exception.FigmaException;
+import com.delgo.reward.comm.exception.PhotoException;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
-import com.delgo.reward.record.common.ResponseRecord;
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.webp.WebpWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.*;
 import java.net.URL;
@@ -47,30 +40,6 @@ public class PhotoService extends CommService {
 
     private final ObjectStorageService objectStorageService;
 
-    public Boolean checkCorrectPhoto(String path){
-        // Flask URL
-        String url = "http://localhost:5000/check-photo?path=" + path;
-        ResponseEntity<ResponseRecord> result;
-
-        try {
-            RestTemplate restTemplate = new RestTemplate();
-
-            HttpHeaders header = new HttpHeaders();
-            HttpEntity<?> entity = new HttpEntity<>(header);
-
-            UriComponents uri = UriComponentsBuilder.fromHttpUrl(url).build();
-            result = restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, ResponseRecord.class);
-            ResponseRecord<HashMap> responseRecord = result.getBody();
-
-            log.info("statusCode : {}", result.getStatusCodeValue()); //http status code를 확인
-            log.info("body : {}", responseRecord.data()); //실제 데이터 정보 확인
-
-            return (Boolean) responseRecord.data().get("result");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 
     public List<String> uploadCertPhotos(int certificationId, List<MultipartFile> photos) {
         int i = 1;
@@ -97,8 +66,7 @@ public class PhotoService extends CommService {
 
                 urls.add(url);
             } catch (Exception e) {
-                e.printStackTrace();
-                throw new NullPointerException("JPG PHOTO UPLOAD ERROR");
+                throw new PhotoException(e.getMessage());
             }
         }
         return urls;
@@ -116,9 +84,8 @@ public class PhotoService extends CommService {
 
             fileDelete(webpFile);
             return ncpLink;
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new NullPointerException("WEBP PHOTO UPLOAD ERROR");
+        } catch (Exception e) {
+            throw new PhotoException(e.getMessage());
         }
     }
 
@@ -139,8 +106,7 @@ public class PhotoService extends CommService {
 
             return setCacheInvalidation(ncpLink);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new NullPointerException("PHOTO UPLOAD ERROR");
+            throw new PhotoException(e.getMessage());
         }
     }
 
@@ -164,8 +130,7 @@ public class PhotoService extends CommService {
 
             return setCacheInvalidation(ncpLink);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new NullPointerException("PHOTO UPLOAD ERROR");
+            throw new PhotoException(e.getMessage());
         }
     }
 
@@ -188,8 +153,7 @@ public class PhotoService extends CommService {
 
             return setCacheInvalidation(ncpLink);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new NullPointerException("PHOTO UPLOAD ERROR");
+            throw new PhotoException(e.getMessage());
         }
     }
 

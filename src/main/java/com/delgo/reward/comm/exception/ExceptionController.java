@@ -52,7 +52,7 @@ public class ExceptionController extends CommController {
     public ResponseEntity NullPointerException(NullPointerException e) {
         if(e.getMessage().equals("PHOTO EXTENSION IS WRONG"))
             return ResponseEntity.ok().body(
-                    new ResponseRecord(APICode.PHOTO_EXTENSION_ERROR.getCode(), APICode.PHOTO_EXTENSION_ERROR.getMsg(), null));
+                    new ResponseRecord(APICode.PHOTO_ERROR.getCode(), APICode.PHOTO_ERROR.getMsg(), null));
 
         return ResponseEntity.ok().body(
                 new ResponseRecord(APICode.NOT_FOUND_DATA.getCode(), e.getMessage(), null));
@@ -77,5 +77,10 @@ public class ExceptionController extends CommController {
             return ErrorReturnSetMessage(APICode.FIGMA_ERROR, e.errorMessage);
         else
             return ErrorReturn(APICode.FIGMA_ERROR);
+    }
+
+    @ExceptionHandler({PhotoException.class})
+    public ResponseEntity photoException(PhotoException e) {
+        return ErrorReturn(APICode.PHOTO_ERROR);
     }
 }
