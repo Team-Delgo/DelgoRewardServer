@@ -3,7 +3,6 @@ package com.delgo.reward.domain.certification;
 
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.common.BaseTimeEntity;
-import com.delgo.reward.domain.like.LikeList;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.record.certification.ModifyCertRecord;
 import lombok.*;
@@ -45,10 +44,6 @@ public class Certification extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "userId", updatable = false)
     private User user;
-
-    @ToString.Exclude
-    @OneToMany(mappedBy = "certificationId", fetch = FetchType.LAZY)
-    private List<LikeList> likeLists;
 
     @ToString.Exclude
     @OneToMany(mappedBy = "certificationId", fetch = FetchType.LAZY)

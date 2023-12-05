@@ -16,7 +16,6 @@ import com.delgo.reward.mongoService.ClassificationService;
 import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
 import com.delgo.reward.service.CertService;
-import com.delgo.reward.service.LikeListService;
 import com.delgo.reward.service.ReactionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -49,7 +48,6 @@ import java.util.Objects;
 public class CertController extends CommController {
 
     private final CertService certService;
-    private final LikeListService likeListService;
     private final ReactionService reactionService;
     private final CertAsyncService certAsyncService;
     private final ClassificationService classificationService;
@@ -240,18 +238,6 @@ public class CertController extends CommController {
     }
 
     // ---------------------------------------- Deprecated ----------------------------------------
-
-    /**
-     * 인증 LIKE [ Deprecated ]
-     * @param userId, certificationId
-     */
-    @Hidden
-    @PostMapping(value = {"/like/{userId}/{certificationId}", "/like/"})
-    public ResponseEntity like(@PathVariable Integer userId, @PathVariable Integer certificationId) throws IOException {
-        likeListService.like(userId, certificationId, certService.getCertById(certificationId).getUser().getUserId());
-
-        return SuccessReturn();
-    }
 
     /**
      * [User] 인증 개수 조회 [ Deprecated ]

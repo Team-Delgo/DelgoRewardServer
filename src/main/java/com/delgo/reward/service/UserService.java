@@ -52,7 +52,6 @@ public class UserService {
     private final PetRepository petRepository;
     private final UserRepository userRepository;
     private final CertRepository certRepository;
-    private final LikeListRepository likeListRepository;
     private final CategoryCountRepository categoryCountRepository;
     private final ClassificationRepository classificationRepository;
 
@@ -140,7 +139,6 @@ public class UserService {
             kakaoService.logout(user.getKakaoId()); // kakao 로그아웃 , Naver는 로그아웃 지원 X
 
         certRepository.deleteAllByUserUserId(userId);
-        likeListRepository.deleteByUserId(userId); // USER가 좋아요 누른 DATA 삭제
         categoryCountRepository.deleteByUserId(userId);
 
         jdbcTemplatePointRepository.deleteAllByUserId(userId);

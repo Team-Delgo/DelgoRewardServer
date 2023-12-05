@@ -49,7 +49,6 @@ public class CertService {
     private final UserService userService;
     private final PhotoService photoService;
     private final MongoMungpleService mongoMungpleService;
-    private final LikeListService likeListService;
     private final ReverseGeoService reverseGeoService;
     private final ObjectStorageService objectStorageService;
 
@@ -299,7 +298,6 @@ public class CertService {
      */
     public void deleteCert(int certificationId) {
         certRepository.deleteById(certificationId);
-        likeListService.deleteCertificationRelatedLike(certificationId);
         reactionRepository.deleteByCertificationId(certificationId);
         objectStorageService.deleteObject(BucketName.CERTIFICATION,certificationId + "_cert.webp");
     }
