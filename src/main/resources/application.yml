@@ -9,24 +9,24 @@ spring:
     hikari:
       connectionTimeout: 30000 #30000ms
       maxLifetime: 280000 #1800000ms(30?). maria db ??? 28800? (8??) -> ?? 1???? ??
-                          #      maximumPoolSize: 20 #?? 10
-                          #      validationTimeout: 1000 #5000ms, connectionTimeout ?? ???
+      #      maximumPoolSize: 20 #?? 10
+      #      validationTimeout: 1000 #5000ms, connectionTimeout ?? ???
   jpa:
     properties:
       hibernate:
         ddl-auto: none
-       # show_sql: true # 쿼리 출력 여부
-       # format_sql: true # 쿼리 포맷팅 여부
+        # show_sql: true # 쿼리 출력 여부
+        # format_sql: true # 쿼리 포맷팅 여부
   servlet:
     multipart:
       maxFileSize: 50MB
       maxRequestSize: 55MB
   kafka:
-     consumer:
-        bootstrap-servers: localhost:9092 # 컨슈머 서버 주소
-        group-id: tester
-     producer:
-        bootstrap-servers: localhost:9092 # 프로듀서 서버 주소
+    consumer:
+      bootstrap-servers: localhost:9092 # 컨슈머 서버 주소
+      group-id: tester
+    producer:
+      bootstrap-servers: localhost:9092 # 프로듀서 서버 주소
 
 server:
   port: 8081
@@ -53,9 +53,9 @@ springdoc:
 spring:
   profiles: local
   data:
-      mongodb:
-        database: delgo_reward_develop
-        uri: mongodb://delgo:Zlzl2022!@101.101.208.202:27017
+    mongodb:
+      database: delgo_reward_develop
+      uri: mongodb://delgo:Zlzl2022!@101.101.208.202:27017
   datasource:
     url: jdbc:mariadb://101.101.208.202:9724/delgo_reward_develop
 
@@ -63,9 +63,10 @@ config:
   profiles: local
   driverLocation: C:\\chrome\\chromedriver.exe
   # 이동재(윈도우)
-  photoDir: C:\\testPhoto\\
+  photo-dir: C:\\testPhoto\\
+  photo-url: C:\\testPhoto\\
   # 조현서(맥)
-#  photoDir: /Users/hs/Desktop/testPhoto
+  #  photo-dir: /Users/hs/Desktop/testPhoto
   kakao:
     REDIRECT_URL: "https://www.test.delgo.pet/oauth/callback/kakao"
   classificationDir: src/main/resources/classification_data_set/classification_category.json
@@ -75,16 +76,17 @@ config:
 spring:
   profiles: dev
   data:
-        mongodb:
-          database: delgo_reward_develop
-          uri: mongodb://delgo:Zlzl2022!@101.101.208.202:27017
+    mongodb:
+      database: delgo_reward_develop
+      uri: mongodb://delgo:Zlzl2022!@101.101.208.202:27017
   datasource:
     url: jdbc:mariadb://101.101.208.202:9724/delgo_reward_develop
 
 config:
   profiles: dev
   driverLocation: /var/www/chrome/chromedriver
-  photoDir: /var/www/reward-backend/
+  photo-dir: /var/www/reward-backend/
+  photo-url: https://www.test.delgo.pet/images/
   kakao:
     REDIRECT_URL: "https://www.test.delgo.pet/oauth/callback/kakao"
   classificationDir: /var/www/reward-backend/WEB-INF/classes/classification_data_set/classification_category.json
@@ -94,16 +96,17 @@ config:
 spring:
   profiles: real
   data:
-        mongodb:
-          database: delgo_reward
-          uri: mongodb://delgo:Zlzl2022!@101.101.208.202:27017
+    mongodb:
+      database: delgo_reward
+      uri: mongodb://delgo:Zlzl2022!@101.101.208.202:27017
   datasource:
     url: jdbc:mariadb://101.101.208.202:9724/delgo_reward
 
 config:
   profiles: real
   driverLocation: /var/www/chrome/chromedriver
-  photoDir: /var/www/reward-backend/
+  photo-dir: /var/www/reward-backend/
+  photo-url: https://www.real.delgo.pet/images/
   kakao:
     REDIRECT_URL: "https://www.reward.delgo.pet/oauth/callback/kakao"
   classificationDir: /var/www/reward-backend/WEB-INF/classes/classification_data_set/classification_category.json
@@ -122,7 +125,8 @@ spring:
 config:
   profiles: qa
   driverLocation: /var/www/chrome/chromedriver
-  photoDir: /var/www/reward-backend/
+  photo-dir: /var/www/reward-backend/
+  photo-url: https://www.qa.delgo.pet/images/
   kakao:
     REDIRECT_URL: "https://www.qa.delgo.pet/oauth/callback/kakao"
   classificationDir: /var/www/reward-backend/WEB-INF/classes/classification_data_set/classification_category.json
