@@ -1,6 +1,5 @@
 package com.delgo.reward.controller;
 
-import com.delgo.reward.comm.config.WebConfig;
 import com.delgo.reward.comm.fcm.FcmService;
 import com.delgo.reward.comm.security.SecurityConfig;
 import com.delgo.reward.domain.Comment;
@@ -35,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(value = CommentController.class,
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class),
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebConfig.class),
+//                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebConfig.class),
         })
 public class CommentControllerTest {
     @Autowired
