@@ -19,10 +19,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -40,7 +37,7 @@ public class FigmaService {
     private final String figmaToken = "figd_r19ArRmULsFDOcl1Mim1B7zpphHYgqYM-YT84yfI";
     private final String figmaFileKey = "yzrVwMDiG6uU8LM57RUfN0";
 
-    @Value("${config.photoDir}")
+    @Value("${config.photo-dir}")
     String DIR;
 
     public void uploadFigmaDataToNCP(String nodeId, MongoMungple mongoMungple) {
@@ -138,25 +135,14 @@ public class FigmaService {
     private void processImages(Map<String, String> imageMap, Map<String, ArrayList<String>> typeListMap) throws UnsupportedEncodingException {
         for (String fileName : imageMap.keySet()) {
             if (StringUtils.isNotEmpty(imageMap.get(fileName))) {
-                String image = imageMap.get(fileName);
-                String encodedFileName = photoService.convertWebpFromUrl(fileName, image);
-                String encodedFilePath = DIR + encodedFileName + ".webp";
+                String imageUrl = imageMap.get(fileName);
+                String type = checkType(fileName);
+                BucketName bucketName = BucketName.fromFigma(type);
 
-                try {
-                    String type = checkType(fileName);
-                    BucketName bucketName = BucketName.fromFigma(type);
+                String uploadedUrl = photoService.downloadAndUploadFromURL(fileName, imageUrl, bucketName);
+                System.out.println("uploadedUrl = " + uploadedUrl);
 
-                    String decodedFileName = URLDecoder.decode(encodedFileName, StandardCharsets.UTF_8) + ".webp";
-                    objectStorageService.uploadObjects(bucketName, decodedFileName, encodedFilePath);
-                    String ncpImageUrl = bucketName.getUrl() + decodedFileName;
-
-                    new File(encodedFilePath).delete();
-
-                    typeListMap.get(type).add(ncpImageUrl);
-                } catch (IllegalArgumentException e) {
-                    e.printStackTrace();
-                    throw new FigmaException(e.getMessage());
-                }
+                typeListMap.get(type).add(uploadedUrl);
             }
         }
     }
