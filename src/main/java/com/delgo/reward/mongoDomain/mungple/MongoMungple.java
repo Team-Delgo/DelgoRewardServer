@@ -4,7 +4,9 @@ package com.delgo.reward.mongoDomain.mungple;
 import com.delgo.reward.comm.code.BusinessHourCode;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.DetailCode;
+import com.delgo.reward.comm.exception.GoogleSheetException;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -18,9 +20,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 
+@Slf4j
 @Getter
 @Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection="mungple")
@@ -112,12 +114,21 @@ public class MongoMungple {
     }
 
     public void setAcceptSize(String input) {
-        acceptSize = Arrays.stream(input.replaceAll("\\s+", "").split(","))
-                .map(s -> s.split(":"))
-                .collect(Collectors.toMap(
-                        arr -> arr[0],
-                        arr -> DetailCode.valueOf(arr[1])
-                ));
+        try {
+            acceptSize = Arrays.stream(input.replaceAll("\\s+", "").split(","))
+                    .map(s -> s.split(":"))
+                    .collect(Collectors.toMap(
+                            arr -> arr[0],
+                            arr -> DetailCode.valueOf(arr[1])
+                    ));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            Pattern pattern = Pattern.compile("No enum constant .+\\.(.+)");
+            Matcher matcher = pattern.matcher(e.getMessage());
+            String errorMessage = matcher.find() ? matcher.group(1) + " 확인해주세요" : e.getMessage();
+
+            throw new GoogleSheetException("[강아지 동반 안내] " + errorMessage);
+        }
     }
 
     public void setBusinessHour(String input) {
@@ -128,9 +139,14 @@ public class MongoMungple {
         Matcher matcher = pattern.matcher(input);
 
         while (matcher.find()) {
-            BusinessHourCode key = BusinessHourCode.valueOf(matcher.group(1));
-            String value = matcher.group(2).trim().replaceAll(",$", ""); // 앞 뒤 공백, 마지막 콤마 제거
-            businessHour.put(key, value);
+            try {
+                BusinessHourCode key = BusinessHourCode.valueOf(matcher.group(1));
+                String value = matcher.group(2).trim().replaceAll(",$", ""); // 앞 뒤 공백, 마지막 콤마 제거
+                businessHour.put(key, value);
+            } catch (Exception e){
+                log.error(e.getMessage());
+                throw new GoogleSheetException("[영업 시간] " + matcher.group(1) + " 확인해주세요");
+            }
         }
 
         // Default 값 설정

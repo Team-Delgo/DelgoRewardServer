@@ -41,7 +41,7 @@ public class ObjectStorageService {
                     .withCannedAcl(CannedAccessControlList.PublicRead);
 
             s3.putObject(putObjectRequest);
-            System.out.format("Object %s has been created.\n", objectName);
+            log.info("Object {} has been created.\n", objectName);
 
             return getBucketURL(bucketName) + objectName;
         } catch (SdkClientException e) {
@@ -52,7 +52,7 @@ public class ObjectStorageService {
     public void deleteObject(BucketName bucketName, String objectName) {
         try {
             s3.deleteObject(getBucketName(bucketName), objectName);
-            System.out.format("Object %s has been deleted.\n", objectName);
+            log.info("Object {} has been deleted.\n", objectName);
 
         } catch (SdkClientException e) {
             log.error(e.getMessage());
