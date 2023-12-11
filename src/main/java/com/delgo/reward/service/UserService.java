@@ -92,11 +92,16 @@ public class UserService {
         categoryCountRepository.save(new CategoryCount().create(user.getUserId()));
 
         user.setVersion(version);
-//        rankingService.rankingByPoint(); // 랭킹 업데이트
-        return user.setPet(pet).setProfile( // User Profile 등록
-                profile.isEmpty()
-                        ? DEFAULT_PROFILE
-                        : photoService.uploadProfile(user.getUserId(), profile));
+        String profileUrl = DEFAULT_PROFILE;
+        if(!profile.isEmpty()){
+            String fileName = photoService.makeProfileFileName(user.getUserId(), profile);
+            profileUrl = photoService.saveAndUpload(fileName, profile, BucketName.PROFILE);
+        }
+
+        user.setPet(pet);
+        user.setProfile(profileUrl);
+
+        return user;
     }
 
     /**
@@ -121,10 +126,17 @@ public class UserService {
 
 //        rankingService.rankingByPoint(); // 랭킹 업데이트
         oAuthUser.setVersion(version);
-        return oAuthUser.setPet(pet).setProfile( // User Profile 등록
-                profile.isEmpty()
-                        ? DEFAULT_PROFILE
-                        : photoService.uploadProfile(oAuthUser.getUserId(), profile));
+
+        String profileUrl = DEFAULT_PROFILE;
+        if(!profile.isEmpty()){
+            String fileName = photoService.makeProfileFileName(oAuthUser.getUserId(), profile);
+            profileUrl = photoService.saveAndUpload(fileName, profile, BucketName.PROFILE);
+        }
+
+        oAuthUser.setPet(pet);
+        oAuthUser.setProfile(profileUrl);
+
+        return oAuthUser;
     }
 
     /**
