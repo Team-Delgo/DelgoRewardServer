@@ -57,7 +57,7 @@ public class FigmaService {
             // typeList를 각 Fileds에 매치 후 저장
             mongoMungple.setFigmaPhotoData(typeListMap);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             throw new FigmaException(e.getMessage());
         }
     }
@@ -89,15 +89,13 @@ public class FigmaService {
                 String imageId = childNode.get("id").asText(); // ex) 4935:43532
                 // 사람에 의한 실수 없애기 위해 공백문자 제거 코드 추가
                 String figmaFileName = childNode.get("name").asText().replaceAll("\\s+", "");  // ex) 강동구_애견동반식당_담금_5
+                int order = getOrderByFileName(figmaFileName);
                 String type = getTypeByFileName(figmaFileName);
-                String order = getOrderByFileName(figmaFileName);
                 String fileName = (type.isBlank()) ? baseName + "_" + order : baseName + "_" + type + "_" + order;
-//                log.info("figmaFileName :{}", figmaFileName);
-//                log.info("final fileName  : {}", fileName);
                 imageIdMap.put(imageId, fileName);
             }
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             throw new FigmaException(e.getMessage());
         }
 
@@ -125,7 +123,7 @@ public class FigmaService {
                 imageUrlMap.put(fileName, imageUrl);
             }
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             throw new FigmaException(e.getMessage());
         }
 
@@ -140,28 +138,34 @@ public class FigmaService {
                 BucketName bucketName = BucketName.fromFigma(type);
 
                 String uploadedUrl = photoService.downloadAndUploadFromURL(fileName, imageUrl, bucketName);
-                System.out.println("uploadedUrl = " + uploadedUrl);
-
                 typeListMap.get(type).add(uploadedUrl);
             }
         }
     }
 
     private String getTypeByFileName(String fileName) {
-        String[] type_arr = fileName.split("_");
-        String type = type_arr[type_arr.length - 2];
+        try {
+            String[] type_arr = fileName.split("_");
+            String type = type_arr[type_arr.length - 2];
 
-        return switch (type) {
-            case "board" -> "menu_board";
-            case "menu" -> "menu";
-            case "price" -> "price";
-            case "dog" -> "dog";
-            default -> "";
-        };
+            return switch (type) {
+                case "board" -> "menu_board";
+                case "menu" -> "menu";
+                case "price" -> "price";
+                case "dog" -> "dog";
+                default -> "";
+            };
+        } catch (Exception e) {
+            throw new FigmaException(" [Figma] : " + fileName + " 확인해주세요");
+        }
     }
 
-    private String getOrderByFileName(String fileName) {
-        String[] type_arr = fileName.split("_");
-        return type_arr[type_arr.length - 1];
+    private int getOrderByFileName(String fileName) {
+        try {
+            String[] type_arr = fileName.split("_");
+            return Integer.parseInt(type_arr[type_arr.length - 1]);
+        } catch (Exception e) {
+            throw new FigmaException(" [Figma] : " + fileName + " 확인해주세요");
+        }
     }
 }

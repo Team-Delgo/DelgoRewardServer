@@ -2,6 +2,7 @@ package com.delgo.reward.comm.googlesheet;
 
 import com.delgo.reward.cacheService.MungpleCacheService;
 import com.delgo.reward.comm.code.CategoryCode;
+import com.delgo.reward.comm.exception.GoogleSheetException;
 import com.delgo.reward.comm.ncp.GeoService;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoService.MongoMungpleService;
@@ -88,69 +89,67 @@ public class GoogleSheetService {
         for (int rowNum = 1; rowNum < ResponseValues.size(); rowNum++) {
             List<Object> row = ResponseValues.get(rowNum);
             String activeType = (String) row.get(0); // false, true, update 가 있음
-            if (activeType.equals("FALSE")) { // activeType 체크
-                GoogleSheetDTO sheet = new GoogleSheetDTO(row, categoryCode);
-                log.info("NEW sheet PlaceName:{}", sheet.getPlaceName());
 
-                // Mongo Mungple Setting & Save
-                MongoMungple mongoMungple = sheet.toMongoEntity(categoryCode, geoService.getGeoData(sheet.getAddress()));
+            if (activeType.equals("TRUE"))
+                continue;
 
-                // 중복 이중 체크 ( 주소, 이름 )
-                if(mongoMungpleService.isMungpleExisting(mongoMungple.getJibunAddress()) && mongoMungpleService.isMungpleExistingByPlaceName(mongoMungple.getPlaceName())) {
-                    log.info("이미 등록된 멍플입니다. : {}", mongoMungple.getPlaceName());
-                    placeNames.add("[" + mongoMungple.getPlaceName() + "]은 중복 데이터입니다. \n");
-                    continue;
+            GoogleSheetDTO sheet = new GoogleSheetDTO(row, categoryCode);
+            MongoMungple mongoMungple = sheet.toMongoEntity(categoryCode, geoService.getGeoData(sheet.getAddress()));
+            try {
+                if (activeType.equals("FALSE")) { // activeType 체크
+                    log.info("NEW sheet PlaceName:{}", sheet.getPlaceName());
+
+                    // 중복 이중 체크 ( 주소, 이름 )
+                    if (mongoMungpleService.isMungpleExisting(mongoMungple.getJibunAddress()) && mongoMungpleService.isMungpleExistingByPlaceName(mongoMungple.getPlaceName())) {
+                        log.info("이미 등록된 멍플입니다. : {}", mongoMungple.getPlaceName());
+                        placeNames.add("[" + mongoMungple.getPlaceName() + "]은 중복 데이터입니다. \n");
+                        continue;
+                    }
+
+                    if (StringUtils.hasText(sheet.getAcceptSize()))
+                        mongoMungple.setAcceptSize(sheet.getAcceptSize());
+                    if (StringUtils.hasText(sheet.getBusinessHour()))
+                        mongoMungple.setBusinessHour(sheet.getBusinessHour());
+
+                    // Figma
+                    if (StringUtils.hasText(sheet.getFigmaNodeId())) {
+                        figmaService.uploadFigmaDataToNCP(sheet.getFigmaNodeId(), mongoMungple);
+                        // Figma 사진 저장 까지 완료 후 저장
+                        MongoMungple savedMongoMungple = mongoMungpleService.save(mongoMungple);
+                        // Cache Update
+                        mungpleCacheService.updateCacheData(savedMongoMungple.getMungpleId(), savedMongoMungple);
+                        placeNames.add("[" + savedMongoMungple.getPlaceName() + "] 등록되었습니다.");
+                        // Sheet IsRegist Data update [ false -> true ]
+                        checkSaveConfirm(categoryCode, rowNum + 1);
+                    }
                 }
+                else if (activeType.equals("UPDATE")) {
+                    log.info("UPDATE sheet PlaceName:{}", sheet.getPlaceName());
+                    if (StringUtils.hasText(sheet.getAcceptSize()))
+                        mongoMungple.setAcceptSize(sheet.getAcceptSize());
+                    if (StringUtils.hasText(sheet.getBusinessHour()))
+                        mongoMungple.setBusinessHour(sheet.getBusinessHour());
 
-                if (StringUtils.hasText(sheet.getAcceptSize()))
-                    mongoMungple.setAcceptSize(sheet.getAcceptSize());
-                if (StringUtils.hasText(sheet.getBusinessHour()))
-                    mongoMungple.setBusinessHour(sheet.getBusinessHour());
+                    // Figma
+                    if (StringUtils.hasText(sheet.getFigmaNodeId()))
+                        figmaService.uploadFigmaDataToNCP(sheet.getFigmaNodeId(), mongoMungple);
 
-                // Figma
-                if (StringUtils.hasText(sheet.getFigmaNodeId())) {
-                    figmaService.uploadFigmaDataToNCP(sheet.getFigmaNodeId(), mongoMungple);
+                    MongoMungple dbMungple = mongoMungpleService.getByPlaceName(sheet.getPlaceName());
 
-                    // Figma 사진 저장 까지 완료 후 저장
+                    mongoMungple.setId(dbMungple.getId());
+                    mongoMungple.setMungpleId(dbMungple.getMungpleId());
                     MongoMungple savedMongoMungple = mongoMungpleService.save(mongoMungple);
 
                     // Cache Update
                     mungpleCacheService.updateCacheData(savedMongoMungple.getMungpleId(), savedMongoMungple);
 
-                    placeNames.add("[" + savedMongoMungple.getPlaceName() + "] 등록 되었습니다.");
-                    // Sheet IsRegist Data update [ false -> true ]
+                    placeNames.add("[" + savedMongoMungple.getPlaceName() + "] 수정되었습니다.");
+
+                    // Sheet IsRegist Data update [ update -> true ]
                     checkSaveConfirm(categoryCode, rowNum + 1);
                 }
-            }
-            if (activeType.equals("UPDATE")){
-                GoogleSheetDTO sheet = new GoogleSheetDTO(row, categoryCode);
-                log.info("UPDATE sheet PlaceName:{}", sheet.getPlaceName());
-
-                MongoMungple mungple =  sheet.toMongoEntity(categoryCode, geoService.getGeoData(sheet.getAddress()));
-
-                if (StringUtils.hasText(sheet.getAcceptSize()))
-                    mungple.setAcceptSize(sheet.getAcceptSize());
-                if (StringUtils.hasText(sheet.getBusinessHour()))
-                    mungple.setBusinessHour(sheet.getBusinessHour());
-
-                // Figma
-                if (StringUtils.hasText(sheet.getFigmaNodeId())) {
-                    figmaService.uploadFigmaDataToNCP(sheet.getFigmaNodeId(), mungple);
-                }
-
-                MongoMungple dbMungple = mongoMungpleService.getByPlaceName(sheet.getPlaceName());
-
-                mungple.setId(dbMungple.getId());
-                mungple.setMungpleId(dbMungple.getMungpleId());
-                MongoMungple savedMongoMungple = mongoMungpleService.save(mungple);
-
-                // Cache Update
-                mungpleCacheService.updateCacheData(savedMongoMungple.getMungpleId(), savedMongoMungple);
-
-                placeNames.add("[" + savedMongoMungple.getPlaceName() + "] 수정 되었습니다.");
-
-                // Sheet IsRegist Data update [ update -> true ]
-                checkSaveConfirm(categoryCode, rowNum + 1);
+            } catch (Exception e) {
+                placeNames.add("[" + mongoMungple.getPlaceName() + "] 저장에 실패 에러가 발생했습니다 - " + e.getMessage());
             }
         }
     }
@@ -168,7 +167,7 @@ public class GoogleSheetService {
                     .setValueInputOption("RAW")
                     .execute();
         } catch (IOException e){
-            throw new RuntimeException("[checkSaveConfirm] : " + e.getMessage());
+            throw new GoogleSheetException("[checkSaveConfirm] : " + e.getMessage());
         }
     }
 
