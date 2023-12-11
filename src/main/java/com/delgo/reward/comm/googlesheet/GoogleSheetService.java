@@ -90,7 +90,7 @@ public class GoogleSheetService {
             List<Object> row = ResponseValues.get(rowNum);
             String activeType = (String) row.get(0); // false, true, update 가 있음
 
-            if (activeType.equals("TRUE"))
+            if (activeType.equals("TRUE") || activeType.equals("DEL SUCCESS"))
                 continue;
 
             GoogleSheetDTO sheet = new GoogleSheetDTO(row, categoryCode);
@@ -148,6 +148,14 @@ public class GoogleSheetService {
                     // Sheet IsRegist Data update [ update -> true ]
                     checkSaveConfirm(categoryCode, rowNum + 1);
                 }
+                else if (activeType.equals("DEL")) { // activeType 체크
+                    log.info("DELETE sheet PlaceName:{}", sheet.getPlaceName());
+                    MongoMungple dbMungple = mongoMungpleService.getByPlaceName(sheet.getPlaceName());
+                    mongoMungpleService.deleteMungple(dbMungple.getMungpleId());
+
+                    placeNames.add("[" + dbMungple.getPlaceName() + "] 삭제되었습니다.");
+                    checkDeleteConfirm(categoryCode, rowNum + 1);
+                }
             } catch (Exception e) {
                 placeNames.add("[" + mongoMungple.getPlaceName() + "] 저장에 실패 에러가 발생했습니다 - " + e.getMessage());
             }
@@ -168,6 +176,23 @@ public class GoogleSheetService {
                     .execute();
         } catch (IOException e){
             throw new GoogleSheetException("[checkSaveConfirm] : " + e.getMessage());
+        }
+    }
+
+    public void checkDeleteConfirm(CategoryCode categoryCode, int rowNum) {
+        try {
+            String range = generateRangeString("A", rowNum, "B", rowNum);
+
+            // 등록 여부(A)에 "True", 등록 날짜(B)에 현재 날짜를 설정
+            List<Object> dataRow = Arrays.asList("DEL SUCCESS", LocalDate.now().toString());
+            ValueRange body = new ValueRange().setValues(List.of(dataRow));
+
+            sheets.spreadsheets().values()
+                    .update(SHEET_ID, categoryCode.getSheetName() + "!" + range, body)
+                    .setValueInputOption("RAW")
+                    .execute();
+        } catch (IOException e){
+            throw new GoogleSheetException("[checkDeleteConfirm] : " + e.getMessage());
         }
     }
 
