@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface MongoMungpleRepository extends MongoRepository<MongoMungple, String> {
     Optional<MongoMungple> findByMungpleId(Integer mungpleId);
     Optional<MongoMungple> findByPlaceName(String placeName);
+    List<MongoMungple> findListByPlaceName(String placeName);
     List<MongoMungple> findByMungpleIdIn(List<Integer> mungpleIdList);
     List<MongoMungple> findByIsActive(boolean isActive);
     List<MongoMungple> findByCategoryCode(String categoryCode);
