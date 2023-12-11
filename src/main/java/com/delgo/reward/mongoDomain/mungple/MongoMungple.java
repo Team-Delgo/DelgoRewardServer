@@ -139,10 +139,10 @@ public class MongoMungple {
     }
 
     public void setFigmaPhotoData(Map<String, ArrayList<String>> listMap) {
-        this.photoUrls = sortAndRetrieveUrls(listMap, "thumbnail");
+        this.photoUrls = sortAndRetrieveUrls(listMap, "");
         this.representMenuPhotoUrls = sortAndRetrieveUrls(listMap, "menu");
         this.representMenuBoardPhotoUrls = sortAndRetrieveUrls(listMap, "menu_board");
-        this.priceTagPhotoUrls = sortAndRetrieveUrls(listMap, "price_tag");
+        this.priceTagPhotoUrls = sortAndRetrieveUrls(listMap, "price");
         this.residentDogPhoto = Optional.ofNullable(listMap.get("dog"))
                 .filter(list -> !list.isEmpty())
                 .map(list -> list.get(0))
@@ -164,5 +164,34 @@ public class MongoMungple {
                     return matcher.find() ? Integer.parseInt(matcher.group(1)) : 0;
                 }))
                 .collect(Collectors.toList());
+    }
+
+    public String makeBaseNameForFigma(){
+        String categoryName = this.categoryCode.getName();
+        String addressName = findAddressName(jibunAddress, isExistGu(jibunAddress) ? "구" : "시");
+
+        String baseName = addressName + "_" + categoryName + "_" + placeName.replaceAll("\\s+", "");
+        System.out.println("baseName = " + baseName);
+
+        return baseName;
+    }
+
+    private boolean isExistGu(String text) {
+        Pattern pattern = Pattern.compile("\\b\\S*구\\b");
+        Matcher matcher = pattern.matcher(text);
+
+        while (matcher.find()) {
+            return true; // 찾은 경우 즉시 true 반환
+        }
+        return false; // 찾지 못한 경우 false 반환
+    }
+
+    private String findAddressName(String text, String type) {
+        Pattern pattern = Pattern.compile("\\b\\S*" + type + "\\b");
+        Matcher matcher = pattern.matcher(text);
+        if (matcher.find()) {
+            return matcher.group();
+        }
+        return "";
     }
 }

@@ -5,7 +5,6 @@ import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.ncp.GeoService;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoService.MongoMungpleService;
-import com.delgo.reward.service.FigmaService;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
