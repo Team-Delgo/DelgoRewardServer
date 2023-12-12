@@ -65,7 +65,7 @@ public class CertResponse {
     @Schema(description = "등록 날짜")
     protected LocalDateTime registDt;
 
-    public static CertResponse from(Integer userId, Certification cert, List<Reaction> reactionList) {
+    public static CertResponse from(Integer userId, Certification cert, List<Reaction> reactionList, List<CertPhoto> photoList) {
         Map<ReactionCode, Boolean> reactionMap = ReactionCode.initializeReactionMap();
         Map<ReactionCode, Integer> reactionCountMap = ReactionCode.initializeReactionCountMap();
         if (!reactionList.isEmpty()) {
@@ -80,7 +80,7 @@ public class CertResponse {
                 .placeName(cert.getPlaceName())
                 .description(cert.getDescription())
                 .address(cert.getAddress())
-                .photos(cert.getPhotos().stream().map(CertPhoto::getUrl).toList())
+                .photos(photoList.stream().map(CertPhoto::getUrl).toList())
                 .isHideAddress(cert.getIsHideAddress())
                 .userId(cert.getUser().getUserId())
                 .userName(cert.getUser().getName())
@@ -104,7 +104,7 @@ public class CertResponse {
                 .placeName(cert.getPlaceName())
                 .description(cert.getDescription())
                 .address(cert.getAddress())
-                .photos(cert.getPhotos().stream().map(CertPhoto::getUrl).toList())
+//                .photos(cert.getPhotos())
                 .isHideAddress(cert.getIsHideAddress())
                 .userId(cert.getUser().getUserId())
                 .userName(cert.getUser().getName())
@@ -116,11 +116,12 @@ public class CertResponse {
                 .build();
     }
 
-    public static List<CertResponse> fromList(Integer userId, List<Certification> certList, Map<Integer, List<Reaction>> reactionMap) {
+    public static List<CertResponse> fromList(Integer userId, List<Certification> certList, Map<Integer, List<Reaction>> reactionMap, Map<Integer, List<CertPhoto>> photoMap) {
         return certList.stream().map(cert -> {
             List<Reaction> reactionList = reactionMap.getOrDefault(cert.getCertificationId(), Collections.emptyList());
+            List<CertPhoto> photoList = photoMap.getOrDefault(cert.getCertificationId(), Collections.emptyList());
 
-            return CertResponse.from(userId, cert, reactionList);
+            return CertResponse.from(userId, cert, reactionList, photoList);
         }).toList();
     }
 }

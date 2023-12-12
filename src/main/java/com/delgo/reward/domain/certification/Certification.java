@@ -8,12 +8,10 @@ import com.delgo.reward.record.certification.ModifyCertRecord;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Getter
 @Entity
 @Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class Certification extends BaseTimeEntity {
@@ -45,20 +43,6 @@ public class Certification extends BaseTimeEntity {
     @JoinColumn(name = "userId", updatable = false)
     private User user;
 
-    @ToString.Exclude
-    @OneToMany(mappedBy = "certificationId", fetch = FetchType.LAZY)
-    private List<CertPhoto> photos;
-
-    public Certification setPhotoUrl(String photoUrl){
-        this.photoUrl = photoUrl;
-
-        return this;
-    }
-
-    public void setPhotos(List<CertPhoto> photos) {
-        this.photos = photos;
-
-    }
 
     public void setIsCorrect(boolean isCorrect){
         this.isCorrect = isCorrect;

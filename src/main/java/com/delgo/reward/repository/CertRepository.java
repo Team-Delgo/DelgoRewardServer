@@ -23,11 +23,11 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     Integer countByUserUserIdAndIsCorrect(int userId, boolean isCorrect);
     void deleteAllByUserUserId(int userId);
 
-    @EntityGraph(attributePaths = {"photos"})
+//    @EntityGraph(attributePaths = {"photos"})
     @Query("SELECT DISTINCT c FROM Certification c JOIN FETCH c.user u JOIN FETCH u.pet WHERE c.certificationId IN :ids order by c.registDt desc")
     List<Certification> findCertByIds(@Param("ids") List<Integer> ids);
 
-    @EntityGraph(attributePaths = {"photos"})
+//    @EntityGraph(attributePaths = {"photos"})
     @Query("SELECT c FROM Certification c JOIN FETCH c.user u JOIN FETCH u.pet WHERE c.certificationId = :certId")
     Optional<Certification> findCertByCertificationId(@Param("certId") Integer certId);
 
@@ -44,7 +44,7 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     List<Certification> findCertByDate(@Param("startDt") LocalDateTime startDt, @Param("endDt") LocalDateTime endDate);
 
     // 자신 거 조회라 is_correct_photo 없어도 됨.
-    @EntityGraph(attributePaths = {"user", "photos"})
+    @EntityGraph(attributePaths = {"user"})
     @Query(value = "select c from Certification c where c.user.userId = :userId and  c.registDt between :startDt and :endDt order by c.registDt desc")
     List<Certification> findCertByDateAndUser(@Param("userId") int userId, @Param("startDt") LocalDateTime startDt, @Param("endDt") LocalDateTime endDate);
 

@@ -1,6 +1,7 @@
 package com.delgo.reward.service;
 
 
+import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.certification.Reaction;
 import com.delgo.reward.dto.cert.CertResponse;
@@ -22,13 +23,15 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CalendarService {
     private final CertService certService;
+    private final CertPhotoService certPhotoService;
     private final ReactionService reactionService;
 
     public List<CalendarRecord> getCalendar(int userId) {
         List<Certification> certificationList = certService.getCertsByUserId(userId);
         Map<Integer,List<Reaction>> reactionMap = reactionService.getMapByCertList(certificationList);
-        List<CertResponse> certifications = CertResponse.fromList(userId, certificationList, reactionMap);
+        Map<Integer,List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(certificationList);
 
+        List<CertResponse> certifications = CertResponse.fromList(userId, certificationList, reactionMap, photoMap);
         return certifications.stream()
                 .sorted(Comparator.comparing(CertResponse::getRegistDt)) // 등록 순으로 정렬
                 .map(cert -> {

@@ -26,7 +26,7 @@ public class CertAsyncService {
 
     @Async
     public void doSomething(Integer certificationId) {
-        List<CertPhoto> certPhotos = certPhotoRepository.findPhotosByCertificationId(certificationId);
+        List<CertPhoto> certPhotos = certPhotoRepository.findListByCertificationId(certificationId);
         for (CertPhoto photo : certPhotos) {
             String fileName = photoService.getFileNameFromURL(photo.getUrl()); // ex) 1359_cert_1.png
 
