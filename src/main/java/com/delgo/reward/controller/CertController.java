@@ -7,6 +7,7 @@ import com.delgo.reward.comm.async.ClassificationAsyncService;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.ReactionCode;
+import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.certification.Reaction;
 import com.delgo.reward.dto.cert.CertResponse;
@@ -14,6 +15,7 @@ import com.delgo.reward.dto.comm.PageCertResponse;
 import com.delgo.reward.mongoService.ClassificationService;
 import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
+import com.delgo.reward.service.CertPhotoService;
 import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.ReactionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -45,6 +47,7 @@ import java.util.*;
 public class CertController extends CommController {
 
     private final CertService certService;
+    private final CertPhotoService certPhotoService;
     private final ReactionService reactionService;
     private final CertAsyncService certAsyncService;
     private final ClassificationService classificationService;
@@ -109,7 +112,9 @@ public class CertController extends CommController {
     public ResponseEntity getCertsByCertId(@RequestParam Integer userId, @RequestParam Integer certificationId) {
         Certification certification = certService.getCertById(certificationId);
         List<Reaction> reactionList = reactionService.getListByCertId(certificationId);
-        return SuccessReturn(new ArrayList<>(Collections.singletonList(CertResponse.from(userId, certification, reactionList))));
+        List<CertPhoto> certPhotoList = certPhotoService.getListByCertId(certificationId);
+
+        return SuccessReturn(new ArrayList<>(Collections.singletonList(CertResponse.from(userId, certification, reactionList, certPhotoList))));
     }
 
     // ---------------------------------권한 필요--------------------------------------------
@@ -127,13 +132,13 @@ public class CertController extends CommController {
         Certification certification = (record.mungpleId() == 0)
                 ? certService.create(record, photos)
                 : certService.createByMungple(record, photos);
-        List<Reaction> reactionList = reactionService.getListByCertId(certification.getCertificationId());
+        List<CertPhoto> certPhotoList = certPhotoService.create(certification.getCertificationId(), photos);
 
         // 비동기적 실행
         certAsyncService.doSomething(certification.getCertificationId());
         classificationAsyncService.doClassification(certification.getCertificationId());
 
-        return SuccessReturn(CertResponse.from(record.userId(), certification, reactionList));
+        return SuccessReturn(CertResponse.from(record.userId(), certification, new ArrayList<>(), certPhotoList));
     }
 
     /**
@@ -148,7 +153,9 @@ public class CertController extends CommController {
     public ResponseEntity getCertsByDate(@RequestParam Integer userId, @RequestParam String date) {
         List<Certification> certificationList = certService.getCertsByDate(userId, LocalDate.parse(date));
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(certificationList);
-        return SuccessReturn(CertResponse.fromList(userId, certificationList, reactionMap));
+        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(certificationList);
+
+        return SuccessReturn(CertResponse.fromList(userId, certificationList, reactionMap, photoMap));
     }
 
     /**
@@ -177,7 +184,9 @@ public class CertController extends CommController {
     public ResponseEntity getAllMyCerts(@RequestParam Integer userId) {
         List<Certification> certificationList = certService.getAllMyCerts(userId);
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(certificationList);
-        return SuccessReturn(CertResponse.fromList(userId, certificationList, reactionMap));
+        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(certificationList);
+
+        return SuccessReturn(CertResponse.fromList(userId, certificationList, reactionMap, photoMap));
     }
 
     /**
@@ -191,7 +200,9 @@ public class CertController extends CommController {
     public ResponseEntity getRecentCerts(@RequestParam Integer userId, @RequestParam Integer count) {
         List<Certification> certificationList = certService.getRecentCerts(userId, count);
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(certificationList);
-        return SuccessReturn(CertResponse.fromList(userId, certificationList, reactionMap));
+        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(certificationList);
+
+        return SuccessReturn(CertResponse.fromList(userId, certificationList, reactionMap, photoMap));
     }
 
     /**
@@ -211,10 +222,11 @@ public class CertController extends CommController {
         classificationService.deleteClassificationWhenModifyCert(certification);
         Certification updatedCertification = certService.modifyCert(certification, record);
         List<Reaction> reactionList = reactionService.getListByCertId(certification.getCertificationId());
+        List<CertPhoto> certPhotoList = certPhotoService.getListByCertId(certification.getCertificationId());
 
         // 비동기적 실행
         classificationAsyncService.doClassification(updatedCertification.getCertificationId());
-        return SuccessReturn(CertResponse.from(record.userId(), updatedCertification, reactionList));
+        return SuccessReturn(CertResponse.from(record.userId(), updatedCertification, reactionList, certPhotoList));
     }
 
     /**

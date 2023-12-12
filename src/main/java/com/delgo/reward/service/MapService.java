@@ -1,6 +1,7 @@
 package com.delgo.reward.service;
 
 
+import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.certification.Reaction;
 import com.delgo.reward.dto.cert.CertResponse;
@@ -26,6 +27,7 @@ public class MapService {
     private final CertService certService;
     private final UserService userService;
     private final ReactionService reactionService;
+    private final CertPhotoService certPhotoService;
     private final MongoMungpleRepository mongoMungpleRepository;
 
     public Map<String, Object> getMap(int userId) {
@@ -37,9 +39,10 @@ public class MapService {
     public OtherMapDTO getOtherMap(int userId) {
         List<Certification> certificationList = certService.getCorrectCertsByUserId(userId);
         Map<Integer,List<Reaction>> reactionMap = reactionService.getMapByCertList(certificationList);
+        Map<Integer,List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(certificationList);
         return new OtherMapDTO(
                 userService.getUserById(userId),
-                CertResponse.fromList(userId, certificationList, reactionMap),  // 인증 리스트 조회
+                CertResponse.fromList(userId, certificationList, reactionMap, photoMap),  // 인증 리스트 조회
                 certService.getCorrectCertCountByUserId(userId)
         );
     }

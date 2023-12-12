@@ -48,6 +48,7 @@ public class CertService {
 
     // Service
     private final UserService userService;
+    private final CertPhotoService certPhotoService;
     private final ReactionService reactionService;
     private final PhotoService photoService;
     private final MongoMungpleService mongoMungpleService;
@@ -69,25 +70,13 @@ public class CertService {
         String address = geoDataService.getReverseGeoData(record.latitude(), record.longitude());
         Code code = codeService.getGeoCodeByAddress(address);
 
-        Certification certification = saveCert(record.toEntity(address, code, user));
-
-        List<CertPhoto> certPhotos = createCertPhoto(certification.getCertificationId(), photos);
-        certPhotoRepository.saveAll(certPhotos);
-        certification.setPhotos(certPhotos);
-
-        return certification;
+        return saveCert(record.toEntity(address, code, user));
     }
 
     public Certification createByMungple(CertRecord record, List<MultipartFile> photos) {
         User user = userService.getUserById(record.userId());
         MongoMungple mongoMungple = mongoMungpleService.getMungpleByMungpleId(record.mungpleId());
-        Certification certification = saveCert(record.toEntity(mongoMungple, user));
-
-        List<CertPhoto> certPhotos = createCertPhoto(certification.getCertificationId(), photos);
-        certPhotoRepository.saveAll(certPhotos);
-        certification.setPhotos(certPhotos);
-
-        return certification;
+        return saveCert(record.toEntity(mongoMungple, user));
     }
 
     public List<CertPhoto> createCertPhoto(int certificationId, List<MultipartFile> photos) {
@@ -178,7 +167,8 @@ public class CertService {
         Slice<Integer> slice = certRepository.findAllCertIdByPaging(userId, pageable);
         List<Certification> certificationList = getCertsByIds(slice.getContent());
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(certificationList);
-        List<CertResponse> certs = CertResponse.fromList(userId, certificationList, reactionMap);
+        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(certificationList);
+        List<CertResponse> certs = CertResponse.fromList(userId, certificationList, reactionMap, photoMap);
 
         return new PageCertResponse(certs, slice.getSize(), slice.getNumber(), slice.isLast());
     }
@@ -191,7 +181,8 @@ public class CertService {
         Slice<Integer> slice = certRepository.findAllExcludeSpecificCert(userId, certificationId, pageable);
         List<Certification> certificationList = getCertsByIds(slice.getContent());
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(certificationList);
-        List<CertResponse> certs = CertResponse.fromList(userId, certificationList, reactionMap);
+        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(certificationList);
+        List<CertResponse> certs = CertResponse.fromList(userId, certificationList, reactionMap, photoMap);
 
         return new PageCertResponse(certs, slice.getSize(), slice.getNumber(), slice.isLast());
     }
@@ -203,7 +194,8 @@ public class CertService {
         Slice<Integer> slice = certRepository.findCertByMungple(mungpleId, pageable);
         List<Certification> certificationList = getCertsByIds(slice.getContent());
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(certificationList);
-        List<CertResponse> certs = CertResponse.fromList(userId, certificationList, reactionMap);
+        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(certificationList);
+        List<CertResponse> certs = CertResponse.fromList(userId, certificationList, reactionMap, photoMap);
 
         return new PageCertResponse(certs, slice.getSize(), slice.getNumber(), slice.isLast());
     }
@@ -218,7 +210,8 @@ public class CertService {
 
         List<Certification> certificationList = getCertsByIds(slice.getContent());
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(certificationList);
-        List<CertResponse> certs = CertResponse.fromList(userId, certificationList, reactionMap);
+        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(certificationList);
+        List<CertResponse> certs = CertResponse.fromList(userId, certificationList, reactionMap, photoMap);
         User user = userService.getUserById(userId);
         return new PageCertResponse(certs, slice.getSize(), slice.getNumber(), slice.isLast(),
                 getCertCountByUser(userId), user.getViewCount());
@@ -242,7 +235,8 @@ public class CertService {
 
         List<Certification> certificationList = getCertsByIds(slice.getContent());
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(certificationList);
-        List<CertResponse> certs = CertResponse.fromList(userId, certificationList, reactionMap);
+        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(certificationList);
+        List<CertResponse> certs = CertResponse.fromList(userId, certificationList, reactionMap, photoMap);
         User user = userService.getUserById(userId);
         return new PageCertResponse(certs, slice.getSize(), slice.getNumber(), slice.isLast(),
                 getCorrectCertCountByUserId(userId), user.getViewCount());

@@ -9,5 +9,6 @@ import java.util.List;
 
 
 public interface CertPhotoRepository extends JpaRepository<CertPhoto, Integer>, JpaSpecificationExecutor<CertPhoto> {
-    List<CertPhoto> findPhotosByCertificationId(int certId);
+    List<CertPhoto> findListByCertificationId(int certificationId);
+    List<CertPhoto> findListByCertificationIdIn(List<Integer> certificationIdList);
 }

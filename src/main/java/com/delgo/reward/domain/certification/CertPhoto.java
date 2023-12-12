@@ -18,6 +18,14 @@ public class CertPhoto extends BaseTimeEntity {
     private String url;
     private Boolean isCorrect;
 
+    public static CertPhoto from(int certificationId, String url) {
+        return CertPhoto.builder()
+                .certificationId(certificationId)
+                .url(url)
+                .isCorrect(true)
+                .build();
+    }
+
     public void setUrl(String url) {
         this.url = url;
     }
