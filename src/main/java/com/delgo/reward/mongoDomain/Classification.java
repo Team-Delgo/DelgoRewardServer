@@ -38,7 +38,7 @@ public class Classification {
     public Classification toEntity(Certification certification, Map<String, String> category, String SIDO, String SIGUGUN, String DONG){
         return Classification.builder()
                 .user(new UserResDTO(certification.getUser()))
-                .certification(CertResponse.from(certification.getUser().getUserId(), certification))
+                .certification(CertResponse.from(certification))
                 .category(category)
                 .sido(SIDO)
                 .sigugun(SIGUGUN)
