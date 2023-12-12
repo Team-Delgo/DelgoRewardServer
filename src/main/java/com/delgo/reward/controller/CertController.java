@@ -38,8 +38,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -110,7 +113,10 @@ public class CertController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CertResDTO.class)))})
     @GetMapping("/id")
     public ResponseEntity getCertsByCertId(@RequestParam Integer userId, @RequestParam Integer certificationId) {
-        return SuccessReturn(certService.getCertsByIdWithLike(userId, certificationId));
+        Certification certification = certService.getCertById(certificationId);
+        CertResDTO dto = new CertResDTO(certification, userId);
+
+        return SuccessReturn(new ArrayList<>(Collections.singletonList(dto)));
     }
 
     // ---------------------------------권한 필요--------------------------------------------
@@ -125,18 +131,15 @@ public class CertController extends CommController {
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> createCert(@Validated @RequestPart(value = "data") CertRecord record, @RequestPart(required = false) List<MultipartFile> photos) throws JsonProcessingException {
         if(photos.isEmpty()) ErrorReturn(APICode.PARAM_ERROR);
-
-        CertResDTO resDto = (record.mungpleId() == 0)
+        Certification certification = (record.mungpleId() == 0)
                 ? certService.create(record, photos)
                 : certService.createByMungple(record, photos);
 
-        log.info("{}", resDto.getCertificationId());
-
         // 비동기적 실행
-        certAsyncService.doSomething(resDto.getCertificationId());
-        classificationAsyncService.doClassification(resDto.getCertificationId());
+        certAsyncService.doSomething(certification.getCertificationId());
+        classificationAsyncService.doClassification(certification.getCertificationId());
 
-        return SuccessReturn(resDto);
+        return SuccessReturn(new CertResDTO(certification, record.userId()));
     }
 
     /**
@@ -144,11 +147,15 @@ public class CertController extends CommController {
      * @param userId, date
      * @return List<CertResDTO>
      */
-    @Operation(summary = "[Date] 인증 조회", description ="특정 날짜에 인증한 모든 인증글 조회 [캘린더] \n  ex) 2023.07.10에 등록한 인증")
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CertResDTO.class)))})
+    @Operation(summary = "[Date] 인증 조회", description = "특정 날짜에 인증한 모든 인증글 조회 [캘린더] \n  ex) 2023.07.10에 등록한 인증")
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array =
+    @ArraySchema(schema = @Schema(implementation = CertResDTO.class)))})
     @GetMapping("/date")
     public ResponseEntity getCertsByDate(@RequestParam Integer userId, @RequestParam String date) {
-        return SuccessReturn(certService.getCertsByDate(userId, LocalDate.parse(date)));
+        List<Certification> certificationList = certService.getCertsByDate(userId, LocalDate.parse(date));
+        return SuccessReturn(certificationList.stream()
+                .map(c -> new CertResDTO(c, userId))
+                .collect(Collectors.toList()));
     }
 
     /**
@@ -175,7 +182,9 @@ public class CertController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCertResDTO.class))})
     @GetMapping("/my/all")
     public ResponseEntity getAllMyCerts(@RequestParam Integer userId) {
-        return SuccessReturn(certService.getAllMyCerts(userId));
+        List<Certification> certificationList = certService.getAllMyCerts(userId);
+        List<CertResDTO> dtoList = certificationList.stream().map(cert -> new CertResDTO(cert, userId)).toList();
+        return SuccessReturn(dtoList);
     }
 
     /**
@@ -187,7 +196,9 @@ public class CertController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CertResDTO.class)))})
     @GetMapping("/recent")
     public ResponseEntity getRecentCerts(@RequestParam Integer userId, @RequestParam Integer count) {
-        return SuccessReturn(certService.getRecentCerts(userId, count));
+        List<Certification> certificationList = certService.getRecentCerts(userId, count);
+        List<CertResDTO> dtoList = certificationList.stream().map(cert -> new CertResDTO(cert, userId)).toList();
+        return SuccessReturn(dtoList);
     }
 
     /**
