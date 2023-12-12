@@ -5,7 +5,6 @@ import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.ReactionCode;
 import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.domain.certification.Reaction;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -14,7 +13,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -65,12 +63,12 @@ public class CertResponse {
     @Schema(description = "등록 날짜")
     protected LocalDateTime registDt;
 
-    public static CertResponse from(Integer userId, Certification cert, List<CertPhoto> photoList, List<Reaction> reactionList) {
+    public static CertResponse from(Integer userId, Certification cert) {
         Map<ReactionCode, Boolean> reactionMap = ReactionCode.initializeReactionMap();
         Map<ReactionCode, Integer> reactionCountMap = ReactionCode.initializeReactionCountMap();
-        if (!reactionList.isEmpty()) {
-            ReactionCode.setReactionMapByUserId(reactionMap, reactionList, userId);
-            ReactionCode.setReactionCountMap(reactionCountMap, reactionList);
+        if (!cert.getReactionList().isEmpty()) {
+            ReactionCode.setReactionMapByUserId(reactionMap, cert.getReactionList(), userId);
+            ReactionCode.setReactionCountMap(reactionCountMap, cert.getReactionList());
         }
 
         return CertResponse.builder()
@@ -80,7 +78,7 @@ public class CertResponse {
                 .placeName(cert.getPlaceName())
                 .description(cert.getDescription())
                 .address(cert.getAddress())
-                .photos(photoList.stream().map(CertPhoto::getUrl).toList())
+                .photos(cert.getPhotos().stream().map(CertPhoto::getUrl).toList())
                 .isHideAddress(cert.getIsHideAddress())
                 .userId(cert.getUser().getUserId())
                 .userName(cert.getUser().getName())
@@ -95,12 +93,7 @@ public class CertResponse {
                 .build();
     }
 
-    public static List<CertResponse> fromList(Integer userId, List<Certification> certList, Map<Integer, List<CertPhoto>> photoMap, Map<Integer, List<Reaction>> reactionMap) {
-        return certList.stream().map(cert -> {
-            List<CertPhoto> photoList = photoMap.getOrDefault(cert.getCertificationId(), Collections.emptyList());
-            List<Reaction> reactionList = reactionMap.getOrDefault(cert.getCertificationId(), Collections.emptyList());
-
-            return CertResponse.from(userId, cert, photoList, reactionList);
-        }).toList();
+    public static List<CertResponse> fromList(Integer userId, List<Certification> certList) {
+        return certList.stream().map(cert -> CertResponse.from(userId, cert)).toList();
     }
 }

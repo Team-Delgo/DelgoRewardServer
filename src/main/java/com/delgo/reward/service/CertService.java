@@ -12,10 +12,8 @@ import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.dto.cert.CertByMungpleResDTO;
-import com.delgo.reward.dto.cert.CertResDTO;
-import com.delgo.reward.dto.comm.PageCertByMungpleResDTO;
-import com.delgo.reward.dto.comm.PageCertResDTO;
+import com.delgo.reward.dto.cert.CertResponse;
+import com.delgo.reward.dto.comm.PageCertResponse;
 import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoService.MongoMungpleService;
@@ -173,45 +171,49 @@ public class CertService {
      * 2. CertId로 (EntityGraph) 실제 객체 조회. ( [ids] 인증 조회 )
      *   - Paging, EntityGraph 같이 사용시 메모리 과부하
      */
-    public PageCertResDTO getAllCert(int userId, Pageable pageable) {
+    public PageCertResponse getAllCert(int userId, Pageable pageable) {
         Slice<Integer> slice = certRepository.findAllCertIdByPaging(userId, pageable);
-        List<CertResDTO> certs = getCertsByIds(slice.getContent()).stream().map(cert -> new CertResDTO(cert, userId)).toList();
+        List<Certification> certificationList = getCertsByIds(slice.getContent());
+        List<CertResponse> certs = CertResponse.fromList(userId,certificationList);
 
-        return new PageCertResDTO(certs, slice.getSize(), slice.getNumber(), slice.isLast());
+        return new PageCertResponse(certs, slice.getSize(), slice.getNumber(), slice.isLast());
     }
 
     /**
      * 전체 인증 조회 (특정 인증 제외)
      * 클라이언트에서 특정 인증글을 맨 위로 올렸을 때 중복을 방지하기 위해 해당 인증글은 반환 리스트에서 제거한다.
      */
-    public PageCertResDTO getAllCertExcludeSpecificCert(int userId, int certificationId, Pageable pageable) {
+    public PageCertResponse getAllCertExcludeSpecificCert(int userId, int certificationId, Pageable pageable) {
         Slice<Integer> slice = certRepository.findAllExcludeSpecificCert(userId, certificationId, pageable);
-        List<CertResDTO> certs = getCertsByIds(slice.getContent()).stream().map(cert -> new CertResDTO(cert, userId)).toList();
+        List<Certification> certificationList = getCertsByIds(slice.getContent());
+        List<CertResponse> certs = CertResponse.fromList(userId,certificationList);
 
-        return new PageCertResDTO(certs, slice.getSize(), slice.getNumber(), slice.isLast());
+        return new PageCertResponse(certs, slice.getSize(), slice.getNumber(), slice.isLast());
     }
 
     /**
      * [Mungple] 인증 조회
      */
-    public PageCertByMungpleResDTO getCertsByMungpleId(int userId, int mungpleId, Pageable pageable) {
+    public PageCertResponse getCertsByMungpleId(int userId, int mungpleId, Pageable pageable) {
         Slice<Integer> slice = certRepository.findCertByMungple(mungpleId, pageable);
-        List<CertByMungpleResDTO> certs = getCertsByIds(slice.getContent()).stream().map(cert -> new CertByMungpleResDTO(cert, userId)).toList();
+        List<Certification> certificationList = getCertsByIds(slice.getContent());
+        List<CertResponse> certs = CertResponse.fromList(userId,certificationList);
 
-        return new PageCertByMungpleResDTO(certs, slice.getSize(), slice.getNumber(), slice.isLast());
+        return new PageCertResponse(certs, slice.getSize(), slice.getNumber(), slice.isLast());
     }
 
     /**
      * [My] 내가 작성한 인증 조회
      */
-    public PageCertResDTO getMyCerts(int userId, CategoryCode categoryCode, Pageable pageable) {
+    public PageCertResponse getMyCerts(int userId, CategoryCode categoryCode, Pageable pageable) {
         Slice<Integer> slice = categoryCode.equals(CategoryCode.CA0000)
                 ? certRepository.findCertIdByUserId(userId, pageable)
                 : certRepository.findCertIdByUserIdAndCategoryCode(userId, categoryCode, pageable);
 
-        List<CertResDTO> certs = getCertsByIds(slice.getContent()).stream().map(cert -> new CertResDTO(cert, userId)).toList();
+        List<Certification> certificationList = getCertsByIds(slice.getContent());
+        List<CertResponse> certs = CertResponse.fromList(userId,certificationList);
         User user = userService.getUserById(userId);
-        return new PageCertResDTO(certs, slice.getSize(), slice.getNumber(), slice.isLast(), getCertCountByUser(userId), user.getViewCount());
+        return new PageCertResponse(certs, slice.getSize(), slice.getNumber(), slice.isLast(), getCertCountByUser(userId), user.getViewCount());
     }
 
     /**
@@ -225,14 +227,15 @@ public class CertService {
     /**
      *  [Other] 다른 사용자가 작성한 인증 조회
      */
-    public PageCertResDTO getOtherCerts(int userId, CategoryCode categoryCode, Pageable pageable) {
+    public PageCertResponse getOtherCerts(int userId, CategoryCode categoryCode, Pageable pageable) {
         Slice<Integer> slice = categoryCode.equals(CategoryCode.CA0000)
                 ? certRepository.findCorrectCertIdByUserId(userId, pageable)
                 : certRepository.findCorrectCertIdByUserIdAndCategoryCode(userId, categoryCode, pageable);
 
-        List<CertResDTO> certs = getCertsByIds(slice.getContent()).stream().map(cert -> new CertResDTO(cert, userId)).toList();
+        List<Certification> certificationList = getCertsByIds(slice.getContent());
+        List<CertResponse> certs = CertResponse.fromList(userId,certificationList);
         User user = userService.getUserById(userId);
-        return new PageCertResDTO(certs, slice.getSize(), slice.getNumber(), slice.isLast(), getCorrectCertCountByUserId(userId),user.getViewCount());
+        return new PageCertResponse(certs, slice.getSize(), slice.getNumber(), slice.isLast(), getCorrectCertCountByUserId(userId),user.getViewCount());
     }
 
     /**
