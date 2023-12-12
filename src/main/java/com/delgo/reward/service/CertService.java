@@ -64,7 +64,7 @@ public class CertService {
      * 인증 생성
      * 일반 인증 - (위도,경도)로 NCP에서 주소 조회 필요
      */
-    public CertResDTO create(CertRecord record, List<MultipartFile> photos) {
+    public Certification create(CertRecord record, List<MultipartFile> photos) {
         User user = userService.getUserById(record.userId());
         String address = geoDataService.getReverseGeoData(record.latitude(), record.longitude());
         Code code = codeService.getGeoCodeByAddress(address);
@@ -75,10 +75,10 @@ public class CertService {
         certPhotoRepository.saveAll(certPhotos);
         certification.setPhotos(certPhotos);
 
-        return new CertResDTO(certification, record.userId());
+        return certification;
     }
 
-    public CertResDTO createByMungple(CertRecord record, List<MultipartFile> photos) {
+    public Certification createByMungple(CertRecord record, List<MultipartFile> photos) {
         User user = userService.getUserById(record.userId());
         MongoMungple mongoMungple = mongoMungpleService.getMungpleByMungpleId(record.mungpleId());
         Certification certification = saveCert(record.toEntity(mongoMungple, user));
@@ -87,7 +87,7 @@ public class CertService {
         certPhotoRepository.saveAll(certPhotos);
         certification.setPhotos(certPhotos);
 
-        return new CertResDTO(certification, record.userId());
+        return certification;
     }
 
     public List<CertPhoto> createCertPhoto(int certificationId, List<MultipartFile> photos) {
@@ -131,22 +131,10 @@ public class CertService {
     }
 
     /**
-     * [certId & Like] 인증 조회
-     * 좋아요 여부 설정
-     * 단 건이지만 Front 요청으로 LIST로 반환
-     */
-    public List<CertResDTO> getCertsByIdWithLike(int userId, int certificationId) {
-        return new ArrayList<>(Collections.singletonList(new CertResDTO(getCertById(certificationId),userId)));
-    }
-
-    /**
      * [Date] 인증 조회
      */
-    public List<CertResDTO> getCertsByDate(int userId, LocalDate date) {
-        return certRepository.findCertByDateAndUser(userId, date.atStartOfDay(), date.atTime(23, 59, 59))
-                .stream()
-                .map(c -> new CertResDTO(c,userId))
-                .collect(Collectors.toList());
+    public List<Certification> getCertsByDate(int userId, LocalDate date) {
+        return certRepository.findCertByDateAndUser(userId, date.atStartOfDay(), date.atTime(23, 59, 59));
     }
 
     /**
@@ -159,9 +147,9 @@ public class CertService {
     /**
      * [Recent] 인증 조회
      */
-    public List<CertResDTO> getRecentCerts(int userId, int count) {
+    public List<Certification> getRecentCerts(int userId, int count) {
         List<Integer> certIds = certRepository.findRecentCertId(userId, PageRequest.of(0, count));
-        return getCertsByIds(certIds).stream().map(cert -> new CertResDTO(cert, userId)).toList();
+        return getCertsByIds(certIds);
     }
 
     /**
@@ -229,9 +217,9 @@ public class CertService {
     /**
      * [My] 내가 작성한 모든 인증 조회
      */
-    public List<CertResDTO> getAllMyCerts(int userId) {
+    public List<Certification> getAllMyCerts(int userId) {
         List<Integer> certIdList = certRepository.findAllCertIdByUserId(userId);
-        return getCertsByIds(certIdList).stream().map(cert -> new CertResDTO(cert, userId)).toList();
+        return getCertsByIds(certIdList);
     }
 
     /**
