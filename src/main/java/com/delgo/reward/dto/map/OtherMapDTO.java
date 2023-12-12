@@ -1,7 +1,7 @@
 package com.delgo.reward.dto.map;
 
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.dto.cert.CertByMungpleResDTO;
+import com.delgo.reward.dto.cert.CertResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,11 +18,11 @@ public class OtherMapDTO {
     private String nickname;
     private int viewCount;
 
-    List<CertByMungpleResDTO> certs;
+    List<CertResponse> certs;
     int totalCount;
 
 
-    public OtherMapDTO(User user, List<CertByMungpleResDTO> certs, int totalCount){
+    public OtherMapDTO(User user, List<CertResponse> certs, int totalCount){
         userId = user.getUserId();
         nickname = user.getName();
         viewCount = user.getViewCount();
