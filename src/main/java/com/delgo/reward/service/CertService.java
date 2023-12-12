@@ -5,18 +5,19 @@ import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.GeoCode;
 import com.delgo.reward.comm.code.PGeoCode;
 import com.delgo.reward.comm.exception.NotFoundDataException;
-import com.delgo.reward.comm.ncp.ReverseGeoService;
+import com.delgo.reward.comm.ncp.geo.GeoDataService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.domain.common.Location;
+import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.cert.CertByMungpleResDTO;
 import com.delgo.reward.dto.cert.CertResDTO;
 import com.delgo.reward.dto.comm.PageCertByMungpleResDTO;
 import com.delgo.reward.dto.comm.PageCertResDTO;
 import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
+import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoService.MongoMungpleService;
 import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
@@ -50,7 +51,8 @@ public class CertService {
     private final UserService userService;
     private final PhotoService photoService;
     private final MongoMungpleService mongoMungpleService;
-    private final ReverseGeoService reverseGeoService;
+    private final GeoDataService geoDataService;
+    private final CodeService codeService;
     private final ObjectStorageService objectStorageService;
 
     // Repository
@@ -62,15 +64,26 @@ public class CertService {
      * 인증 생성
      * 일반 인증 - (위도,경도)로 NCP에서 주소 조회 필요
      */
-    public CertResDTO createCert(CertRecord record, List<MultipartFile> photos) {
+    public CertResDTO create(CertRecord record, List<MultipartFile> photos) {
         User user = userService.getUserById(record.userId());
-        Certification certification = saveCert(
-                (record.mungpleId() == 0)
-                        ? record.toEntity(reverseGeoService.getReverseGeoData(new Location(record.latitude(), record.longitude())), user)
-                        : record.toEntity(mongoMungpleService.getMungpleByMungpleId(record.mungpleId()),user));
+        String address = geoDataService.getReverseGeoData(record.latitude(), record.longitude());
+        Code code = codeService.getGeoCodeByAddress(address);
+
+        Certification certification = saveCert(record.toEntity(address, code, user));
 
         List<CertPhoto> certPhotos = createCertPhoto(certification.getCertificationId(),photos);
+        certPhotoRepository.saveAll(certPhotos);
+        certification.setPhotos(certPhotos);
 
+        return new CertResDTO(certification, record.userId());
+    }
+
+    public CertResDTO createByMungple(CertRecord record, List<MultipartFile> photos) {
+        User user = userService.getUserById(record.userId());
+        MongoMungple mongoMungple = mongoMungpleService.getMungpleByMungpleId(record.mungpleId());
+        Certification certification = saveCert(record.toEntity(mongoMungple, user));
+
+        List<CertPhoto> certPhotos = createCertPhoto(certification.getCertificationId(),photos);
         certPhotoRepository.saveAll(certPhotos);
         certification.setPhotos(certPhotos);
 

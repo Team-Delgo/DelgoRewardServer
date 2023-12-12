@@ -73,4 +73,28 @@ public class CodeService {
     public boolean checkDuplicateBreedCode(String name) {
         return codeRepository.findByCodeName(name).isPresent();
     }
+
+    public Code getGeoCodeByAddress(String address) {
+        String SIDO = extractSIDO(address);
+        String SIGUGUN = extractSIGUGUN(address);
+
+        Code pCode = codeRepository.findByCodeName(SIDO)
+                .orElseThrow(() -> new NotFoundDataException("[Code] : codeName" + SIDO));
+        return codeRepository.findBypCodeAndCodeName(pCode.getCode(), SIGUGUN)
+                .orElseThrow(() -> new NotFoundDataException("[Code] code : " + pCode.getCode() + ", codeName : " + SIGUGUN));
+    }
+
+    private String extractSIDO(String address){
+        String[] addressParts = address.split(" ");
+        return switch (addressParts[0]) {
+            case "제주특별자치도" -> "제주도";
+            case "세종특별자치시" -> "세종특별시";
+            default -> addressParts[0];
+        };
+    }
+
+    private String extractSIGUGUN(String address){
+        String[] addressParts = address.split(" ");
+        return addressParts[1];
+    }
 }
