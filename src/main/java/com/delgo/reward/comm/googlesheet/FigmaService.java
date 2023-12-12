@@ -52,7 +52,7 @@ public class FigmaService {
             );
 
             // imageUrlMap을 Type에 맞게 각 List에 저장
-            processImages(imageUrlMap, typeListMap);
+            uploadImages(imageUrlMap, typeListMap);
 
             // typeList를 각 Fileds에 매치 후 저장
             mongoMungple.setFigmaPhotoData(typeListMap);
@@ -87,11 +87,11 @@ public class FigmaService {
 
             for (JsonNode childNode : childrNodes) {
                 String imageId = childNode.get("id").asText(); // ex) 4935:43532
-                // 사람에 의한 실수 없애기 위해 공백문자 제거 코드 추가
-                String figmaFileName = childNode.get("name").asText().replaceAll("\\s+", "");  // ex) 강동구_애견동반식당_담금_5
-                int order = getOrderByFileName(figmaFileName);
-                String type = getTypeByFileName(figmaFileName);
-                String fileName = (type.isBlank()) ? baseName + "_" + order : baseName + "_" + type + "_" + order;
+                String figmaFileName = childNode.get("name").asText().replaceAll("\\s+", "");  // ex) 담금_menu_5
+                int order = getOrderByFileName(figmaFileName); // ex) 5
+                String type = getTypeByFileName(figmaFileName); // ex) menu
+                String fileName = (type.isBlank()) ? baseName + "_" + order : baseName + "_" + type + "_" + order; // ex) 강동구_애견동반식당_담금_menu_5
+
                 imageIdMap.put(imageId, fileName);
             }
         } catch (JsonProcessingException e) {
@@ -130,7 +130,7 @@ public class FigmaService {
         return imageUrlMap;
     }
 
-    private void processImages(Map<String, String> imageMap, Map<String, ArrayList<String>> typeListMap) throws UnsupportedEncodingException {
+    private void uploadImages(Map<String, String> imageMap, Map<String, ArrayList<String>> typeListMap) throws UnsupportedEncodingException {
         for (String fileName : imageMap.keySet()) {
             if (StringUtils.isNotEmpty(imageMap.get(fileName))) {
                 String imageUrl = imageMap.get(fileName);
