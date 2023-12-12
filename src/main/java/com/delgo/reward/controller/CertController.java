@@ -230,6 +230,7 @@ public class CertController extends CommController {
         classificationService.deleteClassificationWhenModifyCert(certService.getCertById(certificationId));
 
         certService.deleteCert(certificationId);
+        reactionService.deleteByCertId(certificationId);
         return SuccessReturn();
     }
 
@@ -240,8 +241,10 @@ public class CertController extends CommController {
     @Operation(summary = "인증 Reaction", description = "Reaction 등록 및 수정 - 인증에 대한 반응을 등록 및 수정")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Reaction.class))})
     @PostMapping(value = {"/reaction/{userId}/{certificationId}/{reactionCode}"})
-    public ResponseEntity reaction(@PathVariable Integer userId, @PathVariable Integer certificationId, @PathVariable String reactionCode) throws IOException {
-        return SuccessReturn(reactionService.reaction(userId, certificationId, ReactionCode.from(reactionCode)));
+    public ResponseEntity reaction(@PathVariable Integer userId, @PathVariable Integer certificationId, @PathVariable ReactionCode reactionCode){
+        return SuccessReturn((reactionService.hasReaction(userId, certificationId, reactionCode))
+                ? reactionService.update(userId, certificationId, reactionCode)
+                : reactionService.create(userId, certificationId, reactionCode));
     }
 
     // ---------------------------------------- Deprecated ----------------------------------------
