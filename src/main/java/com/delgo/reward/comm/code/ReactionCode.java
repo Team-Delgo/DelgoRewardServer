@@ -54,14 +54,14 @@ public enum ReactionCode {
     public static void setReactionMapByUserId(Map<ReactionCode, Boolean> reactionMap, List<Reaction> reactionList, int userId) {
         for (Reaction reaction : reactionList) {
             if (reaction.getUserId().equals(userId)) {
-                reactionMap.put(reaction.getReactionCode(), reaction.isReaction());
+                reactionMap.put(reaction.getReactionCode(), reaction.getIsReaction());
             }
         }
     }
 
     public static void setReactionCountMap(Map<ReactionCode, Integer> reactionCountMap, List<Reaction> reactionList) {
         for(ReactionCode reactionCode: ReactionCode.values()){
-            reactionCountMap.put(reactionCode, (int) reactionList.stream().filter(reaction -> reaction.getReactionCode().equals(reactionCode) && reaction.isReaction()).count());
+            reactionCountMap.put(reactionCode, (int) reactionList.stream().filter(reaction -> reaction.getReactionCode().equals(reactionCode) && reaction.getIsReaction()).count());
         }
     }
 
