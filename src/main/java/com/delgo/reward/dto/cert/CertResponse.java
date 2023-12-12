@@ -5,6 +5,7 @@ import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.ReactionCode;
 import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.domain.certification.Certification;
+import com.delgo.reward.domain.certification.Reaction;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -13,6 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -63,12 +65,12 @@ public class CertResponse {
     @Schema(description = "등록 날짜")
     protected LocalDateTime registDt;
 
-    public static CertResponse from(Integer userId, Certification cert) {
+    public static CertResponse from(Integer userId, Certification cert, List<Reaction> reactionList) {
         Map<ReactionCode, Boolean> reactionMap = ReactionCode.initializeReactionMap();
         Map<ReactionCode, Integer> reactionCountMap = ReactionCode.initializeReactionCountMap();
-        if (!cert.getReactionList().isEmpty()) {
-            ReactionCode.setReactionMapByUserId(reactionMap, cert.getReactionList(), userId);
-            ReactionCode.setReactionCountMap(reactionCountMap, cert.getReactionList());
+        if (!reactionList.isEmpty()) {
+            ReactionCode.setReactionMapByUserId(reactionMap, reactionList, userId);
+            ReactionCode.setReactionCountMap(reactionCountMap, reactionList);
         }
 
         return CertResponse.builder()
@@ -93,7 +95,32 @@ public class CertResponse {
                 .build();
     }
 
-    public static List<CertResponse> fromList(Integer userId, List<Certification> certList) {
-        return certList.stream().map(cert -> CertResponse.from(userId, cert)).toList();
+    // 분류를 위해 필요
+    public static CertResponse from(Certification cert) {
+        return CertResponse.builder()
+                .certificationId(cert.getCertificationId())
+                .categoryCode(cert.getCategoryCode())
+                .mungpleId(cert.getMungpleId())
+                .placeName(cert.getPlaceName())
+                .description(cert.getDescription())
+                .address(cert.getAddress())
+                .photos(cert.getPhotos().stream().map(CertPhoto::getUrl).toList())
+                .isHideAddress(cert.getIsHideAddress())
+                .userId(cert.getUser().getUserId())
+                .userName(cert.getUser().getName())
+                .userProfile(cert.getUser().getProfile())
+                .commentCount(cert.getCommentCount())
+                .latitude(cert.getLatitude())
+                .longitude(cert.getLongitude())
+                .registDt(cert.getRegistDt())
+                .build();
+    }
+
+    public static List<CertResponse> fromList(Integer userId, List<Certification> certList, Map<Integer, List<Reaction>> reactionMap) {
+        return certList.stream().map(cert -> {
+            List<Reaction> reactionList = reactionMap.getOrDefault(cert.getCertificationId(), Collections.emptyList());
+
+            return CertResponse.from(userId, cert, reactionList);
+        }).toList();
     }
 }

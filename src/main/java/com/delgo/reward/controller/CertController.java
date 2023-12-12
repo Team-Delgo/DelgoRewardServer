@@ -35,13 +35,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -113,7 +108,8 @@ public class CertController extends CommController {
     @GetMapping("/id")
     public ResponseEntity getCertsByCertId(@RequestParam Integer userId, @RequestParam Integer certificationId) {
         Certification certification = certService.getCertById(certificationId);
-        return SuccessReturn(new ArrayList<>(Collections.singletonList(CertResponse.from(userId, certification))));
+        List<Reaction> reactionList = reactionService.getListByCertId(certificationId);
+        return SuccessReturn(new ArrayList<>(Collections.singletonList(CertResponse.from(userId, certification, reactionList))));
     }
 
     // ---------------------------------권한 필요--------------------------------------------
@@ -131,12 +127,13 @@ public class CertController extends CommController {
         Certification certification = (record.mungpleId() == 0)
                 ? certService.create(record, photos)
                 : certService.createByMungple(record, photos);
+        List<Reaction> reactionList = reactionService.getListByCertId(certification.getCertificationId());
 
         // 비동기적 실행
         certAsyncService.doSomething(certification.getCertificationId());
         classificationAsyncService.doClassification(certification.getCertificationId());
 
-        return SuccessReturn(CertResponse.from(record.userId(), certification));
+        return SuccessReturn(CertResponse.from(record.userId(), certification, reactionList));
     }
 
     /**
@@ -150,7 +147,8 @@ public class CertController extends CommController {
     @GetMapping("/date")
     public ResponseEntity getCertsByDate(@RequestParam Integer userId, @RequestParam String date) {
         List<Certification> certificationList = certService.getCertsByDate(userId, LocalDate.parse(date));
-        return SuccessReturn(CertResponse.fromList(userId, certificationList));
+        Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(certificationList);
+        return SuccessReturn(CertResponse.fromList(userId, certificationList, reactionMap));
     }
 
     /**
@@ -178,7 +176,8 @@ public class CertController extends CommController {
     @GetMapping("/my/all")
     public ResponseEntity getAllMyCerts(@RequestParam Integer userId) {
         List<Certification> certificationList = certService.getAllMyCerts(userId);
-        return SuccessReturn(CertResponse.fromList(userId, certificationList));
+        Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(certificationList);
+        return SuccessReturn(CertResponse.fromList(userId, certificationList, reactionMap));
     }
 
     /**
@@ -191,7 +190,8 @@ public class CertController extends CommController {
     @GetMapping("/recent")
     public ResponseEntity getRecentCerts(@RequestParam Integer userId, @RequestParam Integer count) {
         List<Certification> certificationList = certService.getRecentCerts(userId, count);
-        return SuccessReturn(CertResponse.fromList(userId, certificationList));
+        Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(certificationList);
+        return SuccessReturn(CertResponse.fromList(userId, certificationList, reactionMap));
     }
 
     /**
@@ -210,10 +210,11 @@ public class CertController extends CommController {
         // 인증 분류 삭제
         classificationService.deleteClassificationWhenModifyCert(certification);
         Certification updatedCertification = certService.modifyCert(certification, record);
+        List<Reaction> reactionList = reactionService.getListByCertId(certification.getCertificationId());
 
         // 비동기적 실행
         classificationAsyncService.doClassification(updatedCertification.getCertificationId());
-        return SuccessReturn(CertResponse.from(record.userId(), updatedCertification));
+        return SuccessReturn(CertResponse.from(record.userId(), updatedCertification, reactionList));
     }
 
     /**
