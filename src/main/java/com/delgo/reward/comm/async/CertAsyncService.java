@@ -6,16 +6,13 @@ import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.repository.CertPhotoRepository;
 import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.PhotoService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CertAsyncService {
@@ -28,13 +25,13 @@ public class CertAsyncService {
     private final CertPhotoRepository certPhotoRepository;
 
     @Async
-    public void doSomething(Integer certificationId) throws JsonProcessingException {
+    public void doSomething(Integer certificationId) {
         List<CertPhoto> certPhotos = certPhotoRepository.findPhotosByCertificationId(certificationId);
         for (CertPhoto photo : certPhotos) {
             String fileName = photoService.getFileNameFromURL(photo.getUrl()); // ex) 1359_cert_1.png
 
             // [DIR 사진 파일 기준] 유해 사진 체크
-            boolean isCorrect = greenEyeService.checkHarmfulPhoto(photo.getUrl());
+            boolean isCorrect = greenEyeService.isCorrect(photo.getUrl());
             photo.setIsCorrect(isCorrect);
             if (!isCorrect) {
                 certService.changeIsCorrect(certificationId, false);
