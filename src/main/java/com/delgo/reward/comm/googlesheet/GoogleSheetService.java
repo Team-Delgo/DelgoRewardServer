@@ -3,9 +3,12 @@ package com.delgo.reward.comm.googlesheet;
 import com.delgo.reward.cacheService.MungpleCacheService;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.exception.GoogleSheetException;
-import com.delgo.reward.comm.ncp.GeoService;
+import com.delgo.reward.comm.ncp.geo.GeoData;
+import com.delgo.reward.comm.ncp.geo.GeoDataService;
+import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoService.MongoMungpleService;
+import com.delgo.reward.service.CodeService;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -32,8 +35,9 @@ import java.util.*;
 @RequiredArgsConstructor
 public class GoogleSheetService {
 
-    private final GeoService geoService;
+    private final CodeService codeService;
     private final FigmaService figmaService;
+    private final GeoDataService geoDataService;
     private final MungpleCacheService mungpleCacheService;
     private final MongoMungpleService mongoMungpleService;
 
@@ -93,8 +97,12 @@ public class GoogleSheetService {
             if (activeType.equals("TRUE") || activeType.equals("DEL SUCCESS")) continue;
 
             GoogleSheetDTO sheet = new GoogleSheetDTO(row, categoryCode);
-            MongoMungple mongoMungple = sheet.toMongoEntity(categoryCode, geoService.getGeoData(sheet.getAddress()));
+
             try {
+                GeoData geoData = geoDataService.getGeoData(sheet.getAddress());
+                Code geoCode = codeService.getGeoCodeByAddress(geoData.getJibunAddress());
+                MongoMungple mongoMungple = sheet.toMongoEntity(categoryCode, geoData, geoCode);
+
                 switch (activeType) {
                     case "FALSE" -> {
                         log.info("ADD sheet PlaceName:{}", sheet.getPlaceName());
@@ -156,7 +164,7 @@ public class GoogleSheetService {
                     }
                 }
             } catch (Exception e) {
-                resultMessageList.add("[" + mongoMungple.getPlaceName() + "] 저장에 실패 에러가 발생했습니다 - " + e.getMessage());
+                resultMessageList.add("[" + sheet.getPlaceName() + "] 저장에 실패 에러가 발생했습니다 - " + e.getMessage());
             }
         }
     }
