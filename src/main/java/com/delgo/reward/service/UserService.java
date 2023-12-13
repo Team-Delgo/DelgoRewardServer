@@ -81,8 +81,8 @@ public class UserService {
     public User signup(SignUpRecord signUpRecord, MultipartFile profile, String version) {
         // 주소 설정
         String address = (signUpRecord.geoCode().equals("0"))  // 세종시는 구가 없음.
-                ? codeService.getAddress(signUpRecord.pGeoCode(), true)
-                : codeService.getAddress(signUpRecord.geoCode(), false);
+                ? codeService.getAddressByGeoCode(signUpRecord.pGeoCode(), true)
+                : codeService.getAddressByGeoCode(signUpRecord.geoCode(), false);
 
         // USER & PET 저장
         User user = save(signUpRecord.makeUser(passwordEncoder.encode(signUpRecord.password()), address));
@@ -92,11 +92,16 @@ public class UserService {
         categoryCountRepository.save(new CategoryCount().create(user.getUserId()));
 
         user.setVersion(version);
-//        rankingService.rankingByPoint(); // 랭킹 업데이트
-        return user.setPet(pet).setProfile( // User Profile 등록
-                profile.isEmpty()
-                        ? DEFAULT_PROFILE
-                        : photoService.uploadProfile(user.getUserId(), profile));
+        String profileUrl = DEFAULT_PROFILE;
+        if(!profile.isEmpty()){
+            String fileName = photoService.makeProfileFileName(user.getUserId(), profile);
+            profileUrl = photoService.saveAndUpload(fileName, profile, BucketName.PROFILE);
+        }
+
+        user.setPet(pet);
+        user.setProfile(profileUrl);
+
+        return user;
     }
 
     /**
@@ -109,8 +114,8 @@ public class UserService {
     public User oAuthSignup(OAuthSignUpRecord oAuthSignUpRecord, MultipartFile profile, String version) {
         // 주소 설정
         String address = (oAuthSignUpRecord.geoCode().equals("0"))  // 세종시는 구가 없음.
-                ? codeService.getAddress(oAuthSignUpRecord.pGeoCode(), true)
-                : codeService.getAddress(oAuthSignUpRecord.geoCode(), false);
+                ? codeService.getAddressByGeoCode(oAuthSignUpRecord.pGeoCode(), true)
+                : codeService.getAddressByGeoCode(oAuthSignUpRecord.geoCode(), false);
 
         // USER & PET 저장
         User oAuthUser = save(oAuthSignUpRecord.makeUser(oAuthSignUpRecord.userSocial(), address));
@@ -121,10 +126,17 @@ public class UserService {
 
 //        rankingService.rankingByPoint(); // 랭킹 업데이트
         oAuthUser.setVersion(version);
-        return oAuthUser.setPet(pet).setProfile( // User Profile 등록
-                profile.isEmpty()
-                        ? DEFAULT_PROFILE
-                        : photoService.uploadProfile(oAuthUser.getUserId(), profile));
+
+        String profileUrl = DEFAULT_PROFILE;
+        if(!profile.isEmpty()){
+            String fileName = photoService.makeProfileFileName(oAuthUser.getUserId(), profile);
+            profileUrl = photoService.saveAndUpload(fileName, profile, BucketName.PROFILE);
+        }
+
+        oAuthUser.setPet(pet);
+        oAuthUser.setProfile(profileUrl);
+
+        return oAuthUser;
     }
 
     /**
@@ -266,8 +278,8 @@ public class UserService {
 
             // 주소 설정
             String address = (modifyUserRecord.geoCode().equals("0"))  // 세종시는 구가 없음.
-                    ? codeService.getAddress(modifyUserRecord.pGeoCode(), true)
-                    : codeService.getAddress(modifyUserRecord.geoCode(), false);
+                    ? codeService.getAddressByGeoCode(modifyUserRecord.pGeoCode(), true)
+                    : codeService.getAddressByGeoCode(modifyUserRecord.geoCode(), false);
             user.setAddress(address);
 
             jdbcTemplatePointRepository.changeGeoCode(user.getUserId(), modifyUserRecord.geoCode());

@@ -5,10 +5,10 @@ import com.delgo.reward.cacheService.MungpleCacheService;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.MungpleSort;
 import com.delgo.reward.comm.exception.NotFoundDataException;
-import com.delgo.reward.comm.ncp.GeoService;
+import com.delgo.reward.comm.ncp.geo.GeoData;
+import com.delgo.reward.comm.ncp.geo.GeoDataService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
-import com.delgo.reward.domain.common.Location;
 import com.delgo.reward.domain.user.Bookmark;
 import com.delgo.reward.dto.mungple.MungpleCountDTO;
 import com.delgo.reward.dto.mungple.MungpleResDTO;
@@ -51,7 +51,7 @@ public class MongoMungpleService {
     private final MungpleCacheService mungpleCacheService;
 
     // Service
-    private final GeoService geoService;
+    private final GeoDataService geoDataService;
     private final BookmarkService bookmarkService;
     private final ObjectStorageService objectStorageService;
 
@@ -223,8 +223,8 @@ public class MongoMungpleService {
      * NCP - 위도, 경도 구해야 함.
      */
     public boolean isMungpleExisting(String address) {
-        Location location = geoService.getGeoData(address);
-        return mongoMungpleRepository.existsByLatitudeAndLongitude(location.getLatitude(), location.getLongitude());
+        GeoData geoData = geoDataService.getGeoData(address);
+        return mongoMungpleRepository.existsByLatitudeAndLongitude(geoData.getLatitude(), geoData.getLongitude());
     }
 
     /**

@@ -120,13 +120,15 @@ public class LogAop {
             Object arg = args[i];
             if (arg instanceof List<?>) {
                 List<?> list = (List<?>) arg;
-                if (!list.isEmpty() && list.get(0) instanceof MultipartFile) {
+                if (!list.isEmpty() && list.get(0) instanceof MultipartFile) { // 사진 List 등록 예외 처리
                     List<String> fileNameList = ((List<MultipartFile>) list).stream()
                             .map(MultipartFile::getOriginalFilename)
                             .toList();
                     params.put(parameterNames[i], fileNameList);
                 }
-            } else if (!(arg instanceof HttpServletRequest || arg instanceof HttpServletResponse)) {
+            } else if (arg instanceof MultipartFile) { // 사진 한장 등록 예외 처리
+                params.put(parameterNames[i], ((MultipartFile) arg).getOriginalFilename());
+            } else if (!(arg instanceof HttpServletRequest || arg instanceof HttpServletResponse)) { // Spring Security Dispatch 예외처리
                 params.put(parameterNames[i], arg);
             }
         }

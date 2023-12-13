@@ -2,7 +2,8 @@ package com.delgo.reward.comm.googlesheet;
 
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.exception.FigmaException;
-import com.delgo.reward.domain.common.Location;
+import com.delgo.reward.comm.ncp.geo.GeoData;
+import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -56,23 +57,23 @@ public class GoogleSheetDTO {
         }
     }
 
-    public MongoMungple toMongoEntity(CategoryCode categoryCode, Location location) {
+    public MongoMungple toMongoEntity(CategoryCode categoryCode, GeoData geoData, Code code) {
         MongoMungple mongoMungple = MongoMungple.builder()
                 .categoryCode(categoryCode)
                 .phoneNo(phoneNo)
                 .placeName(placeName)
                 .placeNameEn(placeNameEn)
-                .roadAddress(location.getRoadAddress())
-                .jibunAddress(location.getJibunAddress())
-                .geoCode(location.getGeoCode())
-                .pGeoCode(location.getPGeoCode())
-                .latitude(location.getLatitude())
-                .longitude(location.getLongitude())
+                .roadAddress(geoData.getRoadAddress())
+                .jibunAddress(geoData.getJibunAddress())
+                .geoCode(code.getCode())
+                .pGeoCode(code.getPCode())
+                .latitude(geoData.getLatitude())
+                .longitude(geoData.getLongitude())
                 .isActive(true)
                 .createdAt(LocalDateTime.now())
                 .location(new GeoJsonPoint(
-                        Double.parseDouble(location.getLongitude()),
-                        Double.parseDouble(location.getLatitude())))
+                        Double.parseDouble(geoData.getLongitude()),
+                        Double.parseDouble(geoData.getLatitude())))
                 .instaId(instaId)
                 .isParking(isParking)
                 .parkingInfo(parkingInfo)

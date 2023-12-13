@@ -126,7 +126,10 @@ public class CertController extends CommController {
     public ResponseEntity<?> createCert(@Validated @RequestPart(value = "data") CertRecord record, @RequestPart(required = false) List<MultipartFile> photos) throws JsonProcessingException {
         if(photos.isEmpty()) ErrorReturn(APICode.PARAM_ERROR);
 
-        CertResDTO resDto = certService.createCert(record, photos);
+        CertResDTO resDto = (record.mungpleId() == 0)
+                ? certService.create(record, photos)
+                : certService.createByMungple(record, photos);
+
         log.info("{}", resDto.getCertificationId());
 
         // 비동기적 실행

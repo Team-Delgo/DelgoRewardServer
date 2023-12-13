@@ -58,7 +58,7 @@ public class GetGeoCodeCrawlingService {
         Thread.sleep(5000); //브라우저 로딩될때까지 잠시 기다린다.
 
         List<Code> codeList = getGeoCode();
-        codeService.registerCodeList(codeList);
+//        codeService.registerCodeList(codeList);
         return null;
     }
 

@@ -2,10 +2,13 @@ package com.delgo.reward.comm.googlesheet;
 
 import com.delgo.reward.cacheService.MungpleCacheService;
 import com.delgo.reward.comm.code.CategoryCode;
-import com.delgo.reward.comm.ncp.GeoService;
+import com.delgo.reward.comm.exception.GoogleSheetException;
+import com.delgo.reward.comm.ncp.geo.GeoData;
+import com.delgo.reward.comm.ncp.geo.GeoDataService;
+import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoService.MongoMungpleService;
-import com.delgo.reward.service.FigmaService;
+import com.delgo.reward.service.CodeService;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -32,8 +35,9 @@ import java.util.*;
 @RequiredArgsConstructor
 public class GoogleSheetService {
 
-    private final GeoService geoService;
+    private final CodeService codeService;
     private final FigmaService figmaService;
+    private final GeoDataService geoDataService;
     private final MungpleCacheService mungpleCacheService;
     private final MongoMungpleService mongoMungpleService;
 
@@ -51,27 +55,27 @@ public class GoogleSheetService {
     }
 
     public List<String> saveSheetsDataToDB() {
-        List<String> placeNames = new ArrayList<>();
+        List<String> resultMessageList = new ArrayList<>();
         for (CategoryCode categoryCode : CategoryCode.values()) {
             if (categoryCode.shouldSkip()) // TOTAL, CA9999 일 경우에는 동작 X
                 continue;
 
             // Select Google Sheets Data
-            List<List<Object>> responseValues = getSheetResponseValues(categoryCode);
+            List<List<Object>> responseValues = getResponseValuesFromSheet(categoryCode);
             if (responseValues.isEmpty())
                 continue;
 
             // Sheets Data -> MongoDB
-            processResponseValues(categoryCode, responseValues, placeNames);
+            processResponseValues(categoryCode, responseValues, resultMessageList);
         }
 
-        return placeNames;
+        return resultMessageList;
     }
 
 
-    private List<List<Object>>  getSheetResponseValues(CategoryCode categoryCode) {
+    private List<List<Object>> getResponseValuesFromSheet(CategoryCode categoryCode) {
         log.info("saveSheetsDataToDB CategoryCode: {}", categoryCode);
-        String range = generateRangeString("A", 1, "O", 300);
+        String range = generateRangeString("A", 1, "O", 1000);
 
         try {
             ValueRange response = sheets.spreadsheets().values()
@@ -80,78 +84,87 @@ public class GoogleSheetService {
 
             return response.getValues();
         } catch (Exception e) {
-            throw new NullPointerException("[getSheetData] : " + e.getMessage());
+            throw new GoogleSheetException("[getSheetData] : " + e.getMessage());
         }
 
     }
 
-    private void processResponseValues(CategoryCode categoryCode, List<List<Object>> ResponseValues, List<String> placeNames) {
+    private void processResponseValues(CategoryCode categoryCode, List<List<Object>> ResponseValues, List<String> resultMessageList) {
         for (int rowNum = 1; rowNum < ResponseValues.size(); rowNum++) {
             List<Object> row = ResponseValues.get(rowNum);
-            String activeType = (String) row.get(0); // false, true, update 가 있음
-            if (activeType.equals("FALSE")) { // activeType 체크
-                GoogleSheetDTO sheet = new GoogleSheetDTO(row, categoryCode);
-                log.info("NEW sheet PlaceName:{}", sheet.getPlaceName());
+            String activeType = (String) row.get(0); // 동작 상태 지정 (TRUE, FALSE, UPDATE, DEL)
 
-                // Mongo Mungple Setting & Save
-                MongoMungple mongoMungple = sheet.toMongoEntity(categoryCode, geoService.getGeoData(sheet.getAddress()));
+            if (activeType.equals("TRUE") || activeType.equals("DEL SUCCESS")) continue;
 
-                // 중복 이중 체크 ( 주소, 이름 )
-                if(mongoMungpleService.isMungpleExisting(mongoMungple.getJibunAddress()) && mongoMungpleService.isMungpleExistingByPlaceName(mongoMungple.getPlaceName())) {
-                    log.info("이미 등록된 멍플입니다. : {}", mongoMungple.getPlaceName());
-                    placeNames.add("[" + mongoMungple.getPlaceName() + "]은 중복 데이터입니다. \n");
-                    continue;
+            GoogleSheetDTO sheet = new GoogleSheetDTO(row, categoryCode);
+
+            try {
+                GeoData geoData = geoDataService.getGeoData(sheet.getAddress());
+                Code geoCode = codeService.getGeoCodeByAddress(geoData.getJibunAddress());
+                MongoMungple mongoMungple = sheet.toMongoEntity(categoryCode, geoData, geoCode);
+
+                switch (activeType) {
+                    case "FALSE" -> {
+                        log.info("ADD sheet PlaceName:{}", sheet.getPlaceName());
+
+                        // 중복 이중 체크 ( 주소, 이름 )
+                        if (mongoMungpleService.isMungpleExisting(mongoMungple.getJibunAddress()) && mongoMungpleService.isMungpleExistingByPlaceName(mongoMungple.getPlaceName())) {
+                            resultMessageList.add("[" + mongoMungple.getPlaceName() + "]은 이미 등록된 장소입니다. \n");
+                            continue;
+                        }
+
+                        if (StringUtils.hasText(sheet.getAcceptSize()))
+                            mongoMungple.setAcceptSize(sheet.getAcceptSize());
+                        if (StringUtils.hasText(sheet.getBusinessHour()))
+                            mongoMungple.setBusinessHour(sheet.getBusinessHour());
+                        if (StringUtils.hasText(sheet.getFigmaNodeId())) {
+                            // Upload 및 setPhoto
+                            figmaService.uploadFigmaDataToNCP(sheet.getFigmaNodeId(), mongoMungple);
+                            // Figma 사진 저장 까지 완료 후 저장
+                            MongoMungple savedMongoMungple = mongoMungpleService.save(mongoMungple);
+                            // Cache Update
+                            mungpleCacheService.updateCacheData(savedMongoMungple.getMungpleId(), savedMongoMungple);
+                            // Sheet IsRegist Data update [ false -> true ]
+                            checkSaveConfirm(categoryCode, rowNum + 1);
+
+                            resultMessageList.add("[" + savedMongoMungple.getPlaceName() + "] 등록되었습니다.");
+                        }
+                    }
+                    case "UPDATE" -> {
+                        log.info("UPDATE sheet PlaceName:{}", sheet.getPlaceName());
+
+                        if (StringUtils.hasText(sheet.getAcceptSize()))
+                            mongoMungple.setAcceptSize(sheet.getAcceptSize());
+                        if (StringUtils.hasText(sheet.getBusinessHour()))
+                            mongoMungple.setBusinessHour(sheet.getBusinessHour());
+                        if (StringUtils.hasText(sheet.getFigmaNodeId()))
+                            figmaService.uploadFigmaDataToNCP(sheet.getFigmaNodeId(), mongoMungple);
+
+                        MongoMungple dbMungple = mongoMungpleService.getByPlaceName(sheet.getPlaceName());
+
+                        mongoMungple.setId(dbMungple.getId());
+                        mongoMungple.setMungpleId(dbMungple.getMungpleId());
+                        MongoMungple savedMongoMungple = mongoMungpleService.save(mongoMungple);
+
+                        // Cache Update
+                        mungpleCacheService.updateCacheData(savedMongoMungple.getMungpleId(), savedMongoMungple);
+                        // Sheet IsRegist Data update [ update -> true ]
+                        checkSaveConfirm(categoryCode, rowNum + 1);
+
+                        resultMessageList.add("[" + savedMongoMungple.getPlaceName() + "] 수정되었습니다.");
+                    }
+                    case "DEL" -> { // activeType 체크
+                        log.info("DELETE sheet PlaceName:{}", sheet.getPlaceName());
+
+                        MongoMungple dbMungple = mongoMungpleService.getByPlaceName(sheet.getPlaceName());
+                        mongoMungpleService.deleteMungple(dbMungple.getMungpleId());
+
+                        resultMessageList.add("[" + dbMungple.getPlaceName() + "] 삭제되었습니다.");
+                        checkDeleteConfirm(categoryCode, rowNum + 1);
+                    }
                 }
-
-                if (StringUtils.hasText(sheet.getAcceptSize()))
-                    mongoMungple.setAcceptSize(sheet.getAcceptSize());
-                if (StringUtils.hasText(sheet.getBusinessHour()))
-                    mongoMungple.setBusinessHour(sheet.getBusinessHour());
-
-                // Figma
-                if (StringUtils.hasText(sheet.getFigmaNodeId())) {
-                    figmaService.uploadFigmaDataToNCP(sheet.getFigmaNodeId(), mongoMungple);
-
-                    // Figma 사진 저장 까지 완료 후 저장
-                    MongoMungple savedMongoMungple = mongoMungpleService.save(mongoMungple);
-
-                    // Cache Update
-                    mungpleCacheService.updateCacheData(savedMongoMungple.getMungpleId(), savedMongoMungple);
-
-                    placeNames.add("[" + savedMongoMungple.getPlaceName() + "] 등록 되었습니다.");
-                    // Sheet IsRegist Data update [ false -> true ]
-                    checkSaveConfirm(categoryCode, rowNum + 1);
-                }
-            }
-            if (activeType.equals("UPDATE")){
-                GoogleSheetDTO sheet = new GoogleSheetDTO(row, categoryCode);
-                log.info("UPDATE sheet PlaceName:{}", sheet.getPlaceName());
-
-                MongoMungple mungple =  sheet.toMongoEntity(categoryCode, geoService.getGeoData(sheet.getAddress()));
-
-                if (StringUtils.hasText(sheet.getAcceptSize()))
-                    mungple.setAcceptSize(sheet.getAcceptSize());
-                if (StringUtils.hasText(sheet.getBusinessHour()))
-                    mungple.setBusinessHour(sheet.getBusinessHour());
-
-                // Figma
-                if (StringUtils.hasText(sheet.getFigmaNodeId())) {
-                    figmaService.uploadFigmaDataToNCP(sheet.getFigmaNodeId(), mungple);
-                }
-
-                MongoMungple dbMungple = mongoMungpleService.getByPlaceName(sheet.getPlaceName());
-
-                mungple.setId(dbMungple.getId());
-                mungple.setMungpleId(dbMungple.getMungpleId());
-                MongoMungple savedMongoMungple = mongoMungpleService.save(mungple);
-
-                // Cache Update
-                mungpleCacheService.updateCacheData(savedMongoMungple.getMungpleId(), savedMongoMungple);
-
-                placeNames.add("[" + savedMongoMungple.getPlaceName() + "] 수정 되었습니다.");
-
-                // Sheet IsRegist Data update [ update -> true ]
-                checkSaveConfirm(categoryCode, rowNum + 1);
+            } catch (Exception e) {
+                resultMessageList.add("[" + sheet.getPlaceName() + "] 저장에 실패 에러가 발생했습니다 - " + e.getMessage());
             }
         }
     }
@@ -169,7 +182,24 @@ public class GoogleSheetService {
                     .setValueInputOption("RAW")
                     .execute();
         } catch (IOException e){
-            throw new RuntimeException("[checkSaveConfirm] : " + e.getMessage());
+            throw new GoogleSheetException("[checkSaveConfirm] : " + e.getMessage());
+        }
+    }
+
+    public void checkDeleteConfirm(CategoryCode categoryCode, int rowNum) {
+        try {
+            String range = generateRangeString("A", rowNum, "B", rowNum);
+
+            // 등록 여부(A)에 "DEL SUCCESS", 등록 날짜(B)에 현재 날짜를 설정
+            List<Object> dataRow = Arrays.asList("DEL SUCCESS", LocalDate.now().toString());
+            ValueRange body = new ValueRange().setValues(List.of(dataRow));
+
+            sheets.spreadsheets().values()
+                    .update(SHEET_ID, categoryCode.getSheetName() + "!" + range, body)
+                    .setValueInputOption("RAW")
+                    .execute();
+        } catch (IOException e){
+            throw new GoogleSheetException("[checkDeleteConfirm] : " + e.getMessage());
         }
     }
 
