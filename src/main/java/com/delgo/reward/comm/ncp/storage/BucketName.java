@@ -1,46 +1,40 @@
 package com.delgo.reward.comm.ncp.storage;
 
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.Getter;
 
-@Slf4j
+@Getter
 public enum BucketName {
-    ACHIEVEMENTS(
-            "reward-achievements",
-            "reward-achievements",
-            "https://kr.object.ncloudstorage.com/reward-achievements/",
-            "https://kr.object.ncloudstorage.com/reward-achievements/",
-            ""),
     CERTIFICATION(
             "reward-certification",
             "test-certification",
             "https://kr.object.ncloudstorage.com/reward-certification/",
             "https://kr.object.ncloudstorage.com/test-certification/",
-            ""), // 산책
+            "cert"), // 산책
     MUNGPLE(
             "reward-mungple",
             "reward-mungple",
             "https://kr.object.ncloudstorage.com/reward-mungple/",
             "https://kr.object.ncloudstorage.com/reward-mungple/",
-            ""), // 카페
+            "mungple"), // 카페
     MUNGPLE_NOTE(
             "reward-mungplenote",
             "reward-mungplenote",
             "https://kr.object.ncloudstorage.com/reward-mungplenote/",
             "https://kr.object.ncloudstorage.com/reward-mungplenote/",
-            ""),
+            "mungplenote"),
     PROFILE(
             "reward-profile",
             "test-profile",
             "https://kr.object.ncloudstorage.com/reward-profile/",
             "https://kr.object.ncloudstorage.com/test-profile/",
-            ""),
+            "profile"),
     DETAIL_PRICE_TAG(
             "reward-detail-price-tag",
             "reward-detail-price-tag",
             "https://kr.object.ncloudstorage.com/reward-detail-price-tag/",
             "https://kr.object.ncloudstorage.com/reward-detail-price_tag/",
-            "price_tag"),
+            "price"),
     DETAIL_MENU(
             "reward-detail-menu",
             "reward-detail-menu",
@@ -58,7 +52,7 @@ public enum BucketName {
             "reward-detail-thumbnail",
             "https://kr.object.ncloudstorage.com/reward-detail-thumbnail/",
             "https://kr.object.ncloudstorage.com/reward-detail-thumbnail/",
-            "thumbnail"),
+            ""), // figma에서 thumbnail은 ""이다.
     DETAIL_DOG(
             "reward-detail-resident-dog",
             "reward-detail-resident-dog",
@@ -78,26 +72,6 @@ public enum BucketName {
         this.url = url;
         this.testUrl = testUrl;
         this.figma = figma;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public String getUrl() {
-        return this.url;
-    }
-
-    public String getTestName() {
-        return this.testName;
-    }
-
-    public String getTestUrl() {
-        return this.testUrl;
-    }
-
-    public String getFigma() {
-        return this.figma;
     }
 
     public static BucketName fromFigma(String figmaValue) {

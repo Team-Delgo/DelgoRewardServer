@@ -1,5 +1,6 @@
 package com.delgo.reward.service.crawling;
 
+import com.delgo.reward.comm.code.CodeType;
 import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.service.CodeService;
 import lombok.RequiredArgsConstructor;
@@ -57,7 +58,7 @@ public class GetDogCodeCrawlingService {
         driver.get(url);    //브라우저에서 url로 이동한다.
         Thread.sleep(5000); //브라우저 로딩될때까지 잠시 기다린다.
         List<Code> dogList = getDogList();
-        codeService.registerCodeList(dogList);
+//        codeService.registerCodeList(dogList);
 
         return null;
     }
@@ -88,7 +89,7 @@ public class GetDogCodeCrawlingService {
                         .pCode(code_code)
                         .codeName(text)
                         .codeDesc(text)
-                        .type("dog")
+                        .type(CodeType.breed)
                         .build();
                 codeList.add(code);
             }

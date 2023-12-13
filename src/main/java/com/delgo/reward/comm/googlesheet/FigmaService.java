@@ -1,9 +1,9 @@
-package com.delgo.reward.service;
+package com.delgo.reward.comm.googlesheet;
 
 import com.delgo.reward.comm.exception.FigmaException;
 import com.delgo.reward.comm.ncp.storage.BucketName;
-import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
+import com.delgo.reward.service.PhotoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,14 +19,8 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 
 @Slf4j
@@ -34,38 +28,36 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class FigmaService {
     private final PhotoService photoService;
-    private final ObjectStorageService objectStorageService;
 
     private final String API_URL = "https://api.figma.com/v1/";
     private final String figmaToken = "figd_r19ArRmULsFDOcl1Mim1B7zpphHYgqYM-YT84yfI";
     private final String figmaFileKey = "yzrVwMDiG6uU8LM57RUfN0";
 
-    @Value("${config.photoDir}")
+    @Value("${config.photo-dir}")
     String DIR;
 
     public void uploadFigmaDataToNCP(String nodeId, MongoMungple mongoMungple) {
-
         try {
             // Figma 연동 Data 조회
-            Map<String, String> imageIdMap = getImageIdFromFigma(nodeId);
+            Map<String, String> imageIdMap = getImageIdFromFigma(nodeId, mongoMungple.makeBaseNameForFigma());
             Map<String, String> imageUrlMap = getImageUrlFromFigma(imageIdMap);
 
             // typeListMap 초기화
             Map<String, ArrayList<String>> typeListMap = Map.of(
-                    "thumbnail", new ArrayList<>(),
+                    "", new ArrayList<>(), // thumbnail
                     "menu", new ArrayList<>(),
                     "menu_board", new ArrayList<>(),
-                    "price_tag", new ArrayList<>(),
+                    "price", new ArrayList<>(),
                     "dog", new ArrayList<>()
             );
 
             // imageUrlMap을 Type에 맞게 각 List에 저장
-            processImages(imageUrlMap, typeListMap);
+            uploadImages(imageUrlMap, typeListMap);
 
             // typeList를 각 Fileds에 매치 후 저장
             mongoMungple.setFigmaPhotoData(typeListMap);
-        } catch (Exception e){
-            e.printStackTrace();
+        } catch (Exception e) {
+            log.error(e.getMessage());
             throw new FigmaException(e.getMessage());
         }
     }
@@ -81,11 +73,11 @@ public class FigmaService {
         return new RestTemplate(httpRequestFactory);
     }
 
-    public Map<String, String> getImageIdFromFigma(String nodeId) {
+    public Map<String, String> getImageIdFromFigma(String nodeId, String baseName) {
         RestTemplate restTemplate = createRestTemplate();
         HttpHeaders headers = createHeaders();
 
-        String requestURL = API_URL + "files/" + figmaFileKey +"/nodes?ids=" + nodeId;
+        String requestURL = API_URL + "files/" + figmaFileKey + "/nodes?ids=" + nodeId;
         ResponseEntity<String> responseEntity = restTemplate.exchange(requestURL, HttpMethod.GET, new HttpEntity<>(headers), String.class);
 
         Map<String, String> imageIdMap = new HashMap<>();
@@ -95,26 +87,29 @@ public class FigmaService {
 
             for (JsonNode childNode : childrNodes) {
                 String imageId = childNode.get("id").asText(); // ex) 4935:43532
-                // 사람에 의한 실수 없애기 위해 공백문자 제거 코드 추가
-                String fileName = childNode.get("name").asText().replaceAll("\\s+", "");  // ex) 강동구_애견동반식당_담금_5
+                String figmaFileName = childNode.get("name").asText().replaceAll("\\s+", "");  // ex) 담금_menu_5
+                int order = getOrderByFileName(figmaFileName); // ex) 5
+                String type = getTypeByFileName(figmaFileName); // ex) menu
+                String fileName = (type.isBlank()) ? baseName + "_" + order : baseName + "_" + type + "_" + order; // ex) 강동구_애견동반식당_담금_menu_5
+
                 imageIdMap.put(imageId, fileName);
             }
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             throw new FigmaException(e.getMessage());
         }
 
         return imageIdMap;
     }
 
-    public Map<String,String> getImageUrlFromFigma(Map<String,String> imageIdMap) {
+    public Map<String, String> getImageUrlFromFigma(Map<String, String> imageIdMap) {
         RestTemplate restTemplate = createRestTemplate();
         HttpHeaders headers = createHeaders();
 
-        String requestURL = API_URL + "images/" + figmaFileKey +"?format=png&scale=3&ids=" + String.join(",", imageIdMap.keySet());
+        String requestURL = API_URL + "images/" + figmaFileKey + "?format=png&scale=3&ids=" + String.join(",", imageIdMap.keySet());
         ResponseEntity<String> responseEntity = restTemplate.exchange(requestURL, HttpMethod.GET, new HttpEntity<>(headers), String.class);
 
-        Map<String,String> imageUrlMap = new HashMap<>();
+        Map<String, String> imageUrlMap = new HashMap<>();
         try {
             JsonNode rootNode = new ObjectMapper().readTree(responseEntity.getBody());
             JsonNode imageNodes = rootNode.get("images");
@@ -128,51 +123,49 @@ public class FigmaService {
                 imageUrlMap.put(fileName, imageUrl);
             }
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             throw new FigmaException(e.getMessage());
         }
 
         return imageUrlMap;
     }
 
-    private void processImages(Map<String, String> imageMap, Map<String, ArrayList<String>> typeListMap) throws UnsupportedEncodingException {
+    private void uploadImages(Map<String, String> imageMap, Map<String, ArrayList<String>> typeListMap) throws UnsupportedEncodingException {
         for (String fileName : imageMap.keySet()) {
             if (StringUtils.isNotEmpty(imageMap.get(fileName))) {
-                String image = imageMap.get(fileName);
-                String encodedFileName = photoService.convertWebpFromUrl(fileName, image);
-                String encodedFilePath = DIR + encodedFileName + ".webp";
+                String imageUrl = imageMap.get(fileName);
+                String type = getTypeByFileName(fileName);
+                BucketName bucketName = BucketName.fromFigma(type);
 
-                try {
-                    String type = checkType(fileName);
-                    BucketName bucketName = BucketName.fromFigma(type);
-
-                    String decodedFileName = URLDecoder.decode(encodedFileName, StandardCharsets.UTF_8) + ".webp";
-                    objectStorageService.uploadObjects(bucketName, decodedFileName, encodedFilePath);
-                    String ncpImageUrl = bucketName.getUrl() + decodedFileName;
-
-                    new File(encodedFilePath).delete();
-
-                    typeListMap.get(type).add(ncpImageUrl);
-                } catch (IllegalArgumentException e) {
-                    e.printStackTrace();
-                    throw new FigmaException(e.getMessage());
-                }
+                String uploadedUrl = photoService.downloadAndUploadFromURL(fileName, imageUrl, bucketName);
+                typeListMap.get(type).add(uploadedUrl);
             }
         }
     }
 
-    private String checkType(String text) {
-        String[] split = text.split("_");
-        if (split.length == 6)
-            return "menu_board";
-        if(split.length == 4)
-            return "thumbnail";
+    private String getTypeByFileName(String fileName) {
+        try {
+            String[] type_arr = fileName.split("_");
+            String type = type_arr[type_arr.length - 2];
 
-        return switch (split[3]) {
-            case "menu" -> "menu";
-            case "price" -> "price";
-            case "dog" -> "dog";
-            default -> "";
-        };
+            return switch (type) {
+                case "board" -> "menu_board";
+                case "menu" -> "menu";
+                case "price" -> "price";
+                case "dog" -> "dog";
+                default -> "";
+            };
+        } catch (Exception e) {
+            throw new FigmaException(" [Figma] : " + fileName + " 확인해주세요");
+        }
+    }
+
+    private int getOrderByFileName(String fileName) {
+        try {
+            String[] type_arr = fileName.split("_");
+            return Integer.parseInt(type_arr[type_arr.length - 1]);
+        } catch (Exception e) {
+            throw new FigmaException(" [Figma] : " + fileName + " 확인해주세요");
+        }
     }
 }

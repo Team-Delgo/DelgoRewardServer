@@ -2,7 +2,7 @@ package com.delgo.reward.record.certification;
 
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.domain.common.Location;
+import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -42,16 +42,16 @@ public record CertRecord(
         @NotNull
         Boolean isHideAddress) {
 
-    public Certification toEntity(Location location, User user) {
+    public Certification toEntity(String address, Code geoCode, User user) {
         return Certification.builder()
                 .user(user)
                 .categoryCode(categoryCode)
                 .mungpleId(mungpleId)
                 .placeName(placeName)
                 .description(description)
-                .address(location.getSIDO() + " " + location.getSIGUGUN() + " " + location.getDONG())
-                .geoCode(location.getGeoCode())
-                .pGeoCode(location.getPGeoCode())
+                .address(address)
+                .geoCode(geoCode.getCode())
+                .pGeoCode(geoCode.getPCode())
                 .latitude(latitude)
                 .longitude(longitude)
                 .isCorrect(true)

@@ -26,7 +26,7 @@ public class PetService {
     private final PetRepository petRepository;
 
     public Pet register(Pet pet) {
-        return petRepository.save(pet.setBreedName(codeService.getCode(pet.getBreed()).getCodeName()));
+        return petRepository.save(pet.setBreedName(codeService.getByCode(pet.getBreed()).getCodeName()));
     }
 
     @Transactional
@@ -35,7 +35,7 @@ public class PetService {
         Optional.ofNullable(modifyPetRecord.birthday()).ifPresent(user.getPet()::setBirthday);
         Optional.ofNullable(modifyPetRecord.breed()).ifPresent(breed ->{
             user.getPet().setBreed(breed);
-            user.getPet().setBreedName(codeService.getCode(breed).getCodeName());
+            user.getPet().setBreedName(codeService.getByCode(breed).getCodeName());
         });
     }
 
@@ -43,7 +43,7 @@ public class PetService {
     public void fillBreedName(){
         List<Pet> pets = petRepository.findAll();
         for(Pet pet : pets){
-            pet.setBreedName(codeService.getCode(pet.getBreed()).getCodeName());
+            pet.setBreedName(codeService.getByCode(pet.getBreed()).getCodeName());
         }
     }
 }
