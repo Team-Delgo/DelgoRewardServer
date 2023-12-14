@@ -5,7 +5,7 @@ import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.certification.Reaction;
 import com.delgo.reward.dto.cert.CertResponse;
 import com.delgo.reward.dto.map.OtherMapDTO;
-import com.delgo.reward.dto.mungple.MungpleResDTO;
+import com.delgo.reward.dto.mungple.MungpleResponse;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.mongoRepository.MungpleRepository;
 import com.delgo.reward.service.cert.CertQueryService;
@@ -29,7 +29,7 @@ public class MapService {
 
     public Map<String, Object> getMap() {
         List<Mungple> mungples = mungpleRepository.findByIsActive(true);
-        List<MungpleResDTO > mungpleResDTOS = mungples.stream().map(MungpleResDTO::new).toList();
+        List<MungpleResponse> mungpleResDTOS = mungples.stream().map(MungpleResponse::new).toList();
         return  Map.of("mungpleList", mungpleResDTOS);
     }
 

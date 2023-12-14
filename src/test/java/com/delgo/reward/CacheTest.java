@@ -2,7 +2,7 @@ package com.delgo.reward;
 
 import com.delgo.reward.cache.MungpleCache;
 import com.delgo.reward.comm.code.CategoryCode;
-import com.delgo.reward.dto.mungple.MungpleResDTO;
+import com.delgo.reward.dto.mungple.MungpleResponse;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.mongoRepository.MungpleRepository;
 import com.delgo.reward.mongoService.MungpleService;
@@ -69,7 +69,7 @@ public class CacheTest {
         System.out.println("=======[Database]=======");
         stopWatch1.start();
 
-        List<MungpleResDTO> mungpleResDTOList1 = mungpleService.getMungpleByCategoryCode(categoryCode);
+        List<MungpleResponse> mungpleResDTOList1 = mungpleService.getMungpleByCategoryCode(categoryCode);
         System.out.println("Count: " + mungpleResDTOList1.size());
 
         stopWatch1.stop();
@@ -82,7 +82,7 @@ public class CacheTest {
         System.out.println("=======[Cache]=======");
         stopWatch2.start();
 
-        List<MungpleResDTO> mungpleResDTOList2 = mungpleService.getMungpleByCategoryCode(categoryCode);
+        List<MungpleResponse> mungpleResDTOList2 = mungpleService.getMungpleByCategoryCode(categoryCode);
         System.out.println("Count: " + mungpleResDTOList2.size());
 
         stopWatch2.stop();

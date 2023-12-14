@@ -13,7 +13,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @AllArgsConstructor
-public class MungpleResDTO {
+public class MungpleResponse {
     @Schema(description = "멍플 고유 아이디")
     protected int mungpleId;
     @Schema(description = "카테고리 코드", enumAsRef = true)
@@ -40,7 +40,7 @@ public class MungpleResDTO {
     protected Boolean isBookmarked;
 
     // 지도 생성자
-    public MungpleResDTO(Mungple mungple) {
+    public MungpleResponse(Mungple mungple) {
         mungpleId = mungple.getMungpleId();
         categoryCode = mungple.getCategoryCode();
 
@@ -56,7 +56,7 @@ public class MungpleResDTO {
     }
 
     // 목록 생성자
-    public MungpleResDTO(Mungple mungple, int certCount, int bookmarkCount, boolean isBookmarked) {
+    public MungpleResponse(Mungple mungple, int certCount, int bookmarkCount, boolean isBookmarked) {
         mungpleId = mungple.getMungpleId();
         categoryCode = mungple.getCategoryCode();
 
@@ -76,7 +76,7 @@ public class MungpleResDTO {
     }
 
     // [Deprecated]
-    public MungpleResDTO(Mungple mungple, int certCount, int bookmarkCount) {
+    public MungpleResponse(Mungple mungple, int certCount, int bookmarkCount) {
         mungpleId = mungple.getMungpleId();
         categoryCode = mungple.getCategoryCode();
 

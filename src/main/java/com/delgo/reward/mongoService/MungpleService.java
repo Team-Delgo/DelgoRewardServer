@@ -11,10 +11,10 @@ import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.user.Bookmark;
 import com.delgo.reward.dto.mungple.MungpleCountDTO;
-import com.delgo.reward.dto.mungple.MungpleResDTO;
-import com.delgo.reward.dto.mungple.detail.MungpleDetailByMenuResDTO;
-import com.delgo.reward.dto.mungple.detail.MungpleDetailByPriceTagResDTO;
-import com.delgo.reward.dto.mungple.detail.MungpleDetailResDTO;
+import com.delgo.reward.dto.mungple.MungpleResponse;
+import com.delgo.reward.dto.mungple.detail.MungpleDetailByMenuResponse;
+import com.delgo.reward.dto.mungple.detail.MungpleDetailByPriceTagResponse;
+import com.delgo.reward.dto.mungple.detail.MungpleDetailResponse;
 import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.mongoRepository.MungpleRepository;
@@ -72,8 +72,8 @@ public class MungpleService {
      * Active Mungple 전체 조회
      */
     @Cacheable(cacheNames = MUNGPLE_CACHE_STORE)
-    public List<MungpleResDTO> getAllActiveMungple() {
-        return mungpleRepository.findByIsActive(true).stream().map(MungpleResDTO::new).toList();
+    public List<MungpleResponse> getAllActiveMungple() {
+        return mungpleRepository.findByIsActive(true).stream().map(MungpleResponse::new).toList();
     }
 
     /**
@@ -103,18 +103,18 @@ public class MungpleService {
      * [categoryCode] Mungple 조회
      */
     @Cacheable(cacheNames = MUNGPLE_CACHE_STORE)
-    public List<MungpleResDTO> getMungpleByCategoryCode(String categoryCode) {
+    public List<MungpleResponse> getMungpleByCategoryCode(String categoryCode) {
         List<Mungple> mungpleList = !categoryCode.equals(CategoryCode.CA0000.getCode())
                 ? mungpleRepository.findByCategoryCode(categoryCode)
                 : mungpleRepository.findAll();
 
-        return mungpleList.stream().map(MungpleResDTO::new).collect(Collectors.toList());
+        return mungpleList.stream().map(MungpleResponse::new).collect(Collectors.toList());
     }
 
     /**
      * [categoryCode] Active Mungple 조회 [TODO: Deprecated]
      */
-    public List<MungpleResDTO> getActiveMungpleByCategoryCode(CategoryCode categoryCode) {
+    public List<MungpleResponse> getActiveMungpleByCategoryCode(CategoryCode categoryCode) {
         List<Mungple> mungpleList = !categoryCode.equals(CategoryCode.CA0000)
                 ? mungpleRepository.findByCategoryCodeAndIsActive(categoryCode, true)
                 : mungpleRepository.findByIsActive(true);
@@ -123,14 +123,14 @@ public class MungpleService {
             int certCount = certRepository.countOfCorrectCertByMungple(m.getMungpleId());
             int bookmarkCount = bookmarkService.getActiveBookmarkCount(m.getMungpleId());
 
-            return new MungpleResDTO(m, certCount, bookmarkCount);
+            return new MungpleResponse(m, certCount, bookmarkCount);
         }).toList();
     }
 
     /**
      * [categoryCode] Active Mungple 조회
      */
-    public List<MungpleResDTO> getActiveMungpleByCategoryCode(int userId, CategoryCode categoryCode, MungpleSort sort, String latitude, String longitude) {
+    public List<MungpleResponse> getActiveMungpleByCategoryCode(int userId, CategoryCode categoryCode, MungpleSort sort, String latitude, String longitude) {
         List<Mungple> mungpleList = !categoryCode.equals(CategoryCode.CA0000)
                 ? mungpleRepository.findByCategoryCodeAndIsActive(categoryCode, true)
                 : mungpleRepository.findByIsActive(true);
@@ -148,7 +148,7 @@ public class MungpleService {
             default -> throw new IllegalArgumentException("Unknown sorting type: " + sort);
         };
 
-        List<MungpleResDTO> mungpleResDTOS = convertToMungpleResDTOs(sortingStrategy.sort());
+        List<MungpleResponse> mungpleResDTOS = convertToMungpleResDTOs(sortingStrategy.sort());
         setIsBookmarked(userId, mungpleResDTOS);
 
         return mungpleResDTOS;
@@ -157,7 +157,7 @@ public class MungpleService {
     /**
      * [BookMark] Active Mungple 조회
      */
-    public List<MungpleResDTO> getActiveMungpleByBookMark(int userId, MungpleSort sort, String latitude, String longitude) {
+    public List<MungpleResponse> getActiveMungpleByBookMark(int userId, MungpleSort sort, String latitude, String longitude) {
         // 사용자 ID를 기반으로 활성화 된 북마크를 가져온 후 정렬
         List<Bookmark> bookmarkList = bookmarkService.getActiveBookmarkByUserId(userId);
         List<Integer> mungpleIdList = bookmarkList.stream().map(Bookmark::getMungpleId).toList();
@@ -171,7 +171,7 @@ public class MungpleService {
             default -> throw new IllegalArgumentException("Unknown sorting type: " + sort);
         };
 
-        List<MungpleResDTO> mungpleResDTOS = convertToMungpleResDTOs(sortingStrategy.sort());
+        List<MungpleResponse> mungpleResDTOS = convertToMungpleResDTOs(sortingStrategy.sort());
         setIsBookmarked(userId, mungpleResDTOS);
 
         return mungpleResDTOS;
@@ -180,7 +180,7 @@ public class MungpleService {
     /**
      * IsBookmarked 값 설정
      */
-    public void setIsBookmarked(int userId, List<MungpleResDTO> mungpleResDTOS){
+    public void setIsBookmarked(int userId, List<MungpleResponse> mungpleResDTOS){
         Set<Integer> bookmarkedMungpleIds = bookmarkRepository.findBookmarkedMungpleIds(userId);
         mungpleResDTOS.forEach(m -> {
             if (bookmarkedMungpleIds.contains(m.getMungpleId())) m.setIsBookmarked(true);
@@ -188,7 +188,7 @@ public class MungpleService {
     }
 
 
-    public List<MungpleResDTO> convertToMungpleResDTOs(List<Mungple> mungples) {
+    public List<MungpleResponse> convertToMungpleResDTOs(List<Mungple> mungples) {
         Map<Integer, MungpleCountDTO> bookmarkCountsMap = bookmarkRepository.countBookmarksGroupedByMungpleId().stream().collect(Collectors.toMap(MungpleCountDTO::getMungpleId, Function.identity()));
         Map<Integer, MungpleCountDTO> certCountsMap = certRepository.countCertsGroupedByMungpleId().stream().collect(Collectors.toMap(MungpleCountDTO::getMungpleId, Function.identity()));
 
@@ -196,7 +196,7 @@ public class MungpleService {
             int bookmarkCount = bookmarkCountsMap.getOrDefault(m.getMungpleId(), new MungpleCountDTO(0, 0)).getCount();
             int certCount = certCountsMap.getOrDefault(m.getMungpleId(), new MungpleCountDTO(0, 0)).getCount();
 
-            return new MungpleResDTO(m, certCount, bookmarkCount, false);
+            return new MungpleResponse(m, certCount, bookmarkCount, false);
         }).toList();
     }
 
@@ -255,7 +255,7 @@ public class MungpleService {
         return mongoTemplate.find(query, Mungple.class);
     }
 
-    public MungpleDetailResDTO getMungpleDetailByMungpleIdAndUserId(int mungpleId, int userId) {
+    public MungpleDetailResponse getMungpleDetailByMungpleIdAndUserId(int mungpleId, int userId) {
         Mungple mungple = getMungpleByMungpleId(mungpleId);
         int certCount = certRepository.countOfCorrectCertByMungple(mungpleId);
 
@@ -264,10 +264,10 @@ public class MungpleService {
 
         switch (mungple.getCategoryCode()) {
             case CA0002, CA0003 -> {
-                return new MungpleDetailByMenuResDTO(mungple, certCount, bookmarkCount, isBookmarked);
+                return new MungpleDetailByMenuResponse(mungple, certCount, bookmarkCount, isBookmarked);
             }
             default -> {
-                return new MungpleDetailByPriceTagResDTO(mungple, certCount, bookmarkCount, isBookmarked);
+                return new MungpleDetailByPriceTagResponse(mungple, certCount, bookmarkCount, isBookmarked);
             }
         }
     }
