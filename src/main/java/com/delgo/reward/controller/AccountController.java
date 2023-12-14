@@ -7,9 +7,9 @@ import com.delgo.reward.dto.user.UserResDTO;
 import com.delgo.reward.record.user.ModifyPetRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
-import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.PetService;
 import com.delgo.reward.service.UserService;
+import com.delgo.reward.service.cert.CertQueryService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,8 +30,8 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController extends CommController {
 
     private final PetService petService;
-    private final CertService certService;
     private final UserService userService;
+    private final CertQueryService certQueryService;
 
     /**
      * 내 정보 조회
@@ -45,7 +45,7 @@ public class AccountController extends CommController {
         return SuccessReturn(new AccountResDTO(
                 userService.getUserById(userId),
                 userService.getActivityByUserId(userId),
-                certService.getVisitedMungpleIdListTop3ByUserId(userId)));
+                certQueryService.getVisitedMungpleIdListTop3ByUserId(userId)));
     }
 
 
