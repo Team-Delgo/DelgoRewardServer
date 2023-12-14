@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -28,7 +27,6 @@ import java.util.*;
 
 @Slf4j
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class PhotoService extends CommService {
     private final ObjectStorageService objectStorageService;
@@ -55,8 +53,6 @@ public class PhotoService extends CommService {
         File convertedFile = convertToWebp(getBaseNameFromFileName(fileName), originalFile);
 
         String url = objectStorageService.uploadObjects(bucketName, convertedFile.getName(), convertedFile.getPath());
-
-        deleteFile(originalFile);
         deleteFile(convertedFile);
 
         return setCacheInvalidation(url);
@@ -153,7 +149,13 @@ public class PhotoService extends CommService {
 
     public void deleteFile(File file) {
         if (!file.delete())
-            log.error("Failed to delete the file.");
+            log.error("Failed to delete the file. : {}", file.getName());
+    }
+
+    public void deleteFileByName(String fileName) {
+        File file = new File(PHOTO_DIR + fileName);
+        if (!file.delete())
+            log.error("Failed to delete the file. : {}", fileName);
     }
 
     protected void setFilePermissions(File file) {

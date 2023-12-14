@@ -3,7 +3,6 @@ package com.delgo.reward.dto.cert;
 
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.ReactionCode;
-import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.certification.Reaction;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -65,7 +64,7 @@ public class CertResponse {
     @Schema(description = "등록 날짜")
     protected LocalDateTime registDt;
 
-    public static CertResponse from(Integer userId, Certification cert, List<Reaction> reactionList, List<CertPhoto> photoList) {
+    public static CertResponse from(Integer userId, Certification cert, List<Reaction> reactionList) {
         Map<ReactionCode, Boolean> reactionMap = ReactionCode.initializeReactionMap();
         Map<ReactionCode, Integer> reactionCountMap = ReactionCode.initializeReactionCountMap();
         if (!reactionList.isEmpty()) {
@@ -80,7 +79,7 @@ public class CertResponse {
                 .placeName(cert.getPlaceName())
                 .description(cert.getDescription())
                 .address(cert.getAddress())
-                .photos(photoList.stream().map(CertPhoto::getUrl).toList())
+                .photos(cert.getPhotos())
                 .isHideAddress(cert.getIsHideAddress())
                 .userId(cert.getUser().getUserId())
                 .userName(cert.getUser().getName())
@@ -104,7 +103,7 @@ public class CertResponse {
                 .placeName(cert.getPlaceName())
                 .description(cert.getDescription())
                 .address(cert.getAddress())
-//                .photos(cert.getPhotos())
+                .photos(cert.getPhotos())
                 .isHideAddress(cert.getIsHideAddress())
                 .userId(cert.getUser().getUserId())
                 .userName(cert.getUser().getName())
@@ -116,12 +115,10 @@ public class CertResponse {
                 .build();
     }
 
-    public static List<CertResponse> fromList(Integer userId, List<Certification> certList, Map<Integer, List<Reaction>> reactionMap, Map<Integer, List<CertPhoto>> photoMap) {
+    public static List<CertResponse> fromList(Integer userId, List<Certification> certList, Map<Integer, List<Reaction>> reactionMap) {
         return certList.stream().map(cert -> {
             List<Reaction> reactionList = reactionMap.getOrDefault(cert.getCertificationId(), Collections.emptyList());
-            List<CertPhoto> photoList = photoMap.getOrDefault(cert.getCertificationId(), Collections.emptyList());
-
-            return CertResponse.from(userId, cert, reactionList, photoList);
+            return CertResponse.from(userId, cert, reactionList);
         }).toList();
     }
 }
