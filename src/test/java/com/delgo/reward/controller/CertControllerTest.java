@@ -14,7 +14,7 @@
 //import com.delgo.reward.mongoService.ClassificationService;
 //import com.delgo.reward.record.certification.CertRecord;
 //import com.delgo.reward.record.certification.ModifyCertRecord;
-//import com.delgo.reward.service.CertService;
+//import com.delgo.reward.service.cert.CertService;
 //import com.delgo.reward.service.LikeListService;
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import org.junit.jupiter.api.Assertions;

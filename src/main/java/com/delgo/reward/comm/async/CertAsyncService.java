@@ -4,7 +4,7 @@ import com.delgo.reward.comm.ncp.greeneye.GreenEyeService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.repository.CertPhotoRepository;
-import com.delgo.reward.service.CertService;
+import com.delgo.reward.service.cert.CertCommandService;
 import com.delgo.reward.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,9 +19,9 @@ public class CertAsyncService {
     @Value("${config.photo-dir}")
     String DIR;
 
-    private final CertService certService;
     private final PhotoService photoService;
     private final GreenEyeService greenEyeService;
+    private final CertCommandService certCommandService;
     private final CertPhotoRepository certPhotoRepository;
 
     @Async
@@ -34,7 +34,7 @@ public class CertAsyncService {
             boolean isCorrect = greenEyeService.isCorrect(photo.getUrl());
             photo.setIsCorrect(isCorrect);
             if (!isCorrect) {
-                certService.changeIsCorrect(certificationId, false);
+                certCommandService.changeIsCorrect(certificationId, false);
             }
 
             String uploadedURL = photoService.upload(fileName, BucketName.CERTIFICATION);

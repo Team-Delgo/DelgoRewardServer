@@ -6,8 +6,11 @@ import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.certification.Reaction;
 import com.delgo.reward.dto.cert.CertResponse;
 import com.delgo.reward.record.calendar.CalendarRecord;
+import com.delgo.reward.service.cert.CertQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,16 +25,16 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class CalendarService {
-    private final CertService certService;
+    private final CertQueryService certQueryService;
     private final CertPhotoService certPhotoService;
     private final ReactionService reactionService;
 
     public List<CalendarRecord> getCalendar(int userId) {
-        List<Certification> certificationList = certService.getCertsByUserId(userId);
-        Map<Integer,List<Reaction>> reactionMap = reactionService.getMapByCertList(certificationList);
-        Map<Integer,List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(certificationList);
+        Page<Certification> page = certQueryService.getPagingListByUserId(userId, Pageable.unpaged());
+        Map<Integer,List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
+        Map<Integer,List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(page.getContent());
 
-        List<CertResponse> certifications = CertResponse.fromList(userId, certificationList, reactionMap, photoMap);
+        List<CertResponse> certifications = CertResponse.fromList(userId, page.getContent(), reactionMap, photoMap);
         return certifications.stream()
                 .sorted(Comparator.comparing(CertResponse::getRegistDt)) // 등록 순으로 정렬
                 .map(cert -> {
