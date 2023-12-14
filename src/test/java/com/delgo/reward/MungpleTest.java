@@ -3,9 +3,9 @@ package com.delgo.reward;
 
 import com.delgo.reward.dto.mungple.MungpleCountDTO;
 import com.delgo.reward.dto.mungple.MungpleResDTO;
-import com.delgo.reward.mongoDomain.mungple.MongoMungple;
-import com.delgo.reward.mongoRepository.MongoMungpleRepository;
-import com.delgo.reward.mongoService.MongoMungpleService;
+import com.delgo.reward.mongoDomain.mungple.Mungple;
+import com.delgo.reward.mongoRepository.MungpleRepository;
+import com.delgo.reward.mongoService.MungpleService;
 import com.delgo.reward.repository.BookmarkRepository;
 import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.service.strategy.BookmarkCountSorting;
@@ -22,13 +22,13 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class MongoMungpleTest {
+public class MungpleTest {
 
     @Autowired
-    private MongoMungpleService mongoMungpleService;
+    private MungpleService mungpleService;
 
     @Autowired
-    private MongoMungpleRepository mongoMungpleRepository;
+    private MungpleRepository mungpleRepository;
 
     @Autowired
     private BookmarkRepository bookmarkRepository;
@@ -38,7 +38,7 @@ public class MongoMungpleTest {
 
     @Test
     public void deleteAllMongoMunple(){
-        mongoMungpleRepository.deleteAll();
+        mungpleRepository.deleteAll();
     }
 
 
@@ -66,20 +66,20 @@ public class MongoMungpleTest {
         String latitude = "37.4704204";
         String longitude = "127.1412807";
 
-        mongoMungpleService.findWithin3Km(latitude,longitude);
+        mungpleService.findWithin3Km(latitude,longitude);
     }
 
     @Test
     public void BookMarkCountSorting_성공한다() {
         //whne
-        List<MongoMungple> mungpleList = mongoMungpleRepository.findByIsActive(true);
+        List<Mungple> mungpleList = mungpleRepository.findByIsActive(true);
 
         // DB Data 조회
         List<MungpleCountDTO> countByBookmark = bookmarkRepository.countBookmarksGroupedByMungpleId();
 
         // 조건에 맞게 정렬
         MungpleSortingStrategy sortingStrategy = new BookmarkCountSorting(mungpleList, countByBookmark);
-        List<MungpleResDTO> mungpleResDTOS = mongoMungpleService.convertToMungpleResDTOs(sortingStrategy.sort());
+        List<MungpleResDTO> mungpleResDTOS = mungpleService.convertToMungpleResDTOs(sortingStrategy.sort());
         for (MungpleResDTO mungple : mungpleResDTOS) {
             System.out.println("mungple = " + mungple.getPlaceName() + " count : " + mungple.getBookmarkCount());
         }
@@ -88,16 +88,16 @@ public class MongoMungpleTest {
     @Test
     public void CertCountSorting_성공한다() {
         //whne
-        List<MongoMungple> mungpleList = mongoMungpleRepository.findByIsActive(true);
+        List<Mungple> mungpleList = mungpleRepository.findByIsActive(true);
 
         // DB Data 조회
         List<MungpleCountDTO> countByCert = certRepository.countCertsGroupedByMungpleId();
 
         // 조건에 맞게 정렬
         MungpleSortingStrategy sortingStrategy = new CertCountSorting(mungpleList, countByCert);
-        List<MongoMungple> sortedMungpleList = sortingStrategy.sort();
+        List<Mungple> sortedMungpleList = sortingStrategy.sort();
 
-        List<MungpleResDTO> mungpleResDTOS = mongoMungpleService.convertToMungpleResDTOs(sortedMungpleList);
+        List<MungpleResDTO> mungpleResDTOS = mungpleService.convertToMungpleResDTOs(sortedMungpleList);
         for (MungpleResDTO mungple : mungpleResDTOS) {
             System.out.println("mungple = " + mungple.getPlaceName() + " count : " + mungple.getCertCount());
         }

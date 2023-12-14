@@ -1,6 +1,6 @@
 package com.delgo.reward.dto.mungple.detail;
 
-import com.delgo.reward.mongoDomain.mungple.MongoMungple;
+import com.delgo.reward.mongoDomain.mungple.Mungple;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -15,15 +15,15 @@ public class MungpleDetailByMenuResDTO extends MungpleDetailResDTO {
     private final String representMenuTitle; // 대표 메뉴 제목
     private final List<String> representMenuPhotoUrls; // 대표 메뉴 사진 URL // ※무조건 3개 이상이어야 함.
 
-    public MungpleDetailByMenuResDTO(MongoMungple mongoMungple, int certCount, int bookmarkCount, boolean isBookmarked) {
-        super(mongoMungple, certCount, bookmarkCount, isBookmarked);
-        residentDogName = mongoMungple.getResidentDogName();
-        residentDogPhoto = mongoMungple.getResidentDogPhoto();
+    public MungpleDetailByMenuResDTO(Mungple mungple, int certCount, int bookmarkCount, boolean isBookmarked) {
+        super(mungple, certCount, bookmarkCount, isBookmarked);
+        residentDogName = mungple.getResidentDogName();
+        residentDogPhoto = mungple.getResidentDogPhoto();
 
-        representMenuTitle = mongoMungple.getRepresentMenuTitle();
+        representMenuTitle = mungple.getRepresentMenuTitle();
 
-        List<String> representMenuBoardPhotoUrls = mongoMungple.getRepresentMenuBoardPhotoUrls();
-        List<String> representMenuPhotoUrls = mongoMungple.getRepresentMenuPhotoUrls();
+        List<String> representMenuBoardPhotoUrls = mungple.getRepresentMenuBoardPhotoUrls();
+        List<String> representMenuPhotoUrls = mungple.getRepresentMenuPhotoUrls();
         if (representMenuBoardPhotoUrls == null || representMenuBoardPhotoUrls.isEmpty()) {
             this.representMenuPhotoUrls = representMenuPhotoUrls;
         } else {

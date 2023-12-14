@@ -1,24 +1,24 @@
 package com.delgo.reward.service.strategy;
 
-import com.delgo.reward.mongoDomain.mungple.MongoMungple;
+import com.delgo.reward.mongoDomain.mungple.Mungple;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 import java.util.Comparator;
 import java.util.List;
 
 public class DistanceSorting implements MungpleSortingStrategy{
-    private final List<MongoMungple> mungpleList;
+    private final List<Mungple> mungpleList;
     private final double latitude;
     private final double longitude;
 
-    public DistanceSorting(List<MongoMungple> mungpleList, String latitude, String longitude) {
+    public DistanceSorting(List<Mungple> mungpleList, String latitude, String longitude) {
         this.mungpleList = mungpleList;
         this.latitude = Double.parseDouble(latitude);
         this.longitude = Double.parseDouble(longitude);
     }
 
     @Override
-    public List<MongoMungple> sort() {
+    public List<Mungple> sort() {
         // 거리 순 정렬 구현
         GeoJsonPoint targetPoint = new GeoJsonPoint(longitude, latitude);
         return mungpleList.stream()

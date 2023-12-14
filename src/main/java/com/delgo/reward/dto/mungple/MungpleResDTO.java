@@ -1,7 +1,7 @@
 package com.delgo.reward.dto.mungple;
 
 import com.delgo.reward.comm.code.CategoryCode;
-import com.delgo.reward.mongoDomain.mungple.MongoMungple;
+import com.delgo.reward.mongoDomain.mungple.Mungple;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -40,7 +40,7 @@ public class MungpleResDTO {
     protected Boolean isBookmarked;
 
     // 지도 생성자
-    public MungpleResDTO(MongoMungple mungple) {
+    public MungpleResDTO(Mungple mungple) {
         mungpleId = mungple.getMungpleId();
         categoryCode = mungple.getCategoryCode();
 
@@ -56,7 +56,7 @@ public class MungpleResDTO {
     }
 
     // 목록 생성자
-    public MungpleResDTO(MongoMungple mungple, int certCount, int bookmarkCount, boolean isBookmarked) {
+    public MungpleResDTO(Mungple mungple, int certCount, int bookmarkCount, boolean isBookmarked) {
         mungpleId = mungple.getMungpleId();
         categoryCode = mungple.getCategoryCode();
 
@@ -76,7 +76,7 @@ public class MungpleResDTO {
     }
 
     // [Deprecated]
-    public MungpleResDTO(MongoMungple mungple, int certCount, int bookmarkCount) {
+    public MungpleResDTO(Mungple mungple, int certCount, int bookmarkCount) {
         mungpleId = mungple.getMungpleId();
         categoryCode = mungple.getCategoryCode();
 

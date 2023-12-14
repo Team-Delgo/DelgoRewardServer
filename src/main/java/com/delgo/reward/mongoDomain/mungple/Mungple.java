@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection="mungple")
-public class MongoMungple {
+public class Mungple {
     @Transient
     public static final String SEQUENCE_NAME = "mungple_sequence";
     // Mungple
@@ -102,7 +102,7 @@ public class MongoMungple {
         this.mungpleId = mungpleId;
     }
 
-    public MongoMungple setPhoneNo(String phoneNo){
+    public Mungple setPhoneNo(String phoneNo){
         this.phoneNo = phoneNo.replace("-","");
 
         return this;

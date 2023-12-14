@@ -6,7 +6,7 @@ import com.delgo.reward.comm.code.MungpleSort;
 import com.delgo.reward.comm.googlesheet.GoogleSheetService;
 import com.delgo.reward.dto.mungple.MungpleResDTO;
 import com.delgo.reward.dto.mungple.detail.MungpleDetailResDTO;
-import com.delgo.reward.mongoService.MongoMungpleService;
+import com.delgo.reward.mongoService.MungpleService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -26,7 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/mungple")
 public class MungpleController extends CommController {
-    private final MongoMungpleService mongoMungpleService;
+    private final MungpleService mungpleService;
     private final GoogleSheetService googleSheetService;
 
     /**
@@ -47,7 +47,7 @@ public class MungpleController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = MungpleResDTO.class)))})
     @GetMapping
     public ResponseEntity getMungples() {
-        return SuccessReturn(mongoMungpleService.getAllActiveMungple());
+        return SuccessReturn(mungpleService.getAllActiveMungple());
     }
 
     /**
@@ -62,7 +62,7 @@ public class MungpleController extends CommController {
             @RequestParam MungpleSort sort,
             @RequestParam(required = false) String latitude,
             @RequestParam(required = false) String longitude) {
-        return SuccessReturn(mongoMungpleService.getActiveMungpleByCategoryCode(userId, categoryCode, sort, latitude, longitude));
+        return SuccessReturn(mungpleService.getActiveMungpleByCategoryCode(userId, categoryCode, sort, latitude, longitude));
     }
 
     /**
@@ -76,7 +76,7 @@ public class MungpleController extends CommController {
             @RequestParam MungpleSort sort,
             @RequestParam(required = false) String latitude,
             @RequestParam(required = false) String longitude) {
-        return SuccessReturn(mongoMungpleService.getActiveMungpleByBookMark(userId, sort, latitude, longitude));
+        return SuccessReturn(mungpleService.getActiveMungpleByBookMark(userId, sort, latitude, longitude));
     }
 
     /**
@@ -85,7 +85,7 @@ public class MungpleController extends CommController {
     @Operation(summary = "Mungple 삭제", description = "멍플 삭제 API")
     @DeleteMapping("/{mungpleId}")
     public ResponseEntity deleteMungple(@PathVariable Integer mungpleId) {
-        mongoMungpleService.deleteMungple(mungpleId);
+        mungpleService.deleteMungple(mungpleId);
         return SuccessReturn();
     }
 
@@ -95,7 +95,7 @@ public class MungpleController extends CommController {
     @Operation(summary = "Reset Mungple Cache", description = "멍플 등록 시, 혹은 업데이트 시 적용이 안될 때 Cache 업데이트를 위해 사용한다.")
     @GetMapping("/cache")
     public ResponseEntity resetMungpleCache() {
-        mongoMungpleService.resetMungpleCache();
+        mungpleService.resetMungpleCache();
         return SuccessReturn();
     }
 
@@ -108,7 +108,7 @@ public class MungpleController extends CommController {
     @ApiResponse(responseCode = "200", description = "", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MungpleDetailResDTO.class))})
     @GetMapping("/detail")
     public ResponseEntity getMungpleDetailByMungpleIdAndUserId(@RequestParam int mungpleId, @RequestParam int userId) {
-        return SuccessReturn(mongoMungpleService.getMungpleDetailByMungpleIdAndUserId(mungpleId, userId));
+        return SuccessReturn(mungpleService.getMungpleDetailByMungpleIdAndUserId(mungpleId, userId));
     }
 
     // -------------------------------------- Deprecated --------------------------------------
@@ -119,6 +119,6 @@ public class MungpleController extends CommController {
     @Hidden
     @GetMapping("/category/{categoryCode}")
     public ResponseEntity getMungplesByCategoryDeprecated(@PathVariable CategoryCode categoryCode) {
-        return SuccessReturn(mongoMungpleService.getActiveMungpleByCategoryCode(categoryCode));
+        return SuccessReturn(mungpleService.getActiveMungpleByCategoryCode(categoryCode));
     }
 }
