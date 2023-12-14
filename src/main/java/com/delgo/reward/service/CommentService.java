@@ -12,6 +12,7 @@ import com.delgo.reward.record.comment.CommentRecord;
 import com.delgo.reward.record.comment.ModifyCommentRecord;
 import com.delgo.reward.record.comment.ReplyRecord;
 import com.delgo.reward.repository.CommentRepository;
+import com.delgo.reward.service.cert.CertQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class CommentService {
 
     // Service
     private final FcmService fcmService;
-    private final CertService certService;
+    private final CertQueryService certQueryService;
     private final UserService userService;
     private final NotifyService notifyService;
 
@@ -55,7 +56,7 @@ public class CommentService {
     public CommentResDTO createComment(CommentRecord commentRecord) throws IOException {
         User user = userService.getUserById(commentRecord.userId()); // 댓글 작성 유저 조회
         Comment comment = commentRepository.save(commentRecord.toEntity(user)); // 댓글 저장
-        Certification certification = certService.getCertById(commentRecord.certificationId()); // 댓글 저장한 인증글 조회
+        Certification certification = certQueryService.getOneById(commentRecord.certificationId()); // 댓글 저장한 인증글 조회
 
         // commentCount 계산
         int commentCount = commentRepository.countCommentByCertId(commentRecord.certificationId());
@@ -104,7 +105,7 @@ public class CommentService {
     public Boolean deleteComment(int commentId, int userId, int certificationId) {
         // 댓글 OR 인증 작성자인지 CHECK.
         Comment comment = getCommentById(commentId);
-        Certification certification = certService.getCertById(certificationId);
+        Certification certification = certQueryService.getOneById(certificationId);
         if (comment.getUser().getUserId() != userId && certification.getUser().getUserId() != userId)  // 유저 체크
             return false;
 
@@ -127,7 +128,7 @@ public class CommentService {
     public ReplyResDTO createReply(ReplyRecord replyRecord) throws IOException {
         User user = userService.getUserById(replyRecord.userId()); // 답글 작성 유저 조회
         Comment reply = commentRepository.save(replyRecord.toEntity(user));
-        Certification certification = certService.getCertById(replyRecord.certificationId()); // 답글 저장한 인증글 조회
+        Certification certification = certQueryService.getOneById(replyRecord.certificationId()); // 답글 저장한 인증글 조회
 
         // commentCount 계산
         int commentCount = commentRepository.countCommentByCertId(replyRecord.certificationId());

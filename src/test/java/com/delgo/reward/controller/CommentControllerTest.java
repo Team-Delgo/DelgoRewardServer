@@ -7,7 +7,7 @@ import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.comment.CommentResDTO;
 import com.delgo.reward.record.comment.CommentRecord;
-import com.delgo.reward.service.CertService;
+import com.delgo.reward.service.cert.CertCommandService;
 import com.delgo.reward.service.CommentService;
 import com.delgo.reward.service.NotifyService;
 import com.delgo.reward.service.UserService;
@@ -44,7 +44,7 @@ public class CommentControllerTest {
 
     @MockBean private CommentService commentService;
     @MockBean private FcmService fcmService;
-    @MockBean private CertService certService;
+    @MockBean private CertCommandService certService;
     @MockBean private UserService userService;
     @MockBean private NotifyService notifyService;
 
