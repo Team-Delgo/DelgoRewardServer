@@ -4,8 +4,8 @@ import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.MungpleSort;
 import com.delgo.reward.comm.googlesheet.GoogleSheetService;
-import com.delgo.reward.dto.mungple.MungpleResDTO;
-import com.delgo.reward.dto.mungple.detail.MungpleDetailResDTO;
+import com.delgo.reward.dto.mungple.MungpleResponse;
+import com.delgo.reward.dto.mungple.detail.MungpleDetailResponse;
 import com.delgo.reward.mongoService.MungpleService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,7 +44,7 @@ public class MungpleController extends CommController {
      * 모든 멍플 조회 [ 지도, 검색 리스트 생성 ] [Cache]
      */
     @Operation(summary = "ALL Active Mungple 조회 [Cache]", description = "모든 활성화 된 멍플 조회 [지도, 검색 리스트 생성에 사용]")
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = MungpleResDTO.class)))})
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = MungpleResponse.class)))})
     @GetMapping
     public ResponseEntity getMungples() {
         return SuccessReturn(mungpleService.getAllActiveMungple());
@@ -54,7 +54,7 @@ public class MungpleController extends CommController {
      * [Category] Mungple 조회
      */
     @Operation(summary = "[Category] Mungple 조회", description = "Category 별로 Mungple 조회 [지도, 목록 조회 에서 사용]")
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MungpleResDTO.class))})
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MungpleResponse.class))})
     @GetMapping("/category")
     public ResponseEntity getMungplesByCategory(
             @RequestParam int userId, // isBookmarked 체크 필요
@@ -69,7 +69,7 @@ public class MungpleController extends CommController {
      * [Bookmark] Mungple 조회
      */
     @Operation(summary = "[Bookmark] Mungple 조회", description = "특정 사용자가 저장한 멍플 조회 [ 목록 조회 에서 사용 ]")
-    @ApiResponse(responseCode = "200", description = "", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MungpleResDTO.class))})
+    @ApiResponse(responseCode = "200", description = "", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MungpleResponse.class))})
     @GetMapping("/bookmark")
     public ResponseEntity getMungplesByBookmark(
             @RequestParam int userId,
@@ -105,7 +105,7 @@ public class MungpleController extends CommController {
      * [MungpleId] Mungple Detail 조회
      */
     @Operation(summary = "[MungpleId] Mungple Detail 조회", description = "멍플 상세 조회 [특정 사용자가 저장 했는지 여부 체크를 위해 UserId도 받는다]")
-    @ApiResponse(responseCode = "200", description = "", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MungpleDetailResDTO.class))})
+    @ApiResponse(responseCode = "200", description = "", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MungpleDetailResponse.class))})
     @GetMapping("/detail")
     public ResponseEntity getMungpleDetailByMungpleIdAndUserId(@RequestParam int mungpleId, @RequestParam int userId) {
         return SuccessReturn(mungpleService.getMungpleDetailByMungpleIdAndUserId(mungpleId, userId));

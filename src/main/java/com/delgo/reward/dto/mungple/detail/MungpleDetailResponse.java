@@ -2,7 +2,7 @@ package com.delgo.reward.dto.mungple.detail;
 
 import com.delgo.reward.comm.code.BusinessHourCode;
 import com.delgo.reward.comm.code.DetailCode;
-import com.delgo.reward.dto.mungple.MungpleResDTO;
+import com.delgo.reward.dto.mungple.MungpleResponse;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Getter
 @ToString
-public class MungpleDetailResDTO extends MungpleResDTO {
+public class MungpleDetailResponse extends MungpleResponse {
     @Schema(description = "매장 번호")
     protected String phoneNo;
     @Schema(description = "강아지 동반 안내 매장 설명문")
@@ -33,7 +33,7 @@ public class MungpleDetailResDTO extends MungpleResDTO {
     @Schema(description = "주차 정보")
     protected String parkingInfo;
 
-    public MungpleDetailResDTO(Mungple mungple, int certCount, int bookmarkCount, boolean isBookmarked){
+    public MungpleDetailResponse(Mungple mungple, int certCount, int bookmarkCount, boolean isBookmarked){
         super(mungple, certCount, bookmarkCount, isBookmarked);
 
         this.phoneNo = mungple.getPhoneNo();

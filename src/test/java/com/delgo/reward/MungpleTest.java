@@ -2,7 +2,7 @@ package com.delgo.reward;
 
 
 import com.delgo.reward.dto.mungple.MungpleCountDTO;
-import com.delgo.reward.dto.mungple.MungpleResDTO;
+import com.delgo.reward.dto.mungple.MungpleResponse;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.mongoRepository.MungpleRepository;
 import com.delgo.reward.mongoService.MungpleService;
@@ -79,8 +79,8 @@ public class MungpleTest {
 
         // 조건에 맞게 정렬
         MungpleSortingStrategy sortingStrategy = new BookmarkCountSorting(mungpleList, countByBookmark);
-        List<MungpleResDTO> mungpleResDTOS = mungpleService.convertToMungpleResDTOs(sortingStrategy.sort());
-        for (MungpleResDTO mungple : mungpleResDTOS) {
+        List<MungpleResponse> mungpleResDTOS = mungpleService.convertToMungpleResDTOs(sortingStrategy.sort());
+        for (MungpleResponse mungple : mungpleResDTOS) {
             System.out.println("mungple = " + mungple.getPlaceName() + " count : " + mungple.getBookmarkCount());
         }
     }
@@ -97,8 +97,8 @@ public class MungpleTest {
         MungpleSortingStrategy sortingStrategy = new CertCountSorting(mungpleList, countByCert);
         List<Mungple> sortedMungpleList = sortingStrategy.sort();
 
-        List<MungpleResDTO> mungpleResDTOS = mungpleService.convertToMungpleResDTOs(sortedMungpleList);
-        for (MungpleResDTO mungple : mungpleResDTOS) {
+        List<MungpleResponse> mungpleResDTOS = mungpleService.convertToMungpleResDTOs(sortedMungpleList);
+        for (MungpleResponse mungple : mungpleResDTOS) {
             System.out.println("mungple = " + mungple.getPlaceName() + " count : " + mungple.getCertCount());
         }
 
