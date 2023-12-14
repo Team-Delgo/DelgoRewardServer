@@ -127,8 +127,8 @@ public class PhotoService extends CommService {
     }
 
     public String getExtension(MultipartFile photo) {
-        String[] extension_arr = Objects.requireNonNull(photo.getContentType()).split("/"); // ex) png, jpg, jpeg
-        return extension_arr[extension_arr.length - 1];
+        String[] extensionArr = Objects.requireNonNull(photo.getContentType()).split("/"); // ex) png, jpg, jpeg
+        return extensionArr[extensionArr.length - 1];
     }
 
     public File convertToWebp(String baseName, File file) {
