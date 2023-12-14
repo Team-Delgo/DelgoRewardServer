@@ -2,7 +2,7 @@ package com.delgo.reward.comm.googlesheet;
 
 import com.delgo.reward.comm.exception.FigmaException;
 import com.delgo.reward.comm.ncp.storage.BucketName;
-import com.delgo.reward.mongoDomain.mungple.MongoMungple;
+import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.service.PhotoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -36,10 +36,10 @@ public class FigmaService {
     @Value("${config.photo-dir}")
     String DIR;
 
-    public void uploadFigmaDataToNCP(String nodeId, MongoMungple mongoMungple) {
+    public void uploadFigmaDataToNCP(String nodeId, Mungple mungple) {
         try {
             // Figma 연동 Data 조회
-            Map<String, String> imageIdMap = getImageIdFromFigma(nodeId, mongoMungple.makeBaseNameForFigma());
+            Map<String, String> imageIdMap = getImageIdFromFigma(nodeId, mungple.makeBaseNameForFigma());
             Map<String, String> imageUrlMap = getImageUrlFromFigma(imageIdMap);
 
             // typeListMap 초기화
@@ -55,7 +55,7 @@ public class FigmaService {
             uploadImages(imageUrlMap, typeListMap);
 
             // typeList를 각 Fileds에 매치 후 저장
-            mongoMungple.setFigmaPhotoData(typeListMap);
+            mungple.setFigmaPhotoData(typeListMap);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new FigmaException(e.getMessage());

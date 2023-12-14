@@ -5,7 +5,7 @@ import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.domain.common.BaseTimeEntity;
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.mongoDomain.mungple.MongoMungple;
+import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.record.certification.CertCreate;
 import com.delgo.reward.record.certification.CertUpdate;
 import lombok.*;
@@ -78,18 +78,18 @@ public class Certification extends BaseTimeEntity {
                 .build();
     }
 
-    public static Certification from(CertCreate certCreate, MongoMungple mongoMungple, User user) {
+    public static Certification from(CertCreate certCreate, Mungple mungple, User user) {
         return Certification.builder()
                 .user(user)
-                .categoryCode(mongoMungple.getCategoryCode())
+                .categoryCode(mungple.getCategoryCode())
                 .mungpleId(certCreate.mungpleId())
-                .placeName(mongoMungple.getPlaceName())
+                .placeName(mungple.getPlaceName())
                 .description(certCreate.description())
-                .address(mongoMungple.formattedAddress())
-                .geoCode(mongoMungple.getGeoCode())
-                .pGeoCode(mongoMungple.getPGeoCode())
-                .latitude(mongoMungple.getLatitude())
-                .longitude(mongoMungple.getLongitude())
+                .address(mungple.formattedAddress())
+                .geoCode(mungple.getGeoCode())
+                .pGeoCode(mungple.getPGeoCode())
+                .latitude(mungple.getLatitude())
+                .longitude(mungple.getLongitude())
                 .isCorrect(true)
                 .isHideAddress(false)
                 .commentCount(0)

@@ -1,7 +1,7 @@
 package com.delgo.reward.service.strategy;
 
 import com.delgo.reward.dto.mungple.MungpleCountDTO;
-import com.delgo.reward.mongoDomain.mungple.MongoMungple;
+import com.delgo.reward.mongoDomain.mungple.Mungple;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -13,19 +13,19 @@ import java.util.stream.Stream;
 
 @Slf4j
 public class BookmarkCountSorting implements MungpleSortingStrategy {
-    private final List<MongoMungple> mungpleList;
+    private final List<Mungple> mungpleList;
     private final  List<MungpleCountDTO> countByBookmark;
 
-    public BookmarkCountSorting(List<MongoMungple> mungpleList, List<MungpleCountDTO> countByBookmark){
+    public BookmarkCountSorting(List<Mungple> mungpleList, List<MungpleCountDTO> countByBookmark){
         this.mungpleList = mungpleList;
         this.countByBookmark = countByBookmark;
     }
 
     @Override
-    public List<MongoMungple> sort() {
-        Map<Integer, MongoMungple> mungpleMap = mungpleList.stream()
+    public List<Mungple> sort() {
+        Map<Integer, Mungple> mungpleMap = mungpleList.stream()
                 .collect(Collectors.toMap(
-                        MongoMungple::getMungpleId, // 키로 사용할 함수
+                        Mungple::getMungpleId, // 키로 사용할 함수
                         Function.identity()        // 값으로 사용할 함수
                 ));
 

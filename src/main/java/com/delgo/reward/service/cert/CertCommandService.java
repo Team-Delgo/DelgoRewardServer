@@ -8,8 +8,8 @@ import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.mongoDomain.mungple.MongoMungple;
-import com.delgo.reward.mongoService.MongoMungpleService;
+import com.delgo.reward.mongoDomain.mungple.Mungple;
+import com.delgo.reward.mongoService.MungpleService;
 import com.delgo.reward.record.certification.CertCreate;
 import com.delgo.reward.record.certification.CertUpdate;
 import com.delgo.reward.repository.CertRepository;
@@ -40,7 +40,7 @@ public class CertCommandService {
     private final PhotoService photoService;
     private final GeoDataService geoDataService;
     private final ReactionService reactionService;
-    private final MongoMungpleService mongoMungpleService;
+    private final MungpleService mungpleService;
     private final ObjectStorageService objectStorageService;
 
     public Certification save(Certification certification) {
@@ -59,9 +59,9 @@ public class CertCommandService {
 
     public Certification createByMungple(CertCreate certCreate, List<MultipartFile> photoList) {
         User user = userService.getUserById(certCreate.userId());
-        MongoMungple mongoMungple = mongoMungpleService.getMungpleByMungpleId(certCreate.mungpleId());
+        Mungple mungple = mungpleService.getMungpleByMungpleId(certCreate.mungpleId());
 
-        Certification certification = certRepository.save(Certification.from(certCreate, mongoMungple, user));
+        Certification certification = certRepository.save(Certification.from(certCreate, mungple, user));
         certification.setPhotos(createPhotoList(certification.getCertificationId(), photoList));
         return certification;
     }

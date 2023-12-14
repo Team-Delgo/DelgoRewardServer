@@ -3,7 +3,7 @@ package com.delgo.reward.dto.mungple.detail;
 import com.delgo.reward.comm.code.BusinessHourCode;
 import com.delgo.reward.comm.code.DetailCode;
 import com.delgo.reward.dto.mungple.MungpleResDTO;
-import com.delgo.reward.mongoDomain.mungple.MongoMungple;
+import com.delgo.reward.mongoDomain.mungple.Mungple;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.ToString;
@@ -33,17 +33,17 @@ public class MungpleDetailResDTO extends MungpleResDTO {
     @Schema(description = "주차 정보")
     protected String parkingInfo;
 
-    public MungpleDetailResDTO(MongoMungple mongoMungple, int certCount, int bookmarkCount, boolean isBookmarked){
-        super(mongoMungple, certCount, bookmarkCount, isBookmarked);
+    public MungpleDetailResDTO(Mungple mungple, int certCount, int bookmarkCount, boolean isBookmarked){
+        super(mungple, certCount, bookmarkCount, isBookmarked);
 
-        this.phoneNo = mongoMungple.getPhoneNo();
-        this.enterDesc = mongoMungple.getEnterDesc();
-        this.acceptSize = mongoMungple.getAcceptSize();
-        this.businessHour = mongoMungple.getBusinessHour();
-        this.instaId = mongoMungple.getInstaId();
-        this.photoUrls = mongoMungple.getPhotoUrls();
-        this.editorNoteUrl = mongoMungple.getDetailUrl();
-        this.isParking = mongoMungple.getIsParking();
-        this.parkingInfo = mongoMungple.getParkingInfo();
+        this.phoneNo = mungple.getPhoneNo();
+        this.enterDesc = mungple.getEnterDesc();
+        this.acceptSize = mungple.getAcceptSize();
+        this.businessHour = mungple.getBusinessHour();
+        this.instaId = mungple.getInstaId();
+        this.photoUrls = mungple.getPhotoUrls();
+        this.editorNoteUrl = mungple.getDetailUrl();
+        this.isParking = mungple.getIsParking();
+        this.parkingInfo = mungple.getParkingInfo();
     }
 }

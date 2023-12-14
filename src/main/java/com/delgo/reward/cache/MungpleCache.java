@@ -1,12 +1,12 @@
 package com.delgo.reward.cache;
 
-import com.delgo.reward.mongoDomain.mungple.MongoMungple;
+import com.delgo.reward.mongoDomain.mungple.Mungple;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
 public class MungpleCache {
-    private MongoMungple mongoMungple;
+    private Mungple mungple;
     private LocalDateTime expirationDate;
 }

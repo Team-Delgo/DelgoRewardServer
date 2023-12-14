@@ -5,7 +5,7 @@ import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
-import com.delgo.reward.mongoService.MongoMungpleService;
+import com.delgo.reward.mongoService.MungpleService;
 import com.delgo.reward.repository.CertRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CertQueryService {
     private final CertRepository certRepository;
-    private final MongoMungpleService mongoMungpleService;
+    private final MungpleService mungpleService;
 
     public Certification getOneById(int certificationId) {
         return certRepository.findOneByCertificationId(certificationId)
@@ -65,6 +65,6 @@ public class CertQueryService {
 
         List<UserVisitMungpleCountDTO> userVisitMungpleCountDTOList =
                 certRepository.findVisitTop3MungpleIdByUserId(userId, pageable);
-        return mongoMungpleService.getMungpleListByIds(userVisitMungpleCountDTOList);
+        return mungpleService.getMungpleListByIds(userVisitMungpleCountDTOList);
     }
 }

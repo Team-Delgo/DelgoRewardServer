@@ -1,7 +1,7 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.mongoService.MongoMungpleService;
+import com.delgo.reward.mongoService.MungpleService;
 import com.delgo.reward.service.MapService;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class MapController extends CommController {
 
     private final MapService mapService;
-    private final MongoMungpleService mongoMungpleService;
+    private final MungpleService mungpleService;
 
     /*
      * Map 멍플,인증 장소 리스트 조회 TODO: 멍플이랑 인증이랑 구분
@@ -37,6 +37,6 @@ public class MapController extends CommController {
 
     @GetMapping("/mungple")
     public ResponseEntity getMap(@RequestParam String latitude, @RequestParam String longitude) {
-        return SuccessReturn(mongoMungpleService.findWithin3Km(latitude, longitude));
+        return SuccessReturn(mungpleService.findWithin3Km(latitude, longitude));
     }
 }

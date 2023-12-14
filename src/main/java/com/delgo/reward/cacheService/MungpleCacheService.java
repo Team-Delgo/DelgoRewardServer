@@ -1,7 +1,7 @@
 package com.delgo.reward.cacheService;
 
 import com.delgo.reward.cache.MungpleCache;
-import com.delgo.reward.mongoDomain.mungple.MongoMungple;
+import com.delgo.reward.mongoDomain.mungple.Mungple;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,10 +32,10 @@ public class MungpleCacheService {
      * [MUNGPLE_CACHE_STORE] 캐시 저장 / 업데이트
      */
     @CachePut(cacheNames = MUNGPLE_CACHE_STORE, key = "#key")
-    public MungpleCache updateCacheData(final int key, final MongoMungple value) {
+    public MungpleCache updateCacheData(final int key, final Mungple value) {
         log.info("[CacheService] MungpleCache key: " + key + "에 대한 캐시를 업데이트 합니다.");
         MungpleCache cacheData = new MungpleCache();
-        cacheData.setMongoMungple(value);
+        cacheData.setMungple(value);
         cacheData.setExpirationDate(LocalDateTime.now().plusDays(1));
         return cacheData;
     }
@@ -63,7 +63,7 @@ public class MungpleCacheService {
     public boolean isValidation(final MungpleCache cacheData) {
         return ObjectUtils.isNotEmpty(cacheData)
                 && ObjectUtils.isNotEmpty(cacheData.getExpirationDate())
-                && StringUtils.isNotEmpty(cacheData.getMongoMungple().getId())
+                && StringUtils.isNotEmpty(cacheData.getMungple().getId())
                 && cacheData.getExpirationDate().isAfter(LocalDateTime.now());
     }
 }

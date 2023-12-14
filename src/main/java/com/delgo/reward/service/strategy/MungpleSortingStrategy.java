@@ -1,8 +1,8 @@
 package com.delgo.reward.service.strategy;
 
-import com.delgo.reward.mongoDomain.mungple.MongoMungple;
+import com.delgo.reward.mongoDomain.mungple.Mungple;
 import java.util.List;
 
 public interface MungpleSortingStrategy {
-    List<MongoMungple> sort();
+    List<Mungple> sort();
 }

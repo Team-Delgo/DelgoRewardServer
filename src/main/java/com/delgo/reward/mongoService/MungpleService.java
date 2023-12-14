@@ -16,8 +16,8 @@ import com.delgo.reward.dto.mungple.detail.MungpleDetailByMenuResDTO;
 import com.delgo.reward.dto.mungple.detail.MungpleDetailByPriceTagResDTO;
 import com.delgo.reward.dto.mungple.detail.MungpleDetailResDTO;
 import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
-import com.delgo.reward.mongoDomain.mungple.MongoMungple;
-import com.delgo.reward.mongoRepository.MongoMungpleRepository;
+import com.delgo.reward.mongoDomain.mungple.Mungple;
+import com.delgo.reward.mongoRepository.MungpleRepository;
 import com.delgo.reward.repository.BookmarkRepository;
 import com.delgo.reward.service.strategy.*;
 import com.delgo.reward.repository.CertRepository;
@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class MongoMungpleService {
+public class MungpleService {
     private final String MUNGPLE_CACHE_STORE = "MungpleCacheStore";
 
     @Autowired
@@ -58,14 +58,14 @@ public class MongoMungpleService {
     // Repository
     private final CertRepository certRepository;
     private final BookmarkRepository bookmarkRepository;
-    private final MongoMungpleRepository mongoMungpleRepository;
+    private final MungpleRepository mungpleRepository;
 
 
     /**
      * Mungple 생성
      */
-    public MongoMungple save(MongoMungple mongoMungple) {
-        return mongoMungpleRepository.save(mongoMungple);
+    public Mungple save(Mungple mungple) {
+        return mungpleRepository.save(mungple);
     }
 
     /**
@@ -73,29 +73,29 @@ public class MongoMungpleService {
      */
     @Cacheable(cacheNames = MUNGPLE_CACHE_STORE)
     public List<MungpleResDTO> getAllActiveMungple() {
-        return mongoMungpleRepository.findByIsActive(true).stream().map(MungpleResDTO::new).toList();
+        return mungpleRepository.findByIsActive(true).stream().map(MungpleResDTO::new).toList();
     }
 
     /**
      * [mungpleId] Mungple 조회
      */
-    public MongoMungple getMungpleByMungpleId(int mungpleId) {
+    public Mungple getMungpleByMungpleId(int mungpleId) {
         MungpleCache cacheData = mungpleCacheService.getCacheData(mungpleId);
 
         if (!mungpleCacheService.isValidation(cacheData)) {
-            MongoMungple mongoMungple = mongoMungpleRepository.findByMungpleId(mungpleId)
+            Mungple mungple = mungpleRepository.findByMungpleId(mungpleId)
                     .orElseThrow(() -> new NotFoundDataException("[Mungple] mungpleId : " + mungpleId ));
-            cacheData = mungpleCacheService.updateCacheData(mungpleId, mongoMungple);
+            cacheData = mungpleCacheService.updateCacheData(mungpleId, mungple);
         }
 
-        return cacheData.getMongoMungple();
+        return cacheData.getMungple();
     }
 
     /**
      * [mungpleId] Mungple 조회
      */
-    public MongoMungple getByPlaceName(String placeName) {
-        return mongoMungpleRepository.findByPlaceName(placeName)
+    public Mungple getByPlaceName(String placeName) {
+        return mungpleRepository.findByPlaceName(placeName)
                     .orElseThrow(() -> new NotFoundDataException("[Mungple] placeName : " + placeName ));
     }
 
@@ -104,9 +104,9 @@ public class MongoMungpleService {
      */
     @Cacheable(cacheNames = MUNGPLE_CACHE_STORE)
     public List<MungpleResDTO> getMungpleByCategoryCode(String categoryCode) {
-        List<MongoMungple> mungpleList = !categoryCode.equals(CategoryCode.CA0000.getCode())
-                ? mongoMungpleRepository.findByCategoryCode(categoryCode)
-                : mongoMungpleRepository.findAll();
+        List<Mungple> mungpleList = !categoryCode.equals(CategoryCode.CA0000.getCode())
+                ? mungpleRepository.findByCategoryCode(categoryCode)
+                : mungpleRepository.findAll();
 
         return mungpleList.stream().map(MungpleResDTO::new).collect(Collectors.toList());
     }
@@ -115,9 +115,9 @@ public class MongoMungpleService {
      * [categoryCode] Active Mungple 조회 [TODO: Deprecated]
      */
     public List<MungpleResDTO> getActiveMungpleByCategoryCode(CategoryCode categoryCode) {
-        List<MongoMungple> mungpleList = !categoryCode.equals(CategoryCode.CA0000)
-                ? mongoMungpleRepository.findByCategoryCodeAndIsActive(categoryCode, true)
-                : mongoMungpleRepository.findByIsActive(true);
+        List<Mungple> mungpleList = !categoryCode.equals(CategoryCode.CA0000)
+                ? mungpleRepository.findByCategoryCodeAndIsActive(categoryCode, true)
+                : mungpleRepository.findByIsActive(true);
 
         return mungpleList.stream().map(m ->{
             int certCount = certRepository.countOfCorrectCertByMungple(m.getMungpleId());
@@ -131,9 +131,9 @@ public class MongoMungpleService {
      * [categoryCode] Active Mungple 조회
      */
     public List<MungpleResDTO> getActiveMungpleByCategoryCode(int userId, CategoryCode categoryCode, MungpleSort sort, String latitude, String longitude) {
-        List<MongoMungple> mungpleList = !categoryCode.equals(CategoryCode.CA0000)
-                ? mongoMungpleRepository.findByCategoryCodeAndIsActive(categoryCode, true)
-                : mongoMungpleRepository.findByIsActive(true);
+        List<Mungple> mungpleList = !categoryCode.equals(CategoryCode.CA0000)
+                ? mungpleRepository.findByCategoryCodeAndIsActive(categoryCode, true)
+                : mungpleRepository.findByIsActive(true);
 
         // DB Data 조회
         List<MungpleCountDTO> countByBookmark = bookmarkRepository.countBookmarksGroupedByMungpleId();
@@ -161,7 +161,7 @@ public class MongoMungpleService {
         // 사용자 ID를 기반으로 활성화 된 북마크를 가져온 후 정렬
         List<Bookmark> bookmarkList = bookmarkService.getActiveBookmarkByUserId(userId);
         List<Integer> mungpleIdList = bookmarkList.stream().map(Bookmark::getMungpleId).toList();
-        List<MongoMungple> mungpleList = mongoMungpleRepository.findByMungpleIdIn(mungpleIdList);
+        List<Mungple> mungpleList = mungpleRepository.findByMungpleIdIn(mungpleIdList);
 
         // 조건에 맞게 정렬
         MungpleSortingStrategy sortingStrategy = switch (sort) {
@@ -188,7 +188,7 @@ public class MongoMungpleService {
     }
 
 
-    public List<MungpleResDTO> convertToMungpleResDTOs(List<MongoMungple> mungples) {
+    public List<MungpleResDTO> convertToMungpleResDTOs(List<Mungple> mungples) {
         Map<Integer, MungpleCountDTO> bookmarkCountsMap = bookmarkRepository.countBookmarksGroupedByMungpleId().stream().collect(Collectors.toMap(MungpleCountDTO::getMungpleId, Function.identity()));
         Map<Integer, MungpleCountDTO> certCountsMap = certRepository.countCertsGroupedByMungpleId().stream().collect(Collectors.toMap(MungpleCountDTO::getMungpleId, Function.identity()));
 
@@ -204,12 +204,12 @@ public class MongoMungpleService {
      * [User] 멍플 아이디 리스트로 멍플 리스트 조회 후 카운트와 함께 반환
      */
     public List<UserVisitMungpleCountDTO> getMungpleListByIds(List<UserVisitMungpleCountDTO> userVisitMungpleCountDTOList){
-        List<MongoMungple> mongoMungpleList = mongoMungpleRepository.findByMungpleIdIn(userVisitMungpleCountDTOList.stream().map(UserVisitMungpleCountDTO::getMungpleId).collect(Collectors.toList()));
+        List<Mungple> mungpleList = mungpleRepository.findByMungpleIdIn(userVisitMungpleCountDTOList.stream().map(UserVisitMungpleCountDTO::getMungpleId).collect(Collectors.toList()));
 
-        for(MongoMungple mongoMungple: mongoMungpleList){
+        for(Mungple mungple : mungpleList){
             userVisitMungpleCountDTOList.replaceAll(e -> {
-                if(Objects.equals(e.getMungpleId(), mongoMungple.getMungpleId())){
-                    return e.setMungpleData(mongoMungple.getPlaceName(), mongoMungple.getPhotoUrls().get(0));
+                if(Objects.equals(e.getMungpleId(), mungple.getMungpleId())){
+                    return e.setMungpleData(mungple.getPlaceName(), mungple.getPhotoUrls().get(0));
                 } else {
                     return e;
                 }
@@ -224,14 +224,14 @@ public class MongoMungpleService {
      */
     public boolean isMungpleExisting(String address) {
         GeoData geoData = geoDataService.getGeoData(address);
-        return mongoMungpleRepository.existsByLatitudeAndLongitude(geoData.getLatitude(), geoData.getLongitude());
+        return mungpleRepository.existsByLatitudeAndLongitude(geoData.getLatitude(), geoData.getLongitude());
     }
 
     /**
      * [PlaceName] Mungple 중복 체크
      */
     public boolean isMungpleExistingByPlaceName(String placeName) {
-        return mongoMungpleRepository.existsByPlaceName(placeName);
+        return mungpleRepository.existsByPlaceName(placeName);
     }
 
     /**
@@ -240,34 +240,34 @@ public class MongoMungpleService {
      * 캐시도 삭제해줘야함
      */
     public void deleteMungple(int mungpleId){
-        mongoMungpleRepository.deleteByMungpleId(mungpleId);
+        mungpleRepository.deleteByMungpleId(mungpleId);
         mungpleCacheService.deleteCacheData(mungpleId);
         objectStorageService.deleteObject(BucketName.MUNGPLE,mungpleId + "_mungple.webp"); // Thumbnail delete
         objectStorageService.deleteObject(BucketName.MUNGPLE_NOTE,mungpleId + "_mungplenote.webp"); // mungpleNote delete
     }
 
-    public List<MongoMungple> findWithin3Km(String latitude, String longitude) {
+    public List<Mungple> findWithin3Km(String latitude, String longitude) {
         double maxDistanceInRadians = 2 / 6371.01;
 
         Query query = new Query();
         query.addCriteria(Criteria.where("location").withinSphere(new Circle(Double.parseDouble(longitude), Double.parseDouble(latitude), maxDistanceInRadians)));
 
-        return mongoTemplate.find(query, MongoMungple.class);
+        return mongoTemplate.find(query, Mungple.class);
     }
 
     public MungpleDetailResDTO getMungpleDetailByMungpleIdAndUserId(int mungpleId, int userId) {
-        MongoMungple mongoMungple = getMungpleByMungpleId(mungpleId);
+        Mungple mungple = getMungpleByMungpleId(mungpleId);
         int certCount = certRepository.countOfCorrectCertByMungple(mungpleId);
 
         boolean isBookmarked = (userId != 0 && bookmarkService.hasBookmarkByIsBookmarked(userId, mungpleId, true));
         int bookmarkCount = bookmarkService.getActiveBookmarkCount(mungpleId);
 
-        switch (mongoMungple.getCategoryCode()) {
+        switch (mungple.getCategoryCode()) {
             case CA0002, CA0003 -> {
-                return new MungpleDetailByMenuResDTO(mongoMungple, certCount, bookmarkCount, isBookmarked);
+                return new MungpleDetailByMenuResDTO(mungple, certCount, bookmarkCount, isBookmarked);
             }
             default -> {
-                return new MungpleDetailByPriceTagResDTO(mongoMungple, certCount, bookmarkCount, isBookmarked);
+                return new MungpleDetailByPriceTagResDTO(mungple, certCount, bookmarkCount, isBookmarked);
             }
         }
     }
@@ -276,7 +276,7 @@ public class MongoMungpleService {
         // Cache 전부 삭제
         mungpleCacheService.deleteAllCacheData();
         // Active Mongo Mungple 조회
-        List<MongoMungple> mungpleList = mongoMungpleRepository.findByIsActive(true);
+        List<Mungple> mungpleList = mungpleRepository.findByIsActive(true);
         // Cache 설정
         mungpleList.forEach(m -> mungpleCacheService.updateCacheData(m.getMungpleId(), m));
     }

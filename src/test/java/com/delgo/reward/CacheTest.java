@@ -3,9 +3,9 @@ package com.delgo.reward;
 import com.delgo.reward.cache.MungpleCache;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.dto.mungple.MungpleResDTO;
-import com.delgo.reward.mongoDomain.mungple.MongoMungple;
-import com.delgo.reward.mongoRepository.MongoMungpleRepository;
-import com.delgo.reward.mongoService.MongoMungpleService;
+import com.delgo.reward.mongoDomain.mungple.Mungple;
+import com.delgo.reward.mongoRepository.MungpleRepository;
+import com.delgo.reward.mongoService.MungpleService;
 import com.delgo.reward.cacheService.MungpleCacheService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,23 +22,23 @@ public class CacheTest {
     @Autowired
     private MungpleCacheService mungpleCacheService;
     @Autowired
-    private MongoMungpleService mongoMungpleService;
+    private MungpleService mungpleService;
     @Autowired
-    private MongoMungpleRepository mongoMungpleRepository;
+    private MungpleRepository mungpleRepository;
 
     @Test
     public void allCacheTest() {
-        MongoMungple mongoMungple = mongoMungpleService.getMungpleByMungpleId(1);
+        Mungple mungple = mungpleService.getMungpleByMungpleId(1);
 
         MungpleCache cacheData = mungpleCacheService.getCacheData(1);
         if (!mungpleCacheService.isValidation(cacheData)) {
-            cacheData = mungpleCacheService.updateCacheData(1, mongoMungple);
+            cacheData = mungpleCacheService.updateCacheData(1, mungple);
         }
         MungpleCache newCacheData = mungpleCacheService.getCacheData(1);
 
-        System.out.println("cacheData mungpleId: " + cacheData.getMongoMungple().getMungpleId());
+        System.out.println("cacheData mungpleId: " + cacheData.getMungple().getMungpleId());
         System.out.println("cacheData expirationDate: " + cacheData.getExpirationDate());
-        System.out.println("newCacheData mungpleId: " + newCacheData.getMongoMungple().getMungpleId());
+        System.out.println("newCacheData mungpleId: " + newCacheData.getMungple().getMungpleId());
         System.out.println("newCacheData expirationDate: " + newCacheData.getExpirationDate());
 
         mungpleCacheService.deleteCacheData(1);
@@ -47,18 +47,18 @@ public class CacheTest {
 
     @Test
     public void getCacheTest(){
-        MongoMungple mongoMungple = mongoMungpleService.getMungpleByMungpleId(1);
+        Mungple mungple = mungpleService.getMungpleByMungpleId(1);
 
         MungpleCache cacheData = mungpleCacheService.getCacheData(1);
         if (!mungpleCacheService.isValidation(cacheData)) {
-            cacheData = mungpleCacheService.updateCacheData(1, mongoMungple);
+            cacheData = mungpleCacheService.updateCacheData(1, mungple);
         }
 
         MungpleCache newCacheData = mungpleCacheService.getCacheData(1);
 
-        System.out.println("cacheData mungpleId: " + cacheData.getMongoMungple().getMungpleId());
+        System.out.println("cacheData mungpleId: " + cacheData.getMungple().getMungpleId());
         System.out.println("cacheData expirationDate: " + cacheData.getExpirationDate());
-        System.out.println("newCacheData mungpleId: " + newCacheData.getMongoMungple().getMungpleId());
+        System.out.println("newCacheData mungpleId: " + newCacheData.getMungple().getMungpleId());
         System.out.println("newCacheData expirationDate: " + newCacheData.getExpirationDate());
     }
     @Test
@@ -69,7 +69,7 @@ public class CacheTest {
         System.out.println("=======[Database]=======");
         stopWatch1.start();
 
-        List<MungpleResDTO> mungpleResDTOList1 = mongoMungpleService.getMungpleByCategoryCode(categoryCode);
+        List<MungpleResDTO> mungpleResDTOList1 = mungpleService.getMungpleByCategoryCode(categoryCode);
         System.out.println("Count: " + mungpleResDTOList1.size());
 
         stopWatch1.stop();
@@ -82,7 +82,7 @@ public class CacheTest {
         System.out.println("=======[Cache]=======");
         stopWatch2.start();
 
-        List<MungpleResDTO> mungpleResDTOList2 = mongoMungpleService.getMungpleByCategoryCode(categoryCode);
+        List<MungpleResDTO> mungpleResDTOList2 = mungpleService.getMungpleByCategoryCode(categoryCode);
         System.out.println("Count: " + mungpleResDTOList2.size());
 
         stopWatch2.stop();
