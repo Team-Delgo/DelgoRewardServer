@@ -56,11 +56,9 @@ public class CertQueryService {
         return certRepository.findCorrectPage(userId, pageable);
     }
 
-
     public Page<Certification> getPagingListByMungpleId(int userId, int mungpleId, Pageable pageable) {
          return certRepository.findCorrectPageByMungple(mungpleId, userId, pageable);
     }
-
 
     public List<UserVisitMungpleCountDTO> getVisitedMungpleIdListTop3ByUserId(int userId) {
         Pageable pageable = PageRequest.of(0, 3);
