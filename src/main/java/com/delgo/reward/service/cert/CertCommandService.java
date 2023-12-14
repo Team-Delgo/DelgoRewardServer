@@ -10,8 +10,8 @@ import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoService.MongoMungpleService;
-import com.delgo.reward.record.certification.CertRecord;
-import com.delgo.reward.record.certification.ModifyCertRecord;
+import com.delgo.reward.record.certification.CertCreate;
+import com.delgo.reward.record.certification.CertUpdate;
 import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.service.CodeService;
 import com.delgo.reward.service.ReactionService;
@@ -37,24 +37,25 @@ public class CertCommandService {
     private final MongoMungpleService mongoMungpleService;
     private final ObjectStorageService objectStorageService;
 
-    public Certification create(CertRecord record) {
-        User user = userService.getUserById(record.userId());
-        String address = geoDataService.getReverseGeoData(record.latitude(), record.longitude());
+    public Certification create(CertCreate certCreate) {
+        User user = userService.getUserById(certCreate.userId());
+        String address = geoDataService.getReverseGeoData(certCreate.latitude(), certCreate.longitude());
         Code code = codeService.getGeoCodeByAddress(address);
 
-        return certRepository.save(record.toEntity(address, code, user));
+        return certRepository.save(Certification.from(certCreate, address, code, user));
     }
 
-    public Certification createByMungple(CertRecord record) {
-        User user = userService.getUserById(record.userId());
-        MongoMungple mongoMungple = mongoMungpleService.getMungpleByMungpleId(record.mungpleId());
-        return certRepository.save(record.toEntity(mongoMungple, user));
+    public Certification createByMungple(CertCreate certCreate) {
+        User user = userService.getUserById(certCreate.userId());
+        MongoMungple mongoMungple = mongoMungpleService.getMungpleByMungpleId(certCreate.mungpleId());
+        return certRepository.save(Certification.from(certCreate, mongoMungple, user));
     }
 
-    public Certification modifyCert(Certification certification, ModifyCertRecord record) {
-        return certification.modify(record);
+    public Certification update(CertUpdate certUpdate) {
+        Certification cert = certRepository.findOneByCertificationId(certUpdate.certificationId())
+                .orElseThrow(() -> new NotFoundDataException("[Certification] certificationId : " + certUpdate.certificationId()));
+        return certRepository.save(cert.update(certUpdate));
     }
-
 
     public void changeIsCorrect(int certificationId, boolean isCorrect) {
         Certification cert = certRepository.findOneByCertificationId(certificationId)
@@ -62,7 +63,7 @@ public class CertCommandService {
         cert.setIsCorrect(isCorrect);
     }
 
-    public void deleteCert(int certificationId) {
+    public void delete(int certificationId) {
         certRepository.deleteById(certificationId);
         reactionService.deleteByCertId(certificationId);
         objectStorageService.deleteObject(BucketName.CERTIFICATION, certificationId + "_cert.webp");

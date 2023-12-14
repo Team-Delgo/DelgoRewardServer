@@ -14,14 +14,13 @@ import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.cert.CertResponse;
 import com.delgo.reward.dto.cert.PageCertResponse;
 import com.delgo.reward.mongoService.ClassificationService;
-import com.delgo.reward.record.certification.CertRecord;
-import com.delgo.reward.record.certification.ModifyCertRecord;
+import com.delgo.reward.record.certification.CertCreate;
+import com.delgo.reward.record.certification.CertUpdate;
 import com.delgo.reward.service.CertPhotoService;
 import com.delgo.reward.service.cert.CertCommandService;
 import com.delgo.reward.service.ReactionService;
 import com.delgo.reward.service.UserService;
 import com.delgo.reward.service.cert.CertQueryService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -29,7 +28,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -60,8 +58,6 @@ public class CertController extends CommController {
 
     /**
      * 전체 인증 조회
-     * @param userId, certificationId(제외할 인증 번호), pageable
-     * @return PageCertResponse
      */
     @Operation(summary = "전체 인증 조회 [Paging]", description = "모든 isCorrect = true인 인증 조회 \n certificationId의 경우 특정 인증을 제외 하고 싶을 때 사용")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCertResponse.class))})
@@ -79,8 +75,6 @@ public class CertController extends CommController {
 
     /**
      * [Other]다른 사용자 작성 인증 조회  ex) CA0000(전체 조회), CA0002(카페 조회)
-     * @param userId, categoryCode, pageable
-     * @return PageCertResponse
      */
     @Operation(summary = "다른 사용자 작성 인증 조회 [Paging]", description = "다른 사용자가 작성한 인증 조회 [권한 필요 없음]")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCertResponse.class))})
@@ -104,8 +98,6 @@ public class CertController extends CommController {
 
     /**
      * [Mungple] 인증 조회
-     * @param userId, mungpleId, pageable
-     * @return PageResDTO<CertByMungpleResDTO, Integer>
      */
     @Operation(summary = "[Mungple] 인증 조회 [Paging]", description ="mungpleId로 멍플 인증 조회 [권한 필요 없음]")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCertResponse.class))})
@@ -123,8 +115,6 @@ public class CertController extends CommController {
 
     /**
      * [certId] 인증 조회
-     * @param userId, certificationId
-     * @return List<CertResDTO>
      */
     @Operation(summary = "[certId] 인증 조회", description ="고유 ID로 인증 데이터 조회  \n  단 건이지만 Front 요청으로 LIST로 반환")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CertResponse.class)))})
@@ -141,30 +131,26 @@ public class CertController extends CommController {
 
     /**
      * 인증 생성
-     * @param record, photo
-     * @return CertByAchvResDTO
      */
     @Operation(summary = "인증 생성", description ="인증 생성")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = CertResponse.class))})
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<?> createCert(@Validated @RequestPart(value = "data") CertRecord record, @RequestPart(required = false) List<MultipartFile> photos) throws JsonProcessingException {
+    public ResponseEntity<?> createCert(@Validated @RequestPart(value = "data") CertCreate certCreate, @RequestPart(required = false) List<MultipartFile> photos) {
         if(photos.isEmpty()) ErrorReturn(APICode.PARAM_ERROR);
-        Certification certification = (record.mungpleId() == 0)
-                ? certCommandService.create(record)
-                : certCommandService.createByMungple(record);
+        Certification certification = (certCreate.mungpleId() == 0)
+                ? certCommandService.create(certCreate)
+                : certCommandService.createByMungple(certCreate);
         List<CertPhoto> certPhotoList = certPhotoService.create(certification.getCertificationId(), photos);
 
         // 비동기적 실행
         certAsyncService.doSomething(certification.getCertificationId());
         classificationAsyncService.doClassification(certification.getCertificationId());
 
-        return SuccessReturn(CertResponse.from(record.userId(), certification, new ArrayList<>(), certPhotoList));
+        return SuccessReturn(CertResponse.from(certCreate.userId(), certification, new ArrayList<>(), certPhotoList));
     }
 
     /**
      * [Date] 인증 조회 ex) 2023.07.10에 등록한 인증
-     * @param userId, date
-     * @return List<CertResDTO>
      */
     @Operation(summary = "[Date] 인증 조회", description = "특정 날짜에 인증한 모든 인증글 조회 [캘린더] \n  ex) 2023.07.10에 등록한 인증")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array =
@@ -180,8 +166,6 @@ public class CertController extends CommController {
 
     /**
      * [My]내가 작성한 인증 조회  ex) CA0000(전체 조회), CA0002(카페 조회)
-     * @param userId, categoryCode, pageable
-     * @return PageResDTO<CertResDTO, Integer>
      */
     @Operation(summary = "[My] 내가 작성한 인증 조회 [paging]", description = "내가 작성한 모든 인증글 조회 [ \n isCorrect = false 여도 조회.")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCertResponse.class))})
@@ -204,8 +188,6 @@ public class CertController extends CommController {
 
     /**
      * [My]내가 작성한 인증 전체 조회
-     * @param userId, categoryCode, pageable
-     * @return PageResDTO<CertResDTO, Integer>
      */
     @Operation(summary = "[My] 내가 작성한 인증 전체 조회", description = "내가 작성한 모든 인증글 조회 \n isCorrect = false 여도 조회.")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCertResponse.class))})
@@ -220,8 +202,6 @@ public class CertController extends CommController {
 
     /**
      * [Recent] 인증 조회
-     * @param userId, count(조회 개수)
-     * @return List<CertResDTO>
      */
     @Operation(summary = "[Recent] 인증 조회", description = "param count 만큼 최근 인증 조회")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CertResponse.class)))})
@@ -236,31 +216,28 @@ public class CertController extends CommController {
 
     /**
      * 인증 수정
-     * @param record
-     * @return CertResDTO
      */
     @Operation(summary = "인증 수정", description = "인증 수정 - 내용, 주소 숨김 여부만 수정 가능")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = CertResponse.class))})
     @PutMapping
-    public ResponseEntity modifyCert(@Validated @RequestBody ModifyCertRecord record) {
-        Certification certification = certQueryService.getOneById(record.certificationId());
-        if (record.userId() != certification.getUser().getUserId())
+    public ResponseEntity modifyCert(@Validated @RequestBody CertUpdate certUpdate) {
+        Certification certification = certQueryService.getOneById(certUpdate.certificationId());
+        if (certUpdate.userId() != certification.getUser().getUserId())
             return ErrorReturn(APICode.INVALID_USER_ERROR);
 
         // 인증 분류 삭제
         classificationService.deleteClassificationWhenModifyCert(certification);
-        Certification updatedCertification = certCommandService.modifyCert(certification, record);
+        Certification updatedCertification = certCommandService.update(certUpdate);
         List<Reaction> reactionList = reactionService.getListByCertId(certification.getCertificationId());
         List<CertPhoto> certPhotoList = certPhotoService.getListByCertId(certification.getCertificationId());
 
         // 비동기적 실행
         classificationAsyncService.doClassification(updatedCertification.getCertificationId());
-        return SuccessReturn(CertResponse.from(record.userId(), updatedCertification, reactionList, certPhotoList));
+        return SuccessReturn(CertResponse.from(certUpdate.userId(), updatedCertification, reactionList, certPhotoList));
     }
 
     /**
      * 인증 삭제
-     * @param userId, certificationId
      */
     @Operation(summary = "인증 삭제", description = "인증 삭제")
     @DeleteMapping(value = {"/{userId}/{certificationId}"})
@@ -271,14 +248,13 @@ public class CertController extends CommController {
         // 인증 분류 삭제
         classificationService.deleteClassificationWhenModifyCert(certQueryService.getOneById(certificationId));
 
-        certCommandService.deleteCert(certificationId);
+        certCommandService.delete(certificationId);
         reactionService.deleteByCertId(certificationId);
         return SuccessReturn();
     }
 
     /**
      * 인증 Reaction
-     * @param userId, certificationId, reactionCode
      */
     @Operation(summary = "인증 Reaction", description = "Reaction 등록 및 수정 - 인증에 대한 반응을 등록 및 수정")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Reaction.class))})

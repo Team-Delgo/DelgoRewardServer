@@ -210,4 +210,9 @@ public class MongoMungple {
         }
         return "";
     }
+
+    public String formattedAddress(){
+        String[] arr = jibunAddress.split(" ");
+        return arr[0] + " " + arr[1] + " " + arr[2];
+    }
 }
