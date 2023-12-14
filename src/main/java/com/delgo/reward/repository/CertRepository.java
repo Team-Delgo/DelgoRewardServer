@@ -7,10 +7,7 @@ import com.delgo.reward.dto.mungple.MungpleCountDTO;
 import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
@@ -18,6 +15,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CertRepository extends JpaRepository<Certification, Integer>, JpaSpecificationExecutor<Certification> {
+
+    @Modifying
+    @Query("DELETE FROM Certification c WHERE c.user.userId = :userId")
+    void deleteByUserId(@Param("userId") Integer userId);
 
     @EntityGraph(attributePaths = {"user", "user.pet"})
     @Query("SELECT c FROM Certification c WHERE c.certificationId = :certId")
