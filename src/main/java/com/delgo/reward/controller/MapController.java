@@ -39,10 +39,4 @@ public class MapController extends CommController {
     public ResponseEntity getMap(@RequestParam String latitude, @RequestParam String longitude) {
         return SuccessReturn(mongoMungpleService.findWithin3Km(latitude, longitude));
     }
-
-    // 시, 도, 광역시 기준 6개 노출(서울특별시 기준 송파구 3개 외 지역 3개)
-    @GetMapping("/test")
-    public ResponseEntity test(){
-        return SuccessReturn(mapService.test());
-    }
 }

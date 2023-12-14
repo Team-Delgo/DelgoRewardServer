@@ -282,17 +282,4 @@ public class CertController extends CommController {
                 ? reactionService.update(userId, certificationId, reactionCode)
                 : reactionService.create(userId, certificationId, reactionCode));
     }
-
-    // ---------------------------------------- Deprecated ----------------------------------------
-
-    /**
-     * [User] 인증 개수 조회 [ Deprecated ]
-     * @param userId
-     * @return int
-     */
-    @Hidden
-    @GetMapping(value = {"/count/{userId}", "/count/"})
-    public ResponseEntity getCertCountByUser(@PathVariable Integer userId) {
-        return SuccessReturn(certService.getCertCountByUser(userId));
-    }
 }
