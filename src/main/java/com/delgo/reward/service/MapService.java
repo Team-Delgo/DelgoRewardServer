@@ -46,8 +46,4 @@ public class MapService {
                 certService.getCorrectCertCountByUserId(userId)
         );
     }
-
-    public Map<String, List<Certification>> test() {
-        return certService.test(6);
-    }
 }
