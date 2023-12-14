@@ -2,9 +2,12 @@ package com.delgo.reward.domain.certification;
 
 
 import com.delgo.reward.comm.code.CategoryCode;
+import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.domain.common.BaseTimeEntity;
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.record.certification.ModifyCertRecord;
+import com.delgo.reward.mongoDomain.mungple.MongoMungple;
+import com.delgo.reward.record.certification.CertCreate;
+import com.delgo.reward.record.certification.CertUpdate;
 import lombok.*;
 
 import javax.persistence.*;
@@ -43,6 +46,61 @@ public class Certification extends BaseTimeEntity {
     @JoinColumn(name = "userId", updatable = false)
     private User user;
 
+    public static Certification from(CertCreate certCreate, String address, Code code, User user) {
+        return Certification.builder()
+                .user(user)
+                .categoryCode(certCreate.categoryCode())
+                .mungpleId(certCreate.mungpleId())
+                .placeName(certCreate.placeName())
+                .description(certCreate.description())
+                .address(address)
+                .geoCode(code.getCode())
+                .pGeoCode(code.getPCode())
+                .latitude(certCreate.latitude())
+                .longitude(certCreate.longitude())
+                .isCorrect(true)
+                .isHideAddress(certCreate.isHideAddress())
+                .commentCount(0)
+                .build();
+    }
+
+    public static Certification from(CertCreate certCreate, MongoMungple mongoMungple, User user) {
+        return Certification.builder()
+                .user(user)
+                .categoryCode(mongoMungple.getCategoryCode())
+                .mungpleId(certCreate.mungpleId())
+                .placeName(mongoMungple.getPlaceName())
+                .description(certCreate.description())
+                .address(mongoMungple.formattedAddress())
+                .geoCode(mongoMungple.getGeoCode())
+                .pGeoCode(mongoMungple.getPGeoCode())
+                .latitude(mongoMungple.getLatitude())
+                .longitude(mongoMungple.getLongitude())
+                .isCorrect(true)
+                .isHideAddress(false)
+                .commentCount(0)
+                .build();
+    }
+
+    public Certification update(CertUpdate certUpdate) {
+        return Certification.builder()
+                .certificationId(this.certificationId)
+                .user(user)
+                .categoryCode(categoryCode)
+                .mungpleId(mungpleId)
+                .placeName(placeName)
+                .address(address)
+                .geoCode(geoCode)
+                .pGeoCode(pGeoCode)
+                .latitude(latitude)
+                .longitude(longitude)
+                .isCorrect(isCorrect)
+                .commentCount(commentCount)
+                // update
+                .description(certUpdate.description())
+                .isHideAddress(certUpdate.isHideAddress())
+                .build();
+    }
 
     public void setIsCorrect(boolean isCorrect){
         this.isCorrect = isCorrect;
@@ -54,7 +112,7 @@ public class Certification extends BaseTimeEntity {
 
     }
 
-    public Certification modify(ModifyCertRecord record){
+    public Certification modify(CertUpdate record){
         this.description = record.description();
         this.isHideAddress = record.isHideAddress();
 
