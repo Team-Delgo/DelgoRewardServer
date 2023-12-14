@@ -1,6 +1,5 @@
 package com.delgo.reward.dto.cert;
 
-import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.certification.Reaction;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -29,8 +28,8 @@ public class PageCertResponse {
     @Schema(description = "데이터 리스트")
     private List<CertResponse> content;
 
-    public static PageCertResponse from(Integer userId, Page<Certification> page, Map<Integer, List<Reaction>> reactionMap, Map<Integer, List<CertPhoto>> photoMap) {
-        List<CertResponse> content = CertResponse.fromList(userId, page.getContent(), reactionMap, photoMap);
+    public static PageCertResponse from(Integer userId, Page<Certification> page, Map<Integer, List<Reaction>> reactionMap) {
+        List<CertResponse> content = CertResponse.fromList(userId, page.getContent(), reactionMap);
         return PageCertResponse.builder().
                 size(page.getSize())
                 .number(page.getNumber())

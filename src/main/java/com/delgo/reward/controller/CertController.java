@@ -7,7 +7,6 @@ import com.delgo.reward.comm.async.ClassificationAsyncService;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.ReactionCode;
-import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.certification.Reaction;
 import com.delgo.reward.domain.user.User;
@@ -16,7 +15,6 @@ import com.delgo.reward.dto.cert.PageCertResponse;
 import com.delgo.reward.mongoService.ClassificationService;
 import com.delgo.reward.record.certification.CertCreate;
 import com.delgo.reward.record.certification.CertUpdate;
-import com.delgo.reward.service.CertPhotoService;
 import com.delgo.reward.service.cert.CertCommandService;
 import com.delgo.reward.service.ReactionService;
 import com.delgo.reward.service.UserService;
@@ -49,7 +47,6 @@ public class CertController extends CommController {
 
     private final UserService userService;
     private final ReactionService reactionService;
-    private final CertPhotoService certPhotoService;
     private final CertAsyncService certAsyncService;
     private final CertQueryService certQueryService;
     private final CertCommandService certCommandService;
@@ -68,9 +65,8 @@ public class CertController extends CommController {
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Certification> page = certQueryService.getCorrectPagingList(userId, pageable);
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
-        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(page.getContent());
 
-        return SuccessReturn(PageCertResponse.from(userId, page, reactionMap, photoMap));
+        return SuccessReturn(PageCertResponse.from(userId, page, reactionMap));
     }
 
     /**
@@ -88,10 +84,9 @@ public class CertController extends CommController {
                 : certQueryService.getCorrectPagingListByUserIdAndCategoryCode(userId, categoryCode, pageable);
 
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
-        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(page.getContent());
         User user = userService.getUserById(userId);
 
-        return SuccessReturn(PageCertResponse.from(userId, page, reactionMap, photoMap)
+        return SuccessReturn(PageCertResponse.from(userId, page, reactionMap)
                 .setViewCount(user.getViewCount()));
     }
 
@@ -108,9 +103,8 @@ public class CertController extends CommController {
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Certification> page =  certQueryService.getPagingListByMungpleId(userId, mungpleId, pageable);
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
-        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(page.getContent());
 
-        return SuccessReturn(PageCertResponse.from(userId, page, reactionMap, photoMap));
+        return SuccessReturn(PageCertResponse.from(userId, page, reactionMap));
     }
 
     /**
@@ -122,9 +116,8 @@ public class CertController extends CommController {
     public ResponseEntity getCertsByCertId(@RequestParam Integer userId, @RequestParam Integer certificationId) {
         Certification certification = certQueryService.getOneById(certificationId);
         List<Reaction> reactionList = reactionService.getListByCertId(certificationId);
-        List<CertPhoto> certPhotoList = certPhotoService.getListByCertId(certificationId);
 
-        return SuccessReturn(new ArrayList<>(Collections.singletonList(CertResponse.from(userId, certification, reactionList, certPhotoList))));
+        return SuccessReturn(new ArrayList<>(Collections.singletonList(CertResponse.from(userId, certification, reactionList))));
     }
 
     // ---------------------------------권한 필요--------------------------------------------
@@ -136,17 +129,16 @@ public class CertController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = CertResponse.class))})
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> createCert(@Validated @RequestPart(value = "data") CertCreate certCreate, @RequestPart(required = false) List<MultipartFile> photos) {
-        if(photos.isEmpty()) ErrorReturn(APICode.PARAM_ERROR);
+        if (photos.isEmpty()) ErrorReturn(APICode.PARAM_ERROR);
         Certification certification = (certCreate.mungpleId() == 0)
-                ? certCommandService.create(certCreate)
-                : certCommandService.createByMungple(certCreate);
-        List<CertPhoto> certPhotoList = certPhotoService.create(certification.getCertificationId(), photos);
+                ? certCommandService.create(certCreate, photos)
+                : certCommandService.createByMungple(certCreate, photos);
 
         // 비동기적 실행
-        certAsyncService.doSomething(certification.getCertificationId());
+        certAsyncService.convertAndUpload(certification.getCertificationId());
         classificationAsyncService.doClassification(certification.getCertificationId());
 
-        return SuccessReturn(CertResponse.from(certCreate.userId(), certification, new ArrayList<>(), certPhotoList));
+        return SuccessReturn(CertResponse.from(certCreate.userId(), certification, new ArrayList<>()));
     }
 
     /**
@@ -159,9 +151,8 @@ public class CertController extends CommController {
     public ResponseEntity getCertsByDate(@RequestParam Integer userId, @RequestParam String date) {
         List<Certification> certificationList = certQueryService.getListByDate(userId, LocalDate.parse(date));
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(certificationList);
-        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(certificationList);
 
-        return SuccessReturn(CertResponse.fromList(userId, certificationList, reactionMap, photoMap));
+        return SuccessReturn(CertResponse.fromList(userId, certificationList, reactionMap));
     }
 
     /**
@@ -179,10 +170,9 @@ public class CertController extends CommController {
                 : certQueryService.getPagingListByUserIdAndCategoryCode(userId, categoryCode, pageable);
 
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
-        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(page.getContent());
         User user = userService.getUserById(userId);
 
-        return SuccessReturn(PageCertResponse.from(userId, page, reactionMap, photoMap)
+        return SuccessReturn(PageCertResponse.from(userId, page, reactionMap)
                 .setViewCount(user.getViewCount()));
     }
 
@@ -195,9 +185,8 @@ public class CertController extends CommController {
     public ResponseEntity getAllMyCerts(@RequestParam Integer userId) {
         Page<Certification> page = certQueryService.getPagingListByUserId(userId, Pageable.unpaged());
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
-        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(page.getContent());
 
-        return SuccessReturn(CertResponse.fromList(userId, page.getContent(), reactionMap, photoMap));
+        return SuccessReturn(CertResponse.fromList(userId, page.getContent(), reactionMap));
     }
 
     /**
@@ -209,9 +198,8 @@ public class CertController extends CommController {
     public ResponseEntity getRecentCerts(@RequestParam Integer userId, @RequestParam Integer count) {
         Page<Certification> page = certQueryService.getCorrectPagingList(userId, PageRequest.of(0, count));
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
-        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(page.getContent());
 
-        return SuccessReturn(CertResponse.fromList(userId, page.getContent(), reactionMap, photoMap));
+        return SuccessReturn(CertResponse.fromList(userId, page.getContent(), reactionMap));
     }
 
     /**
@@ -229,11 +217,10 @@ public class CertController extends CommController {
         classificationService.deleteClassificationWhenModifyCert(certification);
         Certification updatedCertification = certCommandService.update(certUpdate);
         List<Reaction> reactionList = reactionService.getListByCertId(certification.getCertificationId());
-        List<CertPhoto> certPhotoList = certPhotoService.getListByCertId(certification.getCertificationId());
 
         // 비동기적 실행
         classificationAsyncService.doClassification(updatedCertification.getCertificationId());
-        return SuccessReturn(CertResponse.from(certUpdate.userId(), updatedCertification, reactionList, certPhotoList));
+        return SuccessReturn(CertResponse.from(certUpdate.userId(), updatedCertification, reactionList));
     }
 
     /**

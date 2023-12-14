@@ -1,11 +1,9 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.certification.Reaction;
 import com.delgo.reward.dto.cert.CalendarResponse;
-import com.delgo.reward.service.CertPhotoService;
 import com.delgo.reward.service.ReactionService;
 import com.delgo.reward.service.cert.CertQueryService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +20,6 @@ import java.util.Map;
 @RequestMapping("/api/calendar")
 public class CalendarController extends CommController {
     private final ReactionService reactionService;
-    private final CertPhotoService certPhotoService;
     private final CertQueryService certQueryService;
 
     /*
@@ -34,8 +31,7 @@ public class CalendarController extends CommController {
     public ResponseEntity getCalendar(@PathVariable Integer userId) {
         Page<Certification> page = certQueryService.getPagingListByUserId(userId, Pageable.unpaged());
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
-        Map<Integer,List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(page.getContent());
 
-        return SuccessReturn(CalendarResponse.from(userId, page, reactionMap, photoMap));
+        return SuccessReturn(CalendarResponse.from(userId, page, reactionMap));
     }
 }

@@ -9,14 +9,19 @@ import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.record.certification.CertCreate;
 import com.delgo.reward.record.certification.CertUpdate;
 import lombok.*;
-
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import javax.persistence.*;
+import java.util.List;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
+
 
 @Getter
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@TypeDef(name = "json", typeClass = JsonType.class)
 public class Certification extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,6 +50,15 @@ public class Certification extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "userId", updatable = false)
     private User user;
+
+    @Type(type = "json")
+    @Column(columnDefinition = "longtext")
+    private List<String> photos;
+
+    public Certification setPhotos(List<String> photos){
+        this.photos = photos;
+        return this;
+    }
 
     public static Certification from(CertCreate certCreate, String address, Code code, User user) {
         return Certification.builder()
@@ -110,12 +124,5 @@ public class Certification extends BaseTimeEntity {
     public void setCommentCount(Integer commentCount){
         this.commentCount = commentCount;
 
-    }
-
-    public Certification modify(CertUpdate record){
-        this.description = record.description();
-        this.isHideAddress = record.isHideAddress();
-
-        return this;
     }
 }
