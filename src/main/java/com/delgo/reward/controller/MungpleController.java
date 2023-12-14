@@ -6,6 +6,7 @@ import com.delgo.reward.comm.code.MungpleSort;
 import com.delgo.reward.comm.googlesheet.GoogleSheetService;
 import com.delgo.reward.dto.mungple.MungpleResponse;
 import com.delgo.reward.dto.mungple.detail.MungpleDetailResponse;
+import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.mongoService.MungpleService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,7 +48,8 @@ public class MungpleController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = MungpleResponse.class)))})
     @GetMapping
     public ResponseEntity getMungples() {
-        return SuccessReturn(mungpleService.getAllActiveMungple());
+        List<Mungple> mungpleList = mungpleService.getAllActiveMungple();
+        return SuccessReturn(MungpleResponse.fromList(mungpleList));
     }
 
     /**

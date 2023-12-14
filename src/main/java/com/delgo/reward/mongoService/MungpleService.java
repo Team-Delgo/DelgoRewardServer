@@ -72,8 +72,8 @@ public class MungpleService {
      * Active Mungple 전체 조회
      */
     @Cacheable(cacheNames = MUNGPLE_CACHE_STORE)
-    public List<MungpleResponse> getAllActiveMungple() {
-        return mungpleRepository.findByIsActive(true).stream().map(MungpleResponse::new).toList();
+    public List<Mungple> getAllActiveMungple() {
+        return mungpleRepository.findByIsActive(true);
     }
 
     /**
@@ -97,18 +97,6 @@ public class MungpleService {
     public Mungple getByPlaceName(String placeName) {
         return mungpleRepository.findByPlaceName(placeName)
                     .orElseThrow(() -> new NotFoundDataException("[Mungple] placeName : " + placeName ));
-    }
-
-    /**
-     * [categoryCode] Mungple 조회
-     */
-    @Cacheable(cacheNames = MUNGPLE_CACHE_STORE)
-    public List<MungpleResponse> getMungpleByCategoryCode(String categoryCode) {
-        List<Mungple> mungpleList = !categoryCode.equals(CategoryCode.CA0000.getCode())
-                ? mungpleRepository.findByCategoryCode(categoryCode)
-                : mungpleRepository.findAll();
-
-        return mungpleList.stream().map(MungpleResponse::new).collect(Collectors.toList());
     }
 
     /**
@@ -182,9 +170,9 @@ public class MungpleService {
      */
     public void setIsBookmarked(int userId, List<MungpleResponse> mungpleResDTOS){
         Set<Integer> bookmarkedMungpleIds = bookmarkRepository.findBookmarkedMungpleIds(userId);
-        mungpleResDTOS.forEach(m -> {
-            if (bookmarkedMungpleIds.contains(m.getMungpleId())) m.setIsBookmarked(true);
-        });
+//        mungpleResDTOS.forEach(m -> {
+//            if (bookmarkedMungpleIds.contains(m.getMungpleId())) m.setIsBookmarked(true);
+//        });
     }
 
 
