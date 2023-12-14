@@ -6,7 +6,7 @@ import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.dto.mungple.MungpleCountDTO;
 import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -51,14 +51,10 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId")
     List<Integer> findCertIdByUserUserId(@Param("userId") int userId);
 
-    @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId")
-    Slice<Integer> findCertIdByUserId(@Param("userId") int userId, Pageable pageable);
 
     @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId")
     List<Integer> findAllCertIdByUserId(@Param("userId") int userId);
 
-    @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId and c.categoryCode = :categoryCode")
-    Slice<Integer> findCertIdByUserIdAndCategoryCode(@Param("userId")int userId, @Param("categoryCode") CategoryCode categoryCode, Pageable pageable);
 
     @Query("SELECT c.mungpleId FROM Certification c where c.mungpleId != 0 GROUP BY c.mungpleId ORDER BY COUNT(c) DESC")
     List<Integer>  findCertOrderByMungpleCount(Pageable pageable);
@@ -72,20 +68,9 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @Query(value = "select c.certificationId from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrect = true order by c.registDt desc")
     List<Integer> findRecentCertId(@Param("userId") int userId, Pageable pageable);
 
-    @Query(value = "select c.certificationId from Certification c where c.user.userId  not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrect = true")
-    Slice<Integer> findAllCertIdByPaging(@Param("userId") int userId, Pageable pageable);
 
     @Query(value = "select c.certificationId from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.certificationId != :certificationId and c.isCorrect = true")
-    Slice<Integer> findAllExcludeSpecificCert(@Param("userId") int userId, @Param("certificationId") int certificationId, Pageable pageable);
-
-    @Query(value = "select c.certificationId from Certification c where c.mungpleId = :mungpleId and c.isCorrect = true")
-    Slice<Integer> findCertByMungple(@Param("mungpleId") int mungpleId, Pageable pageable);
-
-    @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId and c.categoryCode = :categoryCode and c.isCorrect = true")
-    Slice<Integer> findCorrectCertIdByUserIdAndCategoryCode(@Param("userId")int userId, @Param("categoryCode") CategoryCode categoryCode, Pageable pageable);
-
-    @Query(value = "select c.certificationId from Certification c where c.user.userId = :userId and c.isCorrect = true")
-    Slice<Integer> findCorrectCertIdByUserId(@Param("userId") int userId, Pageable pageable);
+    Page<Integer> findAllExcludeSpecificCert(@Param("userId") int userId, @Param("certificationId") int certificationId, Pageable pageable);
 
     @Query(value = "select c from Certification c where c.user.userId = :userId and c.isCorrect = true")
     List<Certification> findCorrectCertByUserId(@Param("userId") int userId);
@@ -106,4 +91,31 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
 
     @Query(value = "SELECT c FROM Certification c where c.pGeoCode = :pGeoCode and not c.geoCode = :geoCode order by RAND()")
     List<Certification> findCertByPGeoCodeExceptGeoCode(@Param("pGeoCode") String pGeoCode, @Param("geoCode") String geoCode, Pageable pageable);
+
+
+
+
+    @EntityGraph(attributePaths = {"user", "user.pet"})
+    @Query(value = "select c from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrect = true")
+    Page<Certification> findCorrectPage(@Param("userId") int userId, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"user", "user.pet"})
+    @Query(value = "select c from Certification c where c.mungpleId = :mungpleId and c.isCorrect = true and c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId)")
+    Page<Certification> findCorrectPageByMungple(@Param("mungpleId") int mungpleId, @Param("userId") int userId, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"user", "user.pet"})
+    @Query(value = "select c from Certification c where c.user.userId = :userId")
+    Page<Certification> findPageByUserId(@Param("userId") int userId, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"user", "user.pet"})
+    @Query(value = "select c from Certification c where c.user.userId = :userId and c.categoryCode = :categoryCode")
+    Page<Certification> findPageByUserIdAndCategoryCode(@Param("userId")int userId, @Param("categoryCode") CategoryCode categoryCode, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"user", "user.pet"})
+    @Query(value = "select c from Certification c where c.user.userId = :userId and c.isCorrect = true and c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId)")
+    Page<Certification> findCorrectPageByUserId(@Param("userId") int userId, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"user", "user.pet"})
+    @Query(value = "select c from Certification c where c.user.userId = :userId and c.categoryCode = :categoryCode and c.isCorrect = true and c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId)")
+    Page<Certification> findCorrectPageByUserIdAndCategoryCode(@Param("userId")int userId, @Param("categoryCode") CategoryCode categoryCode, Pageable pageable);
 }

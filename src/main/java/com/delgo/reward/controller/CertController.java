@@ -10,14 +10,16 @@ import com.delgo.reward.comm.code.ReactionCode;
 import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.certification.Reaction;
+import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.cert.CertResponse;
-import com.delgo.reward.dto.comm.PageCertResponse;
+import com.delgo.reward.dto.cert.PageCertResponse;
 import com.delgo.reward.mongoService.ClassificationService;
 import com.delgo.reward.record.certification.CertRecord;
 import com.delgo.reward.record.certification.ModifyCertRecord;
 import com.delgo.reward.service.CertPhotoService;
 import com.delgo.reward.service.CertService;
 import com.delgo.reward.service.ReactionService;
+import com.delgo.reward.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,6 +30,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -47,6 +50,7 @@ import java.util.*;
 public class CertController extends CommController {
 
     private final CertService certService;
+    private final UserService userService;
     private final CertPhotoService certPhotoService;
     private final ReactionService reactionService;
     private final CertAsyncService certAsyncService;
@@ -65,9 +69,11 @@ public class CertController extends CommController {
             @RequestParam Integer userId,
             @Parameter(description = "조회에서 제외할 인증 번호") @RequestParam(required = false) Integer certificationId,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return (certificationId == null)
-                ? SuccessReturn(certService.getAllCert(userId, pageable))
-                : SuccessReturn(certService.getAllCertExcludeSpecificCert(userId, certificationId,pageable));
+        Page<Certification> page = certService.getPagingList(userId, pageable);
+        Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
+        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(page.getContent());
+
+        return SuccessReturn(PageCertResponse.from(userId, page, reactionMap, photoMap));
     }
 
     /**
@@ -82,7 +88,14 @@ public class CertController extends CommController {
             @RequestParam Integer userId,
             @RequestParam CategoryCode categoryCode,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return SuccessReturn(certService.getOtherCerts(userId, categoryCode, pageable));
+        Page<Certification> page = certService.getOtherCerts(userId, categoryCode, pageable);
+
+        Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
+        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(page.getContent());
+        User user = userService.getUserById(userId);
+
+        return SuccessReturn(PageCertResponse.from(userId, page, reactionMap, photoMap)
+                .setViewCount(user.getViewCount()));
     }
 
 
@@ -98,7 +111,11 @@ public class CertController extends CommController {
             @RequestParam Integer userId,
             @RequestParam Integer mungpleId,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return SuccessReturn(certService.getCertsByMungpleId(userId, mungpleId, pageable));
+        Page<Certification> page =  certService.getPagingListByMungpleId(userId, mungpleId, pageable);
+        Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
+        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(page.getContent());
+
+        return SuccessReturn(PageCertResponse.from(userId, page, reactionMap, photoMap));
     }
 
     /**
@@ -170,7 +187,13 @@ public class CertController extends CommController {
             @RequestParam Integer userId,
             @RequestParam CategoryCode categoryCode,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return SuccessReturn(certService.getMyCerts(userId, categoryCode, pageable));
+        Page<Certification> page = certService.getMyCerts(userId, categoryCode, pageable);
+        Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
+        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(page.getContent());
+        User user = userService.getUserById(userId);
+
+        return SuccessReturn(PageCertResponse.from(userId, page, reactionMap, photoMap)
+                .setViewCount(user.getViewCount()));
     }
 
     /**
