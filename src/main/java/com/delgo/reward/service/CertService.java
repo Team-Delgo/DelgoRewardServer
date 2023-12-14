@@ -10,11 +10,8 @@ import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.certification.CertPhoto;
 import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.domain.certification.Reaction;
 import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.dto.cert.CertResponse;
-import com.delgo.reward.dto.comm.PageCertResponse;
 import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
 import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import com.delgo.reward.mongoService.MongoMungpleService;
@@ -28,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,8 +45,6 @@ public class CertService {
 
     // Service
     private final UserService userService;
-    private final CertPhotoService certPhotoService;
-    private final ReactionService reactionService;
     private final PhotoService photoService;
     private final MongoMungpleService mongoMungpleService;
     private final GeoDataService geoDataService;
@@ -157,65 +152,6 @@ public class CertService {
         return certRepository.findCertByIds(ids);
     }
 
-    /**
-     * 전체 인증 조회 - Paging
-     * 1. Paging으로 CertIds 조회
-     * 2. CertId로 (EntityGraph) 실제 객체 조회. ( [ids] 인증 조회 )
-     * - Paging, EntityGraph 같이 사용시 메모리 과부하
-     */
-    public PageCertResponse getAllCert(int userId, Pageable pageable) {
-        Slice<Integer> slice = certRepository.findAllCertIdByPaging(userId, pageable);
-        List<Certification> certificationList = getCertsByIds(slice.getContent());
-        Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(certificationList);
-        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(certificationList);
-        List<CertResponse> certs = CertResponse.fromList(userId, certificationList, reactionMap, photoMap);
-
-        return new PageCertResponse(certs, slice.getSize(), slice.getNumber(), slice.isLast());
-    }
-
-    /**
-     * 전체 인증 조회 (특정 인증 제외)
-     * 클라이언트에서 특정 인증글을 맨 위로 올렸을 때 중복을 방지하기 위해 해당 인증글은 반환 리스트에서 제거한다.
-     */
-    public PageCertResponse getAllCertExcludeSpecificCert(int userId, int certificationId, Pageable pageable) {
-        Slice<Integer> slice = certRepository.findAllExcludeSpecificCert(userId, certificationId, pageable);
-        List<Certification> certificationList = getCertsByIds(slice.getContent());
-        Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(certificationList);
-        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(certificationList);
-        List<CertResponse> certs = CertResponse.fromList(userId, certificationList, reactionMap, photoMap);
-
-        return new PageCertResponse(certs, slice.getSize(), slice.getNumber(), slice.isLast());
-    }
-
-    /**
-     * [Mungple] 인증 조회
-     */
-    public PageCertResponse getCertsByMungpleId(int userId, int mungpleId, Pageable pageable) {
-        Slice<Integer> slice = certRepository.findCertByMungple(mungpleId, pageable);
-        List<Certification> certificationList = getCertsByIds(slice.getContent());
-        Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(certificationList);
-        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(certificationList);
-        List<CertResponse> certs = CertResponse.fromList(userId, certificationList, reactionMap, photoMap);
-
-        return new PageCertResponse(certs, slice.getSize(), slice.getNumber(), slice.isLast());
-    }
-
-    /**
-     * [My] 내가 작성한 인증 조회
-     */
-    public PageCertResponse getMyCerts(int userId, CategoryCode categoryCode, Pageable pageable) {
-        Slice<Integer> slice = categoryCode.equals(CategoryCode.CA0000)
-                ? certRepository.findCertIdByUserId(userId, pageable)
-                : certRepository.findCertIdByUserIdAndCategoryCode(userId, categoryCode, pageable);
-
-        List<Certification> certificationList = getCertsByIds(slice.getContent());
-        Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(certificationList);
-        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(certificationList);
-        List<CertResponse> certs = CertResponse.fromList(userId, certificationList, reactionMap, photoMap);
-        User user = userService.getUserById(userId);
-        return new PageCertResponse(certs, slice.getSize(), slice.getNumber(), slice.isLast(),
-                getCertCountByUser(userId), user.getViewCount());
-    }
 
     /**
      * [My] 내가 작성한 모든 인증 조회
@@ -223,23 +159,6 @@ public class CertService {
     public List<Certification> getAllMyCerts(int userId) {
         List<Integer> certIdList = certRepository.findAllCertIdByUserId(userId);
         return getCertsByIds(certIdList);
-    }
-
-    /**
-     * [Other] 다른 사용자가 작성한 인증 조회
-     */
-    public PageCertResponse getOtherCerts(int userId, CategoryCode categoryCode, Pageable pageable) {
-        Slice<Integer> slice = categoryCode.equals(CategoryCode.CA0000)
-                ? certRepository.findCorrectCertIdByUserId(userId, pageable)
-                : certRepository.findCorrectCertIdByUserIdAndCategoryCode(userId, categoryCode, pageable);
-
-        List<Certification> certificationList = getCertsByIds(slice.getContent());
-        Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(certificationList);
-        Map<Integer, List<CertPhoto>> photoMap = certPhotoService.getMapByCertList(certificationList);
-        List<CertResponse> certs = CertResponse.fromList(userId, certificationList, reactionMap, photoMap);
-        User user = userService.getUserById(userId);
-        return new PageCertResponse(certs, slice.getSize(), slice.getNumber(), slice.isLast(),
-                getCorrectCertCountByUserId(userId), user.getViewCount());
     }
 
     /**
@@ -340,5 +259,42 @@ public class CertService {
         }
 
         return certByPGeoCode;
+    }
+
+
+    /**
+     * 전체 인증 조회 - Paging
+     * 1. Paging으로 CertIds 조회
+     * 2. CertId로 (EntityGraph) 실제 객체 조회. ( [ids] 인증 조회 )
+     * - Paging, EntityGraph 같이 사용시 메모리 과부하
+     */
+    public Page<Certification> getPagingList(int userId, Pageable pageable) {
+        return certRepository.findCorrectPage(userId, pageable);
+    }
+
+    /**
+     * [Mungple] 인증 조회
+     */
+    public Page<Certification> getPagingListByMungpleId(int userId, int mungpleId, Pageable pageable) {
+         return certRepository.findCorrectPageByMungple(mungpleId, userId, pageable);
+    }
+
+    /**
+     * [My] 내가 작성한 인증 조회
+     */
+    public Page<Certification> getMyCerts(int userId, CategoryCode categoryCode, Pageable pageable) {
+        return categoryCode.equals(CategoryCode.CA0000)
+                ? certRepository.findPageByUserId(userId, pageable)
+                : certRepository.findPageByUserIdAndCategoryCode(userId, categoryCode, pageable);
+    }
+
+    /**
+     * [Other] 다른 사용자가 작성한 인증 조회
+     */
+    public Page<Certification> getOtherCerts(int userId, CategoryCode categoryCode, Pageable pageable) {
+        return categoryCode.equals(CategoryCode.CA0000)
+                ? certRepository.findCorrectPageByUserId(userId, pageable)
+                : certRepository.findCorrectPageByUserIdAndCategoryCode(userId, categoryCode, pageable);
+
     }
 }
