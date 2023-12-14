@@ -21,16 +21,14 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class MapService {
-
-    private final CertQueryService certQueryService;
     private final UserService userService;
     private final ReactionService reactionService;
+    private final CertQueryService certQueryService;
     private final MungpleRepository mungpleRepository;
 
     public Map<String, Object> getMap() {
-        List<Mungple> mungples = mungpleRepository.findByIsActive(true);
-        List<MungpleResponse> mungpleResDTOS = mungples.stream().map(MungpleResponse::new).toList();
-        return  Map.of("mungpleList", mungpleResDTOS);
+        List<Mungple> mungpleList = mungpleRepository.findByIsActive(true);
+        return  Map.of("mungpleList", MungpleResponse.fromList(mungpleList));
     }
 
     public OtherMapDTO getOtherMap(int userId) {

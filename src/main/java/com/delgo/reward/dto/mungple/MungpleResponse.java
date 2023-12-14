@@ -3,15 +3,13 @@ package com.delgo.reward.dto.mungple;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+
+import java.util.List;
 
 
 @Getter
-@Setter
-@ToString
+@Builder
 @AllArgsConstructor
 public class MungpleResponse {
     @Schema(description = "멍플 고유 아이디")
@@ -39,20 +37,22 @@ public class MungpleResponse {
     @Schema(description = "유저가 저장했는지 여부")
     protected Boolean isBookmarked;
 
-    // 지도 생성자
-    public MungpleResponse(Mungple mungple) {
-        mungpleId = mungple.getMungpleId();
-        categoryCode = mungple.getCategoryCode();
+    public static MungpleResponse from(Mungple mungple){
+        return MungpleResponse.builder()
+                .mungpleId(mungple.getMungpleId())
+                .categoryCode(mungple.getCategoryCode())
+                .placeName(mungple.getPlaceName())
+                .placeNameEn(mungple.getPlaceNameEn())
+                .address(mungple.getJibunAddress())
+                .latitude(mungple.getLatitude())
+                .longitude(mungple.getLongitude())
+                .photoUrl(mungple.getPhotoUrls().get(0))
+                .detailUrl(mungple.getDetailUrl())
+                .build();
+    }
 
-        placeName = mungple.getPlaceName();
-        placeNameEn = mungple.getPlaceNameEn();
-        address = mungple.getJibunAddress();
-
-        latitude = mungple.getLatitude();
-        longitude = mungple.getLongitude();
-
-        photoUrl = mungple.getPhotoUrls().get(0);
-        detailUrl = mungple.getDetailUrl();
+    public static List<MungpleResponse> fromList(List<Mungple> mungpleList) {
+        return mungpleList.stream().map(mungple -> MungpleResponse.from(mungple)).toList();
     }
 
     // 목록 생성자
