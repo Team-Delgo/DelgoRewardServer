@@ -4,10 +4,12 @@ package com.delgo.reward.service.cert;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.domain.certification.Certification;
+import com.delgo.reward.dto.cert.UserVisitMungpleCountDTO;
 import com.delgo.reward.dto.mungple.MungpleCountDTO;
 import com.delgo.reward.repository.CertRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -66,5 +68,10 @@ public class CertQueryService {
 
     public Integer getCountByMungpleId(int mungpleId){
         return certRepository.countOfCorrectCertByMungple(mungpleId);
+    }
+
+    public List<UserVisitMungpleCountDTO> getVisitedMungpleIdListTop3ByUserId(int userId) {
+        Pageable pageable = PageRequest.of(0, 3);
+        return certRepository.findVisitTop3MungpleIdByUserId(userId, pageable);
     }
 }

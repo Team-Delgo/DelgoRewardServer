@@ -1,4 +1,4 @@
-package com.delgo.reward.dto.user;
+package com.delgo.reward.dto.cert;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
