@@ -1,16 +1,10 @@
 package com.delgo.reward;
 
 
-import com.delgo.reward.dto.mungple.MungpleCountDTO;
-import com.delgo.reward.dto.mungple.MungpleResponse;
-import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.mongoRepository.MungpleRepository;
-import com.delgo.reward.mongoService.MungpleService;
+import com.delgo.reward.service.mungple.MungpleService;
 import com.delgo.reward.repository.BookmarkRepository;
 import com.delgo.reward.repository.CertRepository;
-import com.delgo.reward.service.strategy.BookmarkCountSorting;
-import com.delgo.reward.service.strategy.CertCountSorting;
-import com.delgo.reward.service.strategy.MungpleSortingStrategy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

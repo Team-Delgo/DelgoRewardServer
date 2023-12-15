@@ -9,13 +9,11 @@ import java.util.Optional;
 
 
 public interface MungpleRepository extends MongoRepository<Mungple, String> {
-    Optional<Mungple> findByMungpleId(Integer mungpleId);
-    Optional<Mungple> findByPlaceName(String placeName);
-    List<Mungple> findListByPlaceName(String placeName);
-    List<Mungple> findByMungpleIdIn(List<Integer> mungpleIdList);
-    List<Mungple> findByIsActive(boolean isActive);
-    List<Mungple> findByCategoryCode(String categoryCode);
-    List<Mungple> findByCategoryCodeAndIsActive(CategoryCode categoryCode, boolean isActive);
+    Optional<Mungple> findOneByMungpleId(Integer mungpleId);
+    Optional<Mungple> findOneByPlaceName(String placeName);
+    List<Mungple> findListByMungpleIdIn(List<Integer> mungpleIdList);
+    List<Mungple> findListByIsActive(boolean isActive);
+    List<Mungple> findListByCategoryCodeAndIsActive(CategoryCode categoryCode, boolean isActive);
     boolean existsByLatitudeAndLongitude(String latitude, String longitude);
     boolean existsByPlaceName(String placeName);
     void deleteByMungpleId(int mungpleId);

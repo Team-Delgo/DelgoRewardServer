@@ -10,7 +10,7 @@ import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
-import com.delgo.reward.mongoService.MungpleService;
+import com.delgo.reward.service.mungple.MungpleService;
 import com.delgo.reward.record.certification.CertCreate;
 import com.delgo.reward.record.certification.CertUpdate;
 import com.delgo.reward.repository.CertRepository;
@@ -62,7 +62,7 @@ public class CertCommandService {
 
     public Certification createByMungple(CertCreate certCreate, List<MultipartFile> photoList) {
         User user = userService.getUserById(certCreate.userId());
-        Mungple mungple = mungpleService.getMungpleByMungpleId(certCreate.mungpleId());
+        Mungple mungple = mungpleService.getOneByMungpleId(certCreate.mungpleId());
 
         Certification certification = certRepository.save(Certification.from(certCreate, mungple, user));
         certification.setPhotos(createPhotoList(certification.getCertificationId(), photoList));
@@ -101,7 +101,7 @@ public class CertCommandService {
 
         List<UserVisitMungpleCountDTO> userVisitMungpleCountDTOList =
                 certRepository.findVisitTop3MungpleIdByUserId(userId, pageable);
-        return mungpleService.getMungpleListByIds(userVisitMungpleCountDTOList);
+        return mungpleService.getListByIds(userVisitMungpleCountDTOList);
     }
 
 }
