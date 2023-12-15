@@ -17,12 +17,7 @@ import com.delgo.reward.service.strategy.*;
 import com.delgo.reward.service.BookmarkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.geo.Circle;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -36,10 +31,6 @@ import java.util.stream.Collectors;
 public class MungpleService {
     private final MungpleRepository mungpleRepository;
     private final String MUNGPLE_CACHE_STORE = "MungpleCacheStore";
-
-    @Autowired
-    private MongoTemplate mongoTemplate;
-
     // Cache
     private final MungpleCacheService mungpleCacheService;
 
@@ -169,15 +160,6 @@ public class MungpleService {
         mungpleCacheService.deleteCacheData(mungpleId);
         objectStorageService.deleteObject(BucketName.MUNGPLE,mungpleId + "_mungple.webp"); // Thumbnail delete
         objectStorageService.deleteObject(BucketName.MUNGPLE_NOTE,mungpleId + "_mungplenote.webp"); // mungpleNote delete
-    }
-
-    public List<Mungple> findWithin3Km(String latitude, String longitude) {
-        double maxDistanceInRadians = 2 / 6371.01;
-
-        Query query = new Query();
-        query.addCriteria(Criteria.where("location").withinSphere(new Circle(Double.parseDouble(longitude), Double.parseDouble(latitude), maxDistanceInRadians)));
-
-        return mongoTemplate.find(query, Mungple.class);
     }
 
     public void resetMungpleCache(){
