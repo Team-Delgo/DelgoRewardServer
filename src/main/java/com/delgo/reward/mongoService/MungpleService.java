@@ -164,16 +164,10 @@ public class MungpleService {
      * [address] Mungple 중복 체크
      * NCP - 위도, 경도 구해야 함.
      */
-    public boolean isMungpleExisting(String address) {
+    public boolean isMungpleExisting(String address, String placeName) {
         GeoData geoData = geoDataService.getGeoData(address);
-        return mungpleRepository.existsByLatitudeAndLongitude(geoData.getLatitude(), geoData.getLongitude());
-    }
-
-    /**
-     * [PlaceName] Mungple 중복 체크
-     */
-    public boolean isMungpleExistingByPlaceName(String placeName) {
-        return mungpleRepository.existsByPlaceName(placeName);
+        return mungpleRepository.existsByLatitudeAndLongitude(geoData.getLatitude(), geoData.getLongitude())
+                && mungpleRepository.existsByPlaceName(placeName);
     }
 
     /**
