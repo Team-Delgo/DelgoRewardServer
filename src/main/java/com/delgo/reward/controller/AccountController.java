@@ -9,7 +9,7 @@ import com.delgo.reward.record.user.ModifyUserRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
 import com.delgo.reward.service.PetService;
 import com.delgo.reward.service.UserService;
-import com.delgo.reward.service.cert.CertQueryService;
+import com.delgo.reward.service.cert.CertCommandService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -31,7 +31,7 @@ public class AccountController extends CommController {
 
     private final PetService petService;
     private final UserService userService;
-    private final CertQueryService certQueryService;
+    private final CertCommandService certCommandService;
 
     /**
      * 내 정보 조회
@@ -45,7 +45,7 @@ public class AccountController extends CommController {
         return SuccessReturn(new AccountResDTO(
                 userService.getUserById(userId),
                 userService.getActivityByUserId(userId),
-                certQueryService.getVisitedMungpleIdListTop3ByUserId(userId)));
+                certCommandService.getVisitedMungpleIdListTop3ByUserId(userId)));
     }
 
 

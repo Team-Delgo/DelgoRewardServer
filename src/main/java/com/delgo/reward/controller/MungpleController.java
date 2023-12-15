@@ -8,6 +8,8 @@ import com.delgo.reward.dto.mungple.MungpleResponse;
 import com.delgo.reward.dto.mungple.detail.MungpleDetailResponse;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.mongoService.MungpleService;
+import com.delgo.reward.service.BookmarkService;
+import com.delgo.reward.service.cert.CertQueryService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -28,6 +30,8 @@ import java.util.List;
 @RequestMapping("/api/mungple")
 public class MungpleController extends CommController {
     private final MungpleService mungpleService;
+    private final BookmarkService bookmarkService;
+    private final CertQueryService certQueryService;
     private final GoogleSheetService googleSheetService;
 
     /**
@@ -37,7 +41,6 @@ public class MungpleController extends CommController {
     @GetMapping("/parsing")
     public ResponseEntity parsingGoogleSheetMungple() {
         List<String> placeNames = googleSheetService.saveSheetsDataToDB();
-
         return SuccessReturn(placeNames);
     }
 
@@ -64,7 +67,15 @@ public class MungpleController extends CommController {
             @RequestParam MungpleSort sort,
             @RequestParam(required = false) String latitude,
             @RequestParam(required = false) String longitude) {
-        return SuccessReturn(mungpleService.getActiveMungpleByCategoryCode(userId, categoryCode, sort, latitude, longitude));
+        List<Mungple> mungpleList = mungpleService.getActiveMungpleByCategoryCode(categoryCode);
+
+        List<MungpleResponse> responses = MungpleResponse.fromList(
+                mungpleService.sort(mungpleList, sort, latitude, longitude), // sort
+                certQueryService.getCountMapByMungple(),  // cert count
+                bookmarkService.getCountMapByMungple());
+
+        mungpleService.setIsBookmarked(userId, responses);
+        return SuccessReturn(responses); // bookmark count
     }
 
     /**
@@ -121,6 +132,7 @@ public class MungpleController extends CommController {
     @Hidden
     @GetMapping("/category/{categoryCode}")
     public ResponseEntity getMungplesByCategoryDeprecated(@PathVariable CategoryCode categoryCode) {
-        return SuccessReturn(mungpleService.getActiveMungpleByCategoryCode(categoryCode));
+        List<Mungple> mungpleList = mungpleService.getActiveMungpleByCategoryCode(categoryCode);
+        return SuccessReturn(MungpleResponse.fromList(mungpleList, certQueryService.getCountMapByMungple(), bookmarkService.getCountMapByMungple()));
     }
 }

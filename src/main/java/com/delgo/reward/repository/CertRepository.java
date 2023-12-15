@@ -67,5 +67,5 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     List<UserVisitMungpleCountDTO> findVisitTop3MungpleIdByUserId(@Param("userId") int userId, Pageable pageable);
 
     @Query(value = "select new com.delgo.reward.dto.mungple.MungpleCountDTO(c.mungpleId, count(c)) from Certification c where c.isCorrect = true and c.mungpleId != 0 group by c.mungpleId order by count(c) desc")
-    List<MungpleCountDTO> countCertsGroupedByMungpleId();
+    List<MungpleCountDTO> countGroupedByMungpleId();
 }

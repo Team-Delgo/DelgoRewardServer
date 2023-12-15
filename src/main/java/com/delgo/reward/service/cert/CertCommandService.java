@@ -8,6 +8,7 @@ import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.domain.user.User;
+import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.mongoService.MungpleService;
 import com.delgo.reward.record.certification.CertCreate;
@@ -19,6 +20,8 @@ import com.delgo.reward.service.ReactionService;
 import com.delgo.reward.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -92,4 +95,13 @@ public class CertCommandService {
         reactionService.deleteByCertId(certificationId);
         objectStorageService.deleteObject(BucketName.CERTIFICATION, certificationId + "_cert.webp");
     }
+
+    public List<UserVisitMungpleCountDTO> getVisitedMungpleIdListTop3ByUserId(int userId) {
+        Pageable pageable = PageRequest.of(0, 3);
+
+        List<UserVisitMungpleCountDTO> userVisitMungpleCountDTOList =
+                certRepository.findVisitTop3MungpleIdByUserId(userId, pageable);
+        return mungpleService.getMungpleListByIds(userVisitMungpleCountDTOList);
+    }
+
 }

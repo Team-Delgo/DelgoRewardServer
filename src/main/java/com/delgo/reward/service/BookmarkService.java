@@ -2,6 +2,7 @@ package com.delgo.reward.service;
 
 import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.domain.user.Bookmark;
+import com.delgo.reward.dto.mungple.MungpleCountDTO;
 import com.delgo.reward.repository.BookmarkRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -67,5 +70,10 @@ public class BookmarkService {
      */
     public int getActiveBookmarkCount(int mungpleId) {
         return bookmarkRepository.countOfActiveBookmarkByMungple(mungpleId);
+    }
+
+    public Map<Integer, Integer> getCountMapByMungple(){
+        return bookmarkRepository.countBookmarksGroupedByMungpleId().stream()
+                .collect(Collectors.toMap(MungpleCountDTO::getMungpleId, MungpleCountDTO::getCount));
     }
 }

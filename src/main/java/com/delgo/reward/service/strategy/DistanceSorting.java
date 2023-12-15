@@ -7,18 +7,16 @@ import java.util.Comparator;
 import java.util.List;
 
 public class DistanceSorting implements MungpleSortingStrategy{
-    private final List<Mungple> mungpleList;
     private final double latitude;
     private final double longitude;
 
-    public DistanceSorting(List<Mungple> mungpleList, String latitude, String longitude) {
-        this.mungpleList = mungpleList;
+    public DistanceSorting(String latitude, String longitude) {
         this.latitude = Double.parseDouble(latitude);
         this.longitude = Double.parseDouble(longitude);
     }
 
     @Override
-    public List<Mungple> sort() {
+    public List<Mungple> sort(List<Mungple> mungpleList) {
         // 거리 순 정렬 구현
         GeoJsonPoint targetPoint = new GeoJsonPoint(longitude, latitude);
         return mungpleList.stream()

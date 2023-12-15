@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.util.List;
+import java.util.Map;
 
 
 @Getter
@@ -55,6 +56,31 @@ public class MungpleResponse {
         return mungpleList.stream().map(mungple -> MungpleResponse.from(mungple)).toList();
     }
 
+    public static MungpleResponse from(Mungple mungple, int certCount, int bookmarkCount) {
+        return MungpleResponse.builder()
+                .mungpleId(mungple.getMungpleId())
+                .categoryCode(mungple.getCategoryCode())
+                .placeName(mungple.getPlaceName())
+                .placeNameEn(mungple.getPlaceNameEn())
+                .address(mungple.getJibunAddress())
+                .latitude(mungple.getLatitude())
+                .longitude(mungple.getLongitude())
+                .photoUrl(mungple.getPhotoUrls().get(0))
+                .detailUrl(mungple.getDetailUrl())
+                .certCount(certCount)
+                .bookmarkCount(bookmarkCount)
+                .build();
+    }
+
+    public static List<MungpleResponse> fromList(List<Mungple> mungpleList, Map<Integer, Integer> certCountMap, Map<Integer, Integer> bookmarkCountMap) {
+        return mungpleList.stream().map(mungple -> {
+            int certCount = certCountMap.getOrDefault(mungple.getMungpleId(),0);
+            int bookmarkCount = bookmarkCountMap.getOrDefault(mungple.getMungpleId(), 0);
+
+            return MungpleResponse.from(mungple, certCount, bookmarkCount);
+        }).toList();
+    }
+
     // 목록 생성자
     public MungpleResponse(Mungple mungple, int certCount, int bookmarkCount, boolean isBookmarked) {
         mungpleId = mungple.getMungpleId();
@@ -92,5 +118,9 @@ public class MungpleResponse {
 
         this.certCount = certCount;
         this.bookmarkCount = bookmarkCount;
+    }
+
+    public void setIsBookmarked(Boolean bookmarked) {
+        isBookmarked = bookmarked;
     }
 }
