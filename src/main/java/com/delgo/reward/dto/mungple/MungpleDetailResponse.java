@@ -108,7 +108,7 @@ public class MungpleDetailResponse {
 
                 .residentDogName(mungple.getResidentDogName())
                 .residentDogPhoto(mungple.getResidentDogPhoto())
-                .representMenuTitle(mungple.getResidentDogPhoto())
+                .representMenuTitle(mungple.getRepresentMenuTitle())
                 .representMenuPhotoUrls(representMenuBoardPhotoUrls)
 
                 .isPriceTag(mungple.getIsPriceTag())

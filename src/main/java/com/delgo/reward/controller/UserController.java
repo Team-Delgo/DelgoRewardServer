@@ -16,7 +16,7 @@ import com.delgo.reward.record.signup.SignUpRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
 import com.delgo.reward.service.SmsAuthService;
 import com.delgo.reward.service.UserService;
-import com.delgo.reward.service.cert.CertCommandService;
+import com.delgo.reward.service.mungple.MungpleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -46,7 +46,7 @@ public class UserController extends CommController {
 
     private final JwtService jwtService;
     private final UserService userService;
-    private final CertCommandService certCommandService;
+    private final MungpleService mungpleService;
     private final SmsAuthService smsAuthService;
 
     /**
@@ -58,7 +58,10 @@ public class UserController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = OtherUserResDTO.class))})
     @GetMapping("/other")
     public ResponseEntity<?> getOtherUser(@RequestParam int userId) {
-        return SuccessReturn(new OtherUserResDTO(userService.getUserById(userId), userService.getActivityByUserId(userId), certCommandService.getVisitedMungpleIdListTop3ByUserId(userId)));
+        return SuccessReturn(new OtherUserResDTO(
+                userService.getUserById(userId),
+                userService.getActivityByUserId(userId),
+                mungpleService.getVisitedMungpleIdListTop3ByUserId(userId)));
     }
 
     /**

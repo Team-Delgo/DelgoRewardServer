@@ -8,9 +8,10 @@ import com.delgo.reward.comm.ncp.geo.GeoDataService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.user.Bookmark;
-import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
+import com.delgo.reward.dto.cert.UserVisitMungpleCountDTO;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.mongoRepository.MungpleRepository;
+import com.delgo.reward.service.cert.CertQueryService;
 import com.delgo.reward.service.mungple.strategy.*;
 import com.delgo.reward.service.BookmarkService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +28,7 @@ public class MungpleService {
     private final MungpleRepository mungpleRepository;
 
     private final GeoDataService geoDataService;
+    private final CertQueryService certQueryService;
     private final BookmarkService bookmarkService;
     private final ObjectStorageService objectStorageService;
 
@@ -54,7 +57,6 @@ public class MungpleService {
     }
 
     public List<Mungple> getListByBookMark(int userId) {
-        // 사용자 ID를 기반으로 활성화 된 북마크를 가져온 후 정렬
         List<Bookmark> bookmarkList = bookmarkService.getActiveBookmarkByUserId(userId);
         List<Integer> mungpleIdList = bookmarkList.stream().map(Bookmark::getMungpleId).toList();
         List<Mungple> mungpleList = mungpleRepository.findListByMungpleIdIn(mungpleIdList);
@@ -62,19 +64,29 @@ public class MungpleService {
         return mungpleList;
     }
 
-    public List<UserVisitMungpleCountDTO> getListByIds(List<UserVisitMungpleCountDTO> userVisitMungpleCountDTOList){
-        List<Mungple> mungpleList = mungpleRepository.findListByMungpleIdIn(userVisitMungpleCountDTOList.stream().map(UserVisitMungpleCountDTO::getMungpleId).collect(Collectors.toList()));
+    /**
+     * [mungpleIds] List 조회
+     */
+    public List<Mungple> getListByIds(List<Integer> mungpleIdList) {
+        return mungpleRepository.findListByMungpleIdIn(mungpleIdList);
+    }
 
-        for(Mungple mungple : mungpleList){
-            userVisitMungpleCountDTOList.replaceAll(e -> {
-                if(Objects.equals(e.getMungpleId(), mungple.getMungpleId())){
-                    return e.setMungpleData(mungple.getPlaceName(), mungple.getPhotoUrls().get(0));
-                } else {
-                    return e;
-                }
-            });
-        }
-        return userVisitMungpleCountDTOList;
+    /**
+     * 유저 인증 중 가장 많이 방문한 멍플 조회
+     */
+    public List<UserVisitMungpleCountDTO> getVisitedMungpleIdListTop3ByUserId(int userId) {
+        List<UserVisitMungpleCountDTO> countList = certQueryService.getVisitedMungpleIdListTop3ByUserId(userId);
+        List<Integer> mungpleIds = countList.stream().map(UserVisitMungpleCountDTO::getMungpleId).toList();
+
+        List<Mungple> mungpleList = getListByIds(mungpleIds);
+        Map<Integer, Mungple> mongoMungpleMap = mungpleList.stream().collect(Collectors.toMap(Mungple::getMungpleId, Function.identity()));
+
+        countList.forEach(dto -> {
+            Mungple mongoMungple = mongoMungpleMap.get(dto.getMungpleId());
+            dto.setMungpleData(mongoMungple.getPlaceName(), mongoMungple.getPhotoUrls().get(0));
+        });
+
+        return countList;
     }
 
     public boolean isMungpleExisting(String address, String placeName) {
