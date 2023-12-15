@@ -83,9 +83,9 @@ public class Mungple {
     @Field("represent_menu_title")
     private String representMenuTitle; // 대표 메뉴 제목
     @Field("represent_menu_photo_urls")
-    private List<String> representMenuPhotoUrls; // 대표 메뉴 URL List // ※무조건 3개 이상이어야 함.
+    private List<String> representMenuPhotoUrls = new ArrayList<>(); // 대표 메뉴 URL List // ※무조건 3개 이상이어야 함.
     @Field("represent_menu_board_photo_urls")
-    private List<String> representMenuBoardPhotoUrls; // 대표 메뉴 URL List // ※무조건 3개 이상이어야 함.
+    private List<String> representMenuBoardPhotoUrls = new ArrayList<>(); // 대표 메뉴 URL List // ※무조건 3개 이상이어야 함.
 
     // CA0001, CA0005, CA0006, CA0007
     @Field("is_price_tag")
