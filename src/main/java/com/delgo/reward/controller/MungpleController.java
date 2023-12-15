@@ -71,11 +71,11 @@ public class MungpleController extends CommController {
 
         List<MungpleResponse> responses = MungpleResponse.fromList(
                 mungpleService.sort(mungpleList, sort, latitude, longitude), // sort
-                certQueryService.getCountMapByMungple(),  // cert count
-                bookmarkService.getCountMapByMungple());
+                certQueryService.getCountMapByMungple(), // cert count
+                bookmarkService.getCountMapByMungple()); // bookmark count
 
         mungpleService.setIsBookmarked(userId, responses);
-        return SuccessReturn(responses); // bookmark count
+        return SuccessReturn(responses);
     }
 
     /**
@@ -89,7 +89,15 @@ public class MungpleController extends CommController {
             @RequestParam MungpleSort sort,
             @RequestParam(required = false) String latitude,
             @RequestParam(required = false) String longitude) {
-        return SuccessReturn(mungpleService.getActiveMungpleByBookMark(userId, sort, latitude, longitude));
+        List<Mungple> mungpleList = mungpleService.getActiveMungpleByBookMark(userId);
+
+        List<MungpleResponse> responses = MungpleResponse.fromList(
+                mungpleService.sortByBookmark(userId, mungpleList, sort, latitude, longitude), // sort
+                certQueryService.getCountMapByMungple(), // cert count
+                bookmarkService.getCountMapByMungple()); // bookmark count
+
+        mungpleService.setIsBookmarked(userId, responses);
+        return SuccessReturn(responses);
     }
 
     /**

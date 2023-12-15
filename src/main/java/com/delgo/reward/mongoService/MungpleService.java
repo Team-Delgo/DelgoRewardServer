@@ -10,7 +10,6 @@ import com.delgo.reward.comm.ncp.geo.GeoDataService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.user.Bookmark;
-import com.delgo.reward.dto.mungple.MungpleCountDTO;
 import com.delgo.reward.dto.mungple.MungpleResponse;
 import com.delgo.reward.dto.mungple.detail.MungpleDetailByMenuResponse;
 import com.delgo.reward.dto.mungple.detail.MungpleDetailByPriceTagResponse;
@@ -34,7 +33,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -121,27 +119,28 @@ public class MungpleService {
         return sortingStrategy.sort(mungpleList);
     }
 
+    public List<Mungple> sortByBookmark(int userId, List<Mungple> mungpleList, MungpleSort sort, String latitude, String longitude) {
+        List<Bookmark> bookmarkList = bookmarkService.getActiveBookmarkByUserId(userId);
+        MungpleSortingStrategy sortingStrategy = switch (sort) {
+            case DISTANCE -> new DistanceSorting(latitude, longitude);
+            case NEWEST -> new NewestSorting(bookmarkList);
+            case OLDEST -> new OldestSorting(bookmarkList);
+            default -> throw new IllegalArgumentException("Unknown sorting type: " + sort);
+        };
+
+        return sortingStrategy.sort(mungpleList);
+    }
+
     /**
      * [BookMark] Active Mungple 조회
      */
-    public List<MungpleResponse> getActiveMungpleByBookMark(int userId, MungpleSort sort, String latitude, String longitude) {
+    public List<Mungple> getActiveMungpleByBookMark(int userId) {
         // 사용자 ID를 기반으로 활성화 된 북마크를 가져온 후 정렬
         List<Bookmark> bookmarkList = bookmarkService.getActiveBookmarkByUserId(userId);
         List<Integer> mungpleIdList = bookmarkList.stream().map(Bookmark::getMungpleId).toList();
         List<Mungple> mungpleList = mungpleRepository.findByMungpleIdIn(mungpleIdList);
 
-        // 조건에 맞게 정렬
-//        MungpleSortingStrategy sortingStrategy = switch (sort) {
-//            case DISTANCE -> new DistanceSorting(mungpleList, latitude, longitude);
-//            case NEWEST -> new NewestSorting(mungpleList, bookmarkList);
-//            case OLDEST -> new OldestSorting(mungpleList, bookmarkList);
-//            default -> throw new IllegalArgumentException("Unknown sorting type: " + sort);
-//        };
-
-        List<MungpleResponse> mungpleResDTOS = convertToMungpleResDTOs(mungpleList);
-        setIsBookmarked(userId, mungpleResDTOS);
-
-        return mungpleResDTOS;
+        return mungpleList;
     }
 
     /**
@@ -152,19 +151,6 @@ public class MungpleService {
         responseList.forEach(m -> {
             if (bookmarkedMungpleIds.contains(m.getMungpleId())) m.setIsBookmarked(true);
         });
-    }
-
-
-    public List<MungpleResponse> convertToMungpleResDTOs(List<Mungple> mungples) {
-        Map<Integer, MungpleCountDTO> bookmarkCountsMap = bookmarkRepository.countBookmarksGroupedByMungpleId().stream().collect(Collectors.toMap(MungpleCountDTO::getMungpleId, Function.identity()));
-        Map<Integer, MungpleCountDTO> certCountsMap = certRepository.countGroupedByMungpleId().stream().collect(Collectors.toMap(MungpleCountDTO::getMungpleId, Function.identity()));
-
-        return mungples.stream().map(m -> {
-            int bookmarkCount = bookmarkCountsMap.getOrDefault(m.getMungpleId(), new MungpleCountDTO(0, 0)).getCount();
-            int certCount = certCountsMap.getOrDefault(m.getMungpleId(), new MungpleCountDTO(0, 0)).getCount();
-
-            return new MungpleResponse(m, certCount, bookmarkCount, false);
-        }).toList();
     }
 
     /**
