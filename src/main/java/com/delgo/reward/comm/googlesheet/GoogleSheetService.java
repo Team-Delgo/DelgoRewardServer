@@ -1,13 +1,12 @@
 package com.delgo.reward.comm.googlesheet;
 
-import com.delgo.reward.cacheService.MungpleCacheService;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.exception.GoogleSheetException;
 import com.delgo.reward.comm.ncp.geo.GeoData;
 import com.delgo.reward.comm.ncp.geo.GeoDataService;
 import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
-import com.delgo.reward.mongoService.MungpleService;
+import com.delgo.reward.service.mungple.MungpleService;
 import com.delgo.reward.service.CodeService;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -38,7 +37,6 @@ public class GoogleSheetService {
     private final CodeService codeService;
     private final FigmaService figmaService;
     private final GeoDataService geoDataService;
-    private final MungpleCacheService mungpleCacheService;
     private final MungpleService mungpleService;
 
     private Sheets sheets;
@@ -123,7 +121,7 @@ public class GoogleSheetService {
                             // Figma 사진 저장 까지 완료 후 저장
                             Mungple savedMungple = mungpleService.save(mungple);
                             // Cache Update
-                            mungpleCacheService.updateCacheData(savedMungple.getMungpleId(), savedMungple);
+//                            mungpleQueryService.update(savedMungple.getMungpleId(), savedMungple);
                             // Sheet IsRegist Data update [ false -> true ]
                             checkSaveConfirm(categoryCode, rowNum + 1);
 
@@ -140,14 +138,14 @@ public class GoogleSheetService {
                         if (StringUtils.hasText(sheet.getFigmaNodeId()))
                             figmaService.uploadFigmaDataToNCP(sheet.getFigmaNodeId(), mungple);
 
-                        Mungple dbMungple = mungpleService.getByPlaceName(sheet.getPlaceName());
+                        Mungple dbMungple = mungpleService.getOneByPlaceName(sheet.getPlaceName());
 
                         mungple.setId(dbMungple.getId());
                         mungple.setMungpleId(dbMungple.getMungpleId());
                         Mungple savedMungple = mungpleService.save(mungple);
 
                         // Cache Update
-                        mungpleCacheService.updateCacheData(savedMungple.getMungpleId(), savedMungple);
+//                        mungpleQueryService.update(savedMungple.getMungpleId(), savedMungple);
                         // Sheet IsRegist Data update [ update -> true ]
                         checkSaveConfirm(categoryCode, rowNum + 1);
 
@@ -156,8 +154,8 @@ public class GoogleSheetService {
                     case "DEL" -> { // activeType 체크
                         log.info("DELETE sheet PlaceName:{}", sheet.getPlaceName());
 
-                        Mungple dbMungple = mungpleService.getByPlaceName(sheet.getPlaceName());
-                        mungpleService.deleteMungple(dbMungple.getMungpleId());
+                        Mungple dbMungple = mungpleService.getOneByPlaceName(sheet.getPlaceName());
+                        mungpleService.delete(dbMungple.getMungpleId());
 
                         resultMessageList.add("[" + dbMungple.getPlaceName() + "] 삭제되었습니다.");
                         checkDeleteConfirm(categoryCode, rowNum + 1);

@@ -27,7 +27,7 @@ public class MapService {
     private final MungpleRepository mungpleRepository;
 
     public Map<String, Object> getMap() {
-        List<Mungple> mungpleList = mungpleRepository.findByIsActive(true);
+        List<Mungple> mungpleList = mungpleRepository.findListByIsActive(true);
         return  Map.of("mungpleList", MungpleResponse.fromList(mungpleList));
     }
 

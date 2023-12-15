@@ -7,24 +7,20 @@ import com.delgo.reward.comm.googlesheet.GoogleSheetService;
 import com.delgo.reward.dto.mungple.MungpleResponse;
 import com.delgo.reward.dto.mungple.MungpleDetailResponse;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
-import com.delgo.reward.mongoService.MungpleService;
+import com.delgo.reward.service.mungple.MungpleService;
 import com.delgo.reward.service.BookmarkService;
 import com.delgo.reward.service.cert.CertQueryService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/mungple")
@@ -33,6 +29,7 @@ public class MungpleController extends CommController {
     private final BookmarkService bookmarkService;
     private final CertQueryService certQueryService;
     private final GoogleSheetService googleSheetService;
+
 
     /**
      * Mungple 등록 From GoogleSheet, Figma
@@ -43,18 +40,6 @@ public class MungpleController extends CommController {
         List<String> placeNames = googleSheetService.saveSheetsDataToDB();
         return SuccessReturn(placeNames);
     }
-
-    /**
-     * 모든 멍플 조회 [ 지도, 검색 리스트 생성 ] [Cache]
-     */
-    @Operation(summary = "ALL Active Mungple 조회 [Cache]", description = "모든 활성화 된 멍플 조회 [지도, 검색 리스트 생성에 사용]")
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = MungpleResponse.class)))})
-    @GetMapping
-    public ResponseEntity getMungples() {
-        List<Mungple> mungpleList = mungpleService.getAllActiveMungple();
-        return SuccessReturn(MungpleResponse.fromList(mungpleList));
-    }
-
     /**
      * [Category] Mungple 조회
      */
@@ -67,7 +52,7 @@ public class MungpleController extends CommController {
             @RequestParam MungpleSort sort,
             @RequestParam(required = false) String latitude,
             @RequestParam(required = false) String longitude) {
-        List<Mungple> mungpleList = mungpleService.getActiveMungpleByCategoryCode(categoryCode);
+        List<Mungple> mungpleList = mungpleService.getListByCategoryCode(categoryCode);
 
         return SuccessReturn(MungpleResponse.fromList(
                 mungpleService.sort(mungpleList, sort, latitude, longitude), // sort
@@ -87,7 +72,7 @@ public class MungpleController extends CommController {
             @RequestParam MungpleSort sort,
             @RequestParam(required = false) String latitude,
             @RequestParam(required = false) String longitude) {
-        List<Mungple> mungpleList = mungpleService.getActiveMungpleByBookMark(userId);
+        List<Mungple> mungpleList = mungpleService.getListByBookMark(userId);
         return SuccessReturn(MungpleResponse.fromList(
                 mungpleService.sortByBookmark(userId, mungpleList, sort, latitude, longitude), // sort
                 certQueryService.getCountMapByMungple(), // cert count
@@ -101,17 +86,7 @@ public class MungpleController extends CommController {
     @Operation(summary = "Mungple 삭제", description = "멍플 삭제 API")
     @DeleteMapping("/{mungpleId}")
     public ResponseEntity deleteMungple(@PathVariable Integer mungpleId) {
-        mungpleService.deleteMungple(mungpleId);
-        return SuccessReturn();
-    }
-
-    /**
-     * Mungple Cache Reset
-     */
-    @Operation(summary = "Reset Mungple Cache", description = "멍플 등록 시, 혹은 업데이트 시 적용이 안될 때 Cache 업데이트를 위해 사용한다.")
-    @GetMapping("/cache")
-    public ResponseEntity resetMungpleCache() {
-        mungpleService.resetMungpleCache();
+        mungpleService.delete(mungpleId);
         return SuccessReturn();
     }
 
@@ -125,21 +100,9 @@ public class MungpleController extends CommController {
     @GetMapping("/detail")
     public ResponseEntity getMungpleDetailByMungpleIdAndUserId(@RequestParam int mungpleId, @RequestParam int userId) {
         return SuccessReturn(MungpleDetailResponse.from(
-                mungpleService.getMungpleByMungpleId(mungpleId), // mungple
+                mungpleService.getOneByMungpleId(mungpleId), // mungple
                 certQueryService.getCountByMungpleId(mungpleId), // certCount
                 bookmarkService.getActiveBookmarkCount(mungpleId), // bookmarkCount
                 bookmarkService.hasBookmarkByIsBookmarked(userId, mungpleId, true))); // isBookmarked
-    }
-
-    // -------------------------------------- Deprecated --------------------------------------
-
-    /**
-     * TODO: [Deprecated] Category Mungple 조회
-     */
-    @Hidden
-    @GetMapping("/category/{categoryCode}")
-    public ResponseEntity getMungplesByCategoryDeprecated(@PathVariable CategoryCode categoryCode) {
-        List<Mungple> mungpleList = mungpleService.getActiveMungpleByCategoryCode(categoryCode);
-        return SuccessReturn(MungpleResponse.fromList(mungpleList, certQueryService.getCountMapByMungple(), bookmarkService.getCountMapByMungple()));
     }
 }

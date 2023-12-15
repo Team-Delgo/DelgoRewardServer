@@ -1,7 +1,7 @@
-package com.delgo.reward.service.strategy;
+package com.delgo.reward.service.mungple.strategy;
 
 import com.delgo.reward.mongoDomain.mungple.Mungple;
-import com.delgo.reward.service.BookmarkService;
+import com.delgo.reward.service.cert.CertQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -14,8 +14,8 @@ import java.util.stream.Stream;
 
 @Component
 @RequiredArgsConstructor
-public class BookmarkCountSorting implements MungpleSortingStrategy {
-    private final BookmarkService bookmarkService;
+public class CertCountSorting implements MungpleSortingStrategy {
+    private final CertQueryService certQueryService;
 
     @Override
     public List<Mungple> sort(List<Mungple> mungpleList) {
@@ -23,7 +23,7 @@ public class BookmarkCountSorting implements MungpleSortingStrategy {
                 .collect(Collectors.toMap(Mungple::getMungpleId, Function.identity()));
 
         return Stream.concat(
-                        bookmarkService.getCountMapByMungple().entrySet().stream()
+                        certQueryService.getCountMapByMungple().entrySet().stream()
                                 .sorted(Map.Entry.<Integer, Integer>comparingByValue().reversed())
                                 .map(Map.Entry::getKey)
                                 .map((mungpleMap::get)), // 해당 부분에서 Null 생성될 수 있음.
