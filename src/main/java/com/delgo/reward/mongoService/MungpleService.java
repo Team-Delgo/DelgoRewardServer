@@ -10,7 +10,6 @@ import com.delgo.reward.comm.ncp.geo.GeoDataService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.user.Bookmark;
-import com.delgo.reward.dto.mungple.MungpleResponse;
 import com.delgo.reward.dto.mungple.detail.MungpleDetailByMenuResponse;
 import com.delgo.reward.dto.mungple.detail.MungpleDetailByPriceTagResponse;
 import com.delgo.reward.dto.mungple.detail.MungpleDetailResponse;
@@ -141,16 +140,6 @@ public class MungpleService {
         List<Mungple> mungpleList = mungpleRepository.findByMungpleIdIn(mungpleIdList);
 
         return mungpleList;
-    }
-
-    /**
-     * IsBookmarked 값 설정
-     */
-    public void setIsBookmarked(int userId, List<MungpleResponse> responseList){
-        Set<Integer> bookmarkedMungpleIds = bookmarkRepository.findBookmarkedMungpleIds(userId);
-        responseList.forEach(m -> {
-            if (bookmarkedMungpleIds.contains(m.getMungpleId())) m.setIsBookmarked(true);
-        });
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.delgo.reward.dto.mungple;
 
 import com.delgo.reward.comm.code.CategoryCode;
+import com.delgo.reward.domain.user.Bookmark;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -81,6 +82,34 @@ public class MungpleResponse {
         }).toList();
     }
 
+    public static MungpleResponse from(Mungple mungple, int certCount, int bookmarkCount, boolean isBookmarked) {
+        return MungpleResponse.builder()
+                .mungpleId(mungple.getMungpleId())
+                .categoryCode(mungple.getCategoryCode())
+                .placeName(mungple.getPlaceName())
+                .placeNameEn(mungple.getPlaceNameEn())
+                .address(mungple.getJibunAddress())
+                .latitude(mungple.getLatitude())
+                .longitude(mungple.getLongitude())
+                .photoUrl(mungple.getPhotoUrls().get(0))
+                .detailUrl(mungple.getDetailUrl())
+                .certCount(certCount)
+                .bookmarkCount(bookmarkCount)
+                .isBookmarked(isBookmarked)
+                .build();
+    }
+
+    public static List<MungpleResponse> fromList(List<Mungple> mungpleList, Map<Integer, Integer> certCountMap, Map<Integer, Integer> bookmarkCountMap, List<Bookmark> bookmarkList) {
+        List<Integer> bookmarkedMungpleIdList = bookmarkList.stream().map(Bookmark::getMungpleId).toList();
+        return mungpleList.stream().map(mungple -> {
+            int certCount = certCountMap.getOrDefault(mungple.getMungpleId(),0);
+            int bookmarkCount = bookmarkCountMap.getOrDefault(mungple.getMungpleId(), 0);
+            boolean isBookmarked = bookmarkedMungpleIdList.contains(mungple.getMungpleId());
+
+            return MungpleResponse.from(mungple, certCount, bookmarkCount, isBookmarked);
+        }).toList();
+    }
+
     // 목록 생성자
     public MungpleResponse(Mungple mungple, int certCount, int bookmarkCount, boolean isBookmarked) {
         mungpleId = mungple.getMungpleId();
@@ -99,28 +128,5 @@ public class MungpleResponse {
         this.certCount = certCount;
         this.bookmarkCount = bookmarkCount;
         this.isBookmarked = isBookmarked;
-    }
-
-    // [Deprecated]
-    public MungpleResponse(Mungple mungple, int certCount, int bookmarkCount) {
-        mungpleId = mungple.getMungpleId();
-        categoryCode = mungple.getCategoryCode();
-
-        placeName = mungple.getPlaceName();
-        placeNameEn = mungple.getPlaceNameEn();
-        address = mungple.getJibunAddress();
-
-        latitude = mungple.getLatitude();
-        longitude = mungple.getLongitude();
-
-        photoUrl = mungple.getPhotoUrls().get(0);
-        detailUrl = mungple.getDetailUrl();
-
-        this.certCount = certCount;
-        this.bookmarkCount = bookmarkCount;
-    }
-
-    public void setIsBookmarked(Boolean bookmarked) {
-        isBookmarked = bookmarked;
     }
 }
