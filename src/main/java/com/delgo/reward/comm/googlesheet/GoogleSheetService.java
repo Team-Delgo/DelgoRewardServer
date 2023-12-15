@@ -108,7 +108,7 @@ public class GoogleSheetService {
                         log.info("ADD sheet PlaceName:{}", sheet.getPlaceName());
 
                         // 중복 이중 체크 ( 주소, 이름 )
-                        if (mungpleService.isMungpleExisting(mungple.getJibunAddress()) && mungpleService.isMungpleExistingByPlaceName(mungple.getPlaceName())) {
+                        if (mungpleService.isMungpleExisting(mungple.getJibunAddress(), mungple.getPlaceName())) {
                             resultMessageList.add("[" + mungple.getPlaceName() + "]은 이미 등록된 장소입니다. \n");
                             continue;
                         }
