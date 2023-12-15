@@ -109,24 +109,4 @@ public class MungpleResponse {
             return MungpleResponse.from(mungple, certCount, bookmarkCount, isBookmarked);
         }).toList();
     }
-
-    // 목록 생성자
-    public MungpleResponse(Mungple mungple, int certCount, int bookmarkCount, boolean isBookmarked) {
-        mungpleId = mungple.getMungpleId();
-        categoryCode = mungple.getCategoryCode();
-
-        placeName = mungple.getPlaceName();
-        placeNameEn = mungple.getPlaceNameEn();
-        address = mungple.getJibunAddress();
-
-        latitude = mungple.getLatitude();
-        longitude = mungple.getLongitude();
-
-        photoUrl = mungple.getPhotoUrls().get(0);
-        detailUrl = mungple.getDetailUrl();
-
-        this.certCount = certCount;
-        this.bookmarkCount = bookmarkCount;
-        this.isBookmarked = isBookmarked;
-    }
 }

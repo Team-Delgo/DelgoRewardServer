@@ -5,7 +5,7 @@ import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.MungpleSort;
 import com.delgo.reward.comm.googlesheet.GoogleSheetService;
 import com.delgo.reward.dto.mungple.MungpleResponse;
-import com.delgo.reward.dto.mungple.detail.MungpleDetailResponse;
+import com.delgo.reward.dto.mungple.MungpleDetailResponse;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.mongoService.MungpleService;
 import com.delgo.reward.service.BookmarkService;
@@ -124,7 +124,11 @@ public class MungpleController extends CommController {
     @ApiResponse(responseCode = "200", description = "", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MungpleDetailResponse.class))})
     @GetMapping("/detail")
     public ResponseEntity getMungpleDetailByMungpleIdAndUserId(@RequestParam int mungpleId, @RequestParam int userId) {
-        return SuccessReturn(mungpleService.getMungpleDetailByMungpleIdAndUserId(mungpleId, userId));
+        return SuccessReturn(MungpleDetailResponse.from(
+                mungpleService.getMungpleByMungpleId(mungpleId), // mungple
+                certQueryService.getCountByMungpleId(mungpleId), // certCount
+                bookmarkService.getActiveBookmarkCount(mungpleId), // bookmarkCount
+                bookmarkService.hasBookmarkByIsBookmarked(userId, mungpleId, true))); // isBookmarked
     }
 
     // -------------------------------------- Deprecated --------------------------------------

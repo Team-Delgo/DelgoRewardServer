@@ -10,15 +10,10 @@ import com.delgo.reward.comm.ncp.geo.GeoDataService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.domain.user.Bookmark;
-import com.delgo.reward.dto.mungple.detail.MungpleDetailByMenuResponse;
-import com.delgo.reward.dto.mungple.detail.MungpleDetailByPriceTagResponse;
-import com.delgo.reward.dto.mungple.detail.MungpleDetailResponse;
 import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.mongoRepository.MungpleRepository;
-import com.delgo.reward.repository.BookmarkRepository;
 import com.delgo.reward.service.strategy.*;
-import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.service.BookmarkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +34,7 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class MungpleService {
+    private final MungpleRepository mungpleRepository;
     private final String MUNGPLE_CACHE_STORE = "MungpleCacheStore";
 
     @Autowired
@@ -51,11 +47,6 @@ public class MungpleService {
     private final GeoDataService geoDataService;
     private final BookmarkService bookmarkService;
     private final ObjectStorageService objectStorageService;
-
-    // Repository
-    private final CertRepository certRepository;
-    private final BookmarkRepository bookmarkRepository;
-    private final MungpleRepository mungpleRepository;
 
     private final BookmarkCountSorting bookmarkCountSorting;
     private final CertCountSorting certCountSorting;
@@ -108,26 +99,24 @@ public class MungpleService {
     }
 
     public List<Mungple> sort(List<Mungple> mungpleList, MungpleSort sort, String latitude, String longitude) {
-        MungpleSortingStrategy sortingStrategy = switch (sort) {
-            case DISTANCE -> new DistanceSorting(latitude, longitude);
-            case BOOKMARK -> bookmarkCountSorting;
-            case CERT -> certCountSorting;
+        return switch (sort) {
+            case DISTANCE -> new DistanceSorting(latitude, longitude).sort(mungpleList);
+            case BOOKMARK -> bookmarkCountSorting.sort(mungpleList);
+            case CERT -> certCountSorting.sort(mungpleList);
+            case NOT -> mungpleList;
             default -> throw new IllegalArgumentException("Unknown sorting type: " + sort);
         };
-
-        return sortingStrategy.sort(mungpleList);
     }
 
     public List<Mungple> sortByBookmark(int userId, List<Mungple> mungpleList, MungpleSort sort, String latitude, String longitude) {
         List<Bookmark> bookmarkList = bookmarkService.getActiveBookmarkByUserId(userId);
-        MungpleSortingStrategy sortingStrategy = switch (sort) {
-            case DISTANCE -> new DistanceSorting(latitude, longitude);
-            case NEWEST -> new NewestSorting(bookmarkList);
-            case OLDEST -> new OldestSorting(bookmarkList);
+        return switch (sort) {
+            case DISTANCE -> new DistanceSorting(latitude, longitude).sort(mungpleList);
+            case NEWEST -> new NewestSorting(bookmarkList).sort(mungpleList);
+            case OLDEST -> new OldestSorting(bookmarkList).sort(mungpleList);
+            case NOT -> mungpleList;
             default -> throw new IllegalArgumentException("Unknown sorting type: " + sort);
         };
-
-        return sortingStrategy.sort(mungpleList);
     }
 
     /**
@@ -189,23 +178,6 @@ public class MungpleService {
         query.addCriteria(Criteria.where("location").withinSphere(new Circle(Double.parseDouble(longitude), Double.parseDouble(latitude), maxDistanceInRadians)));
 
         return mongoTemplate.find(query, Mungple.class);
-    }
-
-    public MungpleDetailResponse getMungpleDetailByMungpleIdAndUserId(int mungpleId, int userId) {
-        Mungple mungple = getMungpleByMungpleId(mungpleId);
-        int certCount = certRepository.countOfCorrectCertByMungple(mungpleId);
-
-        boolean isBookmarked = (userId != 0 && bookmarkService.hasBookmarkByIsBookmarked(userId, mungpleId, true));
-        int bookmarkCount = bookmarkService.getActiveBookmarkCount(mungpleId);
-
-        switch (mungple.getCategoryCode()) {
-            case CA0002, CA0003 -> {
-                return new MungpleDetailByMenuResponse(mungple, certCount, bookmarkCount, isBookmarked);
-            }
-            default -> {
-                return new MungpleDetailByPriceTagResponse(mungple, certCount, bookmarkCount, isBookmarked);
-            }
-        }
     }
 
     public void resetMungpleCache(){

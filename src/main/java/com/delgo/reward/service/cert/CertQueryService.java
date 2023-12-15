@@ -63,4 +63,8 @@ public class CertQueryService {
         return certRepository.countGroupedByMungpleId().stream()
                 .collect(Collectors.toMap(MungpleCountDTO::getMungpleId, MungpleCountDTO::getCount));
     }
+
+    public Integer getCountByMungpleId(int mungpleId){
+        return certRepository.countOfCorrectCertByMungple(mungpleId);
+    }
 }
