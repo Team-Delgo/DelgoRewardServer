@@ -4,6 +4,7 @@ import com.delgo.reward.domain.user.Bookmark;
 import com.delgo.reward.dto.mungple.MungpleCountDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +19,7 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Integer> {
     List<Bookmark> findActiveBookmarkByUserId(Integer userId);
 
     @Query("SELECT b.mungpleId FROM Bookmark b WHERE b.userId = :userId and b.isBookmarked = true")
-    Set<Integer> findBookmarkedMungpleIds(Integer userId);
+    Set<Integer> findBookmarkedMungpleIds(@Param("userId") Integer userId);
 
     @Query(value = "select count(b) from Bookmark b where b.mungpleId = :mungpleId and b.isBookmarked = true")
     int countOfActiveBookmarkByMungple(int mungpleId);
