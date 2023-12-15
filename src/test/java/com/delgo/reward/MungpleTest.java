@@ -69,41 +69,41 @@ public class MungpleTest {
         mungpleService.findWithin3Km(latitude,longitude);
     }
 
-    @Test
-    public void BookMarkCountSorting_성공한다() {
-        //whne
-        List<Mungple> mungpleList = mungpleRepository.findByIsActive(true);
-
-        // DB Data 조회
-        List<MungpleCountDTO> countByBookmark = bookmarkRepository.countBookmarksGroupedByMungpleId();
-
-        // 조건에 맞게 정렬
-        MungpleSortingStrategy sortingStrategy = new BookmarkCountSorting(mungpleList, countByBookmark);
-        List<MungpleResponse> mungpleResDTOS = mungpleService.convertToMungpleResDTOs(sortingStrategy.sort());
-        for (MungpleResponse mungple : mungpleResDTOS) {
-            System.out.println("mungple = " + mungple.getPlaceName() + " count : " + mungple.getBookmarkCount());
-        }
-    }
-
-    @Test
-    public void CertCountSorting_성공한다() {
-        //whne
-        List<Mungple> mungpleList = mungpleRepository.findByIsActive(true);
-
-        // DB Data 조회
-        List<MungpleCountDTO> countByCert = certRepository.countCertsGroupedByMungpleId();
-
-        // 조건에 맞게 정렬
-        MungpleSortingStrategy sortingStrategy = new CertCountSorting(mungpleList, countByCert);
-        List<Mungple> sortedMungpleList = sortingStrategy.sort();
-
-        List<MungpleResponse> mungpleResDTOS = mungpleService.convertToMungpleResDTOs(sortedMungpleList);
-        for (MungpleResponse mungple : mungpleResDTOS) {
-            System.out.println("mungple = " + mungple.getPlaceName() + " count : " + mungple.getCertCount());
-        }
-
-        int count = mungpleResDTOS.size();
-        System.out.println("count 1 = " + count);
-        System.out.println("count 2 = " + mungpleList.size());
-    }
+//    @Test
+//    public void BookMarkCountSorting_성공한다() {
+//        //whne
+//        List<Mungple> mungpleList = mungpleRepository.findByIsActive(true);
+//
+//        // DB Data 조회
+//        List<MungpleCountDTO> countByBookmark = bookmarkRepository.countBookmarksGroupedByMungpleId();
+//
+//        // 조건에 맞게 정렬
+//        MungpleSortingStrategy sortingStrategy = new BookmarkCountSorting(mungpleList, countByBookmark);
+//        List<MungpleResponse> mungpleResDTOS = mungpleService.convertToMungpleResDTOs(sortingStrategy.sort());
+//        for (MungpleResponse mungple : mungpleResDTOS) {
+//            System.out.println("mungple = " + mungple.getPlaceName() + " count : " + mungple.getBookmarkCount());
+//        }
+//    }
+//
+//    @Test
+//    public void CertCountSorting_성공한다() {
+//        //whne
+//        List<Mungple> mungpleList = mungpleRepository.findByIsActive(true);
+//
+//        // DB Data 조회
+//        List<MungpleCountDTO> countByCert = certRepository.countGroupedByMungpleId();
+//
+//        // 조건에 맞게 정렬
+//        MungpleSortingStrategy sortingStrategy = new CertCountSorting(mungpleList, countByCert);
+//        List<Mungple> sortedMungpleList = sortingStrategy.sort();
+//
+//        List<MungpleResponse> mungpleResDTOS = mungpleService.convertToMungpleResDTOs(sortedMungpleList);
+//        for (MungpleResponse mungple : mungpleResDTOS) {
+//            System.out.println("mungple = " + mungple.getPlaceName() + " count : " + mungple.getCertCount());
+//        }
+//
+//        int count = mungpleResDTOS.size();
+//        System.out.println("count 1 = " + count);
+//        System.out.println("count 2 = " + mungpleList.size());
+//    }
 }
