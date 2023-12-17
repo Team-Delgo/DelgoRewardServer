@@ -56,14 +56,6 @@ public class MungpleService {
                 : mungpleRepository.findListByIsActive(true);
     }
 
-    public List<Mungple> getListByBookMark(int userId) {
-        List<Bookmark> bookmarkList = bookmarkService.getActiveBookmarkByUserId(userId);
-        List<Integer> mungpleIdList = bookmarkList.stream().map(Bookmark::getMungpleId).toList();
-        List<Mungple> mungpleList = mungpleRepository.findListByMungpleIdIn(mungpleIdList);
-
-        return mungpleList;
-    }
-
     /**
      * [mungpleIds] List 조회
      */
@@ -76,14 +68,12 @@ public class MungpleService {
      */
     public List<UserVisitMungpleCountDTO> getVisitedMungpleIdListTop3ByUserId(int userId) {
         List<UserVisitMungpleCountDTO> countList = certQueryService.getVisitedMungpleIdListTop3ByUserId(userId);
-        List<Integer> mungpleIds = countList.stream().map(UserVisitMungpleCountDTO::getMungpleId).toList();
-
-        List<Mungple> mungpleList = getListByIds(mungpleIds);
+        List<Mungple> mungpleList = getListByIds(UserVisitMungpleCountDTO.getMungpleIdList(countList));
         Map<Integer, Mungple> mongoMungpleMap = mungpleList.stream().collect(Collectors.toMap(Mungple::getMungpleId, Function.identity()));
 
         countList.forEach(dto -> {
-            Mungple mongoMungple = mongoMungpleMap.get(dto.getMungpleId());
-            dto.setMungpleData(mongoMungple.getPlaceName(), mongoMungple.getPhotoUrls().get(0));
+            Mungple mungple = mongoMungpleMap.get(dto.getMungpleId());
+            dto.setMungpleData(mungple.getPlaceName(), mungple.getPhotoUrls().get(0));
         });
 
         return countList;

@@ -4,6 +4,7 @@ import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.MungpleSort;
 import com.delgo.reward.comm.googlesheet.GoogleSheetService;
+import com.delgo.reward.domain.user.Bookmark;
 import com.delgo.reward.dto.mungple.MungpleResponse;
 import com.delgo.reward.dto.mungple.MungpleDetailResponse;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
@@ -72,12 +73,13 @@ public class MungpleController extends CommController {
             @RequestParam MungpleSort sort,
             @RequestParam(required = false) String latitude,
             @RequestParam(required = false) String longitude) {
-        List<Mungple> mungpleList = mungpleService.getListByBookMark(userId);
+        List<Bookmark> bookmarkList = bookmarkService.getActiveBookmarkByUserId(userId);
+        List<Mungple> mungpleList = mungpleService.getListByIds(Bookmark.getMungpleIdList(bookmarkList));
         return SuccessReturn(MungpleResponse.fromList(
                 mungpleService.sortByBookmark(userId, mungpleList, sort, latitude, longitude), // sort
                 certQueryService.getCountMapByMungple(), // cert count
                 bookmarkService.getCountMapByMungple(), // bookmark count
-                bookmarkService.getActiveBookmarkByUserId(userId))); // isBookmarked
+                bookmarkList)); // isBookmarked
     }
 
     /**
