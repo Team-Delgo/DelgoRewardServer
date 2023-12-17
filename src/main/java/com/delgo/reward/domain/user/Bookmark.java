@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.List;
 
 @Getter
 @Entity
@@ -25,5 +26,9 @@ public class Bookmark extends BaseTimeEntity {
     public Bookmark setIsBookmarkedReverse(){
         this.isBookmarked = !this.isBookmarked;
         return this;
+    }
+
+    public static List<Integer> getMungpleIdList(List<Bookmark> bookmarkList){
+        return bookmarkList.stream().map(Bookmark::getMungpleId).toList();
     }
 }

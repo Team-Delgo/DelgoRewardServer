@@ -100,7 +100,7 @@ public class MungpleResponse {
     }
 
     public static List<MungpleResponse> fromList(List<Mungple> mungpleList, Map<Integer, Integer> certCountMap, Map<Integer, Integer> bookmarkCountMap, List<Bookmark> bookmarkList) {
-        List<Integer> bookmarkedMungpleIdList = bookmarkList.stream().map(Bookmark::getMungpleId).toList();
+        List<Integer> bookmarkedMungpleIdList = Bookmark.getMungpleIdList(bookmarkList);
         return mungpleList.stream().map(mungple -> {
             int certCount = certCountMap.getOrDefault(mungple.getMungpleId(),0);
             int bookmarkCount = bookmarkCountMap.getOrDefault(mungple.getMungpleId(), 0);
