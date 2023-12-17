@@ -106,7 +106,7 @@ config:
   profiles: real
   driverLocation: /var/www/chrome/chromedriver
   photo-dir: /var/www/reward-backend/
-  photo-url: https://www.real.delgo.pet/images/
+  photo-url: https://www.reward.delgo.pet/images/
   kakao:
     REDIRECT_URL: "https://www.reward.delgo.pet/oauth/callback/kakao"
   classificationDir: /var/www/reward-backend/WEB-INF/classes/classification_data_set/classification_category.json
