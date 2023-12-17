@@ -2,20 +2,26 @@ package com.delgo.reward.domain.certification;
 
 
 import com.delgo.reward.comm.code.CategoryCode;
+import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.domain.common.BaseTimeEntity;
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.record.certification.ModifyCertRecord;
+import com.delgo.reward.mongoDomain.mungple.MongoMungple;
+import com.delgo.reward.record.certification.CertCreate;
+import com.delgo.reward.record.certification.CertUpdate;
 import lombok.*;
-
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import javax.persistence.*;
 import java.util.List;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
+
 
 @Getter
 @Entity
 @Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@TypeDef(name = "json", typeClass = JsonType.class)
 public class Certification extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,24 +51,69 @@ public class Certification extends BaseTimeEntity {
     @JoinColumn(name = "userId", updatable = false)
     private User user;
 
-    @ToString.Exclude
-    @OneToMany(mappedBy = "certificationId", fetch = FetchType.LAZY)
-    private List<CertPhoto> photos;
+    @Type(type = "json")
+    @Column(columnDefinition = "longtext")
+    private List<String> photos;
 
-    @ToString.Exclude
-    @OneToMany(mappedBy = "certificationId", fetch = FetchType.LAZY)
-    private List<Reaction> reactionList;
-
-
-    public Certification setPhotoUrl(String photoUrl){
-        this.photoUrl = photoUrl;
-
+    public Certification setPhotos(List<String> photos){
+        this.photos = photos;
         return this;
     }
 
-    public void setPhotos(List<CertPhoto> photos) {
-        this.photos = photos;
+    public static Certification from(CertCreate certCreate, String address, Code code, User user) {
+        return Certification.builder()
+                .user(user)
+                .categoryCode(certCreate.categoryCode())
+                .mungpleId(certCreate.mungpleId())
+                .placeName(certCreate.placeName())
+                .description(certCreate.description())
+                .address(address)
+                .geoCode(code.getCode())
+                .pGeoCode(code.getPCode())
+                .latitude(certCreate.latitude())
+                .longitude(certCreate.longitude())
+                .isCorrect(true)
+                .isHideAddress(certCreate.isHideAddress())
+                .commentCount(0)
+                .build();
+    }
 
+    public static Certification from(CertCreate certCreate, MongoMungple mongoMungple, User user) {
+        return Certification.builder()
+                .user(user)
+                .categoryCode(mongoMungple.getCategoryCode())
+                .mungpleId(certCreate.mungpleId())
+                .placeName(mongoMungple.getPlaceName())
+                .description(certCreate.description())
+                .address(mongoMungple.formattedAddress())
+                .geoCode(mongoMungple.getGeoCode())
+                .pGeoCode(mongoMungple.getPGeoCode())
+                .latitude(mongoMungple.getLatitude())
+                .longitude(mongoMungple.getLongitude())
+                .isCorrect(true)
+                .isHideAddress(false)
+                .commentCount(0)
+                .build();
+    }
+
+    public Certification update(CertUpdate certUpdate) {
+        return Certification.builder()
+                .certificationId(this.certificationId)
+                .user(user)
+                .categoryCode(categoryCode)
+                .mungpleId(mungpleId)
+                .placeName(placeName)
+                .address(address)
+                .geoCode(geoCode)
+                .pGeoCode(pGeoCode)
+                .latitude(latitude)
+                .longitude(longitude)
+                .isCorrect(isCorrect)
+                .commentCount(commentCount)
+                // update
+                .description(certUpdate.description())
+                .isHideAddress(certUpdate.isHideAddress())
+                .build();
     }
 
     public void setIsCorrect(boolean isCorrect){
@@ -73,12 +124,5 @@ public class Certification extends BaseTimeEntity {
     public void setCommentCount(Integer commentCount){
         this.commentCount = commentCount;
 
-    }
-
-    public Certification modify(ModifyCertRecord record){
-        this.description = record.description();
-        this.isHideAddress = record.isHideAddress();
-
-        return this;
     }
 }

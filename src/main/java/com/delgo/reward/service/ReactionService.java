@@ -1,65 +1,77 @@
 package com.delgo.reward.service;
 
 import com.delgo.reward.comm.code.ReactionCode;
-import com.delgo.reward.comm.exception.NotFoundDataException;
-import com.delgo.reward.comm.fcm.FcmService;
+import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.certification.Reaction;
-import com.delgo.reward.domain.notify.NotifyType;
 import com.delgo.reward.repository.ReactionRepository;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
-@Slf4j
 @Service
-@Transactional
+@Builder
 @RequiredArgsConstructor
 public class ReactionService {
     private final ReactionRepository reactionRepository;
 
-    private final FcmService fcmService;
-    private final CertService certService;
-    private final UserService userService;
-    private final NotifyService notifyService;
-
     /**
-     * [Reaction] 리액션 등록 또는 제거
+     * 생성
      */
-    public Reaction reaction(int userId, int certId, ReactionCode reactionCode) throws IOException {
-        if (hasReaction(userId, certId, reactionCode)) { // 이미 기존의 리액션 Data가 존재할 경우
-            return getReaction(userId, certId, reactionCode).setIsReactionReverse();
-        } else {
-            int ownerId = certService.getCertById(certId).getUser().getUserId();
-            if (userId != ownerId) { // 자신의 반응 에는 알람 X
-                String notifyMsg = userService.getUserById(userId).getName() + "님이 회원님의 게시물에 " + reactionCode.getDesc() + " 로 반응했습니다.";
-                notifyService.saveNotify(ownerId, NotifyType.REACTION, notifyMsg);
-                fcmService.likePush(ownerId, notifyMsg);
-            }
-            return reactionRepository.save(Reaction.builder()
-                    .userId(userId)
-                    .certificationId(certId)
-                    .reactionCode(reactionCode)
-                    .isReaction(true)
-                    .build());
-        }
+    @Transactional
+    public Reaction create(int userId, int certificationId, ReactionCode reactionCode) {
+        return reactionRepository.save(Reaction.from(userId, certificationId, reactionCode));
     }
 
     /**
-     * [Reaction] 리액션 존재 여부 반환
+     * isReaction 수정 (true -> false, false -> true)
      */
-    public Boolean hasReaction(int userId, int certId, ReactionCode reactionCode) {
-        return reactionRepository.existsByUserIdAndCertificationIdAndReactionCode(userId, certId, reactionCode);
+    @Transactional
+    public Reaction update(int userId, int certificationId, ReactionCode reactionCode) {
+        Reaction reaction = getByUserIdAndCertIdAndCode(userId, certificationId, reactionCode);
+        reaction.update();
+
+        return reactionRepository.save(reaction);
+    }
+
+    public Reaction getByUserIdAndCertIdAndCode(int userId, int certificationId, ReactionCode reactionCode){
+        return reactionRepository.findByUserIdAndCertificationIdAndReactionCode(userId, certificationId, reactionCode)
+                .orElseThrow(() -> new NullPointerException("NOT FOUND REACTION userId: " + userId + ", certificationId : " + certificationId));
     }
 
     /**
-     * [Reaction] 리액션 가져오기
+     * [certId] 리스트 조회
      */
-    public Reaction getReaction(int userId, int certId, ReactionCode reactionCode) {
-        return reactionRepository.findByUserIdAndCertificationIdAndReactionCode(userId, certId, reactionCode)
-                .orElseThrow(() -> new NotFoundDataException("[Reaction] userId : " + userId + " certificationId: " + certId + " reactionCode: " + reactionCode.getCode()));
+    public List<Reaction> getListByCertId(int certificationId) {
+        return reactionRepository.findByIsReactionAndCertificationId(true, certificationId);
+    }
+
+    /**
+     * [List<Certification>] 리스트 조회
+     */
+    public Map<Integer,List<Reaction>> getMapByCertList(List<Certification> certList) {
+        List<Integer> certIdList = certList.stream().map(Certification::getCertificationId).toList();
+        List<Reaction> reactionList = reactionRepository.findByIsReactionAndCertificationIdIn(true, certIdList);
+        return reactionList.stream().collect(Collectors.groupingBy(Reaction::getCertificationId));
+    }
+
+    /**
+     * exist 여부 반환
+     */
+    public Boolean hasReaction(int userId, int certificationId, ReactionCode reactionCode) {
+        return reactionRepository.existsByUserIdAndCertificationIdAndReactionCode(userId, certificationId, reactionCode);
+    }
+
+    /**
+     * [certId] 삭제
+     */
+    @Transactional
+    public void deleteByCertId(int certificationId) {
+        reactionRepository.deleteByCertificationId(certificationId);
     }
 }
