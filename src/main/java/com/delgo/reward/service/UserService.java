@@ -150,7 +150,7 @@ public class UserService {
         if (user.getUserSocial().equals(UserSocial.K))
             kakaoService.logout(user.getKakaoId()); // kakao 로그아웃 , Naver는 로그아웃 지원 X
 
-        certRepository.deleteAllByUserUserId(userId);
+        certRepository.deleteByUserId(userId);
         categoryCountRepository.deleteByUserId(userId);
 
         jdbcTemplatePointRepository.deleteAllByUserId(userId);

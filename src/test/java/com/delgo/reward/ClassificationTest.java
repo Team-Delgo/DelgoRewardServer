@@ -8,7 +8,7 @@ import com.delgo.reward.mongoRepository.ClassificationRepository;
 import com.delgo.reward.mongoService.ClassificationService;
 import com.delgo.reward.repository.CategoryCountRepository;
 import com.delgo.reward.repository.UserRepository;
-import com.delgo.reward.service.CertService;
+import com.delgo.reward.service.cert.CertQueryService;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -31,7 +31,7 @@ import java.util.*;
 @SpringBootTest
 public class ClassificationTest {
     @Autowired
-    private CertService certService;
+    private CertQueryService certQueryService;
     @Autowired
     private ClassificationService classificationService;
     @Autowired
@@ -144,7 +144,7 @@ public class ClassificationTest {
             classificationCriteriaMap.put(categoryCode, (List<String>) jsonObject.get("classification"));
         }
 
-        List<Certification> certificationList = certService.getCertsByDateWithoutUser(LocalDate.of(2023, 2, 14));
+        List<Certification> certificationList = certQueryService.getListByDateWithoutUser(LocalDate.of(2023, 2, 14));
 
         for (Certification certification : certificationList) {
             Classification classification = classificationRepository.save(classificationService.classificationCert(certification, categoryCodeList, categoryMap, classificationCriteriaMap));

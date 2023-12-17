@@ -2,44 +2,53 @@ package com.delgo.reward.comm.async;
 
 import com.delgo.reward.comm.ncp.greeneye.GreenEyeService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
-import com.delgo.reward.domain.certification.CertPhoto;
-import com.delgo.reward.repository.CertPhotoRepository;
-import com.delgo.reward.service.CertService;
+import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.service.PhotoService;
+import com.delgo.reward.service.cert.CertCommandService;
+import com.delgo.reward.service.cert.CertQueryService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CertAsyncService {
     @Value("${config.photo-dir}")
     String DIR;
 
-    private final CertService certService;
+    private final CertQueryService certQueryService;
+    private final CertCommandService certCommandService;
     private final PhotoService photoService;
     private final GreenEyeService greenEyeService;
-    private final CertPhotoRepository certPhotoRepository;
 
     @Async
-    public void doSomething(Integer certificationId) {
-        List<CertPhoto> certPhotos = certPhotoRepository.findPhotosByCertificationId(certificationId);
-        for (CertPhoto photo : certPhotos) {
-            String fileName = photoService.getFileNameFromURL(photo.getUrl()); // ex) 1359_cert_1.png
+    public void convertAndUpload(Integer certificationId) {
+        Certification certification = certQueryService.getOneById(certificationId);
+        List<String> photoList = certification.getPhotos();
+
+        List<String> uploadedList = new ArrayList<>();
+        for (String url : photoList) {
+            String fileName = photoService.getFileNameFromURL(url); // ex) 1359_cert_1.png
 
             // [DIR 사진 파일 기준] 유해 사진 체크
-            boolean isCorrect = greenEyeService.isCorrect(photo.getUrl());
-            photo.setIsCorrect(isCorrect);
-            if (!isCorrect) {
-                certService.changeIsCorrect(certificationId, false);
-            }
+            boolean isCorrect = greenEyeService.isCorrect(url);
+            if (!isCorrect) certCommandService.changeIsCorrect(certificationId, false);
 
             String uploadedURL = photoService.upload(fileName, BucketName.CERTIFICATION);
-            photo.setUrl(uploadedURL);
+            uploadedList.add(uploadedURL);
         }
-        certPhotoRepository.saveAll(certPhotos);
+        certification.setPhotos(uploadedList);
+        certCommandService.save(certification);
+
+        for (String url : photoList) {
+            String fileName = photoService.getFileNameFromURL(url); // ex) 1359_cert_1.pn
+            photoService.deleteFileByName(fileName);
+        }
     }
 }

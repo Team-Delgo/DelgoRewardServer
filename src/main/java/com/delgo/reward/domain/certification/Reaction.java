@@ -9,7 +9,6 @@ import javax.persistence.*;
 @Getter
 @Entity
 @Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class Reaction extends BaseTimeEntity {
@@ -20,10 +19,20 @@ public class Reaction extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private ReactionCode reactionCode;
     private Integer userId;
-    private boolean isReaction;
+    private Boolean isReaction;
 
-    public Reaction setIsReactionReverse(){
+    public static Reaction from(int userId, int certificationId, ReactionCode reactionCode){
+        return Reaction.builder()
+                .userId(userId)
+                .certificationId(certificationId)
+                .reactionCode(reactionCode)
+                .isReaction(true)
+                .build();
+    }
+
+    public Reaction update(){
         this.isReaction = !this.isReaction;
+
         return this;
     }
 }

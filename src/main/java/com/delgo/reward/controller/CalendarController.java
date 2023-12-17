@@ -1,21 +1,26 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.service.CalendarService;
-import io.swagger.v3.oas.annotations.Hidden;
+import com.delgo.reward.domain.certification.Certification;
+import com.delgo.reward.domain.certification.Reaction;
+import com.delgo.reward.dto.cert.CalendarResponse;
+import com.delgo.reward.service.ReactionService;
+import com.delgo.reward.service.cert.CertQueryService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Hidden
-@Slf4j
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/calendar")
 public class CalendarController extends CommController {
-
-    private final CalendarService calendarService;
+    private final ReactionService reactionService;
+    private final CertQueryService certQueryService;
 
     /*
      * 날짜별 인증 조회 [ 캘린더 ]
@@ -24,6 +29,9 @@ public class CalendarController extends CommController {
      */
     @GetMapping("/{userId}")
     public ResponseEntity getCalendar(@PathVariable Integer userId) {
-        return SuccessReturn(calendarService.getCalendar(userId));
+        Page<Certification> page = certQueryService.getPagingListByUserId(userId, Pageable.unpaged());
+        Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
+
+        return SuccessReturn(CalendarResponse.from(userId, page, reactionMap));
     }
 }
