@@ -46,7 +46,7 @@ public class NCPTest {
     @Test
     public void isMungpleTest() {
         String address = "서울특별시 송파구 백제고분로45길 22-1";
-        String result = String.valueOf(mungpleService.isMungpleExisting(address));
+        String result = String.valueOf(mungpleService.isMungpleExisting(address, ""));
 
         System.out.println("result = " + result);
     }

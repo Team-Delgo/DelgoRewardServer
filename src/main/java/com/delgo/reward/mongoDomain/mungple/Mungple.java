@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -214,5 +215,9 @@ public class Mungple {
     public String formattedAddress(){
         String[] arr = jibunAddress.split(" ");
         return arr[0] + " " + arr[1] + " " + arr[2];
+    }
+
+    public static Map<Integer, Mungple> listToMap(List<Mungple> mungpleList) {
+        return mungpleList.stream().collect(Collectors.toMap(Mungple::getMungpleId, Function.identity()));
     }
 }
