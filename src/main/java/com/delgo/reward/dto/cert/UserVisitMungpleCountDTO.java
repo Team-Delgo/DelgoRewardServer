@@ -1,11 +1,15 @@
 package com.delgo.reward.dto.cert;
 
+import com.delgo.reward.mongoDomain.mungple.Mungple;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Getter
+@Builder
+@AllArgsConstructor
 public class UserVisitMungpleCountDTO {
     @Schema(description = "멍플 고유 아이디")
     private Integer mungpleId;
@@ -21,13 +25,15 @@ public class UserVisitMungpleCountDTO {
         this.visitCount = visitCount;
     }
 
-    public UserVisitMungpleCountDTO setMungpleData(String placeName, String photoUrl){
-        this.placeName = placeName;
-        this.photoUrl = photoUrl;
-        return this;
-    }
-
-    public static List<Integer> getMungpleIdList(List<UserVisitMungpleCountDTO> list){
-        return list.stream().map(UserVisitMungpleCountDTO::getMungpleId).toList();
+    public static List<UserVisitMungpleCountDTO> setMungpleData(List<UserVisitMungpleCountDTO> dtoList, Map<Integer, Mungple> mungpleMap){
+        return dtoList.stream().map(dto ->{
+            Mungple mungple = mungpleMap.get(dto.getMungpleId());
+            return UserVisitMungpleCountDTO.builder()
+                    .mungpleId(dto.getMungpleId())
+                    .visitCount(dto.getVisitCount())
+                    .placeName(mungple.getPlaceName())
+                    .photoUrl( mungple.getPhotoUrls().get(0))
+                    .build();
+        }).toList();
     }
 }

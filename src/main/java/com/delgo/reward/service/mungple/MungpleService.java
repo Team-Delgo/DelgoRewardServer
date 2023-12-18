@@ -7,11 +7,8 @@ import com.delgo.reward.comm.ncp.geo.GeoData;
 import com.delgo.reward.comm.ncp.geo.GeoDataService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
-import com.delgo.reward.domain.user.Bookmark;
-import com.delgo.reward.dto.cert.UserVisitMungpleCountDTO;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.mongoRepository.MungpleRepository;
-import com.delgo.reward.service.cert.CertQueryService;
 import com.delgo.reward.service.mungple.strategy.*;
 import com.delgo.reward.service.BookmarkService;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +16,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +23,6 @@ public class MungpleService {
     private final MungpleRepository mungpleRepository;
 
     private final GeoDataService geoDataService;
-    private final CertQueryService certQueryService;
     private final BookmarkService bookmarkService;
     private final ObjectStorageService objectStorageService;
 
@@ -38,6 +32,10 @@ public class MungpleService {
     @Transactional
     public Mungple save(Mungple mungple) {
         return mungpleRepository.save(mungple);
+    }
+
+    public List<Mungple> getAll() {
+        return mungpleRepository.findListByIsActive(true);
     }
 
     public Mungple getOneByMungpleId(int mungpleId) {
@@ -51,32 +49,11 @@ public class MungpleService {
     }
 
     public List<Mungple> getListByCategoryCode(CategoryCode categoryCode) {
-         return !categoryCode.equals(CategoryCode.CA0000)
-                ? mungpleRepository.findListByCategoryCodeAndIsActive(categoryCode, true)
-                : mungpleRepository.findListByIsActive(true);
+         return mungpleRepository.findListByCategoryCodeAndIsActive(categoryCode, true);
     }
 
-    /**
-     * [mungpleIds] List 조회
-     */
     public List<Mungple> getListByIds(List<Integer> mungpleIdList) {
         return mungpleRepository.findListByMungpleIdIn(mungpleIdList);
-    }
-
-    /**
-     * 유저 인증 중 가장 많이 방문한 멍플 조회
-     */
-    public List<UserVisitMungpleCountDTO> getVisitedMungpleIdListTop3ByUserId(int userId) {
-        List<UserVisitMungpleCountDTO> countList = certQueryService.getVisitedMungpleIdListTop3ByUserId(userId);
-        List<Mungple> mungpleList = getListByIds(UserVisitMungpleCountDTO.getMungpleIdList(countList));
-        Map<Integer, Mungple> mongoMungpleMap = mungpleList.stream().collect(Collectors.toMap(Mungple::getMungpleId, Function.identity()));
-
-        countList.forEach(dto -> {
-            Mungple mungple = mongoMungpleMap.get(dto.getMungpleId());
-            dto.setMungpleData(mungple.getPlaceName(), mungple.getPhotoUrls().get(0));
-        });
-
-        return countList;
     }
 
     public boolean isMungpleExisting(String address, String placeName) {
@@ -91,24 +68,14 @@ public class MungpleService {
         objectStorageService.deleteObject(BucketName.MUNGPLE_NOTE,mungpleId + "_mungplenote.webp"); // mungpleNote delete
     }
 
-    public List<Mungple> sort(List<Mungple> mungpleList, MungpleSort sort, String latitude, String longitude) {
+    public MungpleSortingStrategy getSortingStrategy(MungpleSort sort, String latitude, String longitude, int userId) {
         return switch (sort) {
-            case DISTANCE -> new DistanceSorting(latitude, longitude).sort(mungpleList);
-            case BOOKMARK -> bookmarkCountSorting.sort(mungpleList);
-            case CERT -> certCountSorting.sort(mungpleList);
-            case NOT -> mungpleList;
-            default -> throw new IllegalArgumentException("Unknown sorting type: " + sort);
-        };
-    }
-
-    public List<Mungple> sortByBookmark(int userId, List<Mungple> mungpleList, MungpleSort sort, String latitude, String longitude) {
-        List<Bookmark> bookmarkList = bookmarkService.getActiveBookmarkByUserId(userId);
-        return switch (sort) {
-            case DISTANCE -> new DistanceSorting(latitude, longitude).sort(mungpleList);
-            case NEWEST -> new NewestSorting(bookmarkList).sort(mungpleList);
-            case OLDEST -> new OldestSorting(bookmarkList).sort(mungpleList);
-            case NOT -> mungpleList;
-            default -> throw new IllegalArgumentException("Unknown sorting type: " + sort);
+            case DISTANCE -> new DistanceSorting(latitude, longitude);
+            case BOOKMARK -> bookmarkCountSorting;
+            case CERT -> certCountSorting;
+            case NEWEST -> new NewestSorting(bookmarkService.getActiveBookmarkByUserId(userId));
+            case OLDEST -> new OldestSorting(bookmarkService.getActiveBookmarkByUserId(userId));
+            case NOT -> new NotSorting();
         };
     }
 }
