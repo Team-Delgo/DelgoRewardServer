@@ -91,6 +91,7 @@ public class GoogleSheetService {
         for (int rowNum = 1; rowNum < ResponseValues.size(); rowNum++) {
             List<Object> row = ResponseValues.get(rowNum);
             String activeType = (String) row.get(0); // 동작 상태 지정 (TRUE, FALSE, UPDATE, DEL)
+            activeType = activeType.trim();
 
             if (activeType.equals("TRUE") || activeType.equals("DEL SUCCESS")) continue;
 
@@ -124,7 +125,6 @@ public class GoogleSheetService {
 //                            mungpleQueryService.update(savedMungple.getMungpleId(), savedMungple);
                             // Sheet IsRegist Data update [ false -> true ]
                             checkSaveConfirm(categoryCode, rowNum + 1);
-
                             resultMessageList.add("[" + savedMungple.getPlaceName() + "] 등록되었습니다.");
                         }
                     }
@@ -148,7 +148,6 @@ public class GoogleSheetService {
 //                        mungpleQueryService.update(savedMungple.getMungpleId(), savedMungple);
                         // Sheet IsRegist Data update [ update -> true ]
                         checkSaveConfirm(categoryCode, rowNum + 1);
-
                         resultMessageList.add("[" + savedMungple.getPlaceName() + "] 수정되었습니다.");
                     }
                     case "DEL" -> { // activeType 체크
@@ -157,12 +156,12 @@ public class GoogleSheetService {
                         Mungple dbMungple = mungpleService.getOneByPlaceName(sheet.getPlaceName());
                         mungpleService.delete(dbMungple.getMungpleId());
 
-                        resultMessageList.add("[" + dbMungple.getPlaceName() + "] 삭제되었습니다.");
+                        resultMessageList.add("[" + dbMungple.getPlaceName() + "] 삭제되었습니다.\n");
                         checkDeleteConfirm(categoryCode, rowNum + 1);
                     }
                 }
             } catch (Exception e) {
-                resultMessageList.add("[" + sheet.getPlaceName() + "] 저장에 실패 에러가 발생했습니다 - " + e.getMessage());
+                resultMessageList.add("[" + sheet.getPlaceName() + "] 저장에 실패 에러가 발생했습니다 - " + e.getMessage() + "\n");
             }
         }
     }
