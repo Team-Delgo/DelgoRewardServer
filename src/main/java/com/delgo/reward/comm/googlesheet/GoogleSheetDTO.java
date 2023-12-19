@@ -8,6 +8,7 @@ import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.util.StringUtils;
 
@@ -17,6 +18,7 @@ import java.util.List;
 import static com.delgo.reward.comm.code.CategoryCode.MENU_CODES;
 
 @Data
+@Slf4j
 @Builder
 @AllArgsConstructor
 public class GoogleSheetDTO {
@@ -93,8 +95,10 @@ public class GoogleSheetDTO {
             value = value.replace("\"", "").trim(); // 큰따옴표 제거, 앞 뒤 공백 제거
 
             return value;
+        } else {
+            log.error(ERROR_MSG + "[" + this.placeName + " : " + fieldName + "]");
+            throw new FigmaException(ERROR_MSG + "[" + this.placeName + " : " + fieldName + "]");
         }
-        throw new FigmaException(ERROR_MSG + "[" +this.placeName + " : " + fieldName + "]");
     }
 
     private String getValue(List<Object> row, int index) {
