@@ -24,14 +24,6 @@ public class DistanceSorting implements MungpleSortingStrategy{
                 .toList();
     }
 
-    // 2차 평면 거리 계산 함수
-    private double calculateDistance(GeoJsonPoint point1, GeoJsonPoint point2) {
-        double xDiff = point1.getX() - point2.getX();
-        double yDiff = point1.getY() - point2.getY();
-
-        return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
-    }
-
     // 2차 구 거리 계산 함수 (실제 거리에 가까움)
     private double hversineCalculate(GeoJsonPoint point1, GeoJsonPoint point2) {
         int EARTH_RADIUS = 6371; // 지구의 반경, km
