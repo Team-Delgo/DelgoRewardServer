@@ -116,7 +116,7 @@ public class GoogleSheetService {
                             mungple.setBusinessHour(sheet.getBusinessHour());
                         if (StringUtils.hasText(sheet.getFigmaNodeId())) {
                             // Upload 및 setPhoto
-                            figmaService.uploadFigmaDataToNCP(sheet.getFigmaNodeId(), mongoMungple);
+                            figmaService.uploadFigmaDataToNCP(sheet.getFigmaNodeId(), mungple);
                             // Figma 사진 저장 까지 완료 후 저장
                             Mungple savedMungple = mungpleService.save(mungple);
                             // Cache Update
