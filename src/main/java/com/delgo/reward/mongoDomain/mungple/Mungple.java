@@ -30,9 +30,10 @@ import java.util.stream.Collectors;
 public class Mungple {
     @Transient
     public static final String SEQUENCE_NAME = "mungple_sequence";
-    // Mungple
+    @Setter  // Sheet Update 시 사용
     @Id private String id;
 
+    @Setter
     @Field("mungple_id") private Integer mungpleId;
     @Field("category_code")private CategoryCode categoryCode; // 카테고리 코드 ( ex. 카페, 음식점 .. )
 
@@ -81,6 +82,7 @@ public class Mungple {
     @Field("resident_dog_photo")
     private String residentDogPhoto; // 상주견 사진
 
+    @Setter
     @Field("represent_menu_title")
     private String representMenuTitle; // 대표 메뉴 제목
     @Field("represent_menu_photo_urls")
@@ -94,48 +96,29 @@ public class Mungple {
     @Field("price_tag_photo_urls")
     private List<String> priceTagPhotoUrls; // 가격표 사진
 
-    // Sheet Update 시 사용
-    public void setId(String id){
-        this.id = id;
-    }
-
-    public void setMungpleId(Integer mungpleId) {
-        this.mungpleId = mungpleId;
-    }
-
-    public Mungple setPhoneNo(String phoneNo){
-        this.phoneNo = phoneNo.replace("-","");
-
-        return this;
-    }
-
-    public void setRepresentMenuTitle(String representMenuTitle){
-        this.representMenuTitle = representMenuTitle;
-
-    }
-
     public void setAcceptSize(String input) {
-        try {
-            acceptSize = Arrays.stream(input.replaceAll("\\s+", "").split(","))
-                    .map(s -> s.split(":"))
-                    .collect(Collectors.toMap(
-                            arr -> arr[0],
-                            arr -> DetailCode.valueOf(arr[1])
-                    ));
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            Pattern pattern = Pattern.compile("No enum constant .+\\.(.+)");
-            Matcher matcher = pattern.matcher(e.getMessage());
-            String errorMessage = matcher.find() ? matcher.group(1) + " 확인해주세요" : e.getMessage();
+        acceptSize = new HashMap<>();
 
-            throw new GoogleSheetException("[강아지 동반 안내] " + errorMessage);
+        Pattern pattern = Pattern.compile("([A-Z_]+): ([^\\n]+),?");
+        Matcher matcher = pattern.matcher(input);
+
+        while (matcher.find()) {
+            try {
+                String key = matcher.group(1).trim().replaceAll(",$", "");
+                System.out.println("key = " + key);
+                String value = matcher.group(2).trim().replaceAll(",$", "");
+                System.out.println("value = " + value);
+                acceptSize.put(key,DetailCode.valueOf(value));
+            } catch (Exception e){
+                log.error(e.getMessage());
+                throw new GoogleSheetException("[강아지 동반 안내] " + matcher.group(1) + " 확인해주세요");
+            }
         }
     }
 
     public void setBusinessHour(String input) {
         businessHour = new HashMap<>();
 
-        // 정규식 으로 Key, Value 체크
         Pattern pattern = Pattern.compile("([A-Z_]+): ([^\\n]+),?");
         Matcher matcher = pattern.matcher(input);
 
