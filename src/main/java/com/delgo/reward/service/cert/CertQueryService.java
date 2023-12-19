@@ -37,6 +37,10 @@ public class CertQueryService {
         return certRepository.findListByDate(localDate.minusDays(1).atStartOfDay(), localDate.atStartOfDay());
     }
 
+    public List<Certification> getListByPlaceName(String placeName) {
+        return certRepository.findListByPlaceName(placeName);
+    }
+
     public Page<Certification> getPagingListByUserId(int userId, Pageable pageable) {
         return certRepository.findPageByUserId(userId, pageable);
     }
