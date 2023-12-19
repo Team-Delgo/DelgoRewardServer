@@ -1,16 +1,15 @@
-package com.delgo.reward.service;
+package com.delgo.reward.service.mungple;
 
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.MungpleSort;
 import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
-import com.delgo.reward.service.mungple.MungpleService;
 import com.delgo.reward.service.mungple.strategy.*;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,15 +18,15 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
-class MungpleServiceTest {
+@ExtendWith(SpringExtension.class)
+public class MungpleServiceTest {
 
     @Autowired
     MungpleService mungpleService;
 
     @Test
-    void save() {
+    public void save() {
         // given
         Mungple mungple = Mungple.builder()
                 .categoryCode(CategoryCode.CA0002) // 가정된 열거형 값
@@ -92,7 +91,7 @@ class MungpleServiceTest {
     }
 
     @Test
-    void getAll() {
+    public void getAll() {
         // given
 
         // when
@@ -104,7 +103,7 @@ class MungpleServiceTest {
     }
 
     @Test
-    void getOneByMungpleId() {
+    public void getOneByMungpleId() {
         // given
         int mungpleId = 1;
 
@@ -116,7 +115,7 @@ class MungpleServiceTest {
     }
 
     @Test
-    void getOneByMungpleId_예외처리() {
+    public void getOneByMungpleId_예외처리() {
         // given
         int mungpleId = 0;
 
@@ -128,7 +127,7 @@ class MungpleServiceTest {
     }
 
     @Test
-    void getOneByPlaceName() {
+    public void getOneByPlaceName() {
         // given
         String placeName = "니드스윗";
 
@@ -140,7 +139,7 @@ class MungpleServiceTest {
     }
 
     @Test
-    void getOneByPlaceName_예외처리() {
+    public void getOneByPlaceName_예외처리() {
         // given
         String placeName = "에베베베베베";
 
@@ -153,7 +152,7 @@ class MungpleServiceTest {
 
 
     @Test
-    void getListByCategoryCode() {
+    public void getListByCategoryCode() {
         // given
         CategoryCode categoryCode = CategoryCode.CA0002;
 
@@ -165,7 +164,7 @@ class MungpleServiceTest {
     }
 
     @Test
-    void getListByIds() {
+    public void getListByIds() {
         // given
         List<Integer> mungpleIdList = Arrays.asList(2, 3);
 
@@ -179,7 +178,7 @@ class MungpleServiceTest {
     }
 
     @Test
-    void isMungpleExisting() {
+    public void isMungpleExisting() {
         // given
         String placeName = "니드스윗";
         String address = "서울특별시 송파구 송파동 54-13";
@@ -192,7 +191,7 @@ class MungpleServiceTest {
     }
 
     @Test
-    void delete() {
+    public void delete() {
         // given
         int mungpleId = 1;
 

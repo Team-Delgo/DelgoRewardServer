@@ -26,8 +26,6 @@ public class MungpleService {
     private final BookmarkService bookmarkService;
     private final ObjectStorageService objectStorageService;
 
-    private final CertCountSorting certCountSorting;
-    private final BookmarkCountSorting bookmarkCountSorting;
 
     @Transactional
     public Mungple save(Mungple mungple) {
@@ -71,8 +69,8 @@ public class MungpleService {
     public MungpleSortingStrategy getSortingStrategy(MungpleSort sort, String latitude, String longitude, int userId) {
         return switch (sort) {
             case DISTANCE -> new DistanceSorting(latitude, longitude);
-            case BOOKMARK -> bookmarkCountSorting;
-            case CERT -> certCountSorting;
+            case BOOKMARK -> new BookmarkCountSorting(bookmarkService.getCountMapByMungple());
+            case CERT -> new CertCountSorting(bookmarkService.getCountMapByMungple());
             case NEWEST -> new NewestSorting(bookmarkService.getActiveBookmarkByUserId(userId));
             case OLDEST -> new OldestSorting(bookmarkService.getActiveBookmarkByUserId(userId));
             case NOT -> new NotSorting();
