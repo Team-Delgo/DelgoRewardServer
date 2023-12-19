@@ -97,6 +97,9 @@ public class FigmaService {
         } catch (JsonProcessingException e) {
             log.error(e.getMessage());
             throw new FigmaException(e.getMessage());
+        } catch (NullPointerException e) {
+            log.error(e.getMessage());
+            throw new FigmaException("figmaNodeId를 확인해주세요");
         }
 
         return imageIdMap;
