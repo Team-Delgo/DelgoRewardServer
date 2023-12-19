@@ -95,11 +95,9 @@ public class GoogleSheetService {
             String activeType = (String) row.get(0); // 동작 상태 지정 (TRUE, FALSE, UPDATE, DEL)
             activeType = activeType.trim();
 
-            if (activeType.equals("TRUE") || activeType.equals("DEL SUCCESS")) continue;
-
-            GoogleSheetDTO sheet = new GoogleSheetDTO(row, categoryCode);
-
+            if (activeType.equals("TRUE") || activeType.equals("DEL SUCCESS") || activeType.isEmpty()) continue;
             try {
+                GoogleSheetDTO sheet = new GoogleSheetDTO(row, categoryCode);
                 GeoData geoData = geoDataService.getGeoData(sheet.getAddress());
                 Code geoCode = codeService.getGeoCodeByAddress(geoData.getJibunAddress());
                 MongoMungple mongoMungple = sheet.toMongoEntity(categoryCode, geoData, geoCode);
@@ -110,7 +108,7 @@ public class GoogleSheetService {
 
                         // 중복 이중 체크 ( 주소, 이름 )
                         if (mongoMungpleService.isMungpleExisting(mongoMungple.getJibunAddress()) && mongoMungpleService.isMungpleExistingByPlaceName(mongoMungple.getPlaceName())) {
-                            resultMessageList.add("[" + mongoMungple.getPlaceName() + "]은 이미 등록된 장소입니다.\n");
+                            resultMessageList.add("[" + mongoMungple.getPlaceName() + "]은 이미 등록된 장소입니다.");
                             continue;
                         }
 
@@ -128,7 +126,7 @@ public class GoogleSheetService {
                             // Sheet IsRegist Data update [ false -> true ]
                             checkSaveConfirm(categoryCode, rowNum + 1);
 
-                            resultMessageList.add("[" + savedMongoMungple.getPlaceName() + "] 등록되었습니다.\n");
+                            resultMessageList.add("[" + savedMongoMungple.getPlaceName() + "] 등록되었습니다.");
                         }
                     }
                     case "UPDATE" -> {
@@ -152,7 +150,7 @@ public class GoogleSheetService {
                         // Sheet IsRegist Data update [ update -> true ]
                         checkSaveConfirm(categoryCode, rowNum + 1);
 
-                        resultMessageList.add("[" + savedMongoMungple.getPlaceName() + "] 수정되었습니다.\n");
+                        resultMessageList.add("[" + savedMongoMungple.getPlaceName() + "] 수정되었습니다.");
                     }
                     case "DEL" -> { // activeType 체크
                         log.info("DELETE sheet PlaceName:{}", sheet.getPlaceName());
@@ -165,7 +163,7 @@ public class GoogleSheetService {
                     }
                 }
             } catch (Exception e) {
-                resultMessageList.add("[" + sheet.getPlaceName() + "] 저장에 실패 에러가 발생했습니다 - " + e.getMessage() + "\n");
+                resultMessageList.add("[" + row.get(2) + "] 파싱 실패 에러가 발생했습니다 - " + e.getMessage());
             }
         }
     }
