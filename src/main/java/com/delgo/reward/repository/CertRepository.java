@@ -35,6 +35,9 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @Query(value = "select c from Certification c where c.user.userId = :userId and  c.registDt between :startDt and :endDt order by c.registDt desc")
     List<Certification> findListByDateAndUser(@Param("userId") int userId, @Param("startDt") LocalDateTime startDt, @Param("endDt") LocalDateTime endDate);
 
+    @Query(value = "select c from Certification c where c.placeName = :placeName")
+    List<Certification> findListByPlaceName(@Param("placeName") String placeName);
+
     // ---------------------------Paging---------------------------
 
     @EntityGraph(attributePaths = {"user", "user.pet"})
