@@ -19,6 +19,7 @@ import com.delgo.reward.service.cert.CertCommandService;
 import com.delgo.reward.service.ReactionService;
 import com.delgo.reward.service.UserService;
 import com.delgo.reward.service.cert.CertQueryService;
+import com.delgo.reward.service.mungple.MungpleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -46,6 +47,7 @@ import java.util.*;
 public class CertController extends CommController {
 
     private final UserService userService;
+    private final MungpleService mungpleService;
     private final ReactionService reactionService;
     private final CertAsyncService certAsyncService;
     private final CertQueryService certQueryService;
@@ -250,5 +252,23 @@ public class CertController extends CommController {
         return SuccessReturn((reactionService.hasReaction(userId, certificationId, reactionCode))
                 ? reactionService.update(userId, certificationId, reactionCode)
                 : reactionService.create(userId, certificationId, reactionCode));
+    }
+
+    /**
+     * Mungple <-> Certifiation Sync
+     */
+    @Operation(summary = "인증 Sync", description ="새로 추가된 멍플과 기존 인증 Sync 맟주는 API\n 기존에 멍플이 없어서 mungpleId = 0 이던 Cert의 mungpleId를 update.")
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json")})
+    @GetMapping("/sync")
+    public ResponseEntity sync() {
+        mungpleService.getAll().forEach(mungple ->{
+            List<Certification> certificationList = certQueryService.getListByPlaceName(mungple.getPlaceName());
+            certificationList.forEach(certification -> {
+                certification.setMungpleId(mungple.getMungpleId());
+                certCommandService.save(certification);
+            });
+        });
+
+        return SuccessReturn();
     }
 }

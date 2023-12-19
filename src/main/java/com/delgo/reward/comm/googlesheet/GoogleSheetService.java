@@ -93,11 +93,9 @@ public class GoogleSheetService {
             String activeType = (String) row.get(0); // 동작 상태 지정 (TRUE, FALSE, UPDATE, DEL)
             activeType = activeType.trim();
 
-            if (activeType.equals("TRUE") || activeType.equals("DEL SUCCESS")) continue;
-
-            GoogleSheetDTO sheet = new GoogleSheetDTO(row, categoryCode);
-
+            if (activeType.equals("TRUE") || activeType.equals("DEL SUCCESS") || activeType.isEmpty()) continue;
             try {
+                GoogleSheetDTO sheet = new GoogleSheetDTO(row, categoryCode);
                 GeoData geoData = geoDataService.getGeoData(sheet.getAddress());
                 Code geoCode = codeService.getGeoCodeByAddress(geoData.getJibunAddress());
                 Mungple mungple = sheet.toMongoEntity(categoryCode, geoData, geoCode);
@@ -118,7 +116,7 @@ public class GoogleSheetService {
                             mungple.setBusinessHour(sheet.getBusinessHour());
                         if (StringUtils.hasText(sheet.getFigmaNodeId())) {
                             // Upload 및 setPhoto
-                            figmaService.uploadFigmaDataToNCP(sheet.getFigmaNodeId(), mungple);
+                            figmaService.uploadFigmaDataToNCP(sheet.getFigmaNodeId(), mongoMungple);
                             // Figma 사진 저장 까지 완료 후 저장
                             Mungple savedMungple = mungpleService.save(mungple);
                             // Cache Update
@@ -161,7 +159,7 @@ public class GoogleSheetService {
                     }
                 }
             } catch (Exception e) {
-                resultMessageList.add("[" + sheet.getPlaceName() + "] 저장에 실패 에러가 발생했습니다 - " + e.getMessage() + "\n");
+                resultMessageList.add("[" + row.get(2) + "] 파싱 실패 에러가 발생했습니다 - " + e.getMessage());
             }
         }
     }
