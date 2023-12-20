@@ -43,6 +43,8 @@ public class GoogleSheetService {
     private final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     private final String SHEET_ID ="10wrl07KdizmU2Z1ntSTVjbbYGV6V22tUMRJjjmDTBv4";
 
+    private final Object lock = new Object();
+
     @PostConstruct
     public void connectSheet() throws GeneralSecurityException, IOException {
         NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
@@ -53,21 +55,22 @@ public class GoogleSheetService {
     }
 
     public List<String> saveSheetsDataToDB() {
-        List<String> resultMessageList = new ArrayList<>();
-        for (CategoryCode categoryCode : CategoryCode.values()) {
-            if (categoryCode.shouldSkip()) // TOTAL, CA9999 일 경우에는 동작 X
-                continue;
+        synchronized (lock) {
+            List<String> resultMessageList = new ArrayList<>();
+            for (CategoryCode categoryCode : CategoryCode.values()) {
+                if (categoryCode.shouldSkip()) // TOTAL, CA9999 일 경우에는 동작 X
+                    continue;
 
-            // Select Google Sheets Data
-            List<List<Object>> responseValues = getResponseValuesFromSheet(categoryCode);
-            if (responseValues.isEmpty())
-                continue;
+                // Select Google Sheets Data
+                List<List<Object>> responseValues = getResponseValuesFromSheet(categoryCode);
+                if (responseValues.isEmpty())
+                    continue;
 
-            // Sheets Data -> MongoDB
-            processResponseValues(categoryCode, responseValues, resultMessageList);
+                // Sheets Data -> MongoDB
+                processResponseValues(categoryCode, responseValues, resultMessageList);
+            }
+            return resultMessageList;
         }
-
-        return resultMessageList;
     }
 
 
