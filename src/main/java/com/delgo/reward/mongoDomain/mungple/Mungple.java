@@ -94,7 +94,7 @@ public class Mungple {
     @Field("is_price_tag")
     private Boolean isPriceTag; // 가격표 존재 여부
     @Field("price_tag_photo_urls")
-    private List<String> priceTagPhotoUrls; // 가격표 사진
+    private List<String> priceTagPhotoUrls = new ArrayList<>(); // 가격표 사진
 
     public void setAcceptSize(String input) {
         acceptSize = new HashMap<>();

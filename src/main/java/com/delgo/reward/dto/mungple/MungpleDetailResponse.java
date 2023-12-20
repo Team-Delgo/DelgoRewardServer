@@ -111,7 +111,7 @@ public class MungpleDetailResponse {
                 .representMenuTitle(mungple.getRepresentMenuTitle())
                 .representMenuPhotoUrls(representMenuBoardPhotoUrls)
 
-                .isPriceTag(mungple.getIsPriceTag())
+                .isPriceTag(!mungple.getPriceTagPhotoUrls().isEmpty())
                 .priceTagPhotoUrls(mungple.getPriceTagPhotoUrls())
                 .build();
     }
