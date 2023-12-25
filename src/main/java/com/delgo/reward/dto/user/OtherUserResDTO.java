@@ -2,11 +2,8 @@ package com.delgo.reward.dto.user;
 
 
 import com.delgo.reward.comm.code.CategoryCode;
-import com.delgo.reward.domain.user.CategoryCount;
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.mongoDomain.mungple.MongoMungple;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.delgo.reward.dto.cert.UserVisitMungpleCountDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

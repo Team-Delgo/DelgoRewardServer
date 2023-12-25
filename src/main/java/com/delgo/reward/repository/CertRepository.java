@@ -4,7 +4,7 @@ package com.delgo.reward.repository;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.dto.mungple.MungpleCountDTO;
-import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
+import com.delgo.reward.dto.cert.UserVisitMungpleCountDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.*;
@@ -35,6 +35,9 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @Query(value = "select c from Certification c where c.user.userId = :userId and  c.registDt between :startDt and :endDt order by c.registDt desc")
     List<Certification> findListByDateAndUser(@Param("userId") int userId, @Param("startDt") LocalDateTime startDt, @Param("endDt") LocalDateTime endDate);
 
+    @Query(value = "select c from Certification c where c.placeName = :placeName")
+    List<Certification> findListByPlaceName(@Param("placeName") String placeName);
+
     // ---------------------------Paging---------------------------
 
     @EntityGraph(attributePaths = {"user", "user.pet"})
@@ -63,9 +66,9 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
 
     // ---------------------------DTO---------------------------
 
-    @Query(value = "select new com.delgo.reward.dto.user.UserVisitMungpleCountDTO(c.mungpleId, COUNT(c.mungpleId)) from Certification c where c.user.userId = :userId and c.mungpleId > 0 group by c.mungpleId having count(c.mungpleId) > 0 order by count(c.mungpleId) desc")
+    @Query(value = "select new com.delgo.reward.dto.cert.UserVisitMungpleCountDTO(c.mungpleId, COUNT(c.mungpleId)) from Certification c where c.user.userId = :userId and c.mungpleId > 0 group by c.mungpleId having count(c.mungpleId) > 0 order by count(c.mungpleId) desc")
     List<UserVisitMungpleCountDTO> findVisitTop3MungpleIdByUserId(@Param("userId") int userId, Pageable pageable);
 
     @Query(value = "select new com.delgo.reward.dto.mungple.MungpleCountDTO(c.mungpleId, count(c)) from Certification c where c.isCorrect = true and c.mungpleId != 0 group by c.mungpleId order by count(c) desc")
-    List<MungpleCountDTO> countCertsGroupedByMungpleId();
+    List<MungpleCountDTO> countGroupedByMungpleId();
 }

@@ -5,7 +5,7 @@ import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.domain.common.BaseTimeEntity;
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.mongoDomain.mungple.MongoMungple;
+import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.record.certification.CertCreate;
 import com.delgo.reward.record.certification.CertUpdate;
 import lombok.*;
@@ -28,7 +28,7 @@ public class Certification extends BaseTimeEntity {
     private Integer certificationId;
     @Enumerated(EnumType.STRING)
     private CategoryCode categoryCode;
-
+    @Setter
     private Integer mungpleId; // mungpleId == 0이면 mungple 장소 아님.
     private String placeName; // 장소 명
     private String description; // 내용
@@ -41,9 +41,10 @@ public class Certification extends BaseTimeEntity {
     private String longitude; // 경도
 
     private String photoUrl; // 사진 URL
+    @Setter
     private Boolean isCorrect; // 올바른 사진 여부 ( NCP GreenEye로 체크 )
     private Boolean isAchievements; // 업적 영향 여부 ( 해당 인증이 등록되었을 때 가지게 된 업적이 있는가?)
-
+    @Setter
     private int commentCount; // 댓글 개수
     private Boolean isExpose; // Map에 노출 시키는 인증 구분. ( 초기엔 운영진이 직접 추가 예정 )
 
@@ -51,14 +52,10 @@ public class Certification extends BaseTimeEntity {
     @JoinColumn(name = "userId", updatable = false)
     private User user;
 
+    @Setter
     @Type(type = "json")
     @Column(columnDefinition = "longtext")
     private List<String> photos;
-
-    public Certification setPhotos(List<String> photos){
-        this.photos = photos;
-        return this;
-    }
 
     public static Certification from(CertCreate certCreate, String address, Code code, User user) {
         return Certification.builder()
@@ -78,18 +75,18 @@ public class Certification extends BaseTimeEntity {
                 .build();
     }
 
-    public static Certification from(CertCreate certCreate, MongoMungple mongoMungple, User user) {
+    public static Certification from(CertCreate certCreate, Mungple mungple, User user) {
         return Certification.builder()
                 .user(user)
-                .categoryCode(mongoMungple.getCategoryCode())
+                .categoryCode(mungple.getCategoryCode())
                 .mungpleId(certCreate.mungpleId())
-                .placeName(mongoMungple.getPlaceName())
+                .placeName(mungple.getPlaceName())
                 .description(certCreate.description())
-                .address(mongoMungple.formattedAddress())
-                .geoCode(mongoMungple.getGeoCode())
-                .pGeoCode(mongoMungple.getPGeoCode())
-                .latitude(mongoMungple.getLatitude())
-                .longitude(mongoMungple.getLongitude())
+                .address(mungple.formattedAddress())
+                .geoCode(mungple.getGeoCode())
+                .pGeoCode(mungple.getPGeoCode())
+                .latitude(mungple.getLatitude())
+                .longitude(mungple.getLongitude())
                 .isCorrect(true)
                 .isHideAddress(false)
                 .commentCount(0)
@@ -114,15 +111,5 @@ public class Certification extends BaseTimeEntity {
                 .description(certUpdate.description())
                 .isHideAddress(certUpdate.isHideAddress())
                 .build();
-    }
-
-    public void setIsCorrect(boolean isCorrect){
-        this.isCorrect = isCorrect;
-
-    }
-
-    public void setCommentCount(Integer commentCount){
-        this.commentCount = commentCount;
-
     }
 }

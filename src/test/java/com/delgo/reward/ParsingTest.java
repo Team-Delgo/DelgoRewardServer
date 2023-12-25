@@ -1,7 +1,7 @@
 package com.delgo.reward;
 
-import com.delgo.reward.mongoDomain.mungple.MongoMungple;
-import com.delgo.reward.mongoRepository.MongoMungpleRepository;
+import com.delgo.reward.mongoDomain.mungple.Mungple;
+import com.delgo.reward.mongoRepository.MungpleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,13 +18,13 @@ import java.util.List;
 public class ParsingTest {
 
     @Autowired
-    private MongoMungpleRepository mongoMungpleRepository;
+    private MungpleRepository mungpleRepository;
 
 
     @Test
     public void checkDuplicated() {
-        List<MongoMungple> mungpleList = mongoMungpleRepository.findAll();
-        for(MongoMungple mungple : mungpleList){
+        List<Mungple> mungpleList = mungpleRepository.findAll();
+        for(Mungple mungple : mungpleList){
             System.out.println(mungple.getMungpleId() + " name = " + mungple.getPlaceName());
         }
     }

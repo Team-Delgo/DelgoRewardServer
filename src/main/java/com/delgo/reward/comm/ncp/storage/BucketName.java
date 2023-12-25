@@ -33,7 +33,7 @@ public enum BucketName {
             "reward-detail-price-tag",
             "reward-detail-price-tag",
             "https://kr.object.ncloudstorage.com/reward-detail-price-tag/",
-            "https://kr.object.ncloudstorage.com/reward-detail-price_tag/",
+            "https://kr.object.ncloudstorage.com/reward-detail-price-tag/",
             "price"),
     DETAIL_MENU(
             "reward-detail-menu",
