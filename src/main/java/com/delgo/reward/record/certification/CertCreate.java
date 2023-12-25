@@ -1,10 +1,6 @@
 package com.delgo.reward.record.certification;
 
 import com.delgo.reward.comm.code.CategoryCode;
-import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.domain.code.Code;
-import com.delgo.reward.domain.user.User;
-import com.delgo.reward.mongoDomain.mungple.MongoMungple;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 

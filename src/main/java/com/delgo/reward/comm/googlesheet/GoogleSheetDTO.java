@@ -4,7 +4,7 @@ import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.exception.FigmaException;
 import com.delgo.reward.comm.ncp.geo.GeoData;
 import com.delgo.reward.domain.code.Code;
-import com.delgo.reward.mongoDomain.mungple.MongoMungple;
+import com.delgo.reward.mongoDomain.mungple.Mungple;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -59,8 +59,8 @@ public class GoogleSheetDTO {
         }
     }
 
-    public MongoMungple toMongoEntity(CategoryCode categoryCode, GeoData geoData, Code code) {
-        MongoMungple mongoMungple = MongoMungple.builder()
+    public Mungple toMongoEntity(CategoryCode categoryCode, GeoData geoData, Code code) {
+        Mungple mungple = Mungple.builder()
                 .categoryCode(categoryCode)
                 .phoneNo(phoneNo)
                 .placeName(placeName)
@@ -84,9 +84,9 @@ public class GoogleSheetDTO {
                 .build();
 
         if (MENU_CODES.contains(categoryCode))  // 카페, 식당
-            mongoMungple.setRepresentMenuTitle(representMenuTitle);
+            mungple.setRepresentMenuTitle(representMenuTitle);
 
-        return mongoMungple;
+        return mungple;
     }
 
     private String getValueOrThrow(List<Object> row, int index, String fieldName) {

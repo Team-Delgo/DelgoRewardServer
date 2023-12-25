@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -26,12 +27,10 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection="mungple")
-public class MongoMungple {
+public class Mungple {
     @Transient
     public static final String SEQUENCE_NAME = "mungple_sequence";
-    // Sheet Update 시 사용
-    // Mungple
-    @Setter
+    @Setter  // Sheet Update 시 사용
     @Id private String id;
 
     @Setter
@@ -87,26 +86,19 @@ public class MongoMungple {
     @Field("represent_menu_title")
     private String representMenuTitle; // 대표 메뉴 제목
     @Field("represent_menu_photo_urls")
-    private List<String> representMenuPhotoUrls; // 대표 메뉴 URL List // ※무조건 3개 이상이어야 함.
+    private List<String> representMenuPhotoUrls = new ArrayList<>(); // 대표 메뉴 URL List // ※무조건 3개 이상이어야 함.
     @Field("represent_menu_board_photo_urls")
-    private List<String> representMenuBoardPhotoUrls; // 대표 메뉴 URL List // ※무조건 3개 이상이어야 함.
+    private List<String> representMenuBoardPhotoUrls = new ArrayList<>(); // 대표 메뉴 URL List // ※무조건 3개 이상이어야 함.
 
     // CA0001, CA0005, CA0006, CA0007
     @Field("is_price_tag")
     private Boolean isPriceTag; // 가격표 존재 여부
     @Field("price_tag_photo_urls")
-    private List<String> priceTagPhotoUrls; // 가격표 사진
-
-    public MongoMungple setPhoneNo(String phoneNo){
-        this.phoneNo = phoneNo.replace("-","");
-
-        return this;
-    }
+    private List<String> priceTagPhotoUrls = new ArrayList<>(); // 가격표 사진
 
     public void setAcceptSize(String input) {
         acceptSize = new HashMap<>();
 
-        // 정규식 으로 Key, Value 체크
         Pattern pattern = Pattern.compile("([A-Z_]+): ([^\\n]+),?");
         Matcher matcher = pattern.matcher(input);
 
@@ -127,7 +119,6 @@ public class MongoMungple {
     public void setBusinessHour(String input) {
         businessHour = new HashMap<>();
 
-        // 정규식 으로 Key, Value 체크
         Pattern pattern = Pattern.compile("([A-Z_]+): ([^\\n]+),?");
         Matcher matcher = pattern.matcher(input);
 
@@ -207,5 +198,9 @@ public class MongoMungple {
     public String formattedAddress(){
         String[] arr = jibunAddress.split(" ");
         return arr[0] + " " + arr[1] + " " + arr[2];
+    }
+
+    public static Map<Integer, Mungple> listToMap(List<Mungple> mungpleList) {
+        return mungpleList.stream().collect(Collectors.toMap(Mungple::getMungpleId, Function.identity()));
     }
 }

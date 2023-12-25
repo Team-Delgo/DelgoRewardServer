@@ -1,37 +1,27 @@
-package com.delgo.reward.service.strategy;
+package com.delgo.reward.service.mungple.strategy;
 
-import com.delgo.reward.mongoDomain.mungple.MongoMungple;
+import com.delgo.reward.mongoDomain.mungple.Mungple;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 import java.util.Comparator;
 import java.util.List;
 
 public class DistanceSorting implements MungpleSortingStrategy{
-    private final List<MongoMungple> mungpleList;
     private final double latitude;
     private final double longitude;
 
-    public DistanceSorting(List<MongoMungple> mungpleList, String latitude, String longitude) {
-        this.mungpleList = mungpleList;
+    public DistanceSorting(String latitude, String longitude) {
         this.latitude = Double.parseDouble(latitude);
         this.longitude = Double.parseDouble(longitude);
     }
 
     @Override
-    public List<MongoMungple> sort() {
+    public List<Mungple> sort(List<Mungple> mungpleList) {
         // 거리 순 정렬 구현
         GeoJsonPoint targetPoint = new GeoJsonPoint(longitude, latitude);
         return mungpleList.stream()
                 .sorted(Comparator.comparingDouble(mungple -> hversineCalculate(mungple.getLocation(), targetPoint)))
                 .toList();
-    }
-
-    // 2차 평면 거리 계산 함수
-    private double calculateDistance(GeoJsonPoint point1, GeoJsonPoint point2) {
-        double xDiff = point1.getX() - point2.getX();
-        double yDiff = point1.getY() - point2.getY();
-
-        return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
     }
 
     // 2차 구 거리 계산 함수 (실제 거리에 가까움)

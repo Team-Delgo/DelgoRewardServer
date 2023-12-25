@@ -2,7 +2,7 @@ package com.delgo.reward;
 
 import com.delgo.reward.comm.ncp.geo.GeoDataService;
 import com.delgo.reward.comm.ncp.greeneye.GreenEyeService;
-import com.delgo.reward.mongoService.MongoMungpleService;
+import com.delgo.reward.service.mungple.MungpleService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +23,7 @@ public class NCPTest {
     private GeoDataService geoDataService;
 
     @Autowired
-    private MongoMungpleService mongoMungpleService;
+    private MungpleService mungpleService;
 
 
     @Test
@@ -46,7 +46,7 @@ public class NCPTest {
     @Test
     public void isMungpleTest() {
         String address = "서울특별시 송파구 백제고분로45길 22-1";
-        String result = String.valueOf(mongoMungpleService.isMungpleExisting(address));
+        String result = String.valueOf(mungpleService.isMungpleExisting(address, ""));
 
         System.out.println("result = " + result);
     }

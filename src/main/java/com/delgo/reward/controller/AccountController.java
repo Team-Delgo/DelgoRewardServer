@@ -2,14 +2,17 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.domain.user.User;
+import com.delgo.reward.dto.cert.UserVisitMungpleCountDTO;
 import com.delgo.reward.dto.user.AccountResDTO;
 import com.delgo.reward.dto.user.UserResDTO;
+import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.record.user.ModifyPetRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
 import com.delgo.reward.service.PetService;
 import com.delgo.reward.service.UserService;
 import com.delgo.reward.service.cert.CertQueryService;
+import com.delgo.reward.service.mungple.MungpleService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,7 +25,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -31,6 +33,7 @@ public class AccountController extends CommController {
 
     private final PetService petService;
     private final UserService userService;
+    private final MungpleService mungpleService;
     private final CertQueryService certQueryService;
 
     /**
@@ -43,9 +46,11 @@ public class AccountController extends CommController {
     @GetMapping
     public ResponseEntity<?> getAccount(@RequestParam Integer userId){
         return SuccessReturn(new AccountResDTO(
-                userService.getUserById(userId),
-                userService.getActivityByUserId(userId),
-                certQueryService.getVisitedMungpleIdListTop3ByUserId(userId)));
+                userService.getUserById(userId), // User
+                userService.getActivityByUserId(userId), // Activity Data
+                UserVisitMungpleCountDTO.setMungpleData( // UserVisitMungpleCountDTO
+                        certQueryService.getVisitedMungpleIdListTop3ByUserId(userId), // UserVisitMungpleCountDTO List
+                        Mungple.listToMap(mungpleService.getAll())))); // Mungple List
     }
 
 

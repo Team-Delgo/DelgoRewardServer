@@ -4,8 +4,8 @@ package com.delgo.reward.service.cert;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.dto.user.UserVisitMungpleCountDTO;
-import com.delgo.reward.mongoService.MongoMungpleService;
+import com.delgo.reward.dto.cert.UserVisitMungpleCountDTO;
+import com.delgo.reward.dto.mungple.MungpleCountDTO;
 import com.delgo.reward.repository.CertRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,13 +15,14 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service
 @RequiredArgsConstructor
 public class CertQueryService {
     private final CertRepository certRepository;
-    private final MongoMungpleService mongoMungpleService;
 
     public Certification getOneById(int certificationId) {
         return certRepository.findOneByCertificationId(certificationId)
@@ -34,6 +35,10 @@ public class CertQueryService {
 
     public List<Certification> getListByDateWithoutUser(LocalDate localDate) {
         return certRepository.findListByDate(localDate.minusDays(1).atStartOfDay(), localDate.atStartOfDay());
+    }
+
+    public List<Certification> getListByPlaceName(String placeName) {
+        return certRepository.findListByPlaceName(placeName);
     }
 
     public Page<Certification> getPagingListByUserId(int userId, Pageable pageable) {
@@ -60,11 +65,17 @@ public class CertQueryService {
          return certRepository.findCorrectPageByMungple(mungpleId, userId, pageable);
     }
 
+    public Map<Integer, Integer> getCountMapByMungple(){
+        return certRepository.countGroupedByMungpleId().stream()
+                .collect(Collectors.toMap(MungpleCountDTO::getMungpleId, MungpleCountDTO::getCount));
+    }
+
+    public Integer getCountByMungpleId(int mungpleId){
+        return certRepository.countOfCorrectCertByMungple(mungpleId);
+    }
+
     public List<UserVisitMungpleCountDTO> getVisitedMungpleIdListTop3ByUserId(int userId) {
         Pageable pageable = PageRequest.of(0, 3);
-
-        List<UserVisitMungpleCountDTO> userVisitMungpleCountDTOList =
-                certRepository.findVisitTop3MungpleIdByUserId(userId, pageable);
-        return mongoMungpleService.getMungpleListByIds(userVisitMungpleCountDTOList);
+        return certRepository.findVisitTop3MungpleIdByUserId(userId, pageable);
     }
 }
