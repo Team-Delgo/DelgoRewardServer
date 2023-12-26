@@ -20,17 +20,17 @@ public class CodeService {
         return codeRepository.findListByType(type);
     }
 
-    public Code getByCode(String code) {
+    public Code getOneByCode(String code) {
         return codeRepository.findByCode(code)
                 .orElseThrow(() -> new NotFoundDataException("[Code] code : " + code));
     }
 
-    public Code getByCodeName(String codeName) {
+    public Code getOneByCodeName(String codeName) {
         return codeRepository.findByCodeName(codeName)
                 .orElseThrow(() -> new NotFoundDataException("[Code] codeName : " + codeName));
     }
 
-    public Code getByPCodeAndCodeName(String pCode, String codeName) {
+    public Code getOneByPCodeAndCodeName(String pCode, String codeName) {
         return codeRepository.findBypCodeAndCodeName(pCode, codeName)
                 .orElseThrow(() -> new NotFoundDataException("[Code] pCode : " + pCode + " codeName : " + codeName));
     }
@@ -40,14 +40,18 @@ public class CodeService {
         String SIDO = extractSIDO(address);
         String SIGUGUN = extractSIGUGUN(address);
 
-        String pCode = getByCodeName(SIDO).getCode();
-        return getByPCodeAndCodeName(pCode, SIGUGUN);
+        String pCode = getOneByCodeName(SIDO).getCode();
+        return getOneByPCodeAndCodeName(pCode, SIGUGUN);
     }
 
-    public String getAddressByGeoCode(String code, Boolean isSejong) {
-        Code c = getByCode(code); // 자식 GeoCode
-        Code p = getByCode(c.getCode()); // 부모 GeoCode
-        return (isSejong) ? p.getCodeName() : p.getCodeName() + " " + c.getCodeName();
+    public String getAddressByGeoCode(String code) {
+        Code childCode = getOneByCode(code); // 자식 GeoCode
+        if ("세종특별시".equals(childCode.getCodeName())) {
+            return childCode.getCodeName();
+        }
+
+        Code parentCode = getOneByCode(childCode.getPCode()); // 부모 GeoCode
+        return parentCode.getCodeName() + " " + childCode.getCodeName();
     }
 
     private String extractSIDO(String address){
