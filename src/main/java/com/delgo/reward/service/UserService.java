@@ -80,9 +80,7 @@ public class UserService {
     @Transactional
     public User signup(SignUpRecord signUpRecord, MultipartFile profile, String version) {
         // 주소 설정
-        String address = (signUpRecord.geoCode().equals("0"))  // 세종시는 구가 없음.
-                ? codeService.getAddressByGeoCode(signUpRecord.pGeoCode(), true)
-                : codeService.getAddressByGeoCode(signUpRecord.geoCode(), false);
+        String address = codeService.getAddressByGeoCode(signUpRecord.geoCode());
 
         // USER & PET 저장
         User user = save(signUpRecord.makeUser(passwordEncoder.encode(signUpRecord.password()), address));
@@ -113,9 +111,7 @@ public class UserService {
      */
     public User oAuthSignup(OAuthSignUpRecord oAuthSignUpRecord, MultipartFile profile, String version) {
         // 주소 설정
-        String address = (oAuthSignUpRecord.geoCode().equals("0"))  // 세종시는 구가 없음.
-                ? codeService.getAddressByGeoCode(oAuthSignUpRecord.pGeoCode(), true)
-                : codeService.getAddressByGeoCode(oAuthSignUpRecord.geoCode(), false);
+        String address = codeService.getAddressByGeoCode(oAuthSignUpRecord.geoCode());
 
         // USER & PET 저장
         User oAuthUser = save(oAuthSignUpRecord.makeUser(oAuthSignUpRecord.userSocial(), address));
@@ -277,9 +273,7 @@ public class UserService {
             user.setPGeoCode(modifyUserRecord.pGeoCode());
 
             // 주소 설정
-            String address = (modifyUserRecord.geoCode().equals("0"))  // 세종시는 구가 없음.
-                    ? codeService.getAddressByGeoCode(modifyUserRecord.pGeoCode(), true)
-                    : codeService.getAddressByGeoCode(modifyUserRecord.geoCode(), false);
+            String address = codeService.getAddressByGeoCode(modifyUserRecord.geoCode());
             user.setAddress(address);
 
             jdbcTemplatePointRepository.changeGeoCode(user.getUserId(), modifyUserRecord.geoCode());
