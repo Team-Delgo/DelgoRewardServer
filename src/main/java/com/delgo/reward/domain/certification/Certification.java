@@ -46,7 +46,7 @@ public class Certification extends BaseTimeEntity {
     private Boolean isAchievements; // 업적 영향 여부 ( 해당 인증이 등록되었을 때 가지게 된 업적이 있는가?)
     @Setter
     private int commentCount; // 댓글 개수
-    private Boolean isExpose; // Map에 노출 시키는 인증 구분. ( 초기엔 운영진이 직접 추가 예정 )
+    private Boolean isExpose; // 동네강아지에 노출 시키는 인증 구분
 
     @ManyToOne
     @JoinColumn(name = "userId", updatable = false)
@@ -72,6 +72,7 @@ public class Certification extends BaseTimeEntity {
                 .isCorrect(true)
                 .isHideAddress(certCreate.isHideAddress())
                 .commentCount(0)
+                .isExpose(user.getRoles().equals("ROLE_USER")) // 관리자가 작성한 글은 동네 강아지에서 보이지 않게 한다.
                 .build();
     }
 
@@ -90,6 +91,7 @@ public class Certification extends BaseTimeEntity {
                 .isCorrect(true)
                 .isHideAddress(false)
                 .commentCount(0)
+                .isExpose(user.getRoles().equals("ROLE_USER")) // 관리자가 작성한 글은 동네 강아지에서 보이지 않게 한다.
                 .build();
     }
 

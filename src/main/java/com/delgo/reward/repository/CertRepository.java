@@ -28,10 +28,6 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     Integer countOfCorrectCertByMungple(@Param("mungpleId") int mungpleId);
 
     @EntityGraph(attributePaths = {"user", "user.pet"})
-    @Query(value = "select c from Certification c where c.registDt between :startDt and :endDt order by c.registDt desc")
-    List<Certification> findListByDate(@Param("startDt") LocalDateTime startDt, @Param("endDt") LocalDateTime endDate);
-
-    @EntityGraph(attributePaths = {"user", "user.pet"})
     @Query(value = "select c from Certification c where c.user.userId = :userId and  c.registDt between :startDt and :endDt order by c.registDt desc")
     List<Certification> findListByDateAndUser(@Param("userId") int userId, @Param("startDt") LocalDateTime startDt, @Param("endDt") LocalDateTime endDate);
 
@@ -41,7 +37,7 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     // ---------------------------Paging---------------------------
 
     @EntityGraph(attributePaths = {"user", "user.pet"})
-    @Query(value = "select c from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrect = true")
+    @Query(value = "select c from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrect = true and c.isExpose = true")
     Page<Certification> findCorrectPage(@Param("userId") int userId, Pageable pageable);
 
     @EntityGraph(attributePaths = {"user", "user.pet"})

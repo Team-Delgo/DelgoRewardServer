@@ -3,10 +3,13 @@ package com.delgo.reward.dto.cert;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Getter
 @Builder
 @AllArgsConstructor
@@ -25,15 +28,21 @@ public class UserVisitMungpleCountDTO {
         this.visitCount = visitCount;
     }
 
-    public static List<UserVisitMungpleCountDTO> setMungpleData(List<UserVisitMungpleCountDTO> dtoList, Map<Integer, Mungple> mungpleMap){
-        return dtoList.stream().map(dto ->{
-            Mungple mungple = mungpleMap.get(dto.getMungpleId());
-            return UserVisitMungpleCountDTO.builder()
-                    .mungpleId(dto.getMungpleId())
-                    .visitCount(dto.getVisitCount())
-                    .placeName(mungple.getPlaceName())
-                    .photoUrl( mungple.getPhotoUrls().get(0))
-                    .build();
-        }).toList();
+    public static List<UserVisitMungpleCountDTO> setMungpleData(List<UserVisitMungpleCountDTO> dtoList, Map<Integer,
+            Mungple> mungpleMap) {
+        try {
+            return dtoList.stream().map(dto -> {
+                Mungple mungple = mungpleMap.get(dto.getMungpleId());
+                return UserVisitMungpleCountDTO.builder()
+                        .mungpleId(dto.getMungpleId())
+                        .visitCount(dto.getVisitCount())
+                        .placeName(mungple.getPlaceName())
+                        .photoUrl(mungple.getPhotoUrls().get(0))
+                        .build();
+            }).toList();
+        } catch (Exception e) {
+            log.error("[UserVisitMungpleCountDTO.setMungpleData ] : {}" ,e.getMessage());
+            return new ArrayList<>();
+        }
     }
 }
