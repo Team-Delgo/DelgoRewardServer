@@ -33,10 +33,6 @@ public class CertQueryService {
         return certRepository.findListByDateAndUser(userId, date.atStartOfDay(), date.atTime(23, 59, 59));
     }
 
-    public List<Certification> getListByDateWithoutUser(LocalDate localDate) {
-        return certRepository.findListByDate(localDate.minusDays(1).atStartOfDay(), localDate.atStartOfDay());
-    }
-
     public List<Certification> getListByPlaceName(String placeName) {
         return certRepository.findListByPlaceName(placeName);
     }
