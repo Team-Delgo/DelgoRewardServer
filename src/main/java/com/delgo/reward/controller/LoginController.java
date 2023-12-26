@@ -58,11 +58,12 @@ public class LoginController extends CommController {
      */
     @GetMapping("/api/token/reissue")
     public ResponseEntity<?> tokenReissue(@CookieValue(name = RefreshTokenProperties.HEADER_STRING, required = false) String refreshToken, HttpServletResponse response) {
-            int userId = jwtService.getUserIdByRefreshToken(refreshToken);
-            JwtToken jwt = jwtService.createToken(userId);
-            jwtService.publishToken(response, jwt);
-
-            return SuccessReturn();
+        log.error("Repuest refreshToken : {}", refreshToken);
+        int userId = jwtService.getUserIdByRefreshToken(refreshToken);
+        JwtToken jwt = jwtService.createToken(userId);
+        log.error("Response refreshToken  {}", jwt.getRefreshToken());
+        jwtService.publishToken(response, jwt);
+        return SuccessReturn();
     }
 
     /*
