@@ -141,6 +141,7 @@ public class CertQueryServiceTest {
         assertThat(certificationList.getSize()).isEqualTo(pageable.getPageSize());
         assertThat(certificationList.getNumber()).isEqualTo(pageable.getPageNumber());
         assertThat(certificationList).extracting(cert -> cert.getIsCorrect()).containsOnly(true);
+        assertThat(certificationList).extracting(cert -> cert.getIsExpose()).containsOnly(true);
     }
 
     @Test

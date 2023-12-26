@@ -39,6 +39,8 @@ public class User extends BaseTimeEntity {
     private int viewCount; // 내 지도 View Count
     private String version; // 현재 User의 버전
 
+    private String roles;  // 권한
+
     @Column(name = "social")
     @Enumerated(EnumType.STRING)
     private UserSocial userSocial;
@@ -98,10 +100,7 @@ public class User extends BaseTimeEntity {
         this.version = version;
     }
 
-    //    // 권한
-//    @JsonIgnore
-//    private String roles;
-//
+
 //    // ENUM으로 안하고 ,로 해서 구분해서 ROLE을 입력된 -> 그걸 파싱!!
 //    @JsonIgnore
 //    public List<String> getRoleList() {

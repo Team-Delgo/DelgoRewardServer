@@ -37,7 +37,7 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     // ---------------------------Paging---------------------------
 
     @EntityGraph(attributePaths = {"user", "user.pet"})
-    @Query(value = "select c from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrect = true")
+    @Query(value = "select c from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrect = true and c.isExpose = true")
     Page<Certification> findCorrectPage(@Param("userId") int userId, Pageable pageable);
 
     @EntityGraph(attributePaths = {"user", "user.pet"})
