@@ -28,10 +28,6 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     Integer countOfCorrectCertByMungple(@Param("mungpleId") int mungpleId);
 
     @EntityGraph(attributePaths = {"user", "user.pet"})
-    @Query(value = "select c from Certification c where c.registDt between :startDt and :endDt order by c.registDt desc")
-    List<Certification> findListByDate(@Param("startDt") LocalDateTime startDt, @Param("endDt") LocalDateTime endDate);
-
-    @EntityGraph(attributePaths = {"user", "user.pet"})
     @Query(value = "select c from Certification c where c.user.userId = :userId and  c.registDt between :startDt and :endDt order by c.registDt desc")
     List<Certification> findListByDateAndUser(@Param("userId") int userId, @Param("startDt") LocalDateTime startDt, @Param("endDt") LocalDateTime endDate);
 
