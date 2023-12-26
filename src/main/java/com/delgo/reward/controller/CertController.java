@@ -86,7 +86,7 @@ public class CertController extends CommController {
                 : certQueryService.getCorrectPagingListByUserIdAndCategoryCode(userId, categoryCode, pageable);
 
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
-        User user = userQueryService.getUserById(userId);
+        User user = userQueryService.getOneByUserId(userId);
 
         return SuccessReturn(PageCertResponse.from(userId, page, reactionMap)
                 .setViewCount(user.getViewCount()));
@@ -173,7 +173,7 @@ public class CertController extends CommController {
                 : certQueryService.getPagingListByUserIdAndCategoryCode(userId, categoryCode, pageable);
 
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
-        User user = userQueryService.getUserById(userId);
+        User user = userQueryService.getOneByUserId(userId);
 
         return SuccessReturn(PageCertResponse.from(userId, page, reactionMap)
                 .setViewCount(user.getViewCount()));

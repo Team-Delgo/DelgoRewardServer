@@ -48,7 +48,7 @@ public class FcmService {
     }
 
     public boolean checkNotify(int userId){
-        User user = userQueryService.getUserById(userId);
+        User user = userQueryService.getOneByUserId(userId);
         return user.getIsNotify();
     }
 

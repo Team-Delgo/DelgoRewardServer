@@ -48,7 +48,7 @@ public class CertCommandService {
     }
 
     public Certification create(CertCreate certCreate, List<MultipartFile> photoList) {
-        User user = userQueryService.getUserById(certCreate.userId());
+        User user = userQueryService.getOneByUserId(certCreate.userId());
         String address = geoDataService.getReverseGeoData(certCreate.latitude(), certCreate.longitude());
         Code code = codeService.getGeoCodeByAddress(address);
 
@@ -58,7 +58,7 @@ public class CertCommandService {
     }
 
     public Certification createByMungple(CertCreate certCreate, List<MultipartFile> photoList) {
-        User user = userQueryService.getUserById(certCreate.userId());
+        User user = userQueryService.getOneByUserId(certCreate.userId());
         Mungple mungple = mungpleService.getOneByMungpleId(certCreate.mungpleId());
 
         Certification certification = certRepository.save(Certification.from(certCreate, mungple, user));

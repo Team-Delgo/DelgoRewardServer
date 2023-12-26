@@ -49,7 +49,7 @@ public class OAuthController extends CommController {
             return ErrorReturn(APICode.APPLE_UNIQUE_NO_NOT_FOUND, appleUniqueNo);
 
         // DB에 appleUniqueNo 존재 O -> 해당 User 반환
-        User user = userQueryService.getUserByAppleUniqueNo(appleUniqueNo);
+        User user = userQueryService.getOneByAppleUniqueNo(appleUniqueNo);
 
         // TOKEN 발행
         JwtToken jwt = jwtService.createToken(user.getUserId());
@@ -81,7 +81,7 @@ public class OAuthController extends CommController {
         if(!userQueryService.isPhoneNoExisting(kakaoPhoneNo))
             return ErrorReturn(APICode.PHONE_NO_NOT_EXIST, oAuthDTO);
 
-        User user = userQueryService.getUserByPhoneNo(kakaoPhoneNo);
+        User user = userQueryService.getOneByPhoneNo(kakaoPhoneNo);
         oAuthDTO.setUserSocial(user.getUserSocial());
 
         // 카카오 전화번호 0 , DB 전화번호 0, 카카오 연동 X -> 현재 연동된 OAuth 코드 반환
@@ -118,7 +118,7 @@ public class OAuthController extends CommController {
         if(!userQueryService.isPhoneNoExisting(naverPhoneNo))
             return ErrorReturn(APICode.PHONE_NO_NOT_EXIST, oAuthDTO);
 
-        User user = userQueryService.getUserByPhoneNo(naverPhoneNo);
+        User user = userQueryService.getOneByPhoneNo(naverPhoneNo);
         oAuthDTO.setUserSocial(user.getUserSocial());
 
         // 네이버 전화번호 0 , DB 전화번호 0, 네이버 연동 X -> 현재 연동된 OAuth 코드 반환

@@ -22,6 +22,6 @@ public class BanService {
         banListRepository.save(banList);
 
         // 벤 당한 유저 반환
-        return userQueryService.getUserById(banUserId);
+        return userQueryService.getOneByUserId(banUserId);
     }
 }
