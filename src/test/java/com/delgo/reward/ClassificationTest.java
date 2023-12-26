@@ -198,12 +198,4 @@ public class ClassificationTest {
         }
 
     }
-
-    @Test
-    public void TEST_SET_CATEGORYCOUNT() {
-        List<User> users = userRepository.findAll();
-        users.forEach(user -> {
-            categoryCountRepository.save(new CategoryCount().create(user.getUserId()));
-        });
-    }
 }

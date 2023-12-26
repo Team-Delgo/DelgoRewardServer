@@ -20,6 +20,7 @@ import com.delgo.reward.service.SmsAuthService;
 import com.delgo.reward.service.UserService;
 import com.delgo.reward.service.cert.CertQueryService;
 import com.delgo.reward.service.mungple.MungpleService;
+import com.delgo.reward.service.user.CategoryCountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -52,6 +53,7 @@ public class UserController extends CommController {
     private final MungpleService mungpleService;
     private final SmsAuthService smsAuthService;
     private final CertQueryService certQueryService;
+    private final CategoryCountService categoryCountService;
 
     /**
      * 다른 User 정보 조회
@@ -121,6 +123,7 @@ public class UserController extends CommController {
             return ErrorReturn(APICode.PARAM_ERROR);
 
         User user = userService.oAuthSignup(oAuthSignUpRecord, profile, version);
+        categoryCountService.create(user.getUserId());
         JwtToken jwt = jwtService.createToken(user.getUserId());
         jwtService.publishToken(response, jwt);
 
@@ -144,6 +147,7 @@ public class UserController extends CommController {
             return ErrorReturn(APICode.EMAIL_DUPLICATE_ERROR);
 
         User user = userService.signup(signUpRecord, profile, version);
+        categoryCountService.create(user.getUserId());
         JwtToken jwt = jwtService.createToken(user.getUserId());
         jwtService.publishToken(response, jwt);
 

@@ -1,12 +1,12 @@
 package com.delgo.reward.mongoService;
 
-import com.delgo.reward.cacheService.ActivityCacheService;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.user.CategoryCount;
 import com.delgo.reward.mongoDomain.Classification;
 import com.delgo.reward.mongoRepository.ClassificationRepository;
 import com.delgo.reward.service.UserService;
+import com.delgo.reward.service.user.CategoryCountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
@@ -24,8 +24,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ClassificationService {
     private final UserService userService;
+    private final CategoryCountService categoryCountService;
     private final ClassificationRepository classificationRepository;
-    private final ActivityCacheService activityCacheService;
 
     private final static String CATEGORY_CLASSIFICATION_DATA_SET_DIR = "classification_data_set/classification_category.json";
 
@@ -115,10 +115,10 @@ public class ClassificationService {
         Optional<Classification> optional = classificationRepository.findClassificationByCertification_CertificationId(certification.getCertificationId());
 
         optional.ifPresent(classification -> {
-            CategoryCount categoryCount = userService.getCategoryCountByUserId(certification.getUser().getUserId());
+            CategoryCount categoryCount = categoryCountService.getOneByUserId(certification.getUser().getUserId());
 
             for(String categoryCode: classification.getCategory().keySet()){
-                userService.categoryCountSave(categoryCount.minusOne(categoryCode));
+                categoryCountService.save(categoryCount.minusOne(categoryCode));
             }
 
             userService.makeActivityCacheValue(certification.getUser().getUserId());
