@@ -136,24 +136,10 @@ public class UserService {
     }
 
     /**
-     * 회원탈퇴
-     *
-     * @param userId
-     * @throws Exception
+     * 회원 탈퇴
      */
-    public void deleteUser(int userId) throws Exception {
-        User user = getUserById(userId);
-        if (user.getUserSocial().equals(UserSocial.K))
-            kakaoService.logout(user.getKakaoId()); // kakao 로그아웃 , Naver는 로그아웃 지원 X
-
-        certRepository.deleteByUserId(userId);
-        jdbcTemplatePointRepository.deleteAllByUserId(userId);
-        jdbcTemplateRankingRepository.deleteAllByUserId(userId);
-
-        petRepository.delete(user.getPet());
-        userRepository.delete(user);
-
-        objectStorageService.deleteObject(BucketName.PROFILE, userId + "_profile.webp");
+    public void delete(int userId) {
+        userRepository.deleteByUserId(userId);
     }
 
     /**
