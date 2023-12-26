@@ -54,7 +54,7 @@ public class AccountController extends CommController {
     @GetMapping
     public ResponseEntity<?> getAccount(@RequestParam Integer userId){
         return SuccessReturn(UserResponse.fromAccount(
-                userQueryService.getUserById(userId), // User
+                userQueryService.getOneByUserId(userId), // User
                 userCommandService.getActivityByUserId(userId), // Activity Data
                 UserVisitMungpleCountDTO.setMungpleData( // UserVisitMungpleCountDTO
                         certQueryService.getVisitedMungpleIdListTop3ByUserId(userId), // UserVisitMungpleCountDTO List
@@ -92,7 +92,7 @@ public class AccountController extends CommController {
     @Operation(summary = "펫 정보 수정", description = "성공 여부만 반환 한다.")
     @PutMapping("/pet")
     public ResponseEntity<?> changePetInfo(@Validated @RequestBody ModifyPetRecord modifyPetRecord) {
-        petService.changePetInfo(modifyPetRecord, userQueryService.getUserByEmail(modifyPetRecord.email()));
+        petService.changePetInfo(modifyPetRecord, userQueryService.getOneByEmail(modifyPetRecord.email()));
         return SuccessReturn();
     }
 
@@ -118,7 +118,7 @@ public class AccountController extends CommController {
     @Operation(summary = "회원 탈퇴", description = "성공 여부만 반환 한다.")
     @DeleteMapping("/user/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable Integer userId) throws Exception {
-        User user = userQueryService.getUserById(userId);
+        User user = userQueryService.getOneByUserId(userId);
         if (user.getUserSocial().equals(UserSocial.K))
             kakaoService.logout(user.getKakaoId()); // kakao 로그아웃 , Naver는 로그아웃 지원 X
 

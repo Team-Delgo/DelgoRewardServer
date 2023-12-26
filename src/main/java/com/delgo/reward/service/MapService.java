@@ -36,7 +36,7 @@ public class MapService {
         Page<Certification> page = certQueryService.getCorrectPagingListByUserId(userId, Pageable.unpaged());
         Map<Integer,List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
         return new OtherMapDTO(
-                userQueryService.getUserById(userId),
+                userQueryService.getOneByUserId(userId),
                 CertResponse.fromList(userId, page.getContent(), reactionMap),  // 인증 리스트 조회
                 page.getTotalElements()
         );

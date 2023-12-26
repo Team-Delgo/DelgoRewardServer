@@ -140,4 +140,21 @@ public class UserResponse {
                 .top3VisitedMungpleList(top3VisitedMungpleList)
                 .build();
     }
+
+    public static UserResponse fromSearch(User user) {
+        return UserResponse.builder()
+                .userId(user.getUserId())
+                .nickname(user.getName())
+                .profile(user.getProfile())
+                // Pet
+                .petId(user.getPet().getPetId())
+                .petName(user.getPet().getName())
+                .breed(user.getPet().getBreed())
+                .breedName(user.getPet().getBreedName())
+                .build();
+    }
+
+    public static List<UserResponse> fromSearchList(List<User> userList) {
+        return userList.stream().map(user -> UserResponse.fromSearch(user)).toList();
+    }
 }

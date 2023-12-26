@@ -5,13 +5,10 @@ import com.delgo.reward.cache.ActivityCache;
 import com.delgo.reward.cacheService.ActivityCacheService;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.UserSocial;
-import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.oauth.KakaoService;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.dto.comm.PageSearchUserDTO;
-import com.delgo.reward.dto.user.SearchUserResDTO;
 import com.delgo.reward.mongoDomain.Classification;
 import com.delgo.reward.mongoRepository.ClassificationRepository;
 import com.delgo.reward.record.signup.OAuthSignUpRecord;
@@ -26,8 +23,6 @@ import com.delgo.reward.service.PhotoService;
 import com.delgo.reward.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -147,7 +142,7 @@ public class UserCommandService {
      * @throws Exception
      */
     public void logout(int userId) throws Exception {
-        User user = userQueryService.getUserById(userId);
+        User user = userQueryService.getOneByUserId(userId);
         if (user.getUserSocial().equals(UserSocial.K))
             kakaoService.logout(user.getKakaoId()); // kakao 로그아웃 , Naver는 로그아웃 지원 X
 
@@ -161,7 +156,7 @@ public class UserCommandService {
      * @param newPassword
      */
     public void changePassword(String checkedEmail, String newPassword) {
-        User user = userQueryService.getUserByEmail(checkedEmail);
+        User user = userQueryService.getOneByEmail(checkedEmail);
         user.setPassword(passwordEncoder.encode(newPassword));
     }
 
@@ -175,12 +170,12 @@ public class UserCommandService {
      * @return 수정된 알람 동의 여부 반환
      */
     public boolean changeNotify(int userId) {
-        return userQueryService.getUserById(userId).setNotify();
+        return userQueryService.getOneByUserId(userId).setNotify();
     }
 
 
     public User changePhoto(int userId, String ncpLink) {
-        return userQueryService.getUserById(userId).setProfile(ncpLink);
+        return userQueryService.getOneByUserId(userId).setProfile(ncpLink);
     }
 
     /**
@@ -190,7 +185,7 @@ public class UserCommandService {
      * @return 수정된 유저 정보 반환
      */
     public User changeUserInfo(ModifyUserRecord modifyUserRecord) {
-        User user = userQueryService.getUserById(modifyUserRecord.userId());
+        User user = userQueryService.getOneByUserId(modifyUserRecord.userId());
 
         if (modifyUserRecord.geoCode() != null && modifyUserRecord.pGeoCode() != null) {
             user.setGeoCode(modifyUserRecord.geoCode());

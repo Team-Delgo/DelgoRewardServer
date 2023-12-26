@@ -55,7 +55,7 @@ public class CommentService {
      *  유저가 댓글을 작성하면 알림을 저장하고 인증 주인에게 푸시 알림을 보냄
      */
     public CommentResDTO createComment(CommentRecord commentRecord) throws IOException {
-        User user = userQueryService.getUserById(commentRecord.userId()); // 댓글 작성 유저 조회
+        User user = userQueryService.getOneByUserId(commentRecord.userId()); // 댓글 작성 유저 조회
         Comment comment = commentRepository.save(commentRecord.toEntity(user)); // 댓글 저장
         Certification certification = certQueryService.getOneById(commentRecord.certificationId()); // 댓글 저장한 인증글 조회
 
@@ -127,7 +127,7 @@ public class CommentService {
      * 유저가 답글을 작성하면 알림을 저장하고 인증 주인과 댓글 주인에게 푸시 알림을 보냄
      */
     public ReplyResDTO createReply(ReplyRecord replyRecord) throws IOException {
-        User user = userQueryService.getUserById(replyRecord.userId()); // 답글 작성 유저 조회
+        User user = userQueryService.getOneByUserId(replyRecord.userId()); // 답글 작성 유저 조회
         Comment reply = commentRepository.save(replyRecord.toEntity(user));
         Certification certification = certQueryService.getOneById(replyRecord.certificationId()); // 답글 저장한 인증글 조회
 

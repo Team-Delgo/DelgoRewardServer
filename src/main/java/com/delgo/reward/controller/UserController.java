@@ -9,7 +9,7 @@ import com.delgo.reward.domain.SmsAuth;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.dto.cert.UserVisitMungpleCountDTO;
-import com.delgo.reward.dto.comm.PageSearchUserDTO;
+import com.delgo.reward.dto.user.PageUserResponse;
 import com.delgo.reward.dto.user.UserResponse;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.record.signup.OAuthSignUpRecord;
@@ -27,6 +27,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
@@ -65,7 +66,7 @@ public class UserController extends CommController {
     @GetMapping("/other")
     public ResponseEntity<?> getOtherUser(@RequestParam int userId) {
         return SuccessReturn(UserResponse.fromOther(
-                userQueryService.getUserById(userId), // User
+                userQueryService.getOneByUserId(userId), // User
                 userCommandService.getActivityByUserId(userId), // Activity Data
                 UserVisitMungpleCountDTO.setMungpleData( // UserVisitMungpleCountDTO
                         certQueryService.getVisitedMungpleIdListTop3ByUserId(userId), // UserVisitMungpleCountDTO List
@@ -78,13 +79,14 @@ public class UserController extends CommController {
      * @return 성공 List<SearchUserResDTO> / 실패 여부
      */
     @Operation(summary = "User 검색", description = "User 검색 API [Search Page 에서 사용] \n 유저 이름, 펫 이름 검색 ")
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageSearchUserDTO.class))})
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageUserResponse.class))})
     @GetMapping("/search")
-    public ResponseEntity<?> getSearchUser(@RequestParam String searchWord, @PageableDefault Pageable pageable) {
+    public ResponseEntity<?> getPagingListBySearchWord(@RequestParam String searchWord, @PageableDefault Pageable pageable) {
         if (!StringUtils.hasText(searchWord))
             return ParamErrorReturn("searchWord");
 
-        return SuccessReturn(userQueryService.getSearchUsers(searchWord, pageable));
+        Page<User> pagingList = userQueryService.getPagingListBySearchWord(searchWord, pageable);
+        return SuccessReturn(PageUserResponse.from(pagingList));
     }
 
     /**
@@ -95,7 +97,7 @@ public class UserController extends CommController {
     @Operation(summary = "비밀번호 재설정", description = "비밀번호 재설정 API")
     @PutMapping("/password")
     public ResponseEntity<?> resetPassword(@Validated @RequestBody ResetPasswordRecord resetPasswordRecord) {
-        User user = userQueryService.getUserByEmail(resetPasswordRecord.email()); // 유저 조회
+        User user = userQueryService.getOneByEmail(resetPasswordRecord.email()); // 유저 조회
         SmsAuth smsAuth = smsAuthService.getSmsAuthByPhoneNo(user.getPhoneNo()); // SMS DATA 조회
         if (!smsAuthService.isAuth(smsAuth))
             return ErrorReturn(APICode.SMS_ERROR);

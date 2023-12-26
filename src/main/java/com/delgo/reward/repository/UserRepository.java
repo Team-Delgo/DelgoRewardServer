@@ -2,8 +2,8 @@ package com.delgo.reward.repository;
 
 
 import com.delgo.reward.domain.user.User;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -15,11 +15,11 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Integer> {
     void deleteByUserId(int userId);
 
-    Optional<User> findByName(String name);
-    Optional<User> findByEmail(String email);
-    Optional<User> findByUserId(Integer userId);
-    Optional<User> findByPhoneNo(String phoneNo);
-    Optional<User> findByAppleUniqueNo(String appleUniqueNo);
+    Optional<User> findOneByName(String name);
+    Optional<User> findOneByEmail(String email);
+    Optional<User> findOneByUserId(Integer userId);
+    Optional<User> findOneByPhoneNo(String phoneNo);
+    Optional<User> findOneByAppleUniqueNo(String appleUniqueNo);
 
     @Modifying
     @Query("UPDATE User u SET u.viewCount = u.viewCount + 1 WHERE u.userId = :userId")
@@ -41,5 +41,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             "WHEN u.name LIKE CONCAT('%', :keyword, '%') THEN ABS(LENGTH(u.name) - LENGTH(:keyword) - 1) " +
             "WHEN u.pet.name LIKE CONCAT('%', :keyword, '%') THEN ABS(LENGTH(u.pet.name) - LENGTH(:keyword)) " +
             "ELSE 100 END")
-    Slice<User> searchByName(@Param("keyword") String keyword, Pageable pageable);
+    Page<User> searchByName(@Param("keyword") String keyword, Pageable pageable);
 }

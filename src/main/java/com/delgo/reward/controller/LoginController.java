@@ -38,7 +38,7 @@ public class LoginController extends CommController {
         JwtToken jwt = jwtService.createToken(userId);
         jwtService.publishToken(response, jwt);
 
-        return SuccessReturn(UserResponse.from(userQueryService.getUserById(userId)));
+        return SuccessReturn(UserResponse.from(userQueryService.getOneByUserId(userId)));
     }
 
     /*

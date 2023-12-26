@@ -33,7 +33,7 @@ public class AuthController extends CommController {
         }
 
         if (userQueryService.isEmailExisting(email)) {
-            return SuccessReturn(userQueryService.getUserByEmail(email).getPhoneNo());
+            return SuccessReturn(userQueryService.getOneByEmail(email).getPhoneNo());
         }
         return ErrorReturn(APICode.NOT_FOUND_DATA);
     }
