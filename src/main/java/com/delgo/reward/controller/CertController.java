@@ -167,6 +167,7 @@ public class CertController extends CommController {
             @RequestParam Integer userId,
             @RequestParam CategoryCode categoryCode,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
+        if(userId == 0) return SuccessReturn();
         Page<Certification> page = categoryCode.equals(CategoryCode.CA0000)
                 ? certQueryService.getPagingListByUserId(userId, pageable)
                 : certQueryService.getPagingListByUserIdAndCategoryCode(userId, categoryCode, pageable);
