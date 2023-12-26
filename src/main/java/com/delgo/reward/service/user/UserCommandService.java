@@ -4,13 +4,12 @@ package com.delgo.reward.service.user;
 import com.delgo.reward.cache.ActivityCache;
 import com.delgo.reward.cacheService.ActivityCacheService;
 import com.delgo.reward.comm.code.CategoryCode;
+import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.comm.ncp.storage.BucketName;
-import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.comm.oauth.KakaoService;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.dto.comm.PageSearchUserDTO;
 import com.delgo.reward.dto.user.SearchUserResDTO;
 import com.delgo.reward.mongoDomain.Classification;
@@ -18,7 +17,9 @@ import com.delgo.reward.mongoRepository.ClassificationRepository;
 import com.delgo.reward.record.signup.OAuthSignUpRecord;
 import com.delgo.reward.record.signup.SignUpRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
-import com.delgo.reward.repository.*;
+import com.delgo.reward.repository.JDBCTemplatePointRepository;
+import com.delgo.reward.repository.JDBCTemplateRankingRepository;
+import com.delgo.reward.repository.UserRepository;
 import com.delgo.reward.service.CodeService;
 import com.delgo.reward.service.PetService;
 import com.delgo.reward.service.PhotoService;
@@ -39,22 +40,19 @@ import java.util.*;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UserService {
-
+public class UserCommandService {
     private final PasswordEncoder passwordEncoder;
 
     // Service
     private final PetService petService;
+    private final UserQueryService userQueryService;
     private final CodeService codeService;
     private final TokenService tokenService;
     private final KakaoService kakaoService;
     private final PhotoService photoService;
-    private final ObjectStorageService objectStorageService;
 
     // Repository
-    private final PetRepository petRepository;
     private final UserRepository userRepository;
-    private final CertRepository certRepository;
     private final ClassificationRepository classificationRepository;
 
     // Cache
@@ -149,7 +147,7 @@ public class UserService {
      * @throws Exception
      */
     public void logout(int userId) throws Exception {
-        User user = getUserById(userId);
+        User user = userQueryService.getUserById(userId);
         if (user.getUserSocial().equals(UserSocial.K))
             kakaoService.logout(user.getKakaoId()); // kakao 로그아웃 , Naver는 로그아웃 지원 X
 
@@ -163,51 +161,12 @@ public class UserService {
      * @param newPassword
      */
     public void changePassword(String checkedEmail, String newPassword) {
-        User user = getUserByEmail(checkedEmail);
+        User user = userQueryService.getUserByEmail(checkedEmail);
         user.setPassword(passwordEncoder.encode(newPassword));
     }
 
 
-    /**
-     * 전화번호 존재 여부 확인
-     *
-     * @param phoneNo
-     * @return 존재 여부 반환
-     */
-    public boolean isPhoneNoExisting(String phoneNo) {
-        return userRepository.findByPhoneNo(phoneNo).isPresent();
-    }
 
-    /**
-     * 이메일 존재 여부 확인
-     *
-     * @param email
-     * @return 존재 여부 반환
-     */
-    public boolean isEmailExisting(String email) {
-        return userRepository.findByEmail(email).isPresent();
-    }
-
-    /**
-     * 이름 존재 여부 확인
-     *
-     * @param name
-     * @return 존재 여부 반환
-     */
-    public boolean isNameExisting(String name) {
-        return userRepository.findByName(name).isPresent();
-    }
-
-    /**
-     * 애플 유저인지 판단
-     *
-     * @param appleUniqueNo
-     * @return 애플 유저 여부 반환
-     */
-    public boolean isAppleUniqueNoExisting(String appleUniqueNo) {
-        Optional<User> findUser = userRepository.findByAppleUniqueNo(appleUniqueNo);
-        return findUser.isPresent();
-    }
 
     /**
      * 알림 동의 여부 수정
@@ -216,31 +175,12 @@ public class UserService {
      * @return 수정된 알람 동의 여부 반환
      */
     public boolean changeNotify(int userId) {
-        return getUserById(userId).setNotify();
+        return userQueryService.getUserById(userId).setNotify();
     }
 
-    public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundDataException("[User] email : " + email));
-    }
-
-    public User getUserById(int userId) {
-        return userRepository.findByUserId(userId)
-                .orElseThrow(() -> new NotFoundDataException("[User] userId : " + userId));
-    }
-
-    public User getUserByPhoneNo(String phoneNo) {
-        return userRepository.findByPhoneNo(phoneNo)
-                .orElseThrow(() -> new NotFoundDataException("[User] phoneNo : " + phoneNo));
-    }
-
-    public User getUserByAppleUniqueNo(String appleUniqueNo) {
-        return userRepository.findByAppleUniqueNo(appleUniqueNo)
-                .orElseThrow(() -> new NotFoundDataException("[User] appleUniqueNo : " + appleUniqueNo));
-    }
 
     public User changePhoto(int userId, String ncpLink) {
-        return getUserById(userId).setProfile(ncpLink);
+        return userQueryService.getUserById(userId).setProfile(ncpLink);
     }
 
     /**
@@ -250,7 +190,7 @@ public class UserService {
      * @return 수정된 유저 정보 반환
      */
     public User changeUserInfo(ModifyUserRecord modifyUserRecord) {
-        User user = getUserById(modifyUserRecord.userId());
+        User user = userQueryService.getUserById(modifyUserRecord.userId());
 
         if (modifyUserRecord.geoCode() != null && modifyUserRecord.pGeoCode() != null) {
             user.setGeoCode(modifyUserRecord.geoCode());
@@ -267,15 +207,6 @@ public class UserService {
         return user;
     }
 
-    /**
-     * 유저 검색 결과 반환
-     */
-    public PageSearchUserDTO getSearchUsers(String searchWord, Pageable pageable) {
-        Slice<User> users = userRepository.searchByName(searchWord, pageable);
-        List<SearchUserResDTO> resDTOs = users.getContent().stream().map(SearchUserResDTO::new).toList();
-
-        return new PageSearchUserDTO(resDTOs, users.getSize(), users.getNumber(), users.isLast());
-    }
 
     public void increaseViewCount(int userId) {
         userRepository.increaseViewCount(userId);

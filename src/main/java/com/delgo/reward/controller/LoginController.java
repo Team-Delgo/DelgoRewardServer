@@ -6,7 +6,7 @@ import com.delgo.reward.comm.security.jwt.JwtService;
 import com.delgo.reward.comm.security.jwt.JwtToken;
 import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
 import com.delgo.reward.dto.user.UserResponse;
-import com.delgo.reward.service.user.UserService;
+import com.delgo.reward.service.user.UserQueryService;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginController extends CommController {
 
     private final JwtService jwtService;
-    private final UserService userService;
+    private final UserQueryService userQueryService;
 
     /*
      * Login 성공
@@ -38,7 +38,7 @@ public class LoginController extends CommController {
         JwtToken jwt = jwtService.createToken(userId);
         jwtService.publishToken(response, jwt);
 
-        return SuccessReturn(UserResponse.from(userService.getUserById(userId)));
+        return SuccessReturn(UserResponse.from(userQueryService.getUserById(userId)));
     }
 
     /*

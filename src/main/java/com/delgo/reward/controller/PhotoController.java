@@ -3,7 +3,8 @@ package com.delgo.reward.controller;
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.service.*;
-import com.delgo.reward.service.user.UserService;
+import com.delgo.reward.service.user.UserCommandService;
+import com.delgo.reward.service.user.UserQueryService;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/photo")
 public class PhotoController extends CommController {
 
-    private final UserService userService;
+    private final UserCommandService userCommandService;
     private final PhotoService photoService;
 
     /***
@@ -33,6 +34,6 @@ public class PhotoController extends CommController {
 
         String fileName = photoService.makeProfileFileName(userId, photo);
         String url = photoService.saveAndUpload(fileName, photo, BucketName.PROFILE);
-        return SuccessReturn(userService.changePhoto(userId, url));
+        return SuccessReturn(userCommandService.changePhoto(userId, url));
     }
 }
