@@ -10,7 +10,7 @@ import com.delgo.reward.comm.security.jwt.JwtToken;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.dto.OAuthDTO;
-import com.delgo.reward.dto.user.UserResDTO;
+import com.delgo.reward.dto.user.UserResponse;
 import com.delgo.reward.service.user.UserService;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +55,7 @@ public class OAuthController extends CommController {
         JwtToken jwt = jwtService.createToken(user.getUserId());
         jwtService.publishToken(response, jwt);
 
-        return SuccessReturn(new UserResDTO(user));
+        return SuccessReturn(UserResponse.from(user));
     }
 
     // Kakao
@@ -93,7 +93,7 @@ public class OAuthController extends CommController {
         JwtToken jwt = jwtService.createToken(user.getUserId());
         jwtService.publishToken(response, jwt);
 
-        return SuccessReturn(new UserResDTO(user)); //200
+        return SuccessReturn(UserResponse.from(user));
     }
 
     // Naver
@@ -130,6 +130,6 @@ public class OAuthController extends CommController {
         JwtToken jwt = jwtService.createToken(user.getUserId());
         jwtService.publishToken(response, jwt);
 
-        return SuccessReturn(new UserResDTO(user)); //200
+        return SuccessReturn(UserResponse.from(user));
     }
 }
