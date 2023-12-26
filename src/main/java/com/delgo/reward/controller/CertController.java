@@ -17,7 +17,7 @@ import com.delgo.reward.record.certification.CertCreate;
 import com.delgo.reward.record.certification.CertUpdate;
 import com.delgo.reward.service.cert.CertCommandService;
 import com.delgo.reward.service.ReactionService;
-import com.delgo.reward.service.UserService;
+import com.delgo.reward.service.user.UserService;
 import com.delgo.reward.service.cert.CertQueryService;
 import com.delgo.reward.service.mungple.MungpleService;
 import io.swagger.v3.oas.annotations.Operation;

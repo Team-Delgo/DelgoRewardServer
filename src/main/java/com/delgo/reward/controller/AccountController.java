@@ -10,7 +10,7 @@ import com.delgo.reward.record.user.ModifyPetRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
 import com.delgo.reward.service.PetService;
-import com.delgo.reward.service.UserService;
+import com.delgo.reward.service.user.UserService;
 import com.delgo.reward.service.cert.CertQueryService;
 import com.delgo.reward.service.mungple.MungpleService;
 import com.delgo.reward.service.user.CategoryCountService;

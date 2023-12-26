@@ -16,7 +16,7 @@ import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.service.CodeService;
 import com.delgo.reward.service.PhotoService;
 import com.delgo.reward.service.ReactionService;
-import com.delgo.reward.service.UserService;
+import com.delgo.reward.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

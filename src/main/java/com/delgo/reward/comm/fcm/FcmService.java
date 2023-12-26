@@ -2,7 +2,7 @@ package com.delgo.reward.comm.fcm;
 
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.service.TokenService;
-import com.delgo.reward.service.UserService;
+import com.delgo.reward.service.user.UserService;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
