@@ -124,7 +124,7 @@ public class UserController extends CommController {
                 && oAuthSignUpRecord.userSocial() == UserSocial.A)
             return ErrorReturn(APICode.PARAM_ERROR);
 
-        User user = userCommandService.oAuthSignup(oAuthSignUpRecord, profile, version);
+        User user = userCommandService.OAuthSignup(oAuthSignUpRecord, profile, version);
         categoryCountService.create(user.getUserId());
         JwtToken jwt = jwtService.createToken(user.getUserId());
         jwtService.publishToken(response, jwt);

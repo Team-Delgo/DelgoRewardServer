@@ -3,6 +3,8 @@ package com.delgo.reward.domain.user;
 import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.domain.common.BaseTimeEntity;
 import com.delgo.reward.domain.pet.Pet;
+import com.delgo.reward.record.signup.OAuthSignUpRecord;
+import com.delgo.reward.record.signup.SignUpRecord;
 import lombok.*;
 
 import javax.persistence.*;
@@ -101,12 +103,43 @@ public class User extends BaseTimeEntity {
     }
 
 
-//    // ENUM으로 안하고 ,로 해서 구분해서 ROLE을 입력된 -> 그걸 파싱!!
-//    @JsonIgnore
-//    public List<String> getRoleList() {
-//        if (this.roles.length() > 0) {
-//            return Arrays.asList(this.roles.split(","));
-//        }
-//        return new ArrayList<>();
-//    }
+    public static User from(SignUpRecord signUpRecord, String password, String address, String version){
+        return User.builder()
+                .name(signUpRecord.userName())
+                .email(signUpRecord.email())
+                .password(password)
+                .phoneNo(signUpRecord.phoneNo().replaceAll("[^0-9]", ""))
+                .userSocial(UserSocial.D)
+                .address(address)
+                .geoCode(signUpRecord.geoCode())
+                .pGeoCode(signUpRecord.pGeoCode())
+                .isNotify(true)
+                .version(version)
+                .build();
+    }
+
+    public static User from(OAuthSignUpRecord oAuthSignUpRecord, String address, String version) {
+        User.UserBuilder userBuilder = User.builder()
+                .name(oAuthSignUpRecord.userName())
+                .phoneNo(oAuthSignUpRecord.phoneNo().replaceAll("[^0-9]", ""))
+                .userSocial(oAuthSignUpRecord.userSocial())
+                .address(address)
+                .geoCode(oAuthSignUpRecord.geoCode())
+                .pGeoCode(oAuthSignUpRecord.pGeoCode())
+                .isNotify(true)
+                .version(version);
+
+        // 각 사례별로 다른 속성 설정
+        switch (oAuthSignUpRecord.userSocial()) {
+            case A -> userBuilder.appleUniqueNo(oAuthSignUpRecord.appleUniqueNo());
+            case K -> userBuilder.email(oAuthSignUpRecord.email())
+                    .kakaoId(oAuthSignUpRecord.socialId())
+                    .age(oAuthSignUpRecord.age())
+                    .gender(oAuthSignUpRecord.gender());
+            case N -> userBuilder.email(oAuthSignUpRecord.email())
+                    .age(oAuthSignUpRecord.age())
+                    .gender(oAuthSignUpRecord.gender());
+        }
+        return userBuilder.build();
+    }
 }

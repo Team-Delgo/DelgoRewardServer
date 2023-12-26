@@ -2,6 +2,8 @@ package com.delgo.reward.domain.pet;
 
 import com.delgo.reward.domain.common.BaseTimeEntity;
 import com.delgo.reward.domain.user.User;
+import com.delgo.reward.record.signup.OAuthSignUpRecord;
+import com.delgo.reward.record.signup.SignUpRecord;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -57,5 +59,23 @@ public class Pet extends BaseTimeEntity {
         this.birthday = birthday;
 
         return this;
+    }
+
+    public static Pet from(SignUpRecord signUpRecord, User user){
+        return Pet.builder()
+                .name(signUpRecord.petName())
+                .breed(signUpRecord.breed())
+                .birthday(signUpRecord.birthday())
+                .user(user)
+                .build();
+    }
+
+    public static Pet from(OAuthSignUpRecord OAuthSignUpRecord, User user){
+        return Pet.builder()
+                .name(OAuthSignUpRecord.petName())
+                .breed(OAuthSignUpRecord.breed())
+                .birthday(OAuthSignUpRecord.birthday())
+                .user(user)
+                .build();
     }
 }

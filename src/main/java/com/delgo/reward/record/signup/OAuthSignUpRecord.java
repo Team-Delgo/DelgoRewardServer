@@ -1,7 +1,5 @@
 package com.delgo.reward.record.signup;
 
-import com.delgo.reward.domain.pet.Pet;
-import com.delgo.reward.domain.user.User;
 import com.delgo.reward.comm.code.UserSocial;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -38,53 +36,4 @@ public record OAuthSignUpRecord(
         @Schema(description = "나이")
         Integer age
 ) {
-    public User makeUser(UserSocial userSocial, String address) {
-        return switch (userSocial) {
-            case A -> User.builder()
-                    .name(userName)
-                    .email(null)
-                    .phoneNo(phoneNo.replaceAll("[^0-9]", ""))
-                    .userSocial(userSocial)
-                    .address(address)
-                    .geoCode(geoCode)
-                    .pGeoCode(pGeoCode)
-                    .isNotify(true)
-                    .appleUniqueNo(appleUniqueNo)
-                    .build();
-            case K -> User.builder()
-                    .name(userName)
-                    .email(email)
-                    .phoneNo(phoneNo.replaceAll("[^0-9]", ""))
-                    .userSocial(userSocial)
-                    .address(address)
-                    .geoCode(geoCode)
-                    .pGeoCode(pGeoCode)
-                    .isNotify(true)
-                    .kakaoId(socialId)
-                    .age(age)
-                    .gender(gender)
-                    .build();
-            default -> User.builder()
-                    .name(userName)
-                    .email(email)
-                    .phoneNo(phoneNo.replaceAll("[^0-9]", ""))
-                    .userSocial(userSocial)
-                    .address(address)
-                    .geoCode(geoCode)
-                    .pGeoCode(pGeoCode)
-                    .age(age)
-                    .gender(gender)
-                    .isNotify(true)
-                    .build();
-        };
-    }
-
-    public Pet makePet(User user){
-        return Pet.builder()
-                .name(petName)
-                .breed(breed)
-                .birthday(birthday)
-                .user(user)
-                .build();
-    }
 }
