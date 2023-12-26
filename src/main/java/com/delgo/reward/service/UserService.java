@@ -9,7 +9,6 @@ import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.comm.oauth.KakaoService;
 import com.delgo.reward.domain.pet.Pet;
-import com.delgo.reward.domain.user.CategoryCount;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.dto.comm.PageSearchUserDTO;
@@ -52,7 +51,6 @@ public class UserService {
     private final PetRepository petRepository;
     private final UserRepository userRepository;
     private final CertRepository certRepository;
-    private final CategoryCountRepository categoryCountRepository;
     private final ClassificationRepository classificationRepository;
 
     // Cache
@@ -87,7 +85,6 @@ public class UserService {
         Pet pet = petService.register(signUpRecord.makePet(user));
 
         jdbcTemplatePointRepository.createUserPoint(user); // Point 생성
-        categoryCountRepository.save(new CategoryCount().create(user.getUserId()));
 
         user.setVersion(version);
         String profileUrl = DEFAULT_PROFILE;
@@ -118,7 +115,6 @@ public class UserService {
         Pet pet = petService.register(oAuthSignUpRecord.makePet(oAuthUser));
 
         jdbcTemplatePointRepository.createUserPoint(oAuthUser); // Point 생성
-        categoryCountRepository.save(new CategoryCount().create(oAuthUser.getUserId()));
 
 //        rankingService.rankingByPoint(); // 랭킹 업데이트
         oAuthUser.setVersion(version);
@@ -147,8 +143,6 @@ public class UserService {
             kakaoService.logout(user.getKakaoId()); // kakao 로그아웃 , Naver는 로그아웃 지원 X
 
         certRepository.deleteByUserId(userId);
-        categoryCountRepository.deleteByUserId(userId);
-
         jdbcTemplatePointRepository.deleteAllByUserId(userId);
         jdbcTemplateRankingRepository.deleteAllByUserId(userId);
 
@@ -282,28 +276,6 @@ public class UserService {
         Optional.ofNullable(modifyUserRecord.name()).ifPresent(user::setName);
         return user;
     }
-
-    /**
-     * 유저별 카테고리 카운트 조회
-     *
-     * @param userId
-     * @return 카테고리 카운트 반환
-     */
-    public CategoryCount getCategoryCountByUserId(int userId) {
-        return categoryCountRepository.findByUserId(userId)
-                .orElseThrow(() -> new NotFoundDataException("[CategoryCount] userId : " + userId));
-    }
-
-    /**
-     * 카테고리 카운트 DB저장
-     *
-     * @param categoryCount
-     * @return 저장된 카테고리 카운트
-     */
-    public CategoryCount categoryCountSave(CategoryCount categoryCount) {
-        return categoryCountRepository.save(categoryCount);
-    }
-
 
     /**
      * 유저 검색 결과 반환

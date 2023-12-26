@@ -13,6 +13,7 @@ import com.delgo.reward.service.PetService;
 import com.delgo.reward.service.UserService;
 import com.delgo.reward.service.cert.CertQueryService;
 import com.delgo.reward.service.mungple.MungpleService;
+import com.delgo.reward.service.user.CategoryCountService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,6 +36,7 @@ public class AccountController extends CommController {
     private final UserService userService;
     private final MungpleService mungpleService;
     private final CertQueryService certQueryService;
+    private final CategoryCountService categoryCountService;
 
     /**
      * 내 정보 조회
@@ -116,7 +118,7 @@ public class AccountController extends CommController {
     @DeleteMapping("/user/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable Integer userId) throws Exception {
         userService.deleteUser(userId); // USER DELETE
-//        rankingService.rankingByPoint(); // 랭킹 실시간으로 집계
+        categoryCountService.delete(userId);
 
         return SuccessReturn();
     }
