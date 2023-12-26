@@ -1,10 +1,8 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.cert.UserVisitMungpleCountDTO;
-import com.delgo.reward.dto.user.AccountResDTO;
-import com.delgo.reward.dto.user.UserResDTO;
+import com.delgo.reward.dto.user.UserResponse;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.record.user.ModifyPetRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
@@ -44,10 +42,10 @@ public class AccountController extends CommController {
      * @return 유저 정보 반환
      */
     @Operation(summary = "내 정보 조회 ", description = "My Page, 및 활동 페이지에서 필요한 모든 Data를 반환한다.")
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AccountResDTO.class))})
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))})
     @GetMapping
     public ResponseEntity<?> getAccount(@RequestParam Integer userId){
-        return SuccessReturn(new AccountResDTO(
+        return SuccessReturn(UserResponse.fromAccount(
                 userService.getUserById(userId), // User
                 userService.getActivityByUserId(userId), // Activity Data
                 UserVisitMungpleCountDTO.setMungpleData( // UserVisitMungpleCountDTO
@@ -73,14 +71,10 @@ public class AccountController extends CommController {
      * @return 성공 / 실패 여부
      */
     @Operation(summary = "유저 정보 수정", description = "수정 된 유저 정보를 반환한다. \n profile은 multipart로 받는다. (RequestBody 체크 필요)")
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResDTO.class))})
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))})
     @PutMapping(value = "/user")
     public ResponseEntity<?> changeUserInfo(@Validated @RequestBody ModifyUserRecord modifyUserRecord) {
-        User user = userService.changeUserInfo(modifyUserRecord);
-
-//        랭킹 실시간으로 집계
-//        rankingService.rankingByPoint();
-        return SuccessReturn(new UserResDTO(user));
+        return SuccessReturn(UserResponse.from(userService.changeUserInfo(modifyUserRecord)));
     }
 
     /**

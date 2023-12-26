@@ -5,7 +5,7 @@ import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.security.jwt.JwtService;
 import com.delgo.reward.comm.security.jwt.JwtToken;
 import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
-import com.delgo.reward.dto.user.UserResDTO;
+import com.delgo.reward.dto.user.UserResponse;
 import com.delgo.reward.service.user.UserService;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ public class LoginController extends CommController {
         JwtToken jwt = jwtService.createToken(userId);
         jwtService.publishToken(response, jwt);
 
-        return SuccessReturn(new UserResDTO(userService.getUserById(userId)));
+        return SuccessReturn(UserResponse.from(userService.getUserById(userId)));
     }
 
     /*

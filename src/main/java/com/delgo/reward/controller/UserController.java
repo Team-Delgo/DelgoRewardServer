@@ -10,8 +10,7 @@ import com.delgo.reward.domain.user.User;
 import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.dto.cert.UserVisitMungpleCountDTO;
 import com.delgo.reward.dto.comm.PageSearchUserDTO;
-import com.delgo.reward.dto.user.OtherUserResDTO;
-import com.delgo.reward.dto.user.UserResDTO;
+import com.delgo.reward.dto.user.UserResponse;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.record.signup.OAuthSignUpRecord;
 import com.delgo.reward.record.signup.SignUpRecord;
@@ -61,10 +60,10 @@ public class UserController extends CommController {
      * @return 성공 OtherUserResDTO / 실패 여부
      */
     @Operation(summary = "다른 User 정보 조회", description = "다른 User 정보 조회 API [Other 페이지에서 사용]")
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = OtherUserResDTO.class))})
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))})
     @GetMapping("/other")
     public ResponseEntity<?> getOtherUser(@RequestParam int userId) {
-        return SuccessReturn(new OtherUserResDTO(
+        return SuccessReturn(UserResponse.fromOther(
                 userService.getUserById(userId), // User
                 userService.getActivityByUserId(userId), // Activity Data
                 UserVisitMungpleCountDTO.setMungpleData( // UserVisitMungpleCountDTO
@@ -110,7 +109,7 @@ public class UserController extends CommController {
      * Response Data : 등록한 인증 데이터 반환
      */
     @Operation(summary = "OAuth 회원가입", description = "소셜 회원가입 ( Kakao, Naver, Apple ) \n Apple, Kakao는 고유 Id 보내야 함.")
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResDTO.class))})
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))})
     @PostMapping(value = "/oauth",consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> registerUserByOAuth(
             @Validated @RequestPart(value = "data") OAuthSignUpRecord oAuthSignUpRecord,
@@ -127,7 +126,7 @@ public class UserController extends CommController {
         JwtToken jwt = jwtService.createToken(user.getUserId());
         jwtService.publishToken(response, jwt);
 
-        return SuccessReturn(new UserResDTO(user));
+        return SuccessReturn(UserResponse.from(user));
     }
 
     /**
@@ -136,7 +135,7 @@ public class UserController extends CommController {
      * Response Data : 등록한 인증 데이터 반환
      */
     @Operation(summary = "일반 회원가입", description = "일반 회원가입")
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResDTO.class))})
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))})
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> registerUser(
             @Validated @RequestPart(value = "data") SignUpRecord signUpRecord,
@@ -151,7 +150,7 @@ public class UserController extends CommController {
         JwtToken jwt = jwtService.createToken(user.getUserId());
         jwtService.publishToken(response, jwt);
 
-        return SuccessReturn(new UserResDTO(user));
+        return SuccessReturn(UserResponse.from(user));
     }
 
     /**
