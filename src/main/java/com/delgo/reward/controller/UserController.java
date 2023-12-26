@@ -17,7 +17,7 @@ import com.delgo.reward.record.signup.OAuthSignUpRecord;
 import com.delgo.reward.record.signup.SignUpRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
 import com.delgo.reward.service.SmsAuthService;
-import com.delgo.reward.service.UserService;
+import com.delgo.reward.service.user.UserService;
 import com.delgo.reward.service.cert.CertQueryService;
 import com.delgo.reward.service.mungple.MungpleService;
 import com.delgo.reward.service.user.CategoryCountService;

@@ -1,4 +1,4 @@
-package com.delgo.reward.service;
+package com.delgo.reward.service.user;
 
 
 import com.delgo.reward.cache.ActivityCache;
@@ -19,6 +19,10 @@ import com.delgo.reward.record.signup.OAuthSignUpRecord;
 import com.delgo.reward.record.signup.SignUpRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
 import com.delgo.reward.repository.*;
+import com.delgo.reward.service.CodeService;
+import com.delgo.reward.service.PetService;
+import com.delgo.reward.service.PhotoService;
+import com.delgo.reward.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;

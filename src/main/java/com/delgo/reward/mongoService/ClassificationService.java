@@ -5,7 +5,7 @@ import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.user.CategoryCount;
 import com.delgo.reward.mongoDomain.Classification;
 import com.delgo.reward.mongoRepository.ClassificationRepository;
-import com.delgo.reward.service.UserService;
+import com.delgo.reward.service.user.UserService;
 import com.delgo.reward.service.user.CategoryCountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
