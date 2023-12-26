@@ -16,7 +16,7 @@ import com.delgo.reward.repository.CertRepository;
 import com.delgo.reward.service.CodeService;
 import com.delgo.reward.service.PhotoService;
 import com.delgo.reward.service.ReactionService;
-import com.delgo.reward.service.user.UserService;
+import com.delgo.reward.service.user.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,7 +36,7 @@ public class CertCommandService {
 
     // Service
     private final CodeService codeService;
-    private final UserService userService;
+    private final UserQueryService userQueryService;
     private final PhotoService photoService;
     private final GeoDataService geoDataService;
     private final ReactionService reactionService;
@@ -48,7 +48,7 @@ public class CertCommandService {
     }
 
     public Certification create(CertCreate certCreate, List<MultipartFile> photoList) {
-        User user = userService.getUserById(certCreate.userId());
+        User user = userQueryService.getUserById(certCreate.userId());
         String address = geoDataService.getReverseGeoData(certCreate.latitude(), certCreate.longitude());
         Code code = codeService.getGeoCodeByAddress(address);
 
@@ -58,7 +58,7 @@ public class CertCommandService {
     }
 
     public Certification createByMungple(CertCreate certCreate, List<MultipartFile> photoList) {
-        User user = userService.getUserById(certCreate.userId());
+        User user = userQueryService.getUserById(certCreate.userId());
         Mungple mungple = mungpleService.getOneByMungpleId(certCreate.mungpleId());
 
         Certification certification = certRepository.save(Certification.from(certCreate, mungple, user));

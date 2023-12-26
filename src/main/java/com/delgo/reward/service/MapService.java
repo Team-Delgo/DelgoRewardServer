@@ -9,7 +9,7 @@ import com.delgo.reward.dto.mungple.MungpleResponse;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.mongoRepository.MungpleRepository;
 import com.delgo.reward.service.cert.CertQueryService;
-import com.delgo.reward.service.user.UserService;
+import com.delgo.reward.service.user.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +22,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class MapService {
-    private final UserService userService;
+    private final UserQueryService userQueryService;
     private final ReactionService reactionService;
     private final CertQueryService certQueryService;
     private final MungpleRepository mungpleRepository;
@@ -36,7 +36,7 @@ public class MapService {
         Page<Certification> page = certQueryService.getCorrectPagingListByUserId(userId, Pageable.unpaged());
         Map<Integer,List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
         return new OtherMapDTO(
-                userService.getUserById(userId),
+                userQueryService.getUserById(userId),
                 CertResponse.fromList(userId, page.getContent(), reactionMap),  // 인증 리스트 조회
                 page.getTotalElements()
         );

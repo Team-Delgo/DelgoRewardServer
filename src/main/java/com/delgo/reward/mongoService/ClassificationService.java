@@ -5,7 +5,8 @@ import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.user.CategoryCount;
 import com.delgo.reward.mongoDomain.Classification;
 import com.delgo.reward.mongoRepository.ClassificationRepository;
-import com.delgo.reward.service.user.UserService;
+import com.delgo.reward.service.user.UserCommandService;
+import com.delgo.reward.service.user.UserQueryService;
 import com.delgo.reward.service.user.CategoryCountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,8 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class ClassificationService {
-    private final UserService userService;
+    private final UserQueryService userQueryService;
+    private final UserCommandService userCommandService;
     private final CategoryCountService categoryCountService;
     private final ClassificationRepository classificationRepository;
 
@@ -64,7 +66,7 @@ public class ClassificationService {
         }
 
         Classification classification = classificationRepository.save(classificationCert(certification, categoryCodeList, categoryMap, classificationCriteriaMap));
-        userService.makeActivityCacheValue(certification.getUser().getUserId());
+        userCommandService.makeActivityCacheValue(certification.getUser().getUserId());
 
         return classification;
     }
@@ -121,7 +123,7 @@ public class ClassificationService {
                 categoryCountService.save(categoryCount.minusOne(categoryCode));
             }
 
-            userService.makeActivityCacheValue(certification.getUser().getUserId());
+            userCommandService.makeActivityCacheValue(certification.getUser().getUserId());
 
             classificationRepository.delete(classification);
         });

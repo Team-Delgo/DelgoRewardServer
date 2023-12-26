@@ -17,7 +17,7 @@ import com.delgo.reward.record.certification.CertCreate;
 import com.delgo.reward.record.certification.CertUpdate;
 import com.delgo.reward.service.cert.CertCommandService;
 import com.delgo.reward.service.ReactionService;
-import com.delgo.reward.service.user.UserService;
+import com.delgo.reward.service.user.UserQueryService;
 import com.delgo.reward.service.cert.CertQueryService;
 import com.delgo.reward.service.mungple.MungpleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,7 +46,7 @@ import java.util.*;
 @RequestMapping("/api/certification")
 public class CertController extends CommController {
 
-    private final UserService userService;
+    private final UserQueryService userQueryService;
     private final MungpleService mungpleService;
     private final ReactionService reactionService;
     private final CertAsyncService certAsyncService;
@@ -86,7 +86,7 @@ public class CertController extends CommController {
                 : certQueryService.getCorrectPagingListByUserIdAndCategoryCode(userId, categoryCode, pageable);
 
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
-        User user = userService.getUserById(userId);
+        User user = userQueryService.getUserById(userId);
 
         return SuccessReturn(PageCertResponse.from(userId, page, reactionMap)
                 .setViewCount(user.getViewCount()));
@@ -173,7 +173,7 @@ public class CertController extends CommController {
                 : certQueryService.getPagingListByUserIdAndCategoryCode(userId, categoryCode, pageable);
 
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
-        User user = userService.getUserById(userId);
+        User user = userQueryService.getUserById(userId);
 
         return SuccessReturn(PageCertResponse.from(userId, page, reactionMap)
                 .setViewCount(user.getViewCount()));

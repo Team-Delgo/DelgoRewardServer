@@ -10,7 +10,7 @@ import com.delgo.reward.record.comment.CommentRecord;
 import com.delgo.reward.service.cert.CertCommandService;
 import com.delgo.reward.service.CommentService;
 import com.delgo.reward.service.NotifyService;
-import com.delgo.reward.service.user.UserService;
+import com.delgo.reward.service.user.UserQueryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -45,7 +45,7 @@ public class CommentControllerTest {
     @MockBean private CommentService commentService;
     @MockBean private FcmService fcmService;
     @MockBean private CertCommandService certService;
-    @MockBean private UserService userService;
+    @MockBean private UserQueryService userQueryService;
     @MockBean private NotifyService notifyService;
 
 

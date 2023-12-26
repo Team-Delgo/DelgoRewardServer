@@ -16,7 +16,8 @@ import com.delgo.reward.record.signup.OAuthSignUpRecord;
 import com.delgo.reward.record.signup.SignUpRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
 import com.delgo.reward.service.SmsAuthService;
-import com.delgo.reward.service.user.UserService;
+import com.delgo.reward.service.user.UserCommandService;
+import com.delgo.reward.service.user.UserQueryService;
 import com.delgo.reward.service.cert.CertQueryService;
 import com.delgo.reward.service.mungple.MungpleService;
 import com.delgo.reward.service.user.CategoryCountService;
@@ -46,12 +47,12 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
 public class UserController extends CommController {
-
     private final JwtService jwtService;
-    private final UserService userService;
     private final MungpleService mungpleService;
     private final SmsAuthService smsAuthService;
     private final CertQueryService certQueryService;
+    private final UserQueryService userQueryService;
+    private final UserCommandService userCommandService;
     private final CategoryCountService categoryCountService;
 
     /**
@@ -64,8 +65,8 @@ public class UserController extends CommController {
     @GetMapping("/other")
     public ResponseEntity<?> getOtherUser(@RequestParam int userId) {
         return SuccessReturn(UserResponse.fromOther(
-                userService.getUserById(userId), // User
-                userService.getActivityByUserId(userId), // Activity Data
+                userQueryService.getUserById(userId), // User
+                userCommandService.getActivityByUserId(userId), // Activity Data
                 UserVisitMungpleCountDTO.setMungpleData( // UserVisitMungpleCountDTO
                         certQueryService.getVisitedMungpleIdListTop3ByUserId(userId), // UserVisitMungpleCountDTO List
                         Mungple.listToMap(mungpleService.getAll())))); // Mungple List
@@ -83,7 +84,7 @@ public class UserController extends CommController {
         if (!StringUtils.hasText(searchWord))
             return ParamErrorReturn("searchWord");
 
-        return SuccessReturn(userService.getSearchUsers(searchWord, pageable));
+        return SuccessReturn(userQueryService.getSearchUsers(searchWord, pageable));
     }
 
     /**
@@ -94,12 +95,12 @@ public class UserController extends CommController {
     @Operation(summary = "비밀번호 재설정", description = "비밀번호 재설정 API")
     @PutMapping("/password")
     public ResponseEntity<?> resetPassword(@Validated @RequestBody ResetPasswordRecord resetPasswordRecord) {
-        User user = userService.getUserByEmail(resetPasswordRecord.email()); // 유저 조회
+        User user = userQueryService.getUserByEmail(resetPasswordRecord.email()); // 유저 조회
         SmsAuth smsAuth = smsAuthService.getSmsAuthByPhoneNo(user.getPhoneNo()); // SMS DATA 조회
         if (!smsAuthService.isAuth(smsAuth))
             return ErrorReturn(APICode.SMS_ERROR);
 
-        userService.changePassword(resetPasswordRecord.email(), resetPasswordRecord.newPassword());
+        userCommandService.changePassword(resetPasswordRecord.email(), resetPasswordRecord.newPassword());
         return SuccessReturn();
     }
 
@@ -121,7 +122,7 @@ public class UserController extends CommController {
                 && oAuthSignUpRecord.userSocial() == UserSocial.A)
             return ErrorReturn(APICode.PARAM_ERROR);
 
-        User user = userService.oAuthSignup(oAuthSignUpRecord, profile, version);
+        User user = userCommandService.oAuthSignup(oAuthSignUpRecord, profile, version);
         categoryCountService.create(user.getUserId());
         JwtToken jwt = jwtService.createToken(user.getUserId());
         jwtService.publishToken(response, jwt);
@@ -142,10 +143,10 @@ public class UserController extends CommController {
             @RequestPart(required = false) MultipartFile profile,
             @RequestHeader("version") String version,
             HttpServletResponse response) {
-        if (userService.isEmailExisting(signUpRecord.email())) // Email 중복확인
+        if (userQueryService.isEmailExisting(signUpRecord.email())) // Email 중복확인
             return ErrorReturn(APICode.EMAIL_DUPLICATE_ERROR);
 
-        User user = userService.signup(signUpRecord, profile, version);
+        User user = userCommandService.signup(signUpRecord, profile, version);
         categoryCountService.create(user.getUserId());
         JwtToken jwt = jwtService.createToken(user.getUserId());
         jwtService.publishToken(response, jwt);
@@ -160,7 +161,7 @@ public class UserController extends CommController {
     @Operation(summary = "지도 조회 수 증가", description = "다른 사용자가 내 지도 조회 시 조회 수 증가 시키는 API")
     @PostMapping(value = {"/view/{userId}", "/view/"})
     public ResponseEntity increaseViewCount(@PathVariable Integer userId) {
-        userService.increaseViewCount(userId);
+        userCommandService.increaseViewCount(userId);
         return SuccessReturn();
     }
 }
