@@ -13,6 +13,7 @@ import com.delgo.reward.record.user.ModifyPetRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
 import com.delgo.reward.service.PetService;
+import com.delgo.reward.service.TokenService;
 import com.delgo.reward.service.cert.CertCommandService;
 import com.delgo.reward.service.user.UserCommandService;
 import com.delgo.reward.service.user.UserQueryService;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/account")
 public class AccountController extends CommController {
     private final PetService petService;
+    private final TokenService tokenService;
     private final KakaoService kakaoService;
     private final MungpleService mungpleService;
     private final UserQueryService userQueryService;
@@ -139,7 +141,11 @@ public class AccountController extends CommController {
     @Operation(summary = "로그아웃", description = "성공 여부만 반환 한다.")
     @PostMapping(value = {"/logout/{userId}","/logout"})
     public ResponseEntity<?> logout(@PathVariable Integer userId) throws Exception {
-        userCommandService.logout(userId);
+        User user = userQueryService.getOneByUserId(userId);
+        if (user.getUserSocial().equals(UserSocial.K))
+            kakaoService.logout(user.getKakaoId()); // kakao 로그아웃 , Naver는 로그아웃 지원 X
+
+        tokenService.deleteToken(userId);
         return SuccessReturn();
     }
 }
