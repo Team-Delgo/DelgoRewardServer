@@ -1,6 +1,11 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
+import com.delgo.reward.comm.code.UserSocial;
+import com.delgo.reward.comm.ncp.storage.BucketName;
+import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
+import com.delgo.reward.comm.oauth.KakaoService;
+import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.cert.UserVisitMungpleCountDTO;
 import com.delgo.reward.dto.user.UserResponse;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
@@ -8,6 +13,7 @@ import com.delgo.reward.record.user.ModifyPetRecord;
 import com.delgo.reward.record.user.ModifyUserRecord;
 import com.delgo.reward.record.user.ResetPasswordRecord;
 import com.delgo.reward.service.PetService;
+import com.delgo.reward.service.cert.CertCommandService;
 import com.delgo.reward.service.user.UserService;
 import com.delgo.reward.service.cert.CertQueryService;
 import com.delgo.reward.service.mungple.MungpleService;
@@ -32,9 +38,12 @@ public class AccountController extends CommController {
 
     private final PetService petService;
     private final UserService userService;
+    private final KakaoService kakaoService;
     private final MungpleService mungpleService;
     private final CertQueryService certQueryService;
+    private final CertCommandService certCommandService;
     private final CategoryCountService categoryCountService;
+    private final ObjectStorageService objectStorageService;
 
     /**
      * 내 정보 조회
@@ -111,8 +120,15 @@ public class AccountController extends CommController {
     @Operation(summary = "회원 탈퇴", description = "성공 여부만 반환 한다.")
     @DeleteMapping("/user/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable Integer userId) throws Exception {
-        userService.deleteUser(userId); // USER DELETE
+        User user = userService.getUserById(userId);
+        if (user.getUserSocial().equals(UserSocial.K))
+            kakaoService.logout(user.getKakaoId()); // kakao 로그아웃 , Naver는 로그아웃 지원 X
+
+        petService.delete(userId);
+        userService.delete(userId);
         categoryCountService.delete(userId);
+        certCommandService.deleteByUserId(userId);
+        objectStorageService.deleteObject(BucketName.PROFILE, userId + "_profile.webp");
 
         return SuccessReturn();
     }

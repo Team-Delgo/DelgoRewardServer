@@ -31,4 +31,8 @@ public class PetService {
             user.getPet().setBreedName(codeService.getOneByCode(breed).getCodeName());
         });
     }
+
+    public void delete(int userId){
+        petRepository.deleteByUserUserId(userId);
+    }
 }

@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
+    void deleteByUserId(int userId);
 
     Optional<User> findByName(String name);
     Optional<User> findByEmail(String email);

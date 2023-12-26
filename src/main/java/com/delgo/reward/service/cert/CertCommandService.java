@@ -92,4 +92,8 @@ public class CertCommandService {
         reactionService.deleteByCertId(certificationId);
         objectStorageService.deleteObject(BucketName.CERTIFICATION, certificationId + "_cert.webp");
     }
+
+    public void deleteByUserId(int userId) {
+        certRepository.deleteByUserId(userId);
+    }
 }
