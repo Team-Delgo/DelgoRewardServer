@@ -50,6 +50,7 @@ public record OAuthSignUpRecord(
                     .pGeoCode(pGeoCode)
                     .isNotify(true)
                     .appleUniqueNo(appleUniqueNo)
+                    .roles("ROLE_USER")
                     .build();
             case K -> User.builder()
                     .name(userName)
@@ -63,6 +64,7 @@ public record OAuthSignUpRecord(
                     .kakaoId(socialId)
                     .age(age)
                     .gender(gender)
+                    .roles("ROLE_USER")
                     .build();
             default -> User.builder()
                     .name(userName)
@@ -75,6 +77,7 @@ public record OAuthSignUpRecord(
                     .age(age)
                     .gender(gender)
                     .isNotify(true)
+                    .roles("ROLE_USER")
                     .build();
         };
     }

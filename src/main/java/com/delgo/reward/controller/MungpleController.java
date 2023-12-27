@@ -109,4 +109,11 @@ public class MungpleController extends CommController {
                 bookmarkService.getActiveBookmarkCount(mungpleId), // bookmarkCount
                 bookmarkService.hasBookmarkByIsBookmarked(userId, mungpleId, true))); // isBookmarked
     }
+
+    @Hidden
+    @GetMapping("/category/{categoryCode}")
+    public ResponseEntity getMungplesByCategoryDeprecated(@PathVariable CategoryCode categoryCode) {
+        List<Mungple> mungpleList = mungpleService.getAll();
+        return SuccessReturn(MungpleResponse.fromList(mungpleList, certQueryService.getCountMapByMungple(), bookmarkService.getCountMapByMungple()));
+    }
 }
