@@ -40,6 +40,7 @@ public record SignUpRecord(
                 .geoCode(geoCode)
                 .pGeoCode(pGeoCode)
                 .isNotify(true)
+                .roles("ROLE_USER")
                 .build();
     }
 
