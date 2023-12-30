@@ -266,6 +266,7 @@ public class CertController extends CommController {
             List<Certification> certificationList = certQueryService.getListByPlaceName(mungple.getPlaceName());
             certificationList.forEach(certification -> {
                 certification.setMungpleId(mungple.getMungpleId());
+                certification.setCategoryCode(mungple.getCategoryCode());
                 certCommandService.save(certification);
             });
         });
