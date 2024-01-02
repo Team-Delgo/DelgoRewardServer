@@ -1,10 +1,12 @@
 package com.delgo.reward.service;
 
 
+import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.record.user.ModifyPetRecord;
 import com.delgo.reward.repository.PetRepository;
+import com.delgo.reward.service.user.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,10 +18,18 @@ import java.util.Optional;
 public class PetService {
     private final PetRepository petRepository;
     private final CodeService codeService;
+    private final UserQueryService userQueryService;
 
     @Transactional
-    public Pet register(Pet pet) {
-        return petRepository.save(pet.setBreedName(codeService.getOneByCode(pet.getBreed()).getCodeName()));
+    public Pet create(Pet pet) {
+        Code code = codeService.getOneByCode(pet.getBreed());
+        pet.setBreedName(code.getCodeName());
+        Pet savedPet = petRepository.save(pet);
+
+        User user = userQueryService.getOneByUserId(pet.getUserId());
+        user.setPet(savedPet);
+
+        return savedPet;
     }
 
     @Transactional

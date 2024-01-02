@@ -3,9 +3,11 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.APICode;
+import com.delgo.reward.comm.encoder.CustomPasswordEncoder;
 import com.delgo.reward.comm.security.jwt.JwtService;
 import com.delgo.reward.comm.security.jwt.JwtToken;
 import com.delgo.reward.domain.SmsAuth;
+import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
 import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.dto.cert.UserVisitMungpleCountDTO;
@@ -14,7 +16,10 @@ import com.delgo.reward.dto.user.UserResponse;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.record.signup.OAuthSignUpRecord;
 import com.delgo.reward.record.signup.SignUpRecord;
-import com.delgo.reward.record.user.ResetPasswordRecord;
+import com.delgo.reward.record.user.PasswordUpdate;
+import com.delgo.reward.service.CodeService;
+import com.delgo.reward.service.PetService;
+import com.delgo.reward.service.PhotoService;
 import com.delgo.reward.service.SmsAuthService;
 import com.delgo.reward.service.user.UserCommandService;
 import com.delgo.reward.service.user.UserQueryService;
@@ -32,6 +37,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -49,12 +55,18 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/api/user")
 public class UserController extends CommController {
     private final JwtService jwtService;
+    private final PetService petService;
+    private final CodeService codeService;
+    private final PhotoService photoService;
     private final MungpleService mungpleService;
     private final SmsAuthService smsAuthService;
     private final CertQueryService certQueryService;
     private final UserQueryService userQueryService;
     private final UserCommandService userCommandService;
     private final CategoryCountService categoryCountService;
+
+    private final CustomPasswordEncoder customPasswordEncoder;
+    private final String DEFAULT_PROFILE = "https://kr.object.ncloudstorage.com/reward-profile/%EA%B8%B0%EB%B3%B8%ED%94%84%EB%A1%9C%ED%95%84.webp";
 
     /**
      * 다른 User 정보 조회
@@ -91,19 +103,19 @@ public class UserController extends CommController {
 
     /**
      * 비밀번호 재설정
-     * @param resetPasswordRecord
+     * @param passwordUpdate
      * @return 성공 / 실패 여부
      */
     @Operation(summary = "비밀번호 재설정", description = "비밀번호 재설정 API")
     @PutMapping("/password")
-    public ResponseEntity<?> resetPassword(@Validated @RequestBody ResetPasswordRecord resetPasswordRecord) {
-        User user = userQueryService.getOneByEmail(resetPasswordRecord.email()); // 유저 조회
+    public ResponseEntity<?> resetPassword(@Validated @RequestBody PasswordUpdate passwordUpdate) {
+        User user = userQueryService.getOneByEmail(passwordUpdate.email()); // 유저 조회
         SmsAuth smsAuth = smsAuthService.getSmsAuthByPhoneNo(user.getPhoneNo()); // SMS DATA 조회
         if (!smsAuthService.isAuth(smsAuth))
             return ErrorReturn(APICode.SMS_ERROR);
 
-        userCommandService.changePassword(resetPasswordRecord.email(), resetPasswordRecord.newPassword());
-        return SuccessReturn();
+        String encodedPassword =  User.encodePassword(customPasswordEncoder, passwordUpdate.newPassword());
+        return SuccessReturn(userCommandService.updatePassword(passwordUpdate.email(), encodedPassword));
     }
 
     /**
@@ -124,8 +136,14 @@ public class UserController extends CommController {
                 && oAuthSignUpRecord.userSocial() == UserSocial.A)
             return ErrorReturn(APICode.PARAM_ERROR);
 
-        User user = userCommandService.OAuthSignup(oAuthSignUpRecord, profile, version);
-        categoryCountService.create(user.getUserId());
+        User user = userCommandService.save(User.from(oAuthSignUpRecord,
+                codeService.getAddressByGeoCode(oAuthSignUpRecord.geoCode()), // Code -> 주소 변환
+                version));
+        petService.create(Pet.from(oAuthSignUpRecord, user)); // Pet 생성
+        String profileUrl = (profile.isEmpty()) ? DEFAULT_PROFILE : photoService.createProfile(user.getUserId(), profile); // Profile 생성
+        userCommandService.updateProfile(user.getUserId(), profileUrl);  // Profile URL 적용
+        categoryCountService.create(user.getUserId()); // CategoryCount 생성
+
         JwtToken jwt = jwtService.createToken(user.getUserId());
         jwtService.publishToken(response, jwt);
 
@@ -145,11 +163,20 @@ public class UserController extends CommController {
             @RequestPart(required = false) MultipartFile profile,
             @RequestHeader("version") String version,
             HttpServletResponse response) {
+
         if (userQueryService.isEmailExisting(signUpRecord.email())) // Email 중복확인
             return ErrorReturn(APICode.EMAIL_DUPLICATE_ERROR);
 
-        User user = userCommandService.signup(signUpRecord, profile, version);
-        categoryCountService.create(user.getUserId());
+        User user = userCommandService.save(User.from(signUpRecord,
+                customPasswordEncoder, // password encoder
+                codeService.getAddressByGeoCode(signUpRecord.geoCode()), // Code -> 주소 변환
+                version));
+
+        petService.create(Pet.from(signUpRecord, user)); // Pet 생성
+        String profileUrl = (profile.isEmpty()) ? DEFAULT_PROFILE : photoService.createProfile(user.getUserId(), profile); // Profile 생성
+        userCommandService.updateProfile(user.getUserId(), profileUrl);  // Profile URL 적용
+        categoryCountService.create(user.getUserId()); // CategoryCount 생성
+
         JwtToken jwt = jwtService.createToken(user.getUserId());
         jwtService.publishToken(response, jwt);
 
