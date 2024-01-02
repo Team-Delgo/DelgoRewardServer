@@ -71,7 +71,8 @@ public class AccountController extends CommController {
     @Hidden
     @PutMapping(value = {"/notify/{userId}", "/notify"})
     public ResponseEntity<?> updateIsNotify(@PathVariable Integer userId){
-        return SuccessReturn(userCommandService.updateIsNotify(userId));
+        User user = userCommandService.updateIsNotify(userId);
+        return SuccessReturn(UserResponse.from(user));
     }
 
     /**
@@ -83,7 +84,8 @@ public class AccountController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))})
     @PutMapping(value = "/user")
     public ResponseEntity<?> updateUserInfo(@Validated @RequestBody UserUpdate userUpdate) {
-        return SuccessReturn(UserResponse.from(userCommandService.updateUserInfo(userUpdate)));
+        User user = userCommandService.updateUserInfo(userUpdate);
+        return SuccessReturn(UserResponse.from(user));
     }
 
     /**
@@ -109,8 +111,8 @@ public class AccountController extends CommController {
         // TODO: 사용자 확인 - 토큰 사용
 
         String encodedPassword = User.encodePassword(customPasswordEncoder, passwordUpdate.newPassword());
-        userCommandService.updatePassword(passwordUpdate.email(), encodedPassword);
-        return SuccessReturn();
+        User user = userCommandService.updatePassword(passwordUpdate.email(), encodedPassword);
+        return SuccessReturn(UserResponse.from(user));
     }
 
     /**

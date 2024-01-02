@@ -104,13 +104,12 @@ public class UserController extends CommController {
             return ErrorReturn(APICode.SMS_ERROR);
 
         String encodedPassword =  User.encodePassword(customPasswordEncoder, passwordUpdate.newPassword());
-        return SuccessReturn(userCommandService.updatePassword(passwordUpdate.email(), encodedPassword));
+        User updatedUser = userCommandService.updatePassword(passwordUpdate.email(), encodedPassword);
+        return SuccessReturn(UserResponse.from(updatedUser));
     }
 
     /**
      * 소셜 회원가입 ( Kakao, Naver, Apple )
-     * Request Data : OAuthSignUpDTO, MultipartFile (프로필 사진)
-     * Response Data : 등록한 인증 데이터 반환
      */
     @Operation(summary = "OAuth 회원가입", description = "소셜 회원가입 ( Kakao, Naver, Apple ) \n Apple, Kakao는 고유 Id 보내야 함.")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))})
@@ -131,7 +130,6 @@ public class UserController extends CommController {
         petService.create(Pet.from(oAuthSignUpRecord, user)); // Pet 생성
         String profileUrl = (profile.isEmpty()) ? DEFAULT_PROFILE : photoService.createProfile(user.getUserId(), profile); // Profile 생성
         userCommandService.updateProfile(user.getUserId(), profileUrl);  // Profile URL 적용
-        categoryCountService.create(user.getUserId()); // CategoryCount 생성
 
         JwtToken jwt = jwtService.createToken(user.getUserId());
         jwtService.publishToken(response, jwt);
@@ -164,7 +162,6 @@ public class UserController extends CommController {
         petService.create(Pet.from(signUpRecord, user)); // Pet 생성
         String profileUrl = (profile.isEmpty()) ? DEFAULT_PROFILE : photoService.createProfile(user.getUserId(), profile); // Profile 생성
         userCommandService.updateProfile(user.getUserId(), profileUrl);  // Profile URL 적용
-        categoryCountService.create(user.getUserId()); // CategoryCount 생성
 
         JwtToken jwt = jwtService.createToken(user.getUserId());
         jwtService.publishToken(response, jwt);
