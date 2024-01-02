@@ -88,6 +88,7 @@ public class User extends BaseTimeEntity {
                 .geoCode(oAuthSignUpRecord.geoCode())
                 .pGeoCode(oAuthSignUpRecord.pGeoCode())
                 .isNotify(true)
+                .roles("ROLE_USER")
                 .version(version);
 
         // 각 사례별로 다른 속성 설정
