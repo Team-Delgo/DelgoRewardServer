@@ -14,8 +14,8 @@ import com.delgo.reward.dto.cert.UserVisitMungpleCountDTO;
 import com.delgo.reward.dto.user.PageUserResponse;
 import com.delgo.reward.dto.user.UserResponse;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
-import com.delgo.reward.record.signup.OAuthSignUpRecord;
-import com.delgo.reward.record.signup.SignUpRecord;
+import com.delgo.reward.record.signup.OAuthCreate;
+import com.delgo.reward.record.signup.UserCreate;
 import com.delgo.reward.record.user.PasswordUpdate;
 import com.delgo.reward.service.CodeService;
 import com.delgo.reward.service.PetService;
@@ -115,19 +115,19 @@ public class UserController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))})
     @PostMapping(value = "/oauth",consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> registerUserByOAuth(
-            @Validated @RequestPart(value = "data") OAuthSignUpRecord oAuthSignUpRecord,
+            @Validated @RequestPart(value = "data") OAuthCreate oAuthCreate,
             @RequestPart(required = false) MultipartFile profile,
             @RequestHeader("version") String version,
             HttpServletResponse response) {
         // Apple 회원가입 시 appleUniqueNo 넣어주어야 함.
-        if (!StringUtils.hasText(oAuthSignUpRecord.appleUniqueNo()) && oAuthSignUpRecord.userSocial() == UserSocial.A)
+        if (!StringUtils.hasText(oAuthCreate.appleUniqueNo()) && oAuthCreate.userSocial() == UserSocial.A)
             return ErrorReturn(APICode.PARAM_ERROR);
 
-        User user = userCommandService.save(User.from(oAuthSignUpRecord,
-                codeService.getAddressByGeoCode(oAuthSignUpRecord.geoCode()), // Code -> 주소 변환
+        User user = userCommandService.save(User.from(oAuthCreate,
+                codeService.getAddressByGeoCode(oAuthCreate.geoCode()), // Code -> 주소 변환
                 version));
 
-        petService.create(Pet.from(oAuthSignUpRecord, user)); // Pet 생성
+        petService.create(Pet.from(oAuthCreate, user)); // Pet 생성
         String profileUrl = (profile.isEmpty()) ? DEFAULT_PROFILE : photoService.createProfile(user.getUserId(), profile); // Profile 생성
         userCommandService.updateProfile(user.getUserId(), profileUrl);  // Profile URL 적용
 
@@ -146,20 +146,20 @@ public class UserController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))})
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> registerUser(
-            @Validated @RequestPart(value = "data") SignUpRecord signUpRecord,
+            @Validated @RequestPart(value = "data") UserCreate userCreate,
             @RequestPart(required = false) MultipartFile profile,
             @RequestHeader("version") String version,
             HttpServletResponse response) {
 
-        if (userQueryService.isEmailExisting(signUpRecord.email())) // Email 중복확인
+        if (userQueryService.isEmailExisting(userCreate.email())) // Email 중복확인
             return ErrorReturn(APICode.EMAIL_DUPLICATE_ERROR);
 
-        User user = userCommandService.save(User.from(signUpRecord,
+        User user = userCommandService.save(User.from(userCreate,
                 customPasswordEncoder, // password encoder
-                codeService.getAddressByGeoCode(signUpRecord.geoCode()), // Code -> 주소 변환
+                codeService.getAddressByGeoCode(userCreate.geoCode()), // Code -> 주소 변환
                 version));
 
-        petService.create(Pet.from(signUpRecord, user)); // Pet 생성
+        petService.create(Pet.from(userCreate, user)); // Pet 생성
         String profileUrl = (profile.isEmpty()) ? DEFAULT_PROFILE : photoService.createProfile(user.getUserId(), profile); // Profile 생성
         userCommandService.updateProfile(user.getUserId(), profileUrl);  // Profile URL 적용
 

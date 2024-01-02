@@ -6,7 +6,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
-public record SignUpRecord(
+public record UserCreate(
         @Schema(description = "이름", required = true)
         @NotBlank String userName,
         @Schema(description = "이메일", required = true)
