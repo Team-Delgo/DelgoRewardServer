@@ -42,7 +42,8 @@ public class PetService {
         });
     }
 
-    public void delete(int userId){
+    @Transactional
+    public void deleteByUserId(int userId){
         petRepository.deleteByUserUserId(userId);
     }
 }
