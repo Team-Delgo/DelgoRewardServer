@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
-public record OAuthSignUpRecord(
+public record OAuthCreate(
         @Schema(description = "이메일", required = true)
         @NotNull String email,
         @Schema(description = "유저 이름", required = true)

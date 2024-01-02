@@ -4,7 +4,7 @@ package com.delgo.reward.service;
 import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.domain.pet.Pet;
 import com.delgo.reward.domain.user.User;
-import com.delgo.reward.record.user.ModifyPetRecord;
+import com.delgo.reward.record.user.PetUpdate;
 import com.delgo.reward.repository.PetRepository;
 import com.delgo.reward.service.user.UserQueryService;
 import lombok.RequiredArgsConstructor;
@@ -33,10 +33,10 @@ public class PetService {
     }
 
     @Transactional
-    public void changePetInfo(ModifyPetRecord modifyPetRecord,User user){
-        Optional.ofNullable(modifyPetRecord.name()).ifPresent(user.getPet()::setName);
-        Optional.ofNullable(modifyPetRecord.birthday()).ifPresent(user.getPet()::setBirthday);
-        Optional.ofNullable(modifyPetRecord.breed()).ifPresent(breed ->{
+    public void changePetInfo(PetUpdate petUpdate, User user){
+        Optional.ofNullable(petUpdate.name()).ifPresent(user.getPet()::setName);
+        Optional.ofNullable(petUpdate.birthday()).ifPresent(user.getPet()::setBirthday);
+        Optional.ofNullable(petUpdate.breed()).ifPresent(breed ->{
             user.getPet().setBreed(breed);
             user.getPet().setBreedName(codeService.getOneByCode(breed).getCodeName());
         });

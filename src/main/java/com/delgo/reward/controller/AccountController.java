@@ -10,7 +10,7 @@ import com.delgo.reward.domain.user.User;
 import com.delgo.reward.dto.cert.UserVisitMungpleCountDTO;
 import com.delgo.reward.dto.user.UserResponse;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
-import com.delgo.reward.record.user.ModifyPetRecord;
+import com.delgo.reward.record.user.PetUpdate;
 import com.delgo.reward.record.user.UserUpdate;
 import com.delgo.reward.record.user.PasswordUpdate;
 import com.delgo.reward.service.PetService;
@@ -48,8 +48,6 @@ public class AccountController extends CommController {
 
     /**
      * 내 정보 조회
-     * @param userId
-     * @return 유저 정보 반환
      */
     @Operation(summary = "내 정보 조회 ", description = "My Page, 및 활동 페이지에서 필요한 모든 Data를 반환한다.")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))})
@@ -65,8 +63,6 @@ public class AccountController extends CommController {
 
     /**
      * 알림 정보 수정
-     * @param userId
-     * @return 수정된 데이터 반환
      */
     @Hidden
     @PutMapping(value = {"/notify/{userId}", "/notify"})
@@ -77,8 +73,6 @@ public class AccountController extends CommController {
 
     /**
      * 유저 정보 수정
-     * @param userUpdate
-     * @return 성공 / 실패 여부
      */
     @Operation(summary = "유저 정보 수정", description = "수정 된 유저 정보를 반환한다. \n profile은 multipart로 받는다. (RequestBody 체크 필요)")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))})
@@ -90,20 +84,16 @@ public class AccountController extends CommController {
 
     /**
      * 펫 정보 수정
-     * @param modifyPetRecord
-     * @return 성공 / 실패 여부
      */
     @Operation(summary = "펫 정보 수정", description = "성공 여부만 반환 한다.")
     @PutMapping("/pet")
-    public ResponseEntity<?> changePetInfo(@Validated @RequestBody ModifyPetRecord modifyPetRecord) {
-        petService.changePetInfo(modifyPetRecord, userQueryService.getOneByEmail(modifyPetRecord.email()));
+    public ResponseEntity<?> changePetInfo(@Validated @RequestBody PetUpdate petUpdate) {
+        petService.changePetInfo(petUpdate, userQueryService.getOneByEmail(petUpdate.email()));
         return SuccessReturn();
     }
 
     /**
      * 비밀번호 변경
-     * @param passwordUpdate
-     * @return 성공 / 실패 여부
      */
     @Operation(summary = "비밀번호 변경", description = "성공 여부만 반환 한다.")
     @PutMapping("/password")
@@ -117,9 +107,6 @@ public class AccountController extends CommController {
 
     /**
      * 회원 탈퇴
-     * @param userId
-     * @return 성공 / 실패 여부
-     * @throws Exception
      */
     @Operation(summary = "회원 탈퇴", description = "성공 여부만 반환 한다.")
     @DeleteMapping("/user/{userId}")
@@ -138,8 +125,6 @@ public class AccountController extends CommController {
 
     /**
      * 로그아웃
-     * @param userId
-     * @return 성공 / 실패 여부
      */
     @Operation(summary = "로그아웃", description = "성공 여부만 반환 한다.")
     @PostMapping(value = {"/logout/{userId}","/logout"})
