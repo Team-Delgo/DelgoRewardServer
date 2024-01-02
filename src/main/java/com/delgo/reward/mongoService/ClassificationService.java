@@ -2,10 +2,8 @@ package com.delgo.reward.mongoService;
 
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.domain.user.CategoryCount;
 import com.delgo.reward.mongoDomain.Classification;
 import com.delgo.reward.mongoRepository.ClassificationRepository;
-import com.delgo.reward.service.user.CategoryCountService;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -20,7 +18,6 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class ClassificationService {
-    private final CategoryCountService categoryCountService;
     private final ClassificationRepository classificationRepository;
 
     private final static String CATEGORY_CLASSIFICATION_DATA_SET_DIR = "classification_data_set/classification_category.json";
@@ -119,14 +116,6 @@ public class ClassificationService {
 
     public void delete(Certification certification){
         Optional<Classification> optional = classificationRepository.findClassificationByCertification_CertificationId(certification.getCertificationId());
-
-        optional.ifPresent(classification -> {
-            CategoryCount categoryCount = categoryCountService.getOneByUserId(certification.getUser().getUserId());
-
-            for(String categoryCode: classification.getCategory().keySet()){
-                categoryCountService.save(categoryCount.minusOne(categoryCode));
-            }
-            classificationRepository.delete(classification);
-        });
+        optional.ifPresent(classification -> classificationRepository.delete(classification));
     }
 }

@@ -25,7 +25,6 @@ import com.delgo.reward.service.user.UserCommandService;
 import com.delgo.reward.service.user.UserQueryService;
 import com.delgo.reward.service.cert.CertQueryService;
 import com.delgo.reward.service.mungple.MungpleService;
-import com.delgo.reward.service.user.CategoryCountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -60,7 +59,6 @@ public class UserController extends CommController {
     private final CertQueryService certQueryService;
     private final UserQueryService userQueryService;
     private final UserCommandService userCommandService;
-    private final CategoryCountService categoryCountService;
 
     private final CustomPasswordEncoder customPasswordEncoder;
     private final String DEFAULT_PROFILE = "https://kr.object.ncloudstorage.com/reward-profile/%EA%B8%B0%EB%B3%B8%ED%94%84%EB%A1%9C%ED%95%84.webp";

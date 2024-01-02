@@ -20,7 +20,6 @@ import com.delgo.reward.service.user.UserCommandService;
 import com.delgo.reward.service.user.UserQueryService;
 import com.delgo.reward.service.cert.CertQueryService;
 import com.delgo.reward.service.mungple.MungpleService;
-import com.delgo.reward.service.user.CategoryCountService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -44,7 +43,6 @@ public class AccountController extends CommController {
     private final UserCommandService userCommandService;
     private final CertQueryService certQueryService;
     private final CertCommandService certCommandService;
-    private final CategoryCountService categoryCountService;
     private final ObjectStorageService objectStorageService;
     private final CustomPasswordEncoder customPasswordEncoder;
 
@@ -128,9 +126,8 @@ public class AccountController extends CommController {
         if (user.getUserSocial().equals(UserSocial.K))
             kakaoService.logout(user.getKakaoId()); // kakao 로그아웃 , Naver는 로그아웃 지원 X
 
-        petService.delete(userId);
+        petService.deleteByUserId(userId);
         userCommandService.deleteByUserId(userId);
-        categoryCountService.delete(userId);
         certCommandService.deleteByUserId(userId);
         objectStorageService.deleteObject(BucketName.PROFILE, userId + "_profile.webp");
 
