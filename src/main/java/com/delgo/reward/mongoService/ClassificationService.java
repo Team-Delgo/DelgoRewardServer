@@ -5,11 +5,8 @@ import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.user.CategoryCount;
 import com.delgo.reward.mongoDomain.Classification;
 import com.delgo.reward.mongoRepository.ClassificationRepository;
-import com.delgo.reward.service.user.UserCommandService;
-import com.delgo.reward.service.user.UserQueryService;
 import com.delgo.reward.service.user.CategoryCountService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -20,18 +17,28 @@ import java.io.FileReader;
 import java.io.Reader;
 import java.util.*;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ClassificationService {
-    private final UserQueryService userQueryService;
-    private final UserCommandService userCommandService;
     private final CategoryCountService categoryCountService;
     private final ClassificationRepository classificationRepository;
 
     private final static String CATEGORY_CLASSIFICATION_DATA_SET_DIR = "classification_data_set/classification_category.json";
 
-    public Classification runClassification(Certification certification) {
+    public Map<CategoryCode, Integer> getCategoryCountMapByUserId(Integer userId) {
+        Map<CategoryCode, Integer> activityMapByCategoryCode = new HashMap<>();
+        List<Classification> classificationList = classificationRepository.findAllByUser_UserId(userId);
+        for (Classification classification : classificationList) {
+            for (String key : classification.getCategory().keySet()) {
+                CategoryCode categoryCode = CategoryCode.valueOf(key);
+                int currentCount = activityMapByCategoryCode.getOrDefault(categoryCode, 0);
+                activityMapByCategoryCode.put(categoryCode, currentCount + 1);
+            }
+        }
+        return activityMapByCategoryCode;
+    }
+
+    public Classification create(Certification certification) {
         ClassPathResource categoryClassificationResource = new ClassPathResource(CATEGORY_CLASSIFICATION_DATA_SET_DIR);
 
         JSONParser jsonParser = new JSONParser();
@@ -65,13 +72,10 @@ public class ClassificationService {
             classificationCriteriaMap.put(categoryCode, (List<String>) jsonObject.get("classification"));
         }
 
-        Classification classification = classificationRepository.save(classificationCert(certification, categoryCodeList, categoryMap, classificationCriteriaMap));
-        userCommandService.makeActivityCacheValue(certification.getUser().getUserId());
-
-        return classification;
+        return classificationRepository.save(classifyCert(certification, categoryCodeList, categoryMap, classificationCriteriaMap));
     }
 
-    public Classification classificationCert(Certification certification, List<String> categoryCodeList, Map<String, String> categoryMap, Map<String, List<String>> classificationCriteriaMap) {
+    public Classification classifyCert(Certification certification, List<String> categoryCodeList, Map<String, String> categoryMap, Map<String, List<String>> classificationCriteriaMap) {
         String text = certification.getDescription();
         String defaultCategory = certification.getMungpleId() != 0 ? certification.getCategoryCode().getCode() : CategoryCode.CA9999.getCode();
 
@@ -110,10 +114,10 @@ public class ClassificationService {
             dong = address[2];
         }
 
-        return new Classification().toEntity(certification, outputCategory, sido, sigugun, dong);
+        return Classification.from(certification, outputCategory, sido, sigugun, dong);
     }
 
-    public void deleteClassificationWhenModifyCert(Certification certification){
+    public void delete(Certification certification){
         Optional<Classification> optional = classificationRepository.findClassificationByCertification_CertificationId(certification.getCertificationId());
 
         optional.ifPresent(classification -> {
@@ -122,9 +126,6 @@ public class ClassificationService {
             for(String categoryCode: classification.getCategory().keySet()){
                 categoryCountService.save(categoryCount.minusOne(categoryCode));
             }
-
-            userCommandService.makeActivityCacheValue(certification.getUser().getUserId());
-
             classificationRepository.delete(classification);
         });
     }

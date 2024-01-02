@@ -217,7 +217,7 @@ public class CertController extends CommController {
             return ErrorReturn(APICode.INVALID_USER_ERROR);
 
         // 인증 분류 삭제
-        classificationService.deleteClassificationWhenModifyCert(certification);
+        classificationService.delete(certification);
         Certification updatedCertification = certCommandService.update(certUpdate);
         List<Reaction> reactionList = reactionService.getListByCertId(certification.getCertificationId());
 
@@ -236,7 +236,7 @@ public class CertController extends CommController {
             return ErrorReturn(APICode.INVALID_USER_ERROR);
 
         // 인증 분류 삭제
-        classificationService.deleteClassificationWhenModifyCert(certQueryService.getOneById(certificationId));
+        classificationService.delete(certQueryService.getOneById(certificationId));
 
         certCommandService.delete(certificationId);
         reactionService.deleteByCertId(certificationId);
