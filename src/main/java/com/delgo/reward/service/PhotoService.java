@@ -103,8 +103,9 @@ public class PhotoService extends CommService {
         return originalFilename[0] + "_mungple." + getExtension(photo);
     }
 
-    public String makeProfileFileName(int userId, MultipartFile photo) {
-        return userId + "_profile." + getExtension(photo);
+    public String createProfile(int userId, MultipartFile photo){
+        String fileName = userId + "_profile." + getExtension(photo);
+        return saveAndUpload(fileName, photo, BucketName.PROFILE);
     }
 
     // 확장자 포함 Ex) 1063_cert_1.jpg

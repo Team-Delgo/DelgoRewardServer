@@ -2,6 +2,7 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.UserSocial;
+import com.delgo.reward.comm.encoder.CustomPasswordEncoder;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.comm.oauth.KakaoService;
@@ -10,8 +11,8 @@ import com.delgo.reward.dto.cert.UserVisitMungpleCountDTO;
 import com.delgo.reward.dto.user.UserResponse;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.record.user.ModifyPetRecord;
-import com.delgo.reward.record.user.ModifyUserRecord;
-import com.delgo.reward.record.user.ResetPasswordRecord;
+import com.delgo.reward.record.user.UserUpdate;
+import com.delgo.reward.record.user.PasswordUpdate;
 import com.delgo.reward.service.PetService;
 import com.delgo.reward.service.TokenService;
 import com.delgo.reward.service.cert.CertCommandService;
@@ -46,6 +47,8 @@ public class AccountController extends CommController {
     private final CategoryCountService categoryCountService;
     private final ObjectStorageService objectStorageService;
 
+    private final CustomPasswordEncoder customPasswordEncoder;
+
     /**
      * 내 정보 조회
      * @param userId
@@ -70,20 +73,20 @@ public class AccountController extends CommController {
      */
     @Hidden
     @PutMapping(value = {"/notify/{userId}", "/notify"})
-    public ResponseEntity<?> changeNotify(@PathVariable Integer userId){
-        return SuccessReturn(userCommandService.changeNotify(userId));
+    public ResponseEntity<?> updateIsNotify(@PathVariable Integer userId){
+        return SuccessReturn(userCommandService.updateIsNotify(userId));
     }
 
     /**
      * 유저 정보 수정
-     * @param modifyUserRecord
+     * @param userUpdate
      * @return 성공 / 실패 여부
      */
     @Operation(summary = "유저 정보 수정", description = "수정 된 유저 정보를 반환한다. \n profile은 multipart로 받는다. (RequestBody 체크 필요)")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))})
     @PutMapping(value = "/user")
-    public ResponseEntity<?> changeUserInfo(@Validated @RequestBody ModifyUserRecord modifyUserRecord) {
-        return SuccessReturn(UserResponse.from(userCommandService.changeUserInfo(modifyUserRecord)));
+    public ResponseEntity<?> updateUserInfo(@Validated @RequestBody UserUpdate userUpdate) {
+        return SuccessReturn(UserResponse.from(userCommandService.updateUserInfo(userUpdate)));
     }
 
     /**
@@ -100,14 +103,16 @@ public class AccountController extends CommController {
 
     /**
      * 비밀번호 변경
-     * @param resetPasswordRecord
+     * @param passwordUpdate
      * @return 성공 / 실패 여부
      */
     @Operation(summary = "비밀번호 변경", description = "성공 여부만 반환 한다.")
     @PutMapping("/password")
-    public ResponseEntity<?> changePassword(@Validated @RequestBody ResetPasswordRecord resetPasswordRecord) {
-        // 사용자 확인 - 토큰 사용
-        userCommandService.changePassword(resetPasswordRecord.email(), resetPasswordRecord.newPassword());
+    public ResponseEntity<?> changePassword(@Validated @RequestBody PasswordUpdate passwordUpdate) {
+        // TODO: 사용자 확인 - 토큰 사용
+
+        String encodedPassword = User.encodePassword(customPasswordEncoder, passwordUpdate.newPassword());
+        userCommandService.updatePassword(passwordUpdate.email(), encodedPassword);
         return SuccessReturn();
     }
 
@@ -125,7 +130,7 @@ public class AccountController extends CommController {
             kakaoService.logout(user.getKakaoId()); // kakao 로그아웃 , Naver는 로그아웃 지원 X
 
         petService.delete(userId);
-        userCommandService.delete(userId);
+        userCommandService.deleteByUserId(userId);
         categoryCountService.delete(userId);
         certCommandService.deleteByUserId(userId);
         objectStorageService.deleteObject(BucketName.PROFILE, userId + "_profile.webp");
