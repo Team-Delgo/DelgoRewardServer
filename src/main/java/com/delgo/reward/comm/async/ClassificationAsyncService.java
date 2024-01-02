@@ -20,7 +20,7 @@ public class ClassificationAsyncService {
     @Async
     public void doClassification(int certificationId){
         Certification certification = certQueryService.getOneById(certificationId);
-        Classification classification = classificationService.runClassification(certification);
+        Classification classification = classificationService.create(certification);
         CategoryCount categoryCount = categoryCountService.getOneByUserId(certification.getUser().getUserId());
 
         for(String categoryCode: classification.getCategory().keySet()){

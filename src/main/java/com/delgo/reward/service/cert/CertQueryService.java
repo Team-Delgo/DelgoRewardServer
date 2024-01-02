@@ -4,6 +4,7 @@ package com.delgo.reward.service.cert;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.domain.certification.Certification;
+import com.delgo.reward.dto.cert.CategoryCountDTO;
 import com.delgo.reward.dto.cert.UserVisitMungpleCountDTO;
 import com.delgo.reward.dto.mungple.MungpleCountDTO;
 import com.delgo.reward.repository.CertRepository;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -73,5 +75,15 @@ public class CertQueryService {
     public List<UserVisitMungpleCountDTO> getVisitedMungpleIdListTop3ByUserId(int userId) {
         Pageable pageable = PageRequest.of(0, 3);
         return certRepository.findVisitTop3MungpleIdByUserId(userId, pageable);
+    }
+
+    public  Map<CategoryCode, Integer> getCategoryCountMapByUserId(int userId){
+        Map<CategoryCode, Integer> categoryCountMap = certRepository.findCategoryCountGroupedByUserId(userId).stream()
+                .collect(Collectors.toMap(CategoryCountDTO::getCategoryCode, CategoryCountDTO::getCount));
+
+        Arrays.stream(CategoryCode.values())
+                .filter(code -> !code.equals(CategoryCode.CA0000)) // CA0000 제외
+                .forEach(code -> categoryCountMap.computeIfAbsent(code, k -> 0));
+        return categoryCountMap;
     }
 }

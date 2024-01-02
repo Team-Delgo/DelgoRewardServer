@@ -13,7 +13,6 @@ import java.util.Map;
 
 @Getter
 @Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection="classification")
@@ -35,7 +34,7 @@ public class Classification {
     @Field("created_at")
     private LocalDateTime createdAt;
 
-    public Classification toEntity(Certification certification, Map<String, String> category, String SIDO, String SIGUGUN, String DONG){
+    public static Classification from(Certification certification, Map<String, String> category, String SIDO, String SIGUGUN, String DONG){
         return Classification.builder()
                 .user(UserResponse.from(certification.getUser()))
                 .certification(CertResponse.from(certification))

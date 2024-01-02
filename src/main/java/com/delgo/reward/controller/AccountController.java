@@ -46,7 +46,6 @@ public class AccountController extends CommController {
     private final CertCommandService certCommandService;
     private final CategoryCountService categoryCountService;
     private final ObjectStorageService objectStorageService;
-
     private final CustomPasswordEncoder customPasswordEncoder;
 
     /**
@@ -60,7 +59,7 @@ public class AccountController extends CommController {
     public ResponseEntity<?> getAccount(@RequestParam Integer userId){
         return SuccessReturn(UserResponse.fromAccount(
                 userQueryService.getOneByUserId(userId), // User
-                userCommandService.getActivityByUserId(userId), // Activity Data
+                certQueryService.getCategoryCountMapByUserId(userId), // Activity Data
                 UserVisitMungpleCountDTO.setMungpleData( // UserVisitMungpleCountDTO
                         certQueryService.getVisitedMungpleIdListTop3ByUserId(userId), // UserVisitMungpleCountDTO List
                         Mungple.listToMap(mungpleService.getAll())))); // Mungple List
