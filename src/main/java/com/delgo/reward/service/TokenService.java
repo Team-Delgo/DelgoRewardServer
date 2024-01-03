@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -21,11 +18,6 @@ public class TokenService {
     public Optional<String> getFcmToken(int userId){
         Token token = tokenRepository.findByUserId(userId).orElse(new Token());
         return Optional.ofNullable(token.getFcmToken());
-    }
-
-    public Map<Integer, String> getFcmToken(List<Integer> userIdList){
-        List<Token> tokenList = tokenRepository.findAllByUserIdIn(userIdList);
-        return tokenList.stream().collect(Collectors.toMap(Token::getUserId, Token::getFcmToken));
     }
 
     public String getRefreshToken(int userId){
