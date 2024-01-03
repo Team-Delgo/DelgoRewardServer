@@ -1,8 +1,8 @@
-package com.delgo.reward.comm.fcm;
+package com.delgo.reward.token.service;
 
-import com.delgo.reward.domain.user.Token;
+import com.delgo.reward.token.domain.Token;
+import com.delgo.reward.token.domain.FcmMessage;
 import com.delgo.reward.user.domain.User;
-import com.delgo.reward.service.TokenService;
 import com.delgo.reward.user.service.UserQueryService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,9 +23,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class FcmService {
-    private final String API_URL = "https://fcm.googleapis.com/v1/projects/delgoreward/messages:send";
-    private final ObjectMapper objectMapper;
-    private final String TITLE = "Delgo";
     private final TokenService tokenService;
     private final UserQueryService userQueryService;
 
@@ -43,6 +40,7 @@ public class FcmService {
     }
 
     private void sendMessageTo(String targetToken, String body) throws IOException {
+        String API_URL = "https://fcm.googleapis.com/v1/projects/delgoreward/messages:send";
         String message = makeMessage(targetToken, body);
 
         OkHttpClient client = new OkHttpClient();
@@ -59,17 +57,19 @@ public class FcmService {
     }
 
     private String makeMessage(String targetToken, String body) throws JsonProcessingException {
-        FcmMessageDTO fcmMessage = FcmMessageDTO.builder()
-                .message(FcmMessageDTO.Message.builder()
+        FcmMessage fcmMessage = FcmMessage.builder()
+                .message(FcmMessage.Message.builder()
                         .token(targetToken)
-                        .notification(FcmMessageDTO.Notification.builder()
-                                .title(TITLE)
+                        .notification(FcmMessage.Notification.builder()
+                                .title("Delgo")
                                 .body(body)
                                 .image(null)
                                 .build()
-                        ).build()).validateOnly(false).build();
+                        ).build())
+                .validateOnly(false)
+                .build();
 
-        return objectMapper.writeValueAsString(fcmMessage);
+        return new ObjectMapper().writeValueAsString(fcmMessage);
     }
 
     private String getAccessToken() throws IOException {

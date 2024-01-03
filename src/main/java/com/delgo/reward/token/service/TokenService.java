@@ -1,10 +1,10 @@
-package com.delgo.reward.service;
+package com.delgo.reward.token.service;
 
 import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.comm.security.jwt.JwtToken;
-import com.delgo.reward.domain.user.Token;
-import com.delgo.reward.dto.FcmTokenCreate;
-import com.delgo.reward.repository.TokenRepository;
+import com.delgo.reward.token.domain.Token;
+import com.delgo.reward.token.controller.request.FcmTokenCreate;
+import com.delgo.reward.token.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
