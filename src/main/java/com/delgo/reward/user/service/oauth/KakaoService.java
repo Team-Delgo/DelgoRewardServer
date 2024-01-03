@@ -1,9 +1,8 @@
-package com.delgo.reward.comm.oauth;
+package com.delgo.reward.user.service.oauth;
 
 
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.code.UserSocial;
-import com.delgo.reward.dto.OAuthDTO;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import lombok.NoArgsConstructor;

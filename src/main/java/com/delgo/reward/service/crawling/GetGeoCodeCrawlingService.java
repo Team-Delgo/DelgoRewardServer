@@ -1,7 +1,7 @@
 package com.delgo.reward.service.crawling;
 
-import com.delgo.reward.domain.code.Code;
-import com.delgo.reward.service.CodeService;
+import com.delgo.reward.code.domain.Code;
+import com.delgo.reward.code.service.CodeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;

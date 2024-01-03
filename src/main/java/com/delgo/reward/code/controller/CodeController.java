@@ -1,9 +1,9 @@
-package com.delgo.reward.controller;
+package com.delgo.reward.code.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.CodeType;
-import com.delgo.reward.dto.code.CodeResponse;
-import com.delgo.reward.service.CodeService;
+import com.delgo.reward.code.response.CodeResponse;
+import com.delgo.reward.code.service.CodeService;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

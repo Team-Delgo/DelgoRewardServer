@@ -3,7 +3,7 @@ package com.delgo.reward.comm.googlesheet;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.exception.FigmaException;
 import com.delgo.reward.comm.ncp.geo.GeoData;
-import com.delgo.reward.domain.code.Code;
+import com.delgo.reward.code.domain.Code;
 import com.delgo.reward.mungple.domain.Mungple;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

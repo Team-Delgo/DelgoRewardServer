@@ -1,18 +1,18 @@
-package com.delgo.reward.controller;
+package com.delgo.reward.user.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.comm.encoder.CustomPasswordEncoder;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
-import com.delgo.reward.comm.oauth.KakaoService;
+import com.delgo.reward.user.service.oauth.KakaoService;
 import com.delgo.reward.user.domain.User;
 import com.delgo.reward.cert.repository.dto.UserVisitMungpleCountDTO;
 import com.delgo.reward.user.response.UserResponse;
 import com.delgo.reward.mungple.domain.Mungple;
 import com.delgo.reward.user.controller.request.PetUpdate;
 import com.delgo.reward.user.controller.request.UserUpdate;
-import com.delgo.reward.record.user.PasswordUpdate;
+import com.delgo.reward.user.controller.request.PasswordUpdate;
 import com.delgo.reward.user.service.PetService;
 import com.delgo.reward.token.service.TokenService;
 import com.delgo.reward.cert.service.CertCommandService;

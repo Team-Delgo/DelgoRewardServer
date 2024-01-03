@@ -1,7 +1,7 @@
-package com.delgo.reward.controller;
+package com.delgo.reward.user.controller;
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.service.BanService;
+import com.delgo.reward.user.service.BanService;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

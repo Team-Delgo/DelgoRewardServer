@@ -1,4 +1,4 @@
-package com.delgo.reward.domain;
+package com.delgo.reward.user.domain;
 
 import lombok.*;
 

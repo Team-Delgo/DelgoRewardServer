@@ -1,7 +1,7 @@
-package com.delgo.reward.repository;
+package com.delgo.reward.user.repository;
 
 
-import com.delgo.reward.domain.SmsAuth;
+import com.delgo.reward.user.domain.SmsAuth;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

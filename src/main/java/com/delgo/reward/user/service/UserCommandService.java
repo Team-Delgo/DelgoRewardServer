@@ -4,7 +4,7 @@ package com.delgo.reward.user.service;
 import com.delgo.reward.user.domain.User;
 import com.delgo.reward.user.controller.request.UserUpdate;
 import com.delgo.reward.user.repository.UserRepository;
-import com.delgo.reward.service.CodeService;
+import com.delgo.reward.code.service.CodeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

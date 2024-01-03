@@ -1,8 +1,8 @@
 package com.delgo.reward.user.service;
 
 
-import com.delgo.reward.domain.code.Code;
-import com.delgo.reward.service.CodeService;
+import com.delgo.reward.code.domain.Code;
+import com.delgo.reward.code.service.CodeService;
 import com.delgo.reward.user.domain.Pet;
 import com.delgo.reward.user.domain.User;
 import com.delgo.reward.user.controller.request.PetUpdate;

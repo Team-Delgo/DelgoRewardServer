@@ -1,12 +1,12 @@
-package com.delgo.reward.service;
+package com.delgo.reward.user.service;
 
 
 import com.delgo.reward.comm.CommService;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.comm.ncp.sms.SmsService;
-import com.delgo.reward.domain.SmsAuth;
-import com.delgo.reward.repository.SmsAuthRepository;
+import com.delgo.reward.user.domain.SmsAuth;
+import com.delgo.reward.user.repository.SmsAuthRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

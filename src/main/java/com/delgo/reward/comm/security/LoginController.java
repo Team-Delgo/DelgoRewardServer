@@ -1,4 +1,4 @@
-package com.delgo.reward.controller;
+package com.delgo.reward.comm.security;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.APICode;
