@@ -1,6 +1,6 @@
 package com.delgo.reward.mungple.service.strategy;
 
-import com.delgo.reward.domain.user.Bookmark;
+import com.delgo.reward.bookmark.domain.Bookmark;
 import com.delgo.reward.mungple.domain.Mungple;
 
 import java.util.Comparator;

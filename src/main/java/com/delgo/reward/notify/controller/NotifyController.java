@@ -1,7 +1,7 @@
-package com.delgo.reward.controller;
+package com.delgo.reward.notify.controller;
 
 import com.delgo.reward.common.controller.CommController;
-import com.delgo.reward.service.NotifyService;
+import com.delgo.reward.notify.service.NotifyService;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

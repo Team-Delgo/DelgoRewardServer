@@ -1,4 +1,4 @@
-package com.delgo.reward.domain.user;
+package com.delgo.reward.bookmark.domain;
 
 import com.delgo.reward.common.domain.BaseTimeEntity;
 import lombok.*;

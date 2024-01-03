@@ -1,9 +1,9 @@
-package com.delgo.reward.service;
+package com.delgo.reward.bookmark.service;
 
 import com.delgo.reward.comm.exception.NotFoundDataException;
-import com.delgo.reward.domain.user.Bookmark;
+import com.delgo.reward.bookmark.domain.Bookmark;
 import com.delgo.reward.cert.repository.dto.MungpleCountDTO;
-import com.delgo.reward.repository.BookmarkRepository;
+import com.delgo.reward.bookmark.repository.BookmarkRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

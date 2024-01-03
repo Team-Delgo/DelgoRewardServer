@@ -1,4 +1,4 @@
-package com.delgo.reward.record.common;
+package com.delgo.reward.common.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

@@ -1,4 +1,4 @@
-package com.delgo.reward.domain.notify;
+package com.delgo.reward.notify.domain;
 
 public enum NotifyType {
     LIKE, COMMENT, REPLY, REACTION

@@ -1,7 +1,7 @@
-package com.delgo.reward.controller;
+package com.delgo.reward.bookmark.controller;
 
 import com.delgo.reward.common.controller.CommController;
-import com.delgo.reward.service.BookmarkService;
+import com.delgo.reward.bookmark.service.BookmarkService;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
