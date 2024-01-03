@@ -10,7 +10,6 @@ import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.mungple.domain.Mungple;
 import com.delgo.reward.mungple.repository.MungpleRepository;
 import com.delgo.reward.mungple.service.strategy.*;
-import com.delgo.reward.service.mungple.strategy.*;
 import com.delgo.reward.service.BookmarkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
