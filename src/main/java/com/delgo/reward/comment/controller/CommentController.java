@@ -5,6 +5,8 @@ import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comment.controller.request.CommentCreate;
 import com.delgo.reward.comment.controller.request.CommentUpdate;
 import com.delgo.reward.comment.controller.request.ReplyCreate;
+import com.delgo.reward.comment.domain.Comment;
+import com.delgo.reward.comment.response.CommentResponse;
 import com.delgo.reward.comment.service.CommentService;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @Hidden
 @RestController
@@ -26,7 +29,8 @@ public class CommentController extends CommController {
      */
     @PostMapping("/comment")
     public ResponseEntity createComment(@Validated @RequestBody CommentCreate commentCreate) throws IOException {
-        return SuccessReturn(commentService.createComment(commentCreate));
+        Comment comment = commentService.createComment(commentCreate);
+        return SuccessReturn(CommentResponse.from(comment));
     }
 
     /**
@@ -34,7 +38,8 @@ public class CommentController extends CommController {
      */
     @GetMapping("/comment")
     public ResponseEntity getComment(@RequestParam int certificationId){
-        return SuccessReturn(commentService.getCommentsByCertId(certificationId));
+        List<Comment> commentList = commentService.getCommentsByCertId(certificationId);
+        return SuccessReturn(CommentResponse.fromList(commentList));
     }
 
     /**
@@ -62,7 +67,8 @@ public class CommentController extends CommController {
      */
     @PostMapping("/reply")
     public ResponseEntity createReply(@Validated @RequestBody ReplyCreate replyCreate) throws IOException{
-        return SuccessReturn(commentService.createReply(replyCreate));
+        Comment reply = commentService.createReply(replyCreate);
+        return SuccessReturn(CommentResponse.from(reply));
     }
 
     /**
@@ -70,7 +76,8 @@ public class CommentController extends CommController {
      */
     @GetMapping("/reply")
     public ResponseEntity getReply(@RequestParam int parentCommentId){
-        return SuccessReturn(commentService.getReplyByParentCommentId(parentCommentId));
+        List<Comment> replyList = commentService.getReplyByParentCommentId(parentCommentId);
+        return SuccessReturn(CommentResponse.fromList(replyList));
     }
 
 }
