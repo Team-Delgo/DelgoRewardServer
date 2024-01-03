@@ -5,7 +5,7 @@ import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.dto.SmsAuthDTO;
 import com.delgo.reward.service.SmsAuthService;
-import com.delgo.reward.service.user.UserQueryService;
+import com.delgo.reward.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;

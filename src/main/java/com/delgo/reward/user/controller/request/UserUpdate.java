@@ -1,4 +1,4 @@
-package com.delgo.reward.record.user;
+package com.delgo.reward.user.controller.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;

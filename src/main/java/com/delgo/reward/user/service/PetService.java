@@ -1,12 +1,12 @@
-package com.delgo.reward.service;
+package com.delgo.reward.user.service;
 
 
 import com.delgo.reward.domain.code.Code;
-import com.delgo.reward.domain.pet.Pet;
-import com.delgo.reward.domain.user.User;
-import com.delgo.reward.record.user.PetUpdate;
-import com.delgo.reward.repository.PetRepository;
-import com.delgo.reward.service.user.UserQueryService;
+import com.delgo.reward.service.CodeService;
+import com.delgo.reward.user.domain.Pet;
+import com.delgo.reward.user.domain.User;
+import com.delgo.reward.user.controller.request.PetUpdate;
+import com.delgo.reward.user.repository.PetRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

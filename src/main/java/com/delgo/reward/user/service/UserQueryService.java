@@ -1,9 +1,9 @@
-package com.delgo.reward.service.user;
+package com.delgo.reward.user.service;
 
 
 import com.delgo.reward.comm.exception.NotFoundDataException;
-import com.delgo.reward.domain.user.User;
-import com.delgo.reward.repository.UserRepository;
+import com.delgo.reward.user.domain.User;
+import com.delgo.reward.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

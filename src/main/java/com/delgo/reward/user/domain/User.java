@@ -1,11 +1,11 @@
-package com.delgo.reward.domain.user;
+package com.delgo.reward.user.domain;
 
 import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.comm.encoder.CustomPasswordEncoder;
 import com.delgo.reward.domain.common.BaseTimeEntity;
-import com.delgo.reward.domain.pet.Pet;
-import com.delgo.reward.record.signup.OAuthCreate;
-import com.delgo.reward.record.signup.UserCreate;
+import com.delgo.reward.domain.user.Bookmark;
+import com.delgo.reward.user.controller.request.OAuthCreate;
+import com.delgo.reward.user.controller.request.UserCreate;
 import lombok.*;
 
 import javax.persistence.*;

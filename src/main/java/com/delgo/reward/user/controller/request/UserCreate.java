@@ -1,4 +1,4 @@
-package com.delgo.reward.record.signup;
+package com.delgo.reward.user.controller.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

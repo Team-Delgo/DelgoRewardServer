@@ -6,7 +6,7 @@
 //import com.delgo.reward.comm.config.WebConfig;
 //import com.delgo.reward.comm.security.SecurityConfig;
 //import com.delgo.reward.domain.certification.Certification;
-//import com.delgo.reward.domain.user.User;
+//import com.delgo.reward.user.domain.User;
 //import com.delgo.reward.dto.cert.CertByAchvResDTO;
 //import com.delgo.reward.dto.cert.CertByMungpleResDTO;
 //import com.delgo.reward.dto.cert.CertResDTO;

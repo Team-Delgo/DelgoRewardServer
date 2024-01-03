@@ -4,7 +4,7 @@ package com.delgo.reward.domain.certification;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.domain.common.BaseTimeEntity;
-import com.delgo.reward.domain.user.User;
+import com.delgo.reward.user.domain.User;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.record.certification.CertCreate;
 import com.delgo.reward.record.certification.CertUpdate;

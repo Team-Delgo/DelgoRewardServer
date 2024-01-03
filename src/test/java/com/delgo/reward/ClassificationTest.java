@@ -1,13 +1,11 @@
 package com.delgo.reward;
 
-import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.domain.user.CategoryCount;
-import com.delgo.reward.domain.user.User;
 import com.delgo.reward.mongoDomain.Classification;
 import com.delgo.reward.mongoRepository.ClassificationRepository;
 import com.delgo.reward.mongoService.ClassificationService;
 import com.delgo.reward.repository.CategoryCountRepository;
-import com.delgo.reward.repository.UserRepository;
+import com.delgo.reward.user.repository.UserRepository;
 import com.delgo.reward.service.cert.CertQueryService;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -24,7 +22,6 @@ import org.springframework.util.StopWatch;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.time.LocalDate;
 import java.util.*;
 
 @RunWith(SpringRunner.class)

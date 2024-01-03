@@ -1,8 +1,8 @@
 package com.delgo.reward;
 
 import com.delgo.reward.comm.fcm.FcmService;
-import com.delgo.reward.domain.pet.Pet;
-import com.delgo.reward.repository.PetRepository;
+import com.delgo.reward.user.domain.Pet;
+import com.delgo.reward.user.repository.PetRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +10,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

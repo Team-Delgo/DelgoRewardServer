@@ -1,7 +1,7 @@
-package com.delgo.reward.repository;
+package com.delgo.reward.user.repository;
 
 
-import com.delgo.reward.domain.user.User;
+import com.delgo.reward.user.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;

@@ -1,4 +1,4 @@
-package com.delgo.reward.record.signup;
+package com.delgo.reward.user.controller.request;
 
 import com.delgo.reward.comm.code.UserSocial;
 import com.fasterxml.jackson.annotation.JsonProperty;
