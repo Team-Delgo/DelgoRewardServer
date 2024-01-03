@@ -1,7 +1,7 @@
 package com.delgo.reward.comment.domain;
 
 import com.delgo.reward.comment.controller.request.CommentCreate;
-import com.delgo.reward.domain.common.BaseTimeEntity;
+import com.delgo.reward.common.domain.BaseTimeEntity;
 import com.delgo.reward.user.domain.User;
 import lombok.*;
 

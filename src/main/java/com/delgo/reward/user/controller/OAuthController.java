@@ -1,6 +1,6 @@
 package com.delgo.reward.user.controller;
 
-import com.delgo.reward.comm.CommController;
+import com.delgo.reward.common.controller.CommController;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.user.service.oauth.AppleService;
 import com.delgo.reward.user.service.oauth.KakaoService;

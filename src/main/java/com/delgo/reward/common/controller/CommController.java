@@ -1,8 +1,8 @@
-package com.delgo.reward.comm;
+package com.delgo.reward.common.controller;
 
 
 import com.delgo.reward.comm.code.APICode;
-import com.delgo.reward.record.common.ResponseRecord;
+import com.delgo.reward.common.response.ResponseRecord;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

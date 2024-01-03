@@ -1,6 +1,6 @@
 package com.delgo.reward.user.controller;
 
-import com.delgo.reward.comm.CommController;
+import com.delgo.reward.common.controller.CommController;
 import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.comm.encoder.CustomPasswordEncoder;
 import com.delgo.reward.comm.ncp.storage.BucketName;

@@ -1,6 +1,6 @@
 package com.delgo.reward.user.domain;
 
-import com.delgo.reward.domain.common.BaseTimeEntity;
+import com.delgo.reward.common.domain.BaseTimeEntity;
 import com.delgo.reward.user.controller.request.OAuthCreate;
 import com.delgo.reward.user.controller.request.UserCreate;
 import com.fasterxml.jackson.annotation.JsonIgnore;

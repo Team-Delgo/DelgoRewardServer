@@ -1,7 +1,7 @@
-package com.delgo.reward.service;
+package com.delgo.reward.common.service;
 
 
-import com.delgo.reward.comm.CommService;
+import com.delgo.reward.common.service.CommService;
 import com.delgo.reward.comm.exception.PhotoException;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;

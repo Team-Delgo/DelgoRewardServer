@@ -1,7 +1,7 @@
 package com.delgo.reward.user.controller;
 
 
-import com.delgo.reward.comm.CommController;
+import com.delgo.reward.common.controller.CommController;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.user.controller.request.SmsAuthCreate;
 import com.delgo.reward.user.service.SmsAuthService;

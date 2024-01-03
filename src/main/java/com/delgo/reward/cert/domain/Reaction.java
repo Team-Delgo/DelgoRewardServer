@@ -1,7 +1,7 @@
 package com.delgo.reward.cert.domain;
 
 import com.delgo.reward.comm.code.ReactionCode;
-import com.delgo.reward.domain.common.BaseTimeEntity;
+import com.delgo.reward.common.domain.BaseTimeEntity;
 import lombok.*;
 
 import javax.persistence.*;

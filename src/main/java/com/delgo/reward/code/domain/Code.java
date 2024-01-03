@@ -2,7 +2,7 @@ package com.delgo.reward.code.domain;
 
 
 import com.delgo.reward.comm.code.CodeType;
-import com.delgo.reward.domain.common.BaseTimeEntity;
+import com.delgo.reward.common.domain.BaseTimeEntity;
 import lombok.*;
 
 import javax.persistence.Entity;

@@ -1,6 +1,6 @@
 package com.delgo.reward.token.controller;
 
-import com.delgo.reward.comm.CommController;
+import com.delgo.reward.common.controller.CommController;
 import com.delgo.reward.token.controller.request.FcmTokenCreate;
 import com.delgo.reward.token.service.TokenService;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package com.delgo.reward.user.controller;
 
 
-import com.delgo.reward.comm.CommController;
+import com.delgo.reward.common.controller.CommController;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.encoder.CustomPasswordEncoder;
 import com.delgo.reward.comm.security.jwt.JwtService;
@@ -19,7 +19,7 @@ import com.delgo.reward.user.controller.request.UserCreate;
 import com.delgo.reward.user.controller.request.PasswordUpdate;
 import com.delgo.reward.code.service.CodeService;
 import com.delgo.reward.user.service.PetService;
-import com.delgo.reward.service.PhotoService;
+import com.delgo.reward.common.service.PhotoService;
 import com.delgo.reward.user.service.SmsAuthService;
 import com.delgo.reward.user.service.UserCommandService;
 import com.delgo.reward.user.service.UserQueryService;

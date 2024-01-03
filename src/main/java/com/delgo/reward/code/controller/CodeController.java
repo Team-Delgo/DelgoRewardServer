@@ -1,6 +1,6 @@
 package com.delgo.reward.code.controller;
 
-import com.delgo.reward.comm.CommController;
+import com.delgo.reward.common.controller.CommController;
 import com.delgo.reward.comm.code.CodeType;
 import com.delgo.reward.code.response.CodeResponse;
 import com.delgo.reward.code.service.CodeService;

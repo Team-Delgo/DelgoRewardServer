@@ -14,7 +14,7 @@ import com.delgo.reward.cert.controller.request.CertCreate;
 import com.delgo.reward.cert.controller.request.CertUpdate;
 import com.delgo.reward.cert.repository.CertRepository;
 import com.delgo.reward.code.service.CodeService;
-import com.delgo.reward.service.PhotoService;
+import com.delgo.reward.common.service.PhotoService;
 import com.delgo.reward.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
