@@ -1,7 +1,7 @@
 package com.delgo.reward.mongoService;
 
 import com.delgo.reward.comm.code.CategoryCode;
-import com.delgo.reward.domain.certification.Certification;
+import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.mongoDomain.Classification;
 import com.delgo.reward.mongoRepository.ClassificationRepository;
 import lombok.RequiredArgsConstructor;

@@ -1,21 +1,20 @@
-package com.delgo.reward.service.cert;
+package com.delgo.reward.cert.service;
 
 
 import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.comm.ncp.geo.GeoDataService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
-import com.delgo.reward.domain.certification.Certification;
+import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.domain.code.Code;
 import com.delgo.reward.user.domain.User;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.service.mungple.MungpleService;
-import com.delgo.reward.record.certification.CertCreate;
-import com.delgo.reward.record.certification.CertUpdate;
-import com.delgo.reward.repository.CertRepository;
+import com.delgo.reward.cert.controller.request.CertCreate;
+import com.delgo.reward.cert.controller.request.CertUpdate;
+import com.delgo.reward.cert.repository.CertRepository;
 import com.delgo.reward.service.CodeService;
 import com.delgo.reward.service.PhotoService;
-import com.delgo.reward.service.ReactionService;
 import com.delgo.reward.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -10,7 +10,7 @@ import com.delgo.reward.dto.mungple.MungpleDetailResponse;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.service.mungple.MungpleService;
 import com.delgo.reward.service.BookmarkService;
-import com.delgo.reward.service.cert.CertQueryService;
+import com.delgo.reward.cert.service.CertQueryService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

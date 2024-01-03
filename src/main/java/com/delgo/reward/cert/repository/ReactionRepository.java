@@ -1,7 +1,7 @@
-package com.delgo.reward.repository;
+package com.delgo.reward.cert.repository;
 
 import com.delgo.reward.comm.code.ReactionCode;
-import com.delgo.reward.domain.certification.Reaction;
+import com.delgo.reward.cert.domain.Reaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

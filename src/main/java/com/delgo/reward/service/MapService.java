@@ -1,14 +1,15 @@
 package com.delgo.reward.service;
 
 
-import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.domain.certification.Reaction;
-import com.delgo.reward.dto.cert.CertResponse;
+import com.delgo.reward.cert.domain.Certification;
+import com.delgo.reward.cert.domain.Reaction;
+import com.delgo.reward.cert.response.CertResponse;
+import com.delgo.reward.cert.service.ReactionService;
 import com.delgo.reward.dto.map.OtherMapDTO;
 import com.delgo.reward.dto.mungple.MungpleResponse;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.mongoRepository.MungpleRepository;
-import com.delgo.reward.service.cert.CertQueryService;
+import com.delgo.reward.cert.service.CertQueryService;
 import com.delgo.reward.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

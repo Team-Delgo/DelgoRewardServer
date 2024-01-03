@@ -1,4 +1,4 @@
-package com.delgo.reward.dto.cert;
+package com.delgo.reward.cert.repository.dto;
 
 import com.delgo.reward.comm.code.CategoryCode;
 import lombok.Getter;

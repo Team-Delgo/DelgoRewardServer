@@ -1,4 +1,4 @@
-package com.delgo.reward.controller;
+package com.delgo.reward.cert.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.service.MapService;

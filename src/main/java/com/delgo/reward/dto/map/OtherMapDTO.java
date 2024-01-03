@@ -1,7 +1,7 @@
 package com.delgo.reward.dto.map;
 
 import com.delgo.reward.user.domain.User;
-import com.delgo.reward.dto.cert.CertResponse;
+import com.delgo.reward.cert.response.CertResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

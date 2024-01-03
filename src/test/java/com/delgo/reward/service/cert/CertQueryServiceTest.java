@@ -1,8 +1,9 @@
 package com.delgo.reward.service.cert;
 
+import com.delgo.reward.cert.service.CertQueryService;
 import com.delgo.reward.comm.code.CategoryCode;
-import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.dto.cert.UserVisitMungpleCountDTO;
+import com.delgo.reward.cert.domain.Certification;
+import com.delgo.reward.cert.repository.dto.UserVisitMungpleCountDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,11 +1,11 @@
-package com.delgo.reward.repository;
+package com.delgo.reward.cert.repository;
 
 
 import com.delgo.reward.comm.code.CategoryCode;
-import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.dto.cert.CategoryCountDTO;
+import com.delgo.reward.cert.domain.Certification;
+import com.delgo.reward.cert.repository.dto.CategoryCountDTO;
 import com.delgo.reward.dto.mungple.MungpleCountDTO;
-import com.delgo.reward.dto.cert.UserVisitMungpleCountDTO;
+import com.delgo.reward.cert.repository.dto.UserVisitMungpleCountDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.*;
@@ -63,12 +63,12 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
 
     // ---------------------------DTO---------------------------
 
-    @Query(value = "select new com.delgo.reward.dto.cert.UserVisitMungpleCountDTO(c.mungpleId, COUNT(c.mungpleId)) from Certification c where c.user.userId = :userId and c.mungpleId > 0 group by c.mungpleId having count(c.mungpleId) > 0 order by count(c.mungpleId) desc")
+    @Query(value = "select new com.delgo.reward.cert.repository.dto.UserVisitMungpleCountDTO(c.mungpleId, COUNT(c.mungpleId)) from Certification c where c.user.userId = :userId and c.mungpleId > 0 group by c.mungpleId having count(c.mungpleId) > 0 order by count(c.mungpleId) desc")
     List<UserVisitMungpleCountDTO> findVisitTop3MungpleIdByUserId(@Param("userId") int userId, Pageable pageable);
 
     @Query(value = "select new com.delgo.reward.dto.mungple.MungpleCountDTO(c.mungpleId, count(c)) from Certification c where c.isCorrect = true and c.mungpleId != 0 group by c.mungpleId order by count(c) desc")
     List<MungpleCountDTO> countGroupedByMungpleId();
 
-    @Query(value = "select new com.delgo.reward.dto.cert.CategoryCountDTO(c.categoryCode, count(c)) from Certification c where c.user.userId = :userId group by c.categoryCode")
+    @Query(value = "select new com.delgo.reward.cert.repository.dto.CategoryCountDTO(c.categoryCode, count(c)) from Certification c where c.user.userId = :userId group by c.categoryCode")
     List<CategoryCountDTO> findCategoryCountGroupedByUserId(@Param("userId") int userId);
 }

@@ -4,7 +4,7 @@ package com.delgo.reward.user.response;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.user.domain.User;
 import com.delgo.reward.comm.code.UserSocial;
-import com.delgo.reward.dto.cert.UserVisitMungpleCountDTO;
+import com.delgo.reward.cert.repository.dto.UserVisitMungpleCountDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 
