@@ -1,6 +1,6 @@
-package com.delgo.reward.repository;
+package com.delgo.reward.bookmark.repository;
 
-import com.delgo.reward.domain.user.Bookmark;
+import com.delgo.reward.bookmark.domain.Bookmark;
 import com.delgo.reward.cert.repository.dto.MungpleCountDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

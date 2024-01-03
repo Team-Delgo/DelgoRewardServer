@@ -1,4 +1,4 @@
-package com.delgo.reward.domain.notify;
+package com.delgo.reward.notify.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;

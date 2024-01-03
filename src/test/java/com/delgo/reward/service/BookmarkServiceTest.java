@@ -1,6 +1,7 @@
 package com.delgo.reward.service;
 
-import com.delgo.reward.repository.BookmarkRepository;
+import com.delgo.reward.bookmark.service.BookmarkService;
+import com.delgo.reward.bookmark.repository.BookmarkRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

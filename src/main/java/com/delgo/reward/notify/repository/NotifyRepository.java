@@ -1,6 +1,6 @@
-package com.delgo.reward.repository;
+package com.delgo.reward.notify.repository;
 
-import com.delgo.reward.domain.notify.Notify;
+import com.delgo.reward.notify.domain.Notify;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

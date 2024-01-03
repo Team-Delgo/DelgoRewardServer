@@ -1,8 +1,8 @@
-package com.delgo.reward.service;
+package com.delgo.reward.notify.service;
 
-import com.delgo.reward.domain.notify.Notify;
-import com.delgo.reward.domain.notify.NotifyType;
-import com.delgo.reward.repository.NotifyRepository;
+import com.delgo.reward.notify.domain.Notify;
+import com.delgo.reward.notify.domain.NotifyType;
+import com.delgo.reward.notify.repository.NotifyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

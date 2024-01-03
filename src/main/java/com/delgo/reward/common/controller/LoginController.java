@@ -1,6 +1,6 @@
-package com.delgo.reward.comm.security;
+package com.delgo.reward.common.controller;
 
-import com.delgo.reward.comm.CommController;
+import com.delgo.reward.common.controller.CommController;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.security.jwt.JwtService;
 import com.delgo.reward.comm.security.jwt.JwtToken;

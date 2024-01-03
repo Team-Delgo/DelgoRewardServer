@@ -1,6 +1,6 @@
 package com.delgo.reward.service.mungple.strategy;
 
-import com.delgo.reward.domain.user.Bookmark;
+import com.delgo.reward.bookmark.domain.Bookmark;
 import com.delgo.reward.mungple.domain.Mungple;
 import com.delgo.reward.mungple.service.strategy.NewestSorting;
 import org.junit.Test;

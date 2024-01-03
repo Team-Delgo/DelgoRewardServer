@@ -1,4 +1,4 @@
-package com.delgo.reward.record.user;
+package com.delgo.reward.common.controller.request;
 
 import javax.validation.constraints.NotNull;
 
