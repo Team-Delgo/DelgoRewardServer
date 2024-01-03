@@ -1,6 +1,6 @@
-package com.delgo.reward.mongoRepository;
+package com.delgo.reward.cert.repository;
 
-import com.delgo.reward.mongoDomain.Classification;
+import com.delgo.reward.cert.domain.Classification;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;

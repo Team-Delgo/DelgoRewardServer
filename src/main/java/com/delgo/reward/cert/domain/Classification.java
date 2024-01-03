@@ -1,6 +1,5 @@
-package com.delgo.reward.mongoDomain;
+package com.delgo.reward.cert.domain;
 
-import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.cert.response.CertResponse;
 import com.delgo.reward.user.response.UserResponse;
 import lombok.*;

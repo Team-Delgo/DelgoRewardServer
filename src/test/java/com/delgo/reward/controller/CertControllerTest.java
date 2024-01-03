@@ -11,7 +11,7 @@
 //import com.delgo.reward.dto.cert.CertByMungpleResDTO;
 //import com.delgo.reward.dto.cert.CertResDTO;
 //import com.delgo.reward.dto.comm.PageResDTO;
-//import com.delgo.reward.mongoService.ClassificationService;
+//import com.delgo.reward.cert.service.ClassificationService;
 //import com.delgo.reward.record.certification.CertRecord;
 //import com.delgo.reward.record.certification.ModifyCertRecord;
 //import com.delgo.reward.service.cert.CertService;

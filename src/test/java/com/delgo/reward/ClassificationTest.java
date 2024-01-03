@@ -1,9 +1,9 @@
 //package com.delgo.reward;
 //
 //import com.delgo.reward.domain.user.CategoryCount;
-//import com.delgo.reward.mongoDomain.Classification;
-//import com.delgo.reward.mongoRepository.ClassificationRepository;
-//import com.delgo.reward.mongoService.ClassificationService;
+//import com.delgo.reward.cert.domain.Classification;
+//import com.delgo.reward.cert.repository.ClassificationRepository;
+//import com.delgo.reward.cert.service.ClassificationService;
 //import com.delgo.reward.repository.CategoryCountRepository;
 //import com.delgo.reward.user.repository.UserRepository;
 //import com.delgo.reward.cert.service.CertQueryService;

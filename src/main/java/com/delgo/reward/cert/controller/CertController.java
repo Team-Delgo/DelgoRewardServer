@@ -2,8 +2,8 @@ package com.delgo.reward.cert.controller;
 
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.comm.async.CertAsyncService;
-import com.delgo.reward.comm.async.ClassificationAsyncService;
+import com.delgo.reward.cert.service.async.CertAsyncService;
+import com.delgo.reward.cert.service.async.ClassificationAsyncService;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.ReactionCode;
@@ -12,7 +12,7 @@ import com.delgo.reward.cert.domain.Reaction;
 import com.delgo.reward.user.domain.User;
 import com.delgo.reward.cert.response.CertResponse;
 import com.delgo.reward.cert.response.PageCertResponse;
-import com.delgo.reward.mongoService.ClassificationService;
+import com.delgo.reward.cert.service.ClassificationService;
 import com.delgo.reward.cert.controller.request.CertCreate;
 import com.delgo.reward.cert.controller.request.CertUpdate;
 import com.delgo.reward.cert.service.CertCommandService;
