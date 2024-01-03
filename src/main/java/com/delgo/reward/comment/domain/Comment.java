@@ -1,4 +1,4 @@
-package com.delgo.reward.domain;
+package com.delgo.reward.comment.domain;
 
 import com.delgo.reward.domain.common.BaseTimeEntity;
 import com.delgo.reward.user.domain.User;

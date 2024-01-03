@@ -1,6 +1,6 @@
-package com.delgo.reward.repository;
+package com.delgo.reward.comment.repository;
 
-import com.delgo.reward.domain.Comment;
+import com.delgo.reward.comment.domain.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

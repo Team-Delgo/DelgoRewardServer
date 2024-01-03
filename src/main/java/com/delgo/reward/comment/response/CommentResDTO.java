@@ -1,6 +1,6 @@
-package com.delgo.reward.dto.comment;
+package com.delgo.reward.comment.response;
 
-import com.delgo.reward.domain.Comment;
+import com.delgo.reward.comment.domain.Comment;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
