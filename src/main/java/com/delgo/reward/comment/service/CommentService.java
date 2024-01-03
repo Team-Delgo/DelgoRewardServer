@@ -7,8 +7,6 @@ import com.delgo.reward.comment.domain.Comment;
 import com.delgo.reward.domain.notify.NotifyType;
 import com.delgo.reward.service.NotifyService;
 import com.delgo.reward.user.domain.User;
-import com.delgo.reward.comment.response.CommentResponse;
-import com.delgo.reward.comment.response.ReplyResponse;
 import com.delgo.reward.comment.controller.request.CommentCreate;
 import com.delgo.reward.comment.controller.request.CommentUpdate;
 import com.delgo.reward.comment.controller.request.ReplyCreate;
@@ -55,9 +53,9 @@ public class CommentService {
     /**
      *  유저가 댓글을 작성하면 알림을 저장하고 인증 주인에게 푸시 알림을 보냄
      */
-    public CommentResponse createComment(CommentCreate commentCreate) throws IOException {
+    public Comment createComment(CommentCreate commentCreate) throws IOException {
         User user = userQueryService.getOneByUserId(commentCreate.userId()); // 댓글 작성 유저 조회
-        Comment comment = commentRepository.save(commentCreate.toEntity(user)); // 댓글 저장
+        Comment comment = commentRepository.save(Comment.from(commentCreate, user)); // 댓글 저장
         Certification certification = certQueryService.getOneById(commentCreate.certificationId()); // 댓글 저장한 인증글 조회
 
         // commentCount 계산
@@ -70,7 +68,7 @@ public class CommentService {
         notifyService.saveNotify(certOwner.getUserId(), NotifyType.COMMENT, notifyMsg);
         fcmService.commentPush(certOwner.getUserId(), notifyMsg);
 
-        return new CommentResponse(comment);
+        return comment;
     }
 
     /**
@@ -84,9 +82,8 @@ public class CommentService {
     /**
      * [certificationId] 뎃글 조회
      */
-    public List<CommentResponse> getCommentsByCertId(int certificationId){
-        return commentRepository.findCommentsByCertId(certificationId)
-                .stream().map(CommentResponse::new).toList();
+    public List<Comment> getCommentsByCertId(int certificationId){
+        return commentRepository.findCommentsByCertId(certificationId);
     }
 
     /**
@@ -127,7 +124,7 @@ public class CommentService {
     /**
      * 유저가 답글을 작성하면 알림을 저장하고 인증 주인과 댓글 주인에게 푸시 알림을 보냄
      */
-    public ReplyResponse createReply(ReplyCreate replyCreate) throws IOException {
+    public Comment createReply(ReplyCreate replyCreate) throws IOException {
         User user = userQueryService.getOneByUserId(replyCreate.userId()); // 답글 작성 유저 조회
         Comment reply = commentRepository.save(replyCreate.toEntity(user));
         Certification certification = certQueryService.getOneById(replyCreate.certificationId()); // 답글 저장한 인증글 조회
@@ -148,14 +145,13 @@ public class CommentService {
         notifyService.saveNotify(commentOwnerId, NotifyType.REPLY, commentOwnerNotifyMsg);
         fcmService.commentPush(commentOwnerId, commentOwnerNotifyMsg);
 
-        return new ReplyResponse(reply);
+        return reply;
     }
 
     /**
      * [parentCommentId] 댓글에 대한 답글 조회
      */
-    public List<ReplyResponse> getReplyByParentCommentId(int parentCommentId){
-        return commentRepository.findCommentsByParentCommentId(parentCommentId)
-                .stream().map(ReplyResponse::new).toList();
+    public List<Comment> getReplyByParentCommentId(int parentCommentId){
+        return commentRepository.findCommentsByParentCommentId(parentCommentId);
     }
 }
