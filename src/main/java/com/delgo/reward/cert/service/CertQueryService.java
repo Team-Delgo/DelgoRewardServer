@@ -6,7 +6,7 @@ import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.cert.repository.dto.CategoryCountDTO;
 import com.delgo.reward.cert.repository.dto.UserVisitMungpleCountDTO;
-import com.delgo.reward.dto.mungple.MungpleCountDTO;
+import com.delgo.reward.cert.repository.dto.MungpleCountDTO;
 import com.delgo.reward.cert.repository.CertRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

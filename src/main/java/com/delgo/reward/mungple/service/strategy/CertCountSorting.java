@@ -1,19 +1,17 @@
-package com.delgo.reward.service.mungple.strategy;
+package com.delgo.reward.mungple.service.strategy;
 
-import com.delgo.reward.mongoDomain.mungple.Mungple;
-
+import com.delgo.reward.mungple.domain.Mungple;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public class BookmarkCountSorting implements MungpleSortingStrategy {
+public class CertCountSorting implements MungpleSortingStrategy {
     private final Map<Integer, Integer> countMap;
 
-    public BookmarkCountSorting(Map<Integer, Integer> countMap){
+    public CertCountSorting(Map<Integer, Integer> countMap){
         this.countMap = countMap;
     }
-
     @Override
     public List<Mungple> sort(List<Mungple> mungpleList) {
         Map<Integer, Mungple> mungpleMap = Mungple.listToMap(mungpleList);

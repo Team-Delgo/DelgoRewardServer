@@ -19,7 +19,7 @@ import com.delgo.reward.cert.service.CertCommandService;
 import com.delgo.reward.cert.service.ReactionService;
 import com.delgo.reward.user.service.UserQueryService;
 import com.delgo.reward.cert.service.CertQueryService;
-import com.delgo.reward.service.mungple.MungpleService;
+import com.delgo.reward.mungple.service.MungpleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;

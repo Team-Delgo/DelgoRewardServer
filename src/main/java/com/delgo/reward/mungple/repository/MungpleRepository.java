@@ -1,7 +1,7 @@
-package com.delgo.reward.mongoRepository;
+package com.delgo.reward.mungple.repository;
 
 import com.delgo.reward.comm.code.CategoryCode;
-import com.delgo.reward.mongoDomain.mungple.Mungple;
+import com.delgo.reward.mungple.domain.Mungple;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.delgo.reward.cert.repository.dto;
 
-import com.delgo.reward.mongoDomain.mungple.Mungple;
+import com.delgo.reward.mungple.domain.Mungple;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;

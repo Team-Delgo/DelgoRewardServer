@@ -2,7 +2,7 @@ package com.delgo.reward.service;
 
 import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.domain.user.Bookmark;
-import com.delgo.reward.dto.mungple.MungpleCountDTO;
+import com.delgo.reward.cert.repository.dto.MungpleCountDTO;
 import com.delgo.reward.repository.BookmarkRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

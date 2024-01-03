@@ -2,7 +2,7 @@ package com.delgo.reward;
 
 import com.delgo.reward.comm.ncp.geo.GeoDataService;
 import com.delgo.reward.comm.ncp.greeneye.GreenEyeService;
-import com.delgo.reward.service.mungple.MungpleService;
+import com.delgo.reward.mungple.service.MungpleService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
