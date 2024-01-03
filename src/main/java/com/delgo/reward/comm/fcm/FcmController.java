@@ -9,26 +9,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.io.IOException;
 
 @Controller
 @RequiredArgsConstructor
 public class FcmController extends CommController {
-    private final FcmService fcmService;
     private final TokenService tokenService;
 
     @PostMapping("/api/fcm/token")
     public ResponseEntity getTokenFromAndroid(@RequestBody FcmTokenDTO fcmTokenDTO){
         tokenService.saveFcmToken(fcmTokenDTO);
-        return SuccessReturn();
-    }
-
-    @PostMapping("/api/fcm")
-    public ResponseEntity pushMessage(@RequestBody SendFcmDTO sendFcmDTO) throws IOException {
-        fcmService.sendMessageTo(
-                sendFcmDTO.getTargetToken(),
-                sendFcmDTO.getBody());
-
         return SuccessReturn();
     }
 }

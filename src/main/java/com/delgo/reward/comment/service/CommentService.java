@@ -27,9 +27,9 @@ public class CommentService {
 
     // Service
     private final FcmService fcmService;
+    private final NotifyService notifyService;
     private final CertQueryService certQueryService;
     private final UserQueryService userQueryService;
-    private final NotifyService notifyService;
 
     // Repository
     private final CommentRepository commentRepository;
@@ -50,13 +50,13 @@ public class CommentService {
         String notifyMsg = makeCommentNotifyMsg(user.getName(), commentCreate.content());
         User certOwner = certification.getUser();
         notifyService.saveNotify(certOwner.getUserId(), NotifyType.COMMENT, notifyMsg);
-        fcmService.commentPush(certOwner.getUserId(), notifyMsg);
+        fcmService.push(certOwner.getUserId(), notifyMsg);
 
         return comment;
     }
 
     /**
-     * [commentId] 뎃글 조회
+     * [commentId] 댓글 조회
      */
     public Comment getOneById(int commentId){
         return commentRepository.findOneByCommentId(commentId)
@@ -64,7 +64,7 @@ public class CommentService {
     }
 
     /**
-     * [certificationId] 뎃글 조회
+     * [certificationId] 댓글 조회
      */
     public List<Comment> getListByCertId(int certificationId){
         return commentRepository.findListByCertId(certificationId);
@@ -121,13 +121,13 @@ public class CommentService {
         int certOwnerId = certification.getUser().getUserId();
         String certOwnerNotifyMsg = makeCommentNotifyMsg(user.getName(), replyCreate.content());
         notifyService.saveNotify(certOwnerId, NotifyType.COMMENT, certOwnerNotifyMsg);
-        fcmService.commentPush(certOwnerId, certOwnerNotifyMsg);
+        fcmService.push(certOwnerId, certOwnerNotifyMsg);
 
         // 부모 댓글 유저 알림
         int commentOwnerId = getOneById(replyCreate.parentCommentId()).getUser().getUserId();
         String commentOwnerNotifyMsg = makeReplyNotifyMsg(user.getName(), replyCreate.content());
         notifyService.saveNotify(commentOwnerId, NotifyType.REPLY, commentOwnerNotifyMsg);
-        fcmService.commentPush(commentOwnerId, commentOwnerNotifyMsg);
+        fcmService.push(commentOwnerId, commentOwnerNotifyMsg);
 
         return reply;
     }
