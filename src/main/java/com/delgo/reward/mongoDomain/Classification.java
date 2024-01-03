@@ -2,7 +2,7 @@ package com.delgo.reward.mongoDomain;
 
 import com.delgo.reward.domain.certification.Certification;
 import com.delgo.reward.dto.cert.CertResponse;
-import com.delgo.reward.dto.user.UserResponse;
+import com.delgo.reward.user.response.UserResponse;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

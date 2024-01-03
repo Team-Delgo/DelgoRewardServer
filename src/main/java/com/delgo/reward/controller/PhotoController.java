@@ -1,10 +1,10 @@
 package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.domain.user.User;
-import com.delgo.reward.dto.user.UserResponse;
+import com.delgo.reward.user.domain.User;
+import com.delgo.reward.user.response.UserResponse;
 import com.delgo.reward.service.*;
-import com.delgo.reward.service.user.UserCommandService;
+import com.delgo.reward.user.service.UserCommandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

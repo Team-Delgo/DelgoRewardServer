@@ -1,7 +1,7 @@
-package com.delgo.reward.repository;
+package com.delgo.reward.user.repository;
 
 
-import com.delgo.reward.domain.pet.Pet;
+import com.delgo.reward.user.domain.Pet;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PetRepository extends JpaRepository<Pet, Integer> {

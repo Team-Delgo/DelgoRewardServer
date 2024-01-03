@@ -1,6 +1,6 @@
-package com.delgo.reward.dto.user;
+package com.delgo.reward.user.response;
 
-import com.delgo.reward.domain.user.User;
+import com.delgo.reward.user.domain.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

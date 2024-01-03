@@ -1,4 +1,4 @@
-package com.delgo.reward.record.user;
+package com.delgo.reward.user.controller.request;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;

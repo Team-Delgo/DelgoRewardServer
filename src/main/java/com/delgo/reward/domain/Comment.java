@@ -1,7 +1,7 @@
 package com.delgo.reward.domain;
 
 import com.delgo.reward.domain.common.BaseTimeEntity;
-import com.delgo.reward.domain.user.User;
+import com.delgo.reward.user.domain.User;
 import lombok.*;
 
 import javax.persistence.*;

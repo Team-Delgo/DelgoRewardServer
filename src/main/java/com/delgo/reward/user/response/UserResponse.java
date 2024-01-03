@@ -1,8 +1,8 @@
-package com.delgo.reward.dto.user;
+package com.delgo.reward.user.response;
 
 
 import com.delgo.reward.comm.code.CategoryCode;
-import com.delgo.reward.domain.user.User;
+import com.delgo.reward.user.domain.User;
 import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.dto.cert.UserVisitMungpleCountDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;

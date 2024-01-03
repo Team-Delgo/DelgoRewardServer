@@ -1,4 +1,4 @@
-package com.delgo.reward.controller;
+package com.delgo.reward.user.controller;
 
 
 import com.delgo.reward.comm.CommController;
@@ -7,22 +7,22 @@ import com.delgo.reward.comm.encoder.CustomPasswordEncoder;
 import com.delgo.reward.comm.security.jwt.JwtService;
 import com.delgo.reward.comm.security.jwt.JwtToken;
 import com.delgo.reward.domain.SmsAuth;
-import com.delgo.reward.domain.pet.Pet;
-import com.delgo.reward.domain.user.User;
+import com.delgo.reward.user.domain.Pet;
+import com.delgo.reward.user.domain.User;
 import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.dto.cert.UserVisitMungpleCountDTO;
-import com.delgo.reward.dto.user.PageUserResponse;
-import com.delgo.reward.dto.user.UserResponse;
+import com.delgo.reward.user.response.PageUserResponse;
+import com.delgo.reward.user.response.UserResponse;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
-import com.delgo.reward.record.signup.OAuthCreate;
-import com.delgo.reward.record.signup.UserCreate;
+import com.delgo.reward.user.controller.request.OAuthCreate;
+import com.delgo.reward.user.controller.request.UserCreate;
 import com.delgo.reward.record.user.PasswordUpdate;
 import com.delgo.reward.service.CodeService;
-import com.delgo.reward.service.PetService;
+import com.delgo.reward.user.service.PetService;
 import com.delgo.reward.service.PhotoService;
 import com.delgo.reward.service.SmsAuthService;
-import com.delgo.reward.service.user.UserCommandService;
-import com.delgo.reward.service.user.UserQueryService;
+import com.delgo.reward.user.service.UserCommandService;
+import com.delgo.reward.user.service.UserQueryService;
 import com.delgo.reward.service.cert.CertQueryService;
 import com.delgo.reward.service.mungple.MungpleService;
 import io.swagger.v3.oas.annotations.Operation;

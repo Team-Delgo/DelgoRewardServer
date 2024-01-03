@@ -1,9 +1,9 @@
 package com.delgo.reward.service;
 
 import com.delgo.reward.domain.BanList;
-import com.delgo.reward.domain.user.User;
+import com.delgo.reward.user.domain.User;
 import com.delgo.reward.repository.BanListRepository;
-import com.delgo.reward.service.user.UserQueryService;
+import com.delgo.reward.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

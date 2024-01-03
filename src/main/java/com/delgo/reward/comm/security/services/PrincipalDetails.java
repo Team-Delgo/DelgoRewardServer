@@ -1,7 +1,7 @@
 package com.delgo.reward.comm.security.services;
 
 
-import com.delgo.reward.domain.user.User;
+import com.delgo.reward.user.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

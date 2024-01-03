@@ -9,7 +9,7 @@ import com.delgo.reward.dto.mungple.MungpleResponse;
 import com.delgo.reward.mongoDomain.mungple.Mungple;
 import com.delgo.reward.mongoRepository.MungpleRepository;
 import com.delgo.reward.service.cert.CertQueryService;
-import com.delgo.reward.service.user.UserQueryService;
+import com.delgo.reward.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

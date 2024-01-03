@@ -1,9 +1,8 @@
-package com.delgo.reward.domain.pet;
+package com.delgo.reward.user.domain;
 
 import com.delgo.reward.domain.common.BaseTimeEntity;
-import com.delgo.reward.domain.user.User;
-import com.delgo.reward.record.signup.OAuthCreate;
-import com.delgo.reward.record.signup.UserCreate;
+import com.delgo.reward.user.controller.request.OAuthCreate;
+import com.delgo.reward.user.controller.request.UserCreate;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 

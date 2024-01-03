@@ -1,8 +1,8 @@
 package com.delgo.reward.comm.quartz.job;
 
 import com.delgo.reward.comm.fcm.FcmService;
-import com.delgo.reward.domain.pet.Pet;
-import com.delgo.reward.repository.PetRepository;
+import com.delgo.reward.user.domain.Pet;
+import com.delgo.reward.user.repository.PetRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobExecutionContext;
