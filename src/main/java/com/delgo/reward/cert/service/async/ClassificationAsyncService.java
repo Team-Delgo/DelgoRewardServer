@@ -1,8 +1,8 @@
-package com.delgo.reward.comm.async;
+package com.delgo.reward.cert.service.async;
 
 import com.delgo.reward.cert.domain.Certification;
-import com.delgo.reward.mongoDomain.Classification;
-import com.delgo.reward.mongoService.ClassificationService;
+import com.delgo.reward.cert.domain.Classification;
+import com.delgo.reward.cert.service.ClassificationService;
 import com.delgo.reward.cert.service.CertQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;

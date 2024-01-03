@@ -1,4 +1,4 @@
-package com.delgo.reward.comm.async;
+package com.delgo.reward.cert.service.async;
 
 import com.delgo.reward.comm.ncp.greeneye.GreenEyeService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
