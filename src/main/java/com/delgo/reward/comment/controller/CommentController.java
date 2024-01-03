@@ -29,7 +29,7 @@ public class CommentController extends CommController {
      */
     @PostMapping("/comment")
     public ResponseEntity createComment(@Validated @RequestBody CommentCreate commentCreate) throws IOException {
-        Comment comment = commentService.createComment(commentCreate);
+        Comment comment = commentService.create(commentCreate);
         return SuccessReturn(CommentResponse.from(comment));
     }
 
@@ -38,7 +38,7 @@ public class CommentController extends CommController {
      */
     @GetMapping("/comment")
     public ResponseEntity getComment(@RequestParam int certificationId){
-        List<Comment> commentList = commentService.getCommentsByCertId(certificationId);
+        List<Comment> commentList = commentService.getListByCertId(certificationId);
         return SuccessReturn(CommentResponse.fromList(commentList));
     }
 
@@ -47,7 +47,7 @@ public class CommentController extends CommController {
      */
     @PutMapping("/comment")
     public ResponseEntity updateComment(@Validated @RequestBody CommentUpdate commentUpdate){
-        return commentService.modifyComment(commentUpdate)
+        return commentService.update(commentUpdate)
                 ? SuccessReturn()
                 : ErrorReturn(APICode.INVALID_USER_ERROR);
     }
@@ -57,7 +57,7 @@ public class CommentController extends CommController {
      */
     @DeleteMapping("/comment/{commentId}/{userId}/{certificationId}")
     public ResponseEntity deleteComment(@PathVariable Integer commentId, @PathVariable Integer userId, @PathVariable Integer certificationId) {
-        return commentService.deleteComment(commentId, userId, certificationId)
+        return commentService.delete(commentId, userId, certificationId)
                 ? SuccessReturn()
                 : ErrorReturn(APICode.INVALID_USER_ERROR);
     }
@@ -76,7 +76,7 @@ public class CommentController extends CommController {
      */
     @GetMapping("/reply")
     public ResponseEntity getReply(@RequestParam int parentCommentId){
-        List<Comment> replyList = commentService.getReplyByParentCommentId(parentCommentId);
+        List<Comment> replyList = commentService.getListByParentCommentId(parentCommentId);
         return SuccessReturn(CommentResponse.fromList(replyList));
     }
 

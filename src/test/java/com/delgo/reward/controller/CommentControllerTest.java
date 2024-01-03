@@ -99,7 +99,7 @@ public class CommentControllerTest {
         CommentCreate commentCreate = new CommentCreate(comment.getUser().getUserId(), comment.getCertificationId(), comment.getContent());
 
         CommentResponse resDTO = new CommentResponse(comment);
-        Mockito.when(commentService.createComment(commentCreate)).thenReturn(resDTO);
+        Mockito.when(commentService.create(commentCreate)).thenReturn(resDTO);
 
         mockMvc.perform(post("/api/comment")
                         .contentType(MediaType.APPLICATION_JSON)

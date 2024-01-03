@@ -28,7 +28,7 @@ public class CommentTest {
         List<Certification> certifications = certRepository.findAll();
         for(Certification cert : certifications){
             // commentCount 업데이트
-            int commentCount = commentRepository.countCommentByCertId(cert.getCertificationId());
+            int commentCount = commentRepository.countByCertId(cert.getCertificationId());
             if(commentCount > 0) {
                 System.out.println("certId : " + cert.getCertificationId());
                 System.out.println("commentCount : " + commentCount);
