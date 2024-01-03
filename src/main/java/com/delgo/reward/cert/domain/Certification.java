@@ -26,6 +26,7 @@ public class Certification extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer certificationId;
+    @Setter
     @Enumerated(EnumType.STRING)
     private CategoryCode categoryCode;
     @Setter
