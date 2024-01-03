@@ -1,6 +1,6 @@
-package com.delgo.reward.mongoService;
+package com.delgo.reward.mungple.service;
 
-import com.delgo.reward.mongoDomain.DatabaseSequence;
+import com.delgo.reward.mungple.domain.DatabaseSequence;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Update;

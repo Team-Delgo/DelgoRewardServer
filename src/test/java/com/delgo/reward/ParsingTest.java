@@ -1,7 +1,7 @@
 package com.delgo.reward;
 
-import com.delgo.reward.mongoDomain.mungple.Mungple;
-import com.delgo.reward.mongoRepository.MungpleRepository;
+import com.delgo.reward.mungple.domain.Mungple;
+import com.delgo.reward.mungple.repository.MungpleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;

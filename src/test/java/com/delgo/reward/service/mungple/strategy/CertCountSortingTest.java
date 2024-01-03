@@ -1,6 +1,7 @@
 package com.delgo.reward.service.mungple.strategy;
 
-import com.delgo.reward.mongoDomain.mungple.Mungple;
+import com.delgo.reward.mungple.domain.Mungple;
+import com.delgo.reward.mungple.service.strategy.CertCountSorting;
 import org.junit.Test;
 import java.util.HashMap;
 import java.util.List;

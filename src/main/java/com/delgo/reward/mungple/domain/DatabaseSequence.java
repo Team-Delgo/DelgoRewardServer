@@ -1,4 +1,4 @@
-package com.delgo.reward.mongoDomain;
+package com.delgo.reward.mungple.domain;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,14 +1,14 @@
-package com.delgo.reward.controller;
+package com.delgo.reward.mungple.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.MungpleSort;
 import com.delgo.reward.comm.googlesheet.GoogleSheetService;
 import com.delgo.reward.domain.user.Bookmark;
-import com.delgo.reward.dto.mungple.MungpleResponse;
-import com.delgo.reward.dto.mungple.MungpleDetailResponse;
-import com.delgo.reward.mongoDomain.mungple.Mungple;
-import com.delgo.reward.service.mungple.MungpleService;
+import com.delgo.reward.mungple.response.MungpleResponse;
+import com.delgo.reward.mungple.response.MungpleDetailResponse;
+import com.delgo.reward.mungple.domain.Mungple;
+import com.delgo.reward.mungple.service.MungpleService;
 import com.delgo.reward.service.BookmarkService;
 import com.delgo.reward.cert.service.CertQueryService;
 import io.swagger.v3.oas.annotations.Hidden;

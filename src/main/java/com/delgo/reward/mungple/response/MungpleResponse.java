@@ -1,8 +1,8 @@
-package com.delgo.reward.dto.mungple;
+package com.delgo.reward.mungple.response;
 
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.domain.user.Bookmark;
-import com.delgo.reward.mongoDomain.mungple.Mungple;
+import com.delgo.reward.mungple.domain.Mungple;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 

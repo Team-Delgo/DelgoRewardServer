@@ -1,4 +1,4 @@
-package com.delgo.reward.service.mungple;
+package com.delgo.reward.mungple.service;
 
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.MungpleSort;
@@ -7,8 +7,9 @@ import com.delgo.reward.comm.ncp.geo.GeoData;
 import com.delgo.reward.comm.ncp.geo.GeoDataService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
-import com.delgo.reward.mongoDomain.mungple.Mungple;
-import com.delgo.reward.mongoRepository.MungpleRepository;
+import com.delgo.reward.mungple.domain.Mungple;
+import com.delgo.reward.mungple.repository.MungpleRepository;
+import com.delgo.reward.mungple.service.strategy.*;
 import com.delgo.reward.service.mungple.strategy.*;
 import com.delgo.reward.service.BookmarkService;
 import lombok.RequiredArgsConstructor;

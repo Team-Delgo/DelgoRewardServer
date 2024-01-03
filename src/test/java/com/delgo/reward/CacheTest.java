@@ -2,10 +2,10 @@
 //
 //import com.delgo.reward.service.mungple.cache.MungpleCache;
 //import com.delgo.reward.comm.code.CategoryCode;
-//import com.delgo.reward.dto.mungple.MungpleResponse;
-//import com.delgo.reward.mongoDomain.mungple.Mungple;
-//import com.delgo.reward.mongoRepository.MungpleRepository;
-//import com.delgo.reward.service.mungple.MungpleService;
+//import com.delgo.reward.mungple.response.MungpleResponse;
+//import com.delgo.reward.mungple.domain.Mungple;
+//import com.delgo.reward.mungple.repository.MungpleRepository;
+//import com.delgo.reward.mungple.service.MungpleService;
 //import com.delgo.reward.service.mungple.cache.MungpleCacheService;
 //import org.junit.Test;
 //import org.junit.runner.RunWith;

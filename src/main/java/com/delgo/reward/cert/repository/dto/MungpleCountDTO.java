@@ -1,4 +1,4 @@
-package com.delgo.reward.dto.mungple;
+package com.delgo.reward.cert.repository.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
