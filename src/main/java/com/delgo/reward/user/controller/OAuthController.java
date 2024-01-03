@@ -1,15 +1,15 @@
-package com.delgo.reward.controller;
+package com.delgo.reward.user.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.APICode;
-import com.delgo.reward.comm.oauth.AppleService;
-import com.delgo.reward.comm.oauth.KakaoService;
-import com.delgo.reward.comm.oauth.NaverService;
+import com.delgo.reward.user.service.oauth.AppleService;
+import com.delgo.reward.user.service.oauth.KakaoService;
+import com.delgo.reward.user.service.oauth.NaverService;
 import com.delgo.reward.comm.security.jwt.JwtService;
 import com.delgo.reward.comm.security.jwt.JwtToken;
 import com.delgo.reward.user.domain.User;
 import com.delgo.reward.comm.code.UserSocial;
-import com.delgo.reward.dto.OAuthDTO;
+import com.delgo.reward.user.service.oauth.OAuthDTO;
 import com.delgo.reward.user.response.UserResponse;
 import com.delgo.reward.user.service.UserQueryService;
 import io.swagger.v3.oas.annotations.Hidden;

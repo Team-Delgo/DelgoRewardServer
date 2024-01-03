@@ -1,4 +1,4 @@
-package com.delgo.reward.dto;
+package com.delgo.reward.user.service.oauth;
 
 import com.delgo.reward.comm.code.UserSocial;
 import lombok.Data;

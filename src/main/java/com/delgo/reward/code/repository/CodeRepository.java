@@ -1,7 +1,7 @@
-package com.delgo.reward.repository;
+package com.delgo.reward.code.repository;
 
 import com.delgo.reward.comm.code.CodeType;
-import com.delgo.reward.domain.code.Code;
+import com.delgo.reward.code.domain.Code;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

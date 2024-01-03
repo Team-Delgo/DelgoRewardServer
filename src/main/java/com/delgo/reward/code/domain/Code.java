@@ -1,4 +1,4 @@
-package com.delgo.reward.domain.code;
+package com.delgo.reward.code.domain;
 
 
 import com.delgo.reward.comm.code.CodeType;

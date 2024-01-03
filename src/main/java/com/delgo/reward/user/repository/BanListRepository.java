@@ -1,6 +1,6 @@
-package com.delgo.reward.repository;
+package com.delgo.reward.user.repository;
 
-import com.delgo.reward.domain.BanList;
+import com.delgo.reward.user.domain.BanList;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BanListRepository extends JpaRepository<BanList, Integer> {

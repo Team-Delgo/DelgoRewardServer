@@ -1,8 +1,8 @@
-package com.delgo.reward.dto.code;
+package com.delgo.reward.code.response;
 
 
 import com.delgo.reward.comm.code.CodeType;
-import com.delgo.reward.domain.code.Code;
+import com.delgo.reward.code.domain.Code;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

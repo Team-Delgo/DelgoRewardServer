@@ -1,10 +1,10 @@
-package com.delgo.reward.controller;
+package com.delgo.reward.user.controller;
 
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.APICode;
-import com.delgo.reward.dto.SmsAuthDTO;
-import com.delgo.reward.service.SmsAuthService;
+import com.delgo.reward.user.controller.request.SmsAuthCreate;
+import com.delgo.reward.user.service.SmsAuthService;
 import com.delgo.reward.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -49,13 +49,13 @@ public class AuthController extends CommController {
 
     // 인증번호 생성
     @PostMapping("/sms")
-    public ResponseEntity<?> phoneNoAuth(@RequestBody @Validated SmsAuthDTO smsAuthDTO) {
-        smsAuthDTO.setPhoneNo(smsAuthDTO.getPhoneNo().replaceAll("[^0-9]", ""));
+    public ResponseEntity<?> phoneNoAuth(@RequestBody @Validated SmsAuthCreate smsAuthCreate) {
+        smsAuthCreate.setPhoneNo(smsAuthCreate.getPhoneNo().replaceAll("[^0-9]", ""));
 
-        if (smsAuthDTO.getIsJoin() && !userQueryService.isPhoneNoExisting(smsAuthDTO.getPhoneNo())) return ErrorReturn(APICode.PHONE_NO_NOT_EXIST);
-        if (!smsAuthDTO.getIsJoin() && userQueryService.isPhoneNoExisting(smsAuthDTO.getPhoneNo())) return ErrorReturn(APICode.PHONE_NO_DUPLICATE_ERROR);
+        if (smsAuthCreate.getIsJoin() && !userQueryService.isPhoneNoExisting(smsAuthCreate.getPhoneNo())) return ErrorReturn(APICode.PHONE_NO_NOT_EXIST);
+        if (!smsAuthCreate.getIsJoin() && userQueryService.isPhoneNoExisting(smsAuthCreate.getPhoneNo())) return ErrorReturn(APICode.PHONE_NO_DUPLICATE_ERROR);
 
-        return SuccessReturn(smsAuthService.makeAuth(smsAuthDTO.getPhoneNo()));
+        return SuccessReturn(smsAuthService.makeAuth(smsAuthCreate.getPhoneNo()));
     }
 
     // 인증번호 확인

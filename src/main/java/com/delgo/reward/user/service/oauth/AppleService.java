@@ -1,4 +1,4 @@
-package com.delgo.reward.comm.oauth;
+package com.delgo.reward.user.service.oauth;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;

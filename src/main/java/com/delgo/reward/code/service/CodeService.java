@@ -1,10 +1,10 @@
-package com.delgo.reward.service;
+package com.delgo.reward.code.service;
 
 
 import com.delgo.reward.comm.code.CodeType;
 import com.delgo.reward.comm.exception.NotFoundDataException;
-import com.delgo.reward.domain.code.Code;
-import com.delgo.reward.repository.CodeRepository;
+import com.delgo.reward.code.domain.Code;
+import com.delgo.reward.code.repository.CodeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
