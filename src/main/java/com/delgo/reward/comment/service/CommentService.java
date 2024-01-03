@@ -7,11 +7,11 @@ import com.delgo.reward.comment.domain.Comment;
 import com.delgo.reward.domain.notify.NotifyType;
 import com.delgo.reward.service.NotifyService;
 import com.delgo.reward.user.domain.User;
-import com.delgo.reward.comment.response.CommentResDTO;
-import com.delgo.reward.comment.response.ReplyResDTO;
-import com.delgo.reward.comment.controller.request.CommentRecord;
-import com.delgo.reward.comment.controller.request.ModifyCommentRecord;
-import com.delgo.reward.comment.controller.request.ReplyRecord;
+import com.delgo.reward.comment.response.CommentResponse;
+import com.delgo.reward.comment.response.ReplyResponse;
+import com.delgo.reward.comment.controller.request.CommentCreate;
+import com.delgo.reward.comment.controller.request.CommentUpdate;
+import com.delgo.reward.comment.controller.request.ReplyCreate;
 import com.delgo.reward.comment.repository.CommentRepository;
 import com.delgo.reward.cert.service.CertQueryService;
 import com.delgo.reward.user.service.UserQueryService;
@@ -55,22 +55,22 @@ public class CommentService {
     /**
      *  유저가 댓글을 작성하면 알림을 저장하고 인증 주인에게 푸시 알림을 보냄
      */
-    public CommentResDTO createComment(CommentRecord commentRecord) throws IOException {
-        User user = userQueryService.getOneByUserId(commentRecord.userId()); // 댓글 작성 유저 조회
-        Comment comment = commentRepository.save(commentRecord.toEntity(user)); // 댓글 저장
-        Certification certification = certQueryService.getOneById(commentRecord.certificationId()); // 댓글 저장한 인증글 조회
+    public CommentResponse createComment(CommentCreate commentCreate) throws IOException {
+        User user = userQueryService.getOneByUserId(commentCreate.userId()); // 댓글 작성 유저 조회
+        Comment comment = commentRepository.save(commentCreate.toEntity(user)); // 댓글 저장
+        Certification certification = certQueryService.getOneById(commentCreate.certificationId()); // 댓글 저장한 인증글 조회
 
         // commentCount 계산
-        int commentCount = commentRepository.countCommentByCertId(commentRecord.certificationId());
+        int commentCount = commentRepository.countCommentByCertId(commentCreate.certificationId());
         certification.setCommentCount(commentCount);
 
         // 인증 유저 알림
-        String notifyMsg = makeCommentNotifyMsg(user.getName(), commentRecord.content());
+        String notifyMsg = makeCommentNotifyMsg(user.getName(), commentCreate.content());
         User certOwner = certification.getUser();
         notifyService.saveNotify(certOwner.getUserId(), NotifyType.COMMENT, notifyMsg);
         fcmService.commentPush(certOwner.getUserId(), notifyMsg);
 
-        return new CommentResDTO(comment);
+        return new CommentResponse(comment);
     }
 
     /**
@@ -84,15 +84,15 @@ public class CommentService {
     /**
      * [certificationId] 뎃글 조회
      */
-    public List<CommentResDTO> getCommentsByCertId(int certificationId){
+    public List<CommentResponse> getCommentsByCertId(int certificationId){
         return commentRepository.findCommentsByCertId(certificationId)
-                .stream().map(CommentResDTO::new).toList();
+                .stream().map(CommentResponse::new).toList();
     }
 
     /**
      * 댓글 수정
      */
-    public Boolean modifyComment(ModifyCommentRecord modifyCommentRecord) {
+    public Boolean modifyComment(CommentUpdate modifyCommentRecord) {
         Comment comment = getCommentById(modifyCommentRecord.commentId());
         if (comment.getUser().getUserId() != modifyCommentRecord.userId())  // 유저 체크
             return false;
@@ -127,35 +127,35 @@ public class CommentService {
     /**
      * 유저가 답글을 작성하면 알림을 저장하고 인증 주인과 댓글 주인에게 푸시 알림을 보냄
      */
-    public ReplyResDTO createReply(ReplyRecord replyRecord) throws IOException {
-        User user = userQueryService.getOneByUserId(replyRecord.userId()); // 답글 작성 유저 조회
-        Comment reply = commentRepository.save(replyRecord.toEntity(user));
-        Certification certification = certQueryService.getOneById(replyRecord.certificationId()); // 답글 저장한 인증글 조회
+    public ReplyResponse createReply(ReplyCreate replyCreate) throws IOException {
+        User user = userQueryService.getOneByUserId(replyCreate.userId()); // 답글 작성 유저 조회
+        Comment reply = commentRepository.save(replyCreate.toEntity(user));
+        Certification certification = certQueryService.getOneById(replyCreate.certificationId()); // 답글 저장한 인증글 조회
 
         // commentCount 계산
-        int commentCount = commentRepository.countCommentByCertId(replyRecord.certificationId());
+        int commentCount = commentRepository.countCommentByCertId(replyCreate.certificationId());
         certification.setCommentCount(commentCount);
 
         // 인증 유저 알림
         int certOwnerId = certification.getUser().getUserId();
-        String certOwnerNotifyMsg = makeCommentNotifyMsg(user.getName(), replyRecord.content());
+        String certOwnerNotifyMsg = makeCommentNotifyMsg(user.getName(), replyCreate.content());
         notifyService.saveNotify(certOwnerId, NotifyType.COMMENT, certOwnerNotifyMsg);
         fcmService.commentPush(certOwnerId, certOwnerNotifyMsg);
 
         // 부모 댓글 유저 알림
-        int commentOwnerId = getCommentById(replyRecord.parentCommentId()).getUser().getUserId();
-        String commentOwnerNotifyMsg = makeReplyNotifyMsg(user.getName(), replyRecord.content());
+        int commentOwnerId = getCommentById(replyCreate.parentCommentId()).getUser().getUserId();
+        String commentOwnerNotifyMsg = makeReplyNotifyMsg(user.getName(), replyCreate.content());
         notifyService.saveNotify(commentOwnerId, NotifyType.REPLY, commentOwnerNotifyMsg);
         fcmService.commentPush(commentOwnerId, commentOwnerNotifyMsg);
 
-        return new ReplyResDTO(reply);
+        return new ReplyResponse(reply);
     }
 
     /**
      * [parentCommentId] 댓글에 대한 답글 조회
      */
-    public List<ReplyResDTO> getReplyByParentCommentId(int parentCommentId){
+    public List<ReplyResponse> getReplyByParentCommentId(int parentCommentId){
         return commentRepository.findCommentsByParentCommentId(parentCommentId)
-                .stream().map(ReplyResDTO::new).toList();
+                .stream().map(ReplyResponse::new).toList();
     }
 }

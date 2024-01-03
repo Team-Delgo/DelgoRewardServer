@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @ToString
-public class CommentResDTO {
+public class CommentResponse {
     private final Integer commentId;
     private final Integer certificationId;
     private final String content;
@@ -21,7 +21,7 @@ public class CommentResDTO {
     @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
     private final LocalDateTime registDt; // 기존 createDt
 
-    public CommentResDTO(Comment comment) {
+    public CommentResponse(Comment comment) {
         this.commentId = comment.getCommentId();
         this.certificationId = comment.getCertificationId();
         this.content = comment.getContent();

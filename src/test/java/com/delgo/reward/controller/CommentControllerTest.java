@@ -6,8 +6,8 @@ import com.delgo.reward.comment.controller.CommentController;
 import com.delgo.reward.comment.domain.Comment;
 import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.user.domain.User;
-import com.delgo.reward.comment.response.CommentResDTO;
-import com.delgo.reward.comment.controller.request.CommentRecord;
+import com.delgo.reward.comment.response.CommentResponse;
+import com.delgo.reward.comment.controller.request.CommentCreate;
 import com.delgo.reward.cert.service.CertCommandService;
 import com.delgo.reward.comment.service.CommentService;
 import com.delgo.reward.service.NotifyService;
@@ -96,14 +96,14 @@ public class CommentControllerTest {
     @Test
     @DisplayName("[API][POST] Comment 생성")
     void createCommentTest() throws Exception {
-        CommentRecord commentRecord = new CommentRecord(comment.getUser().getUserId(), comment.getCertificationId(), comment.getContent());
+        CommentCreate commentCreate = new CommentCreate(comment.getUser().getUserId(), comment.getCertificationId(), comment.getContent());
 
-        CommentResDTO resDTO = new CommentResDTO(comment);
-        Mockito.when(commentService.createComment(commentRecord)).thenReturn(resDTO);
+        CommentResponse resDTO = new CommentResponse(comment);
+        Mockito.when(commentService.createComment(commentCreate)).thenReturn(resDTO);
 
         mockMvc.perform(post("/api/comment")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(commentRecord)))
+                        .content(new ObjectMapper().writeValueAsString(commentCreate)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 

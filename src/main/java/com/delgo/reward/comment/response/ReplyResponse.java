@@ -7,10 +7,10 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class ReplyResDTO extends CommentResDTO {
+public class ReplyResponse extends CommentResponse {
     private final Integer parentCommentId;
 
-    public ReplyResDTO(Comment comment) {
+    public ReplyResponse(Comment comment) {
         super(comment);
         this.parentCommentId = comment.getParentCommentId();
     }

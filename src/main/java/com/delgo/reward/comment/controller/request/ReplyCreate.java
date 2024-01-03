@@ -5,20 +5,21 @@ import com.delgo.reward.user.domain.User;
 
 import javax.validation.constraints.NotNull;
 
-public record CommentRecord(
+public record ReplyCreate(
         @NotNull Integer userId,
         @NotNull Integer certificationId,
+        @NotNull Integer parentCommentId,
         @NotNull String content
 ) {
     public Comment toEntity(User user) {
         return Comment.builder()
                 .user(user)
                 .certificationId(certificationId)
+                .parentCommentId(this.parentCommentId())
                 .content(this.content())
-                .isReply(false)
+                .isReply(true)
                 .build();
     }
 }
-
 
 
