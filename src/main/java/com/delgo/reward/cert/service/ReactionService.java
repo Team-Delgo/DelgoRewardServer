@@ -1,9 +1,9 @@
-package com.delgo.reward.service;
+package com.delgo.reward.cert.service;
 
 import com.delgo.reward.comm.code.ReactionCode;
-import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.domain.certification.Reaction;
-import com.delgo.reward.repository.ReactionRepository;
+import com.delgo.reward.cert.domain.Certification;
+import com.delgo.reward.cert.domain.Reaction;
+import com.delgo.reward.cert.repository.ReactionRepository;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

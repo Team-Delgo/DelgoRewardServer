@@ -6,7 +6,7 @@ import com.delgo.reward.mongoRepository.ClassificationRepository;
 import com.delgo.reward.mongoService.ClassificationService;
 import com.delgo.reward.repository.CategoryCountRepository;
 import com.delgo.reward.user.repository.UserRepository;
-import com.delgo.reward.service.cert.CertQueryService;
+import com.delgo.reward.cert.service.CertQueryService;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;

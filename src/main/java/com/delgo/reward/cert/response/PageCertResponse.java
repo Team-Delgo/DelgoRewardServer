@@ -1,7 +1,7 @@
-package com.delgo.reward.dto.cert;
+package com.delgo.reward.cert.response;
 
-import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.domain.certification.Reaction;
+import com.delgo.reward.cert.domain.Certification;
+import com.delgo.reward.cert.domain.Reaction;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -3,7 +3,7 @@
 //import com.delgo.reward.comm.ncp.ReverseGeoService;
 //import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 //import com.delgo.reward.domain.achievements.Achievements;
-//import com.delgo.reward.domain.certification.Certification;
+//import com.delgo.reward.cert.domain.Certification;
 //import com.delgo.reward.domain.common.Location;
 //import com.delgo.reward.domain.like.LikeList;
 //import com.delgo.reward.domain.mungple.Mungple;
@@ -11,7 +11,7 @@
 //import com.delgo.reward.dto.cert.CertByAchvResDTO;
 //import com.delgo.reward.dto.cert.CertResDTO;
 //import com.delgo.reward.record.certification.CertRecord;
-//import com.delgo.reward.repository.CertRepository;
+//import com.delgo.reward.cert.repository.CertRepository;
 //import org.junit.jupiter.api.*;
 //import org.junit.jupiter.api.extension.ExtendWith;
 //import org.mockito.InjectMocks;

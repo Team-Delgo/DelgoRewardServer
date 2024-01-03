@@ -1,4 +1,4 @@
-package com.delgo.reward.record.certification;
+package com.delgo.reward.cert.controller.request;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;

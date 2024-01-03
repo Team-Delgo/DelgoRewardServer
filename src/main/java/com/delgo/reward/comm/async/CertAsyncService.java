@@ -2,10 +2,10 @@ package com.delgo.reward.comm.async;
 
 import com.delgo.reward.comm.ncp.greeneye.GreenEyeService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
-import com.delgo.reward.domain.certification.Certification;
+import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.service.PhotoService;
-import com.delgo.reward.service.cert.CertCommandService;
-import com.delgo.reward.service.cert.CertQueryService;
+import com.delgo.reward.cert.service.CertCommandService;
+import com.delgo.reward.cert.service.CertQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

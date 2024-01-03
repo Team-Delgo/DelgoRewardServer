@@ -1,4 +1,4 @@
-package com.delgo.reward.domain.certification;
+package com.delgo.reward.cert.domain;
 
 import com.delgo.reward.comm.code.ReactionCode;
 import com.delgo.reward.domain.common.BaseTimeEntity;

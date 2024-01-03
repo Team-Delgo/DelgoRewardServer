@@ -2,7 +2,7 @@ package com.delgo.reward.service;
 
 import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.comm.fcm.FcmService;
-import com.delgo.reward.domain.certification.Certification;
+import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.domain.Comment;
 import com.delgo.reward.domain.notify.NotifyType;
 import com.delgo.reward.user.domain.User;
@@ -12,7 +12,7 @@ import com.delgo.reward.record.comment.CommentRecord;
 import com.delgo.reward.record.comment.ModifyCommentRecord;
 import com.delgo.reward.record.comment.ReplyRecord;
 import com.delgo.reward.repository.CommentRepository;
-import com.delgo.reward.service.cert.CertQueryService;
+import com.delgo.reward.cert.service.CertQueryService;
 import com.delgo.reward.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

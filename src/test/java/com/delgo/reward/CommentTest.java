@@ -1,7 +1,7 @@
 package com.delgo.reward;
 
-import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.repository.CertRepository;
+import com.delgo.reward.cert.domain.Certification;
+import com.delgo.reward.cert.repository.CertRepository;
 import com.delgo.reward.repository.CommentRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;

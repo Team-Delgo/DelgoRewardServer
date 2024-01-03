@@ -1,11 +1,11 @@
-package com.delgo.reward.controller;
+package com.delgo.reward.cert.controller;
 
 import com.delgo.reward.comm.CommController;
-import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.domain.certification.Reaction;
-import com.delgo.reward.dto.cert.CalendarResponse;
-import com.delgo.reward.service.ReactionService;
-import com.delgo.reward.service.cert.CertQueryService;
+import com.delgo.reward.cert.domain.Certification;
+import com.delgo.reward.cert.domain.Reaction;
+import com.delgo.reward.cert.response.CalendarResponse;
+import com.delgo.reward.cert.service.ReactionService;
+import com.delgo.reward.cert.service.CertQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
