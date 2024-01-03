@@ -1,4 +1,4 @@
-package com.delgo.reward.record.comment;
+package com.delgo.reward.comment.controller.request;
 
 
 import javax.validation.constraints.NotNull;

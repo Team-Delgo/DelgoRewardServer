@@ -1,11 +1,11 @@
-package com.delgo.reward.controller;
+package com.delgo.reward.comment.controller;
 
 import com.delgo.reward.comm.CommController;
 import com.delgo.reward.comm.code.APICode;
-import com.delgo.reward.record.comment.CommentRecord;
-import com.delgo.reward.record.comment.ModifyCommentRecord;
-import com.delgo.reward.record.comment.ReplyRecord;
-import com.delgo.reward.service.CommentService;
+import com.delgo.reward.comment.controller.request.CommentRecord;
+import com.delgo.reward.comment.controller.request.ModifyCommentRecord;
+import com.delgo.reward.comment.controller.request.ReplyRecord;
+import com.delgo.reward.comment.service.CommentService;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

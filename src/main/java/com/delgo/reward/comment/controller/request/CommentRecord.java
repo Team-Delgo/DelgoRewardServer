@@ -1,6 +1,6 @@
-package com.delgo.reward.record.comment;
+package com.delgo.reward.comment.controller.request;
 
-import com.delgo.reward.domain.Comment;
+import com.delgo.reward.comment.domain.Comment;
 import com.delgo.reward.user.domain.User;
 
 import javax.validation.constraints.NotNull;

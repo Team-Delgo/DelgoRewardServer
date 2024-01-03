@@ -2,13 +2,14 @@ package com.delgo.reward.controller;
 
 import com.delgo.reward.comm.fcm.FcmService;
 import com.delgo.reward.comm.security.SecurityConfig;
-import com.delgo.reward.domain.Comment;
+import com.delgo.reward.comment.controller.CommentController;
+import com.delgo.reward.comment.domain.Comment;
 import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.user.domain.User;
-import com.delgo.reward.dto.comment.CommentResDTO;
-import com.delgo.reward.record.comment.CommentRecord;
+import com.delgo.reward.comment.response.CommentResDTO;
+import com.delgo.reward.comment.controller.request.CommentRecord;
 import com.delgo.reward.cert.service.CertCommandService;
-import com.delgo.reward.service.CommentService;
+import com.delgo.reward.comment.service.CommentService;
 import com.delgo.reward.service.NotifyService;
 import com.delgo.reward.user.service.UserQueryService;
 import com.fasterxml.jackson.databind.ObjectMapper;

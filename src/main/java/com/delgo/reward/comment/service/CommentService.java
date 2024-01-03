@@ -1,17 +1,18 @@
-package com.delgo.reward.service;
+package com.delgo.reward.comment.service;
 
 import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.comm.fcm.FcmService;
 import com.delgo.reward.cert.domain.Certification;
-import com.delgo.reward.domain.Comment;
+import com.delgo.reward.comment.domain.Comment;
 import com.delgo.reward.domain.notify.NotifyType;
+import com.delgo.reward.service.NotifyService;
 import com.delgo.reward.user.domain.User;
-import com.delgo.reward.dto.comment.CommentResDTO;
-import com.delgo.reward.dto.comment.ReplyResDTO;
-import com.delgo.reward.record.comment.CommentRecord;
-import com.delgo.reward.record.comment.ModifyCommentRecord;
-import com.delgo.reward.record.comment.ReplyRecord;
-import com.delgo.reward.repository.CommentRepository;
+import com.delgo.reward.comment.response.CommentResDTO;
+import com.delgo.reward.comment.response.ReplyResDTO;
+import com.delgo.reward.comment.controller.request.CommentRecord;
+import com.delgo.reward.comment.controller.request.ModifyCommentRecord;
+import com.delgo.reward.comment.controller.request.ReplyRecord;
+import com.delgo.reward.comment.repository.CommentRepository;
 import com.delgo.reward.cert.service.CertQueryService;
 import com.delgo.reward.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
