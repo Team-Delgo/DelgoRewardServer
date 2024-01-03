@@ -1,7 +1,7 @@
 package com.delgo.reward.cert.controller;
 
 
-import com.delgo.reward.comm.CommController;
+import com.delgo.reward.common.controller.CommController;
 import com.delgo.reward.cert.service.async.CertAsyncService;
 import com.delgo.reward.cert.service.async.ClassificationAsyncService;
 import com.delgo.reward.comm.code.APICode;

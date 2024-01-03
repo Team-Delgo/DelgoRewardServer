@@ -1,7 +1,7 @@
 package com.delgo.reward.user.service;
 
 
-import com.delgo.reward.comm.CommService;
+import com.delgo.reward.common.service.CommService;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.comm.ncp.sms.SmsService;

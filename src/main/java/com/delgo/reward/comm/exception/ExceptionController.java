@@ -1,9 +1,9 @@
 package com.delgo.reward.comm.exception;
 
 
-import com.delgo.reward.comm.CommController;
+import com.delgo.reward.common.controller.CommController;
 import com.delgo.reward.comm.code.APICode;
-import com.delgo.reward.record.common.ResponseRecord;
+import com.delgo.reward.common.response.ResponseRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

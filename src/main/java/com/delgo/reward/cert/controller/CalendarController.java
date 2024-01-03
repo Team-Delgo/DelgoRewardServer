@@ -1,6 +1,6 @@
 package com.delgo.reward.cert.controller;
 
-import com.delgo.reward.comm.CommController;
+import com.delgo.reward.common.controller.CommController;
 import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.cert.domain.Reaction;
 import com.delgo.reward.cert.response.CalendarResponse;

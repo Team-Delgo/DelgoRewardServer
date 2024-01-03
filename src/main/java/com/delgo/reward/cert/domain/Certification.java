@@ -3,7 +3,7 @@ package com.delgo.reward.cert.domain;
 
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.code.domain.Code;
-import com.delgo.reward.domain.common.BaseTimeEntity;
+import com.delgo.reward.common.domain.BaseTimeEntity;
 import com.delgo.reward.user.domain.User;
 import com.delgo.reward.mungple.domain.Mungple;
 import com.delgo.reward.cert.controller.request.CertCreate;

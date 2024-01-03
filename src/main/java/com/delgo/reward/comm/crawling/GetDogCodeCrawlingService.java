@@ -1,4 +1,4 @@
-package com.delgo.reward.service.crawling;
+package com.delgo.reward.comm.crawling;
 
 import com.delgo.reward.comm.code.CodeType;
 import com.delgo.reward.code.domain.Code;

@@ -1,9 +1,8 @@
-package com.delgo.reward.controller;
+package com.delgo.reward.common.controller;
 
-import com.delgo.reward.comm.CommController;
+import com.delgo.reward.common.service.PhotoService;
 import com.delgo.reward.user.domain.User;
 import com.delgo.reward.user.response.UserResponse;
-import com.delgo.reward.service.*;
 import com.delgo.reward.user.service.UserCommandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

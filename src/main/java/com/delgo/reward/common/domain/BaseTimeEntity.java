@@ -1,4 +1,4 @@
-package com.delgo.reward.domain.common;
+package com.delgo.reward.common.domain;
 
 import lombok.Getter;
 import lombok.Setter;

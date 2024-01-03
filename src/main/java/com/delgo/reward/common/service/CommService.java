@@ -1,4 +1,4 @@
-package com.delgo.reward.comm;
+package com.delgo.reward.common.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

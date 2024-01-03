@@ -1,9 +1,9 @@
-package com.delgo.reward.service;
+package com.delgo.reward.common.service;
 
 
 import com.delgo.reward.comm.exception.NotFoundDataException;
-import com.delgo.reward.domain.Version;
-import com.delgo.reward.repository.VersionRepository;
+import com.delgo.reward.common.domain.Version;
+import com.delgo.reward.common.repository.VersionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

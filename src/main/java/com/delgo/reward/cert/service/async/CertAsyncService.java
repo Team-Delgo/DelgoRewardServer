@@ -3,7 +3,7 @@ package com.delgo.reward.cert.service.async;
 import com.delgo.reward.comm.ncp.greeneye.GreenEyeService;
 import com.delgo.reward.comm.ncp.storage.BucketName;
 import com.delgo.reward.cert.domain.Certification;
-import com.delgo.reward.service.PhotoService;
+import com.delgo.reward.common.service.PhotoService;
 import com.delgo.reward.cert.service.CertCommandService;
 import com.delgo.reward.cert.service.CertQueryService;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.delgo.reward.comment.controller;
 
-import com.delgo.reward.comm.CommController;
+import com.delgo.reward.common.controller.CommController;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comment.controller.request.CommentCreate;
 import com.delgo.reward.comment.controller.request.CommentUpdate;

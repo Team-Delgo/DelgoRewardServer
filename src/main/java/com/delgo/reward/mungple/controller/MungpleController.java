@@ -1,6 +1,6 @@
 package com.delgo.reward.mungple.controller;
 
-import com.delgo.reward.comm.CommController;
+import com.delgo.reward.common.controller.CommController;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.MungpleSort;
 import com.delgo.reward.comm.googlesheet.GoogleSheetService;
