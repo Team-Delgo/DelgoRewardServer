@@ -1,28 +1,25 @@
-package com.delgo.reward.comm.fcm;
+package com.delgo.reward.token.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 
+@Getter
 @Builder
 @AllArgsConstructor
-@Data
-public class FcmMessageDTO {
+public class FcmMessage {
     private boolean validateOnly;
     private Message message;
 
-    @Builder
-    @AllArgsConstructor
     @Getter
+    @Builder
     public static class Message {
         private Notification notification;
         private String token;
     }
 
-    @Builder
-    @AllArgsConstructor
     @Getter
+    @Builder
     public static class Notification {
         private String title;
         private String body;

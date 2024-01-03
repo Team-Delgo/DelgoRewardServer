@@ -1,12 +1,11 @@
 package com.delgo.reward.controller;
 
-import com.delgo.reward.comm.fcm.FcmService;
+import com.delgo.reward.token.service.FcmService;
 import com.delgo.reward.comm.security.SecurityConfig;
 import com.delgo.reward.comment.controller.CommentController;
 import com.delgo.reward.comment.domain.Comment;
 import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.user.domain.User;
-import com.delgo.reward.comment.response.CommentResponse;
 import com.delgo.reward.comment.controller.request.CommentCreate;
 import com.delgo.reward.cert.service.CertCommandService;
 import com.delgo.reward.comment.service.CommentService;
@@ -16,7 +15,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -70,7 +68,6 @@ public class CommentControllerTest {
                 .certificationId(10)
                 .placeName("Test Place")
                 .description("Test Description")
-                .photoUrl("https://example.com/photo.jpg")
                 .mungpleId(0)
                 .isHideAddress(false)
                 .address("Seoul, South Korea")
@@ -98,8 +95,6 @@ public class CommentControllerTest {
     void createCommentTest() throws Exception {
         CommentCreate commentCreate = new CommentCreate(comment.getUser().getUserId(), comment.getCertificationId(), comment.getContent());
 
-        CommentResponse resDTO = new CommentResponse(comment);
-        Mockito.when(commentService.create(commentCreate)).thenReturn(resDTO);
 
         mockMvc.perform(post("/api/comment")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -14,7 +14,7 @@ import com.delgo.reward.user.controller.request.PetUpdate;
 import com.delgo.reward.user.controller.request.UserUpdate;
 import com.delgo.reward.record.user.PasswordUpdate;
 import com.delgo.reward.user.service.PetService;
-import com.delgo.reward.service.TokenService;
+import com.delgo.reward.token.service.TokenService;
 import com.delgo.reward.cert.service.CertCommandService;
 import com.delgo.reward.user.service.UserCommandService;
 import com.delgo.reward.user.service.UserQueryService;

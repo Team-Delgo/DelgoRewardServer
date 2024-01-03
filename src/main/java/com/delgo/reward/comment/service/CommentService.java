@@ -1,7 +1,7 @@
 package com.delgo.reward.comment.service;
 
 import com.delgo.reward.comm.exception.NotFoundDataException;
-import com.delgo.reward.comm.fcm.FcmService;
+import com.delgo.reward.token.service.FcmService;
 import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.comment.domain.Comment;
 import com.delgo.reward.domain.notify.NotifyType;
