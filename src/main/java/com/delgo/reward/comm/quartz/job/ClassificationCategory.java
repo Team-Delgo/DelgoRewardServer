@@ -1,7 +1,7 @@
 //package com.delgo.reward.comm.quartz.job;
 //
-//import com.delgo.reward.domain.certification.Certification;
-//import com.delgo.reward.mongoService.ClassificationService;
+//import com.delgo.reward.cert.domain.Certification;
+//import com.delgo.reward.cert.service.ClassificationService;
 //import com.delgo.reward.service.cert.CertService;
 //import lombok.RequiredArgsConstructor;
 //import lombok.extern.slf4j.Slf4j;

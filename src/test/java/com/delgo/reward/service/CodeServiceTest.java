@@ -1,8 +1,9 @@
 package com.delgo.reward.service;
 
+import com.delgo.reward.code.service.CodeService;
 import com.delgo.reward.comm.code.CodeType;
 import com.delgo.reward.comm.exception.NotFoundDataException;
-import com.delgo.reward.domain.code.Code;
+import com.delgo.reward.code.domain.Code;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

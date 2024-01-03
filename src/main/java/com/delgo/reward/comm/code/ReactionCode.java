@@ -1,6 +1,6 @@
 package com.delgo.reward.comm.code;
 
-import com.delgo.reward.domain.certification.Reaction;
+import com.delgo.reward.cert.domain.Reaction;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
 

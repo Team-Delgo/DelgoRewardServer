@@ -5,13 +5,13 @@
 //import com.delgo.reward.comm.code.CategoryCode;
 //import com.delgo.reward.comm.config.WebConfig;
 //import com.delgo.reward.comm.security.SecurityConfig;
-//import com.delgo.reward.domain.certification.Certification;
-//import com.delgo.reward.domain.user.User;
+//import com.delgo.reward.cert.domain.Certification;
+//import com.delgo.reward.user.domain.User;
 //import com.delgo.reward.dto.cert.CertByAchvResDTO;
 //import com.delgo.reward.dto.cert.CertByMungpleResDTO;
 //import com.delgo.reward.dto.cert.CertResDTO;
 //import com.delgo.reward.dto.comm.PageResDTO;
-//import com.delgo.reward.mongoService.ClassificationService;
+//import com.delgo.reward.cert.service.ClassificationService;
 //import com.delgo.reward.record.certification.CertRecord;
 //import com.delgo.reward.record.certification.ModifyCertRecord;
 //import com.delgo.reward.service.cert.CertService;

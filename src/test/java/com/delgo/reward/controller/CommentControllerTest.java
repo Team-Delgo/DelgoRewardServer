@@ -1,21 +1,20 @@
 package com.delgo.reward.controller;
 
-import com.delgo.reward.comm.fcm.FcmService;
+import com.delgo.reward.token.service.FcmService;
 import com.delgo.reward.comm.security.SecurityConfig;
-import com.delgo.reward.domain.Comment;
-import com.delgo.reward.domain.certification.Certification;
-import com.delgo.reward.domain.user.User;
-import com.delgo.reward.dto.comment.CommentResDTO;
-import com.delgo.reward.record.comment.CommentRecord;
-import com.delgo.reward.service.cert.CertCommandService;
-import com.delgo.reward.service.CommentService;
-import com.delgo.reward.service.NotifyService;
-import com.delgo.reward.service.UserService;
+import com.delgo.reward.comment.controller.CommentController;
+import com.delgo.reward.comment.domain.Comment;
+import com.delgo.reward.cert.domain.Certification;
+import com.delgo.reward.user.domain.User;
+import com.delgo.reward.comment.controller.request.CommentCreate;
+import com.delgo.reward.cert.service.CertCommandService;
+import com.delgo.reward.comment.service.CommentService;
+import com.delgo.reward.notify.service.NotifyService;
+import com.delgo.reward.user.service.UserQueryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -45,7 +44,7 @@ public class CommentControllerTest {
     @MockBean private CommentService commentService;
     @MockBean private FcmService fcmService;
     @MockBean private CertCommandService certService;
-    @MockBean private UserService userService;
+    @MockBean private UserQueryService userQueryService;
     @MockBean private NotifyService notifyService;
 
 
@@ -69,7 +68,6 @@ public class CommentControllerTest {
                 .certificationId(10)
                 .placeName("Test Place")
                 .description("Test Description")
-                .photoUrl("https://example.com/photo.jpg")
                 .mungpleId(0)
                 .isHideAddress(false)
                 .address("Seoul, South Korea")
@@ -95,14 +93,12 @@ public class CommentControllerTest {
     @Test
     @DisplayName("[API][POST] Comment 생성")
     void createCommentTest() throws Exception {
-        CommentRecord commentRecord = new CommentRecord(comment.getUser().getUserId(), comment.getCertificationId(), comment.getContent());
+        CommentCreate commentCreate = new CommentCreate(comment.getUser().getUserId(), comment.getCertificationId(), comment.getContent());
 
-        CommentResDTO resDTO = new CommentResDTO(comment);
-        Mockito.when(commentService.createComment(commentRecord)).thenReturn(resDTO);
 
         mockMvc.perform(post("/api/comment")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(commentRecord)))
+                        .content(new ObjectMapper().writeValueAsString(commentCreate)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 

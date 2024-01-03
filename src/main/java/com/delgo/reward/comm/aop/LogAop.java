@@ -1,6 +1,6 @@
 package com.delgo.reward.comm.aop;
 
-import com.delgo.reward.record.common.ResponseRecord;
+import com.delgo.reward.common.response.ResponseRecord;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

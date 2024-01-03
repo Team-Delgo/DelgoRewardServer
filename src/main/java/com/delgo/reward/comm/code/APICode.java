@@ -26,6 +26,7 @@ public enum APICode {
     PHONE_NO_NOT_EXIST("370", "존재하지 않는 전화번호입니다."),
     PHONE_NO_DUPLICATE_ERROR("371", "이미 존재하는 전화번호입니다."),
     EMAIL_DUPLICATE_ERROR("371", "이미 존재하는 이메일입니다."),
+    NAME_DUPLICATE_ERROR("372", "이미 존재하는 이름입니다."),
 
     // SMS AUTH ERROR
     AUTH_DO_NOT_MATCHING("317", "인증에 실패하였습니다."),
