@@ -71,8 +71,8 @@ public class MungpleService {
             case DISTANCE -> new DistanceSorting(latitude, longitude);
             case BOOKMARK -> new BookmarkCountSorting(bookmarkService.getCountMapByMungple());
             case CERT -> new CertCountSorting(bookmarkService.getCountMapByMungple());
-            case NEWEST -> new NewestSorting(bookmarkService.getActiveBookmarkByUserId(userId));
-            case OLDEST -> new OldestSorting(bookmarkService.getActiveBookmarkByUserId(userId));
+            case NEWEST -> new NewestSorting(bookmarkService.getListByUserId(userId));
+            case OLDEST -> new OldestSorting(bookmarkService.getListByUserId(userId));
             case NOT -> new NotSorting();
         };
     }

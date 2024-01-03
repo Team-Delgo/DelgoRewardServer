@@ -12,7 +12,6 @@ import java.util.List;
 @Getter
 @Entity
 @Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class Bookmark extends BaseTimeEntity {
@@ -23,12 +22,26 @@ public class Bookmark extends BaseTimeEntity {
     private Integer mungpleId;
     private Boolean isBookmarked;
 
-    public Bookmark setIsBookmarkedReverse(){
-        this.isBookmarked = !this.isBookmarked;
-        return this;
+    public static Bookmark from(int userId, int mungpleId) {
+        return Bookmark.builder()
+                .userId(userId)
+                .mungpleId(mungpleId)
+                .isBookmarked(true)
+                .build();
+    }
+
+    public Bookmark update() {
+        return Bookmark.builder()
+                .bookmarkId(bookmarkId)
+                .userId(userId)
+                .mungpleId(mungpleId)
+                .isBookmarked(!isBookmarked)
+                .build();
     }
 
     public static List<Integer> getMungpleIdList(List<Bookmark> bookmarkList){
         return bookmarkList.stream().map(Bookmark::getMungpleId).toList();
     }
+
+
 }
