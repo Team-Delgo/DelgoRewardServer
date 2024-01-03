@@ -1,7 +1,8 @@
 package com.delgo.reward;
 
-import com.delgo.reward.mongoDomain.mungple.Mungple;
-import com.delgo.reward.mongoRepository.MungpleRepository;
+import com.delgo.reward.token.service.FcmService;
+import com.delgo.reward.mungple.domain.Mungple;
+import com.delgo.reward.mungple.repository.MungpleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +19,8 @@ import java.util.List;
 public class ParsingTest {
 
     @Autowired
+    private FcmService fcmService;
+    @Autowired
     private MungpleRepository mungpleRepository;
 
 
@@ -32,7 +35,7 @@ public class ParsingTest {
     @Test
     public void textParsingTEST() {
       String text =  "강동구_애견동반카페_담금_menu_3";
-      
+
       String[] text_arr = text.split("_");
         System.out.println("text_arr = " + Arrays.toString(text_arr));
 
@@ -53,5 +56,10 @@ public class ParsingTest {
             default:
                 System.out.println("photo");
         }
-    } 
+    }
+    @Test
+    public void test(){
+        int userId = 364;
+        fcmService.push(userId, "test");
+    }
 }

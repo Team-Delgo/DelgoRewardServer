@@ -2,7 +2,7 @@ package com.delgo.reward.comm.security.jwt.filter;
 
 
 import com.delgo.reward.comm.security.services.PrincipalDetails;
-import com.delgo.reward.record.user.LoginRecord;
+import com.delgo.reward.common.controller.request.LoginRecord;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

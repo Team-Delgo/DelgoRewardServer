@@ -2,8 +2,8 @@ package com.delgo.reward.comm.googlesheet;
 
 import com.delgo.reward.comm.exception.FigmaException;
 import com.delgo.reward.comm.ncp.storage.BucketName;
-import com.delgo.reward.mongoDomain.mungple.Mungple;
-import com.delgo.reward.service.PhotoService;
+import com.delgo.reward.mungple.domain.Mungple;
+import com.delgo.reward.common.service.PhotoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
