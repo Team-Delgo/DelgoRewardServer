@@ -8,6 +8,7 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.delgo.reward.comm.exception.TokenException;
 import com.delgo.reward.comm.security.jwt.config.AccessTokenProperties;
 import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
+import com.delgo.reward.domain.user.Token;
 import com.delgo.reward.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,8 +73,8 @@ public class JwtService {
                     .getClaim("userId")
                     .asInt();
 
-            String refreshTokenFromDB = tokenService.getRefreshToken(userId);
-            if (!StringUtils.hasText(refreshToken) || !refreshTokenFromDB.equals(refreshToken))
+            Token tokenByDatabase = tokenService.getOneByUserId(userId);
+            if (!StringUtils.hasText(tokenByDatabase.getRefreshToken()) || !refreshToken.equals(tokenByDatabase.getRefreshToken()))
                 throw new TokenException("TOKEN DB ERROR");
 
             return userId;
@@ -99,7 +100,7 @@ public class JwtService {
                 .build();
 
         // Refresh Token DB Update
-        tokenService.saveRefreshToken(jwt.getUserId(),jwt.getRefreshToken());
+        tokenService.create(jwt);
 
         response.addHeader("Set-Cookie", cookie.toString());
         return response;

@@ -1,5 +1,6 @@
 package com.delgo.reward.comm.fcm;
 
+import com.delgo.reward.domain.user.Token;
 import com.delgo.reward.user.domain.User;
 import com.delgo.reward.service.TokenService;
 import com.delgo.reward.user.service.UserQueryService;
@@ -9,13 +10,14 @@ import com.google.auth.oauth2.GoogleCredentials;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
+
 
 @Slf4j
 @Service
@@ -29,10 +31,10 @@ public class FcmService {
 
     public void push(int userId, String notifyMsg) {
         try {
-            Optional<String> ownerFcmToken = tokenService.getFcmToken(userId);
+            Token token = tokenService.getOneByUserId(userId);
             User user = userQueryService.getOneByUserId(userId);
-            if (user.getIsNotify() && ownerFcmToken.isPresent()) {
-                sendMessageTo(ownerFcmToken.get(), notifyMsg);
+            if (user.getIsNotify() && StringUtils.isNotEmpty(token.getFcmToken())) {
+                sendMessageTo(token.getFcmToken(), notifyMsg);
             }
         } catch (Exception e) {
             log.error("PUSH ERROR userId = {}, notifyMsg = {}", userId, notifyMsg);

@@ -1,6 +1,8 @@
 package com.delgo.reward.domain.user;
 
+import com.delgo.reward.comm.security.jwt.JwtToken;
 import com.delgo.reward.domain.common.BaseTimeEntity;
+import com.delgo.reward.dto.FcmTokenCreate;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -16,4 +18,34 @@ public class Token extends BaseTimeEntity {
     private Integer userId;
     private String refreshToken;
     private String fcmToken;
+
+    public static Token from(FcmTokenCreate fcmTokenCreate) {
+        return Token.builder()
+                .userId(fcmTokenCreate.userId())
+                .fcmToken(fcmTokenCreate.fcmToken())
+                .build();
+    }
+
+    public Token update(FcmTokenCreate fcmTokenCreate) {
+        return Token.builder()
+                .userId(fcmTokenCreate.userId())
+                .fcmToken(fcmTokenCreate.fcmToken())
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    public static Token from(JwtToken jwtToken) {
+        return Token.builder()
+                .userId(jwtToken.getUserId())
+                .refreshToken(jwtToken.getRefreshToken())
+                .build();
+    }
+
+    public Token update(JwtToken jwtToken) {
+        return Token.builder()
+                .userId(jwtToken.getUserId())
+                .fcmToken(fcmToken)
+                .refreshToken(jwtToken.getRefreshToken())
+                .build();
+    }
 }
