@@ -24,6 +24,6 @@ public class NotifyController extends CommController {
      */
     @GetMapping("/all")
     public ResponseEntity<?> getAllNotifyByUserId(@RequestParam int userId){
-        return SuccessReturn(notifyService.getAllNotifyByUserId(userId));
+        return SuccessReturn(notifyService.getListByUserId(userId));
     }
 }

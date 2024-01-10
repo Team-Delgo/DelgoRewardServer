@@ -1,8 +1,9 @@
 package com.delgo.reward.notify.domain;
 
+import com.delgo.reward.token.domain.NotifyType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -10,7 +11,6 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class Notify {
@@ -22,16 +22,14 @@ public class Notify {
     private NotifyType notifyType;
     private String notifyMsg;
     @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
-    @CreationTimestamp
+    @CreatedDate
     private LocalDateTime createAt;
 
-    public Notify toEntity(int userId, NotifyType notifyType, String notifyMsg){
+    public static Notify from(int userId, NotifyType notifyType, String notifyMsg){
         return Notify.builder()
                 .userId(userId)
                 .notifyType(notifyType)
                 .notifyMsg(notifyMsg)
-                .createAt(LocalDateTime.now())
                 .build();
-
     }
 }

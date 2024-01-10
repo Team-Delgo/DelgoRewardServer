@@ -3,35 +3,28 @@ package com.delgo.reward.comm.code;
 import com.delgo.reward.cert.domain.Reaction;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Getter
+@AllArgsConstructor
 @Schema(enumAsRef = true, description = """
         리액션 유형:
         * `HELPER` - 도움돼요
         * `CUTE` - 귀여워요
         """)
 public enum ReactionCode {
-    HELPER("HELPER", "도움돼요"),
-    CUTE("CUTE", "귀여워요");
+    HELPER("HELPER", "도움돼요", "도움돼요😃를 받았어요", "님이 도움돼요😃를 남겼어요"),
+    CUTE("CUTE", "귀여워요", "귀여워요😍를 받았어요", "님이 귀여워요😍를 남겼어요");
 
     private final String code;
     private final String desc;
-
-    ReactionCode(String code, String desc) {
-        this.code = code;
-        this.desc = desc;
-    }
-
-    public String getCode() {
-        return this.code;
-    }
-
-    public String getDesc() {
-        return this.desc;
-    }
+    private final String pushTitle;
+    private final String pushBody;
 
     public static Map<ReactionCode, Boolean> initializeReactionMap() {
         Map<ReactionCode, Boolean> reactionMap = new HashMap<>();

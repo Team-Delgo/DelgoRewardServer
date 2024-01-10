@@ -8,21 +8,15 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class FcmMessage {
-    private boolean validateOnly;
-    private Message message;
+    private String token;
+    private FcmData data; // aos
+    private FcmIOS apns; // ios
 
-    @Getter
-    @Builder
-    public static class Message {
-        private Notification notification;
-        private String token;
-    }
-
-    @Getter
-    @Builder
-    public static class Notification {
-        private String title;
-        private String body;
-        private String image;
+    public static FcmMessage from(String token, FcmData fcmData, FcmIOS fcmIOS) {
+        return FcmMessage.builder()
+                .token(token)
+                .data(fcmData)
+                .apns(fcmIOS)
+                .build();
     }
 }
