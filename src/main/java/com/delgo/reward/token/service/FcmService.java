@@ -1,10 +1,13 @@
 package com.delgo.reward.token.service;
 
-import com.delgo.reward.token.domain.Token;
-import com.delgo.reward.token.domain.FcmMessage;
+import com.delgo.reward.cert.domain.Certification;
+import com.delgo.reward.cert.service.CertQueryService;
+import com.delgo.reward.comm.code.ReactionCode;
+import com.delgo.reward.notify.domain.Notify;
+import com.delgo.reward.notify.service.NotifyService;
+import com.delgo.reward.token.domain.*;
 import com.delgo.reward.user.domain.User;
 import com.delgo.reward.user.service.UserQueryService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -24,27 +28,80 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FcmService {
     private final TokenService tokenService;
+    private final NotifyService notifyService;
     private final UserQueryService userQueryService;
+    private final CertQueryService certQueryService;
 
-    public void push(int userId, String notifyMsg) {
+    public void pushByComment(int sendUserId, int receiveUserId, int certificationId) {
         try {
-            Token token = tokenService.getOneByUserId(userId);
-            User user = userQueryService.getOneByUserId(userId);
-            if (user.getIsNotify() && StringUtils.isNotEmpty(token.getFcmToken())) {
-                sendMessageTo(token.getFcmToken(), notifyMsg);
-            }
+            Token token = tokenService.getOneByUserId(receiveUserId);
+            User recipient = userQueryService.getOneByUserId(receiveUserId);
+
+            if (!recipient.getIsNotify() || StringUtils.isEmpty(token.getFcmToken())) return;
+
+            User sender = userQueryService.getOneByUserId(sendUserId);
+            Certification certification = certQueryService.getOneById(certificationId);
+            Notify notify = notifyService.save(recipient.getUserId(), NotifyType.Comment, NotifyType.Comment.getBody());
+
+            String title = NotifyType.Comment.getTitle();
+            String body = "["+ sender.getName() +"]" + NotifyType.Comment.getBody();
+            String url = NotifyType.Comment.getUrl() + certificationId;
+            String image = certification.getPhotos().get(0);
+
+            FcmMessage message = FcmMessage.from(
+                    token.getFcmToken(),
+                    FcmData.from(NotifyType.Comment, title, body, url, image), // 안드로이드
+                    FcmIOS.from(NotifyType.Comment, title, url, image, notify.getNotifyId()) // 애플
+            );
+
+            sendMessageTo(message);
+
         } catch (Exception e) {
-            log.error("PUSH ERROR userId = {}, notifyMsg = {}", userId, notifyMsg);
+            log.error("[FCM] Comment receiveUserId = {}, certificationId = {} ", receiveUserId, certificationId);
             throw new RuntimeException("PUSH ERROR");
         }
     }
 
-    private void sendMessageTo(String targetToken, String body) throws IOException {
+    public void pushByReaction(int sendUserId, int receiveUserId,int certificationId, ReactionCode reactionCode) {
+        try {
+            Token token = tokenService.getOneByUserId(receiveUserId);
+            User recipient = userQueryService.getOneByUserId(receiveUserId);
+            if (!recipient.getIsNotify() || StringUtils.isEmpty(token.getFcmToken())) return;
+
+            User sender = userQueryService.getOneByUserId(sendUserId);
+            Certification certification = certQueryService.getOneById(certificationId);
+            Notify notify = notifyService.save(recipient.getUserId(), NotifyType.Comment, NotifyType.Reaction.getBody());
+
+            String title = reactionCode.getPushTitle();
+            String body = "["+ sender.getName() +"] " + reactionCode.getPushBody();
+            String url = NotifyType.Reaction.getUrl() + certificationId;
+            String image = certification.getPhotos().get(0);
+
+            FcmMessage message = FcmMessage.from(
+                    token.getFcmToken(),
+                    FcmData.from(NotifyType.Reaction, title, body, url, image), // 안드로이드
+                    FcmIOS.from(NotifyType.Reaction, title, url, image, notify.getNotifyId()) // 애플
+            );
+
+            sendMessageTo(message);
+
+        } catch (Exception e) {
+            log.error("[FCM] Comment receiveUserId = {}, certificationId = {} ", receiveUserId, certificationId);
+            throw new RuntimeException("PUSH ERROR");
+        }
+    }
+
+    private void sendMessageTo(FcmMessage fcmMessage) throws IOException {
         String API_URL = "https://fcm.googleapis.com/v1/projects/delgoreward/messages:send";
-        String message = makeMessage(targetToken, body);
+
+        String json = new ObjectMapper().writeValueAsString(
+                Map.of("validateOnly", false,
+                        "message", fcmMessage));
+
+        System.out.println("json = " + json);
 
         OkHttpClient client = new OkHttpClient();
-        RequestBody requestBody = RequestBody.create(MediaType.get("application/json; charset=utf-8"), message);
+        RequestBody requestBody = RequestBody.create(MediaType.get("application/json; charset=utf-8"), json);
         Request request = new Request.Builder()
                 .url(API_URL)
                 .post(requestBody)
@@ -53,23 +110,9 @@ public class FcmService {
                 .build();
 
         Response response = client.newCall(request).execute();
+        assert response.body() != null;
+        System.out.println("response = " + response.body().string());
         response.close();
-    }
-
-    private String makeMessage(String targetToken, String body) throws JsonProcessingException {
-        FcmMessage fcmMessage = FcmMessage.builder()
-                .message(FcmMessage.Message.builder()
-                        .token(targetToken)
-                        .notification(FcmMessage.Notification.builder()
-                                .title("Delgo")
-                                .body(body)
-                                .image(null)
-                                .build()
-                        ).build())
-                .validateOnly(false)
-                .build();
-
-        return new ObjectMapper().writeValueAsString(fcmMessage);
     }
 
     private String getAccessToken() throws IOException {

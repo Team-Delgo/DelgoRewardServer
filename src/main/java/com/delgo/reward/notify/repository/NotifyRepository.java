@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface NotifyRepository extends JpaRepository<Notify, Integer> {
-    List<Notify> findAllByUserIdOrderByCreateAtDesc(int userId);
+    List<Notify> findListByUserIdOrderByCreateAtDesc(int userId);
 }

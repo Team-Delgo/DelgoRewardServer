@@ -57,9 +57,4 @@ public class ParsingTest {
                 System.out.println("photo");
         }
     }
-    @Test
-    public void test(){
-        int userId = 364;
-        fcmService.push(userId, "test");
-    }
 }
