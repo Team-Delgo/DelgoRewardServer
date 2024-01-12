@@ -4,6 +4,7 @@ import com.delgo.reward.comm.code.ReactionCode;
 import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.cert.domain.Reaction;
 import com.delgo.reward.cert.repository.ReactionRepository;
+import com.delgo.reward.token.service.FcmService;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,13 +20,24 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReactionService {
     private final ReactionRepository reactionRepository;
+    private final CertQueryService certQueryService;
+    private final FcmService fcmService;
 
     /**
      * 생성
      */
     @Transactional
     public Reaction create(int userId, int certificationId, ReactionCode reactionCode) {
-        return reactionRepository.save(Reaction.from(userId, certificationId, reactionCode));
+        Reaction reaction = reactionRepository.save(Reaction.from(userId, certificationId, reactionCode));
+        Certification certification = certQueryService.getOneById(certificationId);
+
+        if (reactionCode.equals(ReactionCode.HELPER)) {
+            fcmService.helper(userId, certification.getUserId(), certificationId);
+        } else {
+            fcmService.cute(userId, certification.getUserId(), certificationId);
+        }
+
+        return reaction;
     }
 
     /**

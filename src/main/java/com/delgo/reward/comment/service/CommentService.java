@@ -44,7 +44,7 @@ public class CommentService {
         certification.setCommentCount(commentCount);
 
         // 인증 유저 알림
-        fcmService.pushByComment(commentCreate.userId(), certification.getUser().getUserId() ,commentCreate.certificationId());
+        fcmService.comment(user.getUserId(), certification.getUserId(), certification.getCertificationId());
         return comment;
     }
 
@@ -111,11 +111,11 @@ public class CommentService {
         certification.setCommentCount(commentCount);
 
         // 인증 유저 알림
-        fcmService.pushByComment(replyCreate.userId(), certification.getUser().getUserId() ,replyCreate.certificationId());
+        fcmService.comment(replyCreate.userId(), certification.getUserId() ,replyCreate.certificationId());
 
         // 부모 댓글 유저 알림
         int commentOwnerId = getOneById(replyCreate.parentCommentId()).getUser().getUserId();
-        fcmService.pushByComment(replyCreate.userId(), commentOwnerId ,replyCreate.certificationId());
+        fcmService.comment(replyCreate.userId(), commentOwnerId, replyCreate.certificationId());
 
         return reply;
     }

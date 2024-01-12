@@ -6,19 +6,19 @@ import lombok.Getter;
 @Getter
 @Builder
 public class FcmData {
-    private String tag;
-    private String url;
     private String title;
     private String body;
     private String image;
+    private String tag;
+    private String url;
 
-    public static FcmData from(NotifyType notifyType, String title, String body, String url, String image) {
+    public static FcmData from(String title, String body, String image, String tag, String url) {
         return FcmData.builder()
-                .url(url)
-                .tag(notifyType.getTag())
-                .title(title) // 유저 명
+                .title(title)
                 .body(body)
                 .image(image)
+                .tag(tag)
+                .url(url)
                 .build();
     }
 }

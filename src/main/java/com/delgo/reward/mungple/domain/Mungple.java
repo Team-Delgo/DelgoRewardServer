@@ -203,4 +203,12 @@ public class Mungple {
     public static Map<Integer, Mungple> listToMap(List<Mungple> mungpleList) {
         return mungpleList.stream().collect(Collectors.toMap(Mungple::getMungpleId, Function.identity()));
     }
+
+    public String getAddressForPush() {
+        return findAddressName(jibunAddress, isExistGu(jibunAddress) ? "구" : "시");
+    }
+
+    public String getThumbnailUrl() {
+        return photoUrls.get(0);
+    }
 }
