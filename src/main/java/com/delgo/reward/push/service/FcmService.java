@@ -1,10 +1,11 @@
-package com.delgo.reward.token.service;
+package com.delgo.reward.push.service;
 
 import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.cert.service.CertQueryService;
 import com.delgo.reward.mungple.domain.Mungple;
 import com.delgo.reward.mungple.service.MungpleService;
-import com.delgo.reward.token.domain.*;
+import com.delgo.reward.push.domain.FcmMessage;
+import com.delgo.reward.push.domain.NotifyType;
 import com.delgo.reward.user.domain.User;
 import com.delgo.reward.user.service.UserQueryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,13 +26,14 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class FcmService {
+    private final NotifyService notifyService;
     private final MungpleService mungpleService;
     private final UserQueryService userQueryService;
     private final CertQueryService certQueryService;
 
     public void comment(int sendUserId,int receiveUserId, int certificationId) {
         try {
-            if(userQueryService.checkNotificationPermission(receiveUserId)) return;
+            if(!userQueryService.checkNotificationPermission(receiveUserId)) return;
 
             User sender = userQueryService.getOneByUserId(sendUserId);
             User receiver = userQueryService.getOneByUserId(receiveUserId);
@@ -40,6 +42,7 @@ public class FcmService {
             FcmMessage message = FcmMessage.cert(NotifyType.Comment, receiver.getFcmToken(), sender.getName(), certification);
             sendMessageTo(message);
 
+            notifyService.create(receiver.getUserId(), message.getData().getBody(), NotifyType.Comment);
         } catch (Exception e) {
             log.error("[FCM] ERROR : {}", e.getMessage());
             throw new RuntimeException("PUSH ERROR");
@@ -48,7 +51,7 @@ public class FcmService {
 
     public void helper(int sendUserId, int receiveUserId, int certificationId) {
         try {
-            if(userQueryService.checkNotificationPermission(receiveUserId)) return;
+            if(!userQueryService.checkNotificationPermission(receiveUserId)) return;
 
             User sender = userQueryService.getOneByUserId(sendUserId);
             User receiver = userQueryService.getOneByUserId(receiveUserId);
@@ -57,6 +60,7 @@ public class FcmService {
             FcmMessage message = FcmMessage.cert(NotifyType.Helper, receiver.getFcmToken(), sender.getName(), certification);
             sendMessageTo(message);
 
+            notifyService.create(receiver.getUserId(), message.getData().getBody(), NotifyType.Helper);
         } catch (Exception e) {
             log.error("[FCM] ERROR : {}", e.getMessage());
             throw new RuntimeException("PUSH ERROR");
@@ -65,7 +69,7 @@ public class FcmService {
 
     public void cute(int sendUserId, int receiveUserId, int certificationId) {
         try {
-            if(userQueryService.checkNotificationPermission(receiveUserId)) return;
+            if(!userQueryService.checkNotificationPermission(receiveUserId)) return;
 
             User sender = userQueryService.getOneByUserId(sendUserId);
             User receiver = userQueryService.getOneByUserId(receiveUserId);
@@ -74,6 +78,7 @@ public class FcmService {
             FcmMessage message = FcmMessage.cert(NotifyType.Cute, receiver.getFcmToken(), sender.getName(), certification);
             sendMessageTo(message);
 
+            notifyService.create(receiver.getUserId(), message.getData().getBody(), NotifyType.Cute);
         } catch (Exception e) {
             log.error("[FCM] ERROR : {}", e.getMessage());
             throw new RuntimeException("PUSH ERROR");
@@ -82,7 +87,7 @@ public class FcmService {
 
     public void mungple(int receiveUserId, int mungpleId) {
         try {
-            if(userQueryService.checkNotificationPermission(receiveUserId)) return;
+            if(!userQueryService.checkNotificationPermission(receiveUserId)) return;
 
             User receiver = userQueryService.getOneByUserId(receiveUserId);
             Mungple mungple = mungpleService.getOneByMungpleId(mungpleId);
@@ -90,6 +95,7 @@ public class FcmService {
             FcmMessage message = FcmMessage.mungple(NotifyType.Mungple, receiver.getFcmToken(), receiver.getPetName(), mungple);
             sendMessageTo(message);
 
+            notifyService.create(receiver.getUserId(), message.getData().getBody(), NotifyType.Mungple);
         } catch (Exception e) {
             log.error("[FCM] ERROR : {}", e.getMessage());
             throw new RuntimeException("PUSH ERROR");
@@ -98,7 +104,7 @@ public class FcmService {
 
     public void mungpleByMe(int receiveUserId, int mungpleId) {
         try {
-            if(userQueryService.checkNotificationPermission(receiveUserId)) return;
+            if(!userQueryService.checkNotificationPermission(receiveUserId)) return;
 
             User receiver = userQueryService.getOneByUserId(receiveUserId);
             Mungple mungple = mungpleService.getOneByMungpleId(mungpleId);
@@ -106,6 +112,7 @@ public class FcmService {
             FcmMessage message = FcmMessage.mungple(NotifyType.MungpleByMe, receiver.getFcmToken(), receiver.getPetName(), mungple);
             sendMessageTo(message);
 
+            notifyService.create(receiver.getUserId(), message.getData().getBody(), NotifyType.MungpleByMe);
         } catch (Exception e) {
             log.error("[FCM] ERROR : {}", e.getMessage());
             throw new RuntimeException("PUSH ERROR");
@@ -114,15 +121,16 @@ public class FcmService {
 
     public void mungpleByOther(int firstWriterId, int receiveUserId, int mungpleId) {
         try {
-            if(userQueryService.checkNotificationPermission(receiveUserId)) return;
+            if(!userQueryService.checkNotificationPermission(receiveUserId)) return;
 
             User firstWriter = userQueryService.getOneByUserId(firstWriterId);
             User receiver = userQueryService.getOneByUserId(receiveUserId);
             Mungple mungple = mungpleService.getOneByMungpleId(mungpleId);
 
-            FcmMessage message = FcmMessage.mungple(NotifyType.MungpleByMe, receiver.getFcmToken(), firstWriter.getPetName(), mungple);
+            FcmMessage message = FcmMessage.mungple(NotifyType.MungpleByOther, receiver.getFcmToken(), firstWriter.getPetName(), mungple);
             sendMessageTo(message);
 
+            notifyService.create(receiver.getUserId(), message.getData().getBody(), NotifyType.MungpleByOther);
         } catch (Exception e) {
             log.error("[FCM] ERROR : {}", e.getMessage());
             throw new RuntimeException("PUSH ERROR");

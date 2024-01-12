@@ -1,4 +1,4 @@
-package com.delgo.reward.token.domain;
+package com.delgo.reward.push.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;

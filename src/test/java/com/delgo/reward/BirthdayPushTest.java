@@ -1,6 +1,6 @@
 //package com.delgo.reward;
 //
-//import com.delgo.reward.token.service.FcmService;
+//import com.delgo.reward.push.service.FcmService;
 //import com.delgo.reward.user.domain.Pet;
 //import com.delgo.reward.user.repository.PetRepository;
 //import org.junit.Test;

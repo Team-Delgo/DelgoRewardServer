@@ -1,6 +1,5 @@
-package com.delgo.reward.notify.domain;
+package com.delgo.reward.push.domain;
 
-import com.delgo.reward.token.domain.NotifyType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -18,18 +17,17 @@ public class Notify {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int notifyId;
     private int userId;
+    private String notifyMsg;
     @Enumerated(EnumType.STRING)
     private NotifyType notifyType;
-    private String notifyMsg;
-    @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
-    @CreatedDate
+    @CreatedDate @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
     private LocalDateTime createAt;
 
-    public static Notify from(int userId, NotifyType notifyType, String notifyMsg){
+    public static Notify from(int userId, String notifyMsg, NotifyType notifyType) {
         return Notify.builder()
                 .userId(userId)
-                .notifyType(notifyType)
                 .notifyMsg(notifyMsg)
+                .notifyType(notifyType)
                 .build();
     }
 }

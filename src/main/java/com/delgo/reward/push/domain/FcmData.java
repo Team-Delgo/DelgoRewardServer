@@ -1,4 +1,4 @@
-package com.delgo.reward.token.domain;
+package com.delgo.reward.push.domain;
 
 import lombok.Builder;
 import lombok.Getter;

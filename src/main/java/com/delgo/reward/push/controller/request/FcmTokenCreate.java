@@ -1,4 +1,4 @@
-package com.delgo.reward.token.controller.request;
+package com.delgo.reward.push.controller.request;
 
 
 public record FcmTokenCreate(

@@ -1,4 +1,4 @@
-package com.delgo.reward.token.domain;
+package com.delgo.reward.push.domain;
 
 import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.mungple.domain.Mungple;

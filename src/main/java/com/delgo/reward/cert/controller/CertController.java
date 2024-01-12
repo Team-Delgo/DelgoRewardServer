@@ -9,7 +9,7 @@ import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.ReactionCode;
 import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.cert.domain.Reaction;
-import com.delgo.reward.token.service.FcmService;
+import com.delgo.reward.push.service.FcmService;
 import com.delgo.reward.user.domain.User;
 import com.delgo.reward.cert.response.CertResponse;
 import com.delgo.reward.cert.response.PageCertResponse;

@@ -5,11 +5,14 @@ import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.user.domain.User;
 import com.delgo.reward.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 @Service
@@ -41,6 +44,10 @@ public class UserQueryService {
         return userRepository.searchByName(searchWord, pageable);
     }
 
+    public List<User> getListByPGeoCode(String pGeoCode) {
+        return userRepository.findListBypGeoCode(pGeoCode);
+    }
+
     public boolean isPhoneNoExisting(String phoneNo) {
         return userRepository.findOneByPhoneNo(phoneNo).isPresent();
     }
@@ -56,8 +63,10 @@ public class UserQueryService {
     public boolean checkNotificationPermission(int userId) {
         User user = getOneByUserId(userId);
         boolean isNotify = user.getIsNotify();
-        boolean hasRefreshToken = StringUtils.isNotEmpty(user.getToken().getRefreshToken());
-        return isNotify && hasRefreshToken;
+        System.out.println("isNotify = " + isNotify);
+        boolean hasFcmToken = StringUtils.isNotEmpty(user.getFcmToken());
+        System.out.println("hasRefreshToken = " + hasFcmToken);
+        return isNotify && hasFcmToken;
     }
 
     public boolean isAppleUniqueNoExisting(String appleUniqueNo) {

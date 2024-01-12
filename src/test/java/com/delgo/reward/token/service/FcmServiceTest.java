@@ -1,11 +1,12 @@
 package com.delgo.reward.token.service;
 
-import com.delgo.reward.comm.code.ReactionCode;
+import com.delgo.reward.push.service.FcmService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -13,40 +14,82 @@ class FcmServiceTest {
     @Autowired
     FcmService fcmService;
 
+//    int receiveUserId = 332; // 창민 AOS
+//    int receiveUserId = 364; // 동재 AOS
+//    int receiveUserId = 276; // 서은 IOS
+//    int receiveUserId = 637; // 창민 IOS
+
     @Test
-    void pushByComment() {
+    void comment() {
         // given
-        int certificationId = 1052;
         int sendUserId = 332;
-
-//        int receiveUserId = 332; // 창민 AOS
-        int receiveUserId = 364; // 동재 AOS
-//        int receiveUserId = 276; // 서은 IOS
-//        int receiveUserId = 637; // 창민 IOS
-
+        int receiveUserId = 364;
+        int certificationId = 1200;
 
         // when
-        fcmService.pushByComment(sendUserId, receiveUserId, certificationId);
+        fcmService.comment(sendUserId, receiveUserId, certificationId);
+
+        // then
+    }
+    @Test
+    void helper() {
+        // given
+        int sendUserId = 332;
+        int receiveUserId = 364;
+        int certificationId = 1200;
+
+        // when
+        fcmService.helper(sendUserId, receiveUserId, certificationId);
+
+        // then
+    }
+    @Test
+    void cute() {
+        // given
+        int sendUserId = 332;
+        int receiveUserId = 364;
+        int certificationId = 1200;
+
+        // when
+        fcmService.cute(sendUserId, receiveUserId, certificationId);
+
+        // then
+    }
+    @Test
+    void mungple() {
+        // given
+        int receiveUserId = 364;
+        int mungpleId = 53;
+
+        // when
+        fcmService.mungple(receiveUserId, mungpleId);
 
         // then
     }
 
     @Test
-    void pushByReaction() {
+    void mungpleByMe() {
         // given
-        int certificationId = 1052;
-        int sendUserId = 332;
-        ReactionCode reactionCode = ReactionCode.HELPER;
-
-//        int receiveUserId = 332; // 창민 AOS
-        int receiveUserId = 364; // 동재 AOS
-//        int receiveUserId = 276; // 서은 IOS
-//        int receiveUserId = 637; // 창민 IOS
-
+        int receiveUserId = 364;
+        int mungpleId = 53;
 
         // when
-        fcmService.pushByReaction(sendUserId, receiveUserId, certificationId, reactionCode);
+        fcmService.mungpleByMe(receiveUserId, mungpleId);
 
         // then
     }
+
+    @Test
+    void mungpleByOther() {
+        // given
+        int firstWriterId = 276;
+        int receiveUserId = 364;
+        int mungpleId = 53;
+
+        // when
+        fcmService.mungpleByOther(firstWriterId, receiveUserId, mungpleId);
+
+        // then
+    }
+
 }
