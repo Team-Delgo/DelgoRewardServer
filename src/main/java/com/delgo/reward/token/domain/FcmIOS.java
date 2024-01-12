@@ -36,12 +36,11 @@ public class FcmIOS {
             public static class Custom {
                 private String url;
                 private String imageUrl;
-                private String notifyId;
             }
 
     }
 
-    public static FcmIOS from(NotifyType notifyType, String title, String url, String image, int notifyId) {
+    public static FcmIOS from(String title, String body, String image, String tag, String url) {
         return FcmIOS.builder()
                 .payload(Payload.builder()
                         .aps(
@@ -49,17 +48,16 @@ public class FcmIOS {
                                         .alert(
                                                 Payload.Alert.builder()
                                                         .title(title)
-                                                        .body(notifyType.getBody())
+                                                        .body(body)
                                                         .build())
                                         .badge(1)
                                         .sound("default")
-                                        .category(notifyType.getTag())
+                                        .category(tag)
                                         .build())
                         .custom(
                                 Payload.Custom.builder()
                                         .url(url)
                                         .imageUrl(image)
-                                        .notifyId(String.valueOf(notifyId))
                                         .build())
                         .build()
                 ).build();

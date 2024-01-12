@@ -53,6 +53,13 @@ public class UserQueryService {
         return userRepository.findOneByName(name).isPresent();
     }
 
+    public boolean checkNotificationPermission(int userId) {
+        User user = getOneByUserId(userId);
+        boolean isNotify = user.getIsNotify();
+        boolean hasRefreshToken = StringUtils.isNotEmpty(user.getToken().getRefreshToken());
+        return isNotify && hasRefreshToken;
+    }
+
     public boolean isAppleUniqueNoExisting(String appleUniqueNo) {
         return userRepository.findOneByAppleUniqueNo(appleUniqueNo).isPresent();
     }

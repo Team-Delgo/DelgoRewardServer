@@ -18,13 +18,11 @@ import java.util.Map;
         * `CUTE` - 귀여워요
         """)
 public enum ReactionCode {
-    HELPER("HELPER", "도움돼요", "도움돼요😃를 받았어요", "님이 도움돼요😃를 남겼어요"),
-    CUTE("CUTE", "귀여워요", "귀여워요😍를 받았어요", "님이 귀여워요😍를 남겼어요");
+    HELPER("HELPER", "도움돼요"),
+    CUTE("CUTE", "귀여워요");
 
     private final String code;
     private final String desc;
-    private final String pushTitle;
-    private final String pushBody;
 
     public static Map<ReactionCode, Boolean> initializeReactionMap() {
         Map<ReactionCode, Boolean> reactionMap = new HashMap<>();

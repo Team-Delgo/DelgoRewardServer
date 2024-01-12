@@ -252,17 +252,9 @@ public class CertController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Reaction.class))})
     @PostMapping(value = {"/reaction/{userId}/{certificationId}/{reactionCode}"})
     public ResponseEntity reaction(@PathVariable Integer userId, @PathVariable Integer certificationId, @PathVariable ReactionCode reactionCode){
-       Boolean isExist = reactionService.hasReaction(userId, certificationId, reactionCode);
-
-        Reaction reaction = isExist
+        return SuccessReturn(reactionService.hasReaction(userId, certificationId, reactionCode)
                 ? reactionService.update(userId, certificationId, reactionCode)
-                : reactionService.create(userId, certificationId, reactionCode);
-
-        if (!isExist) {
-            Certification certification = certQueryService.getOneById(certificationId);
-            fcmService.pushByReaction(userId, certification.getUser().getUserId(), certificationId, reactionCode);
-        }
-        return SuccessReturn(reaction);
+                : reactionService.create(userId, certificationId, reactionCode));
     }
 
     /**
