@@ -1,6 +1,6 @@
 package com.delgo.reward.controller;
 
-import com.delgo.reward.token.service.FcmService;
+import com.delgo.reward.push.service.FcmService;
 import com.delgo.reward.comm.security.SecurityConfig;
 import com.delgo.reward.comment.controller.CommentController;
 import com.delgo.reward.comment.domain.Comment;
@@ -9,7 +9,7 @@ import com.delgo.reward.user.domain.User;
 import com.delgo.reward.comment.controller.request.CommentCreate;
 import com.delgo.reward.cert.service.CertCommandService;
 import com.delgo.reward.comment.service.CommentService;
-import com.delgo.reward.notify.service.NotifyService;
+import com.delgo.reward.push.service.NotifyService;
 import com.delgo.reward.user.service.UserQueryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
