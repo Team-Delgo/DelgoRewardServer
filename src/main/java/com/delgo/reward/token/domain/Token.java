@@ -48,4 +48,12 @@ public class Token extends BaseTimeEntity {
                 .refreshToken(jwtToken.getRefreshToken())
                 .build();
     }
+
+    public Token delete(int userId) {
+        return Token.builder()
+                .userId(userId)
+                .fcmToken("")
+                .refreshToken("")
+                .build();
+    }
 }

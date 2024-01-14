@@ -116,7 +116,7 @@ public class User extends BaseTimeEntity {
     }
 
     public String getFcmToken() {
-        return token.getFcmToken();
+        return (token != null) ? token.getFcmToken() : "";
     }
 
     public String getPetName() {
