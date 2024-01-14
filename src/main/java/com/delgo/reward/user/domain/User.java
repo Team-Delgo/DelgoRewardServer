@@ -4,6 +4,7 @@ import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.comm.encoder.CustomPasswordEncoder;
 import com.delgo.reward.common.domain.BaseTimeEntity;
 import com.delgo.reward.bookmark.domain.Bookmark;
+import com.delgo.reward.token.domain.Token;
 import com.delgo.reward.user.controller.request.OAuthCreate;
 import com.delgo.reward.user.controller.request.UserCreate;
 import lombok.*;
@@ -59,6 +60,11 @@ public class User extends BaseTimeEntity {
     @OneToOne(mappedBy = "user")
     private Pet pet;
 
+    @Setter
+    @OneToOne
+    @JoinColumn(name = "userId")
+    private Token token;
+
     @ToString.Exclude
     @OneToMany(mappedBy = "userId", fetch = FetchType.LAZY)
     private List<Bookmark> bookmarkList;
@@ -107,5 +113,13 @@ public class User extends BaseTimeEntity {
 
     public static String encodePassword(CustomPasswordEncoder passwordEncoder, String password){
         return passwordEncoder.encode(password);
+    }
+
+    public String getFcmToken() {
+        return token.getFcmToken();
+    }
+
+    public String getPetName() {
+        return pet.getName();
     }
 }

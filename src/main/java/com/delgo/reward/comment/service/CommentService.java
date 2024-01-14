@@ -1,11 +1,9 @@
 package com.delgo.reward.comment.service;
 
 import com.delgo.reward.comm.exception.NotFoundDataException;
-import com.delgo.reward.token.service.FcmService;
+import com.delgo.reward.push.service.FcmService;
 import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.comment.domain.Comment;
-import com.delgo.reward.notify.domain.NotifyType;
-import com.delgo.reward.notify.service.NotifyService;
 import com.delgo.reward.user.domain.User;
 import com.delgo.reward.comment.controller.request.CommentCreate;
 import com.delgo.reward.comment.controller.request.CommentUpdate;
@@ -27,7 +25,6 @@ public class CommentService {
 
     // Service
     private final FcmService fcmService;
-    private final NotifyService notifyService;
     private final CertQueryService certQueryService;
     private final UserQueryService userQueryService;
 
@@ -35,7 +32,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     /**
-     *  유저가 댓글을 작성하면 알림을 저장하고 인증 주인에게 푸시 알림을 보냄
+     * 유저가 댓글을 작성하면 알림을 저장하고 인증 주인에게 푸시 알림을 보냄
      */
     public Comment create(CommentCreate commentCreate) throws IOException {
         User user = userQueryService.getOneByUserId(commentCreate.userId()); // 댓글 작성 유저 조회
@@ -47,11 +44,7 @@ public class CommentService {
         certification.setCommentCount(commentCount);
 
         // 인증 유저 알림
-        String notifyMsg = makeCommentNotifyMsg(user.getName(), commentCreate.content());
-        User certOwner = certification.getUser();
-        notifyService.saveNotify(certOwner.getUserId(), NotifyType.COMMENT, notifyMsg);
-        fcmService.push(certOwner.getUserId(), notifyMsg);
-
+        fcmService.comment(user.getUserId(), certification.getUserId(), certification.getCertificationId());
         return comment;
     }
 
@@ -108,7 +101,7 @@ public class CommentService {
     /**
      * 유저가 답글을 작성하면 알림을 저장하고 인증 주인과 댓글 주인에게 푸시 알림을 보냄
      */
-    public Comment createReply(ReplyCreate replyCreate) throws IOException {
+    public Comment createReply(ReplyCreate replyCreate) {
         User user = userQueryService.getOneByUserId(replyCreate.userId()); // 답글 작성 유저 조회
         Comment reply = commentRepository.save(replyCreate.toEntity(user));
         Certification certification = certQueryService.getOneById(replyCreate.certificationId()); // 답글 저장한 인증글 조회
@@ -118,16 +111,11 @@ public class CommentService {
         certification.setCommentCount(commentCount);
 
         // 인증 유저 알림
-        int certOwnerId = certification.getUser().getUserId();
-        String certOwnerNotifyMsg = makeCommentNotifyMsg(user.getName(), replyCreate.content());
-        notifyService.saveNotify(certOwnerId, NotifyType.COMMENT, certOwnerNotifyMsg);
-        fcmService.push(certOwnerId, certOwnerNotifyMsg);
+        fcmService.comment(replyCreate.userId(), certification.getUserId() ,replyCreate.certificationId());
 
         // 부모 댓글 유저 알림
         int commentOwnerId = getOneById(replyCreate.parentCommentId()).getUser().getUserId();
-        String commentOwnerNotifyMsg = makeReplyNotifyMsg(user.getName(), replyCreate.content());
-        notifyService.saveNotify(commentOwnerId, NotifyType.REPLY, commentOwnerNotifyMsg);
-        fcmService.push(commentOwnerId, commentOwnerNotifyMsg);
+        fcmService.comment(replyCreate.userId(), commentOwnerId, replyCreate.certificationId());
 
         return reply;
     }
@@ -137,13 +125,5 @@ public class CommentService {
      */
     public List<Comment> getListByParentCommentId(int parentCommentId){
         return commentRepository.findListByParentCommentId(parentCommentId);
-    }
-
-    public String makeCommentNotifyMsg(String name, String content){
-        return name + "님이 나의 게시글에 댓글을 남겼습니다.\n" + content;
-    }
-
-    public String makeReplyNotifyMsg(String name, String content){
-        return name + "님이 나의 댓글에 답글을 남겼습니다.\n" + content;
     }
 }

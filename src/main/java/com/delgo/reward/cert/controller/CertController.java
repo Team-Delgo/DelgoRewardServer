@@ -9,6 +9,7 @@ import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.ReactionCode;
 import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.cert.domain.Reaction;
+import com.delgo.reward.push.service.FcmService;
 import com.delgo.reward.user.domain.User;
 import com.delgo.reward.cert.response.CertResponse;
 import com.delgo.reward.cert.response.PageCertResponse;
@@ -47,6 +48,7 @@ import java.util.*;
 public class CertController extends CommController {
 
     private final UserQueryService userQueryService;
+    private final FcmService fcmService;
     private final MungpleService mungpleService;
     private final ReactionService reactionService;
     private final CertAsyncService certAsyncService;
@@ -250,7 +252,7 @@ public class CertController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Reaction.class))})
     @PostMapping(value = {"/reaction/{userId}/{certificationId}/{reactionCode}"})
     public ResponseEntity reaction(@PathVariable Integer userId, @PathVariable Integer certificationId, @PathVariable ReactionCode reactionCode){
-        return SuccessReturn((reactionService.hasReaction(userId, certificationId, reactionCode))
+        return SuccessReturn(reactionService.hasReaction(userId, certificationId, reactionCode)
                 ? reactionService.update(userId, certificationId, reactionCode)
                 : reactionService.create(userId, certificationId, reactionCode));
     }

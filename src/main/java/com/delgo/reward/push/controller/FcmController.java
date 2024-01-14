@@ -1,7 +1,7 @@
-package com.delgo.reward.token.controller;
+package com.delgo.reward.push.controller;
 
 import com.delgo.reward.common.controller.CommController;
-import com.delgo.reward.token.controller.request.FcmTokenCreate;
+import com.delgo.reward.push.controller.request.FcmTokenCreate;
 import com.delgo.reward.token.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
