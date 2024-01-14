@@ -19,7 +19,7 @@ public class FcmMessage {
     public static FcmMessage from(String token, String title, String body, String image, String tag, String url) {
         return FcmMessage.builder()
                 .token(token)
-                .data(FcmData.from(title, body, image, tag, url))
+                .data(FcmData.from("Delgo " + title, body, image, tag, url))
                 .apns(FcmIOS.from(title, body, image, tag, url))
                 .build();
     }
