@@ -33,6 +33,7 @@ public class FcmService {
 
     public void comment(int sendUserId,int receiveUserId, int certificationId) {
         try {
+            if(sendUserId == receiveUserId) return;
             if(!userQueryService.checkNotificationPermission(receiveUserId)) return;
 
             User sender = userQueryService.getOneByUserId(sendUserId);
@@ -51,6 +52,7 @@ public class FcmService {
 
     public void helper(int sendUserId, int receiveUserId, int certificationId) {
         try {
+            if(sendUserId == receiveUserId) return;
             if(!userQueryService.checkNotificationPermission(receiveUserId)) return;
 
             User sender = userQueryService.getOneByUserId(sendUserId);
@@ -69,6 +71,7 @@ public class FcmService {
 
     public void cute(int sendUserId, int receiveUserId, int certificationId) {
         try {
+            if(sendUserId == receiveUserId) return;
             if(!userQueryService.checkNotificationPermission(receiveUserId)) return;
 
             User sender = userQueryService.getOneByUserId(sendUserId);
@@ -119,15 +122,15 @@ public class FcmService {
         }
     }
 
-    public void mungpleByOther(int firstWriterId, int receiveUserId, int mungpleId) {
+    public void mungpleByOther(int firstFounderId, int receiveUserId, int mungpleId) {
         try {
             if(!userQueryService.checkNotificationPermission(receiveUserId)) return;
 
-            User firstWriter = userQueryService.getOneByUserId(firstWriterId);
+            User firstFounder = userQueryService.getOneByUserId(firstFounderId);
             User receiver = userQueryService.getOneByUserId(receiveUserId);
             Mungple mungple = mungpleService.getOneByMungpleId(mungpleId);
 
-            FcmMessage message = FcmMessage.mungple(NotifyType.MungpleByOther, receiver.getFcmToken(), firstWriter.getPetName(), mungple);
+            FcmMessage message = FcmMessage.mungple(NotifyType.MungpleByOther, receiver.getFcmToken(), firstFounder.getPetName(), mungple);
             sendMessageTo(message);
 
             notifyService.create(receiver.getUserId(), message.getData().getBody(), NotifyType.MungpleByOther);

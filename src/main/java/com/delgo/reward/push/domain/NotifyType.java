@@ -73,8 +73,8 @@ public enum NotifyType {
     public static String bodyByFoundMungpleByOther(List<String> list) {
         String address = list.get(0);
         String placeName = list.get(1);
-        String firstWriterPetName = list.get(2);
-        return "[" + firstWriterPetName + "]가 다녀 온 " + address + " '" + placeName + "'가 새 장소로 추가되었어요";
+        String firstFounderPetName = list.get(2);
+        return "[" + firstFounderPetName + "]가 다녀 온 " + address + " '" + placeName + "'가 새 장소로 추가되었어요";
     }
 
     // @RequestParam ENUM Parsing
