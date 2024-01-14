@@ -113,4 +113,12 @@ public class Certification extends BaseTimeEntity {
                 .isHideAddress(certUpdate.isHideAddress())
                 .build();
     }
+
+    public String getThumbnailUrl() {
+        return photos.get(0);
+    }
+
+    public Integer getUserId() {
+        return user.getUserId();
+    }
 }

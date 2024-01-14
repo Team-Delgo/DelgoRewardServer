@@ -1,6 +1,6 @@
 package com.delgo.reward.comm.quartz.job;
 
-import com.delgo.reward.token.service.FcmService;
+import com.delgo.reward.push.service.FcmService;
 import com.delgo.reward.user.domain.Pet;
 import com.delgo.reward.user.repository.PetRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +27,8 @@ public class BirthdayPush extends QuartzJobBean {
         List<Pet> petList = petRepository.findAll();
         for(Pet pet: petList){
             if(pet.getBirthday().getMonth().equals(localDate.getMonth()) && pet.getBirthday().getDayOfMonth() == localDate.getDayOfMonth()){
-                String notifyMsg =  pet.getName() + "의 생일을 축하합니다. 오늘도 좋은 하루 되세요!";
-                fcmService.push(pet.getUserId(), notifyMsg);
+//              // TODO 서은님 축하사진 작업되어야 함.
+//                fcmService.pushByBirthday(pet.getUserId());
                 log.info("[BirthdayPush] User Id: " + pet.getUserId() + " Pet Name: " + pet.getName());
             }
         }

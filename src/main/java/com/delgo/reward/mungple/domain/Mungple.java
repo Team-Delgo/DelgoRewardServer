@@ -99,7 +99,7 @@ public class Mungple {
     public void setAcceptSize(String input) {
         acceptSize = new HashMap<>();
 
-        Pattern pattern = Pattern.compile("([A-Z_]+): ([^\\n]+),?");
+        Pattern pattern = Pattern.compile("([A-Z_]+): ?([^\\n]+),?");
         Matcher matcher = pattern.matcher(input);
 
         while (matcher.find()) {
@@ -119,7 +119,7 @@ public class Mungple {
     public void setBusinessHour(String input) {
         businessHour = new HashMap<>();
 
-        Pattern pattern = Pattern.compile("([A-Z_]+): ([^\\n]+),?");
+        Pattern pattern = Pattern.compile("([A-Z_]+): ?([^\\n]+),?");
         Matcher matcher = pattern.matcher(input);
 
         while (matcher.find()) {
@@ -202,5 +202,13 @@ public class Mungple {
 
     public static Map<Integer, Mungple> listToMap(List<Mungple> mungpleList) {
         return mungpleList.stream().collect(Collectors.toMap(Mungple::getMungpleId, Function.identity()));
+    }
+
+    public String getAddressForPush() {
+        return findAddressName(jibunAddress, isExistGu(jibunAddress) ? "구" : "시");
+    }
+
+    public String getThumbnailUrl() {
+        return photoUrls.get(0);
     }
 }

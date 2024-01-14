@@ -2,7 +2,7 @@ package com.delgo.reward.token.domain;
 
 import com.delgo.reward.comm.security.jwt.JwtToken;
 import com.delgo.reward.common.domain.BaseTimeEntity;
-import com.delgo.reward.token.controller.request.FcmTokenCreate;
+import com.delgo.reward.push.controller.request.FcmTokenCreate;
 import lombok.*;
 
 import javax.persistence.Entity;

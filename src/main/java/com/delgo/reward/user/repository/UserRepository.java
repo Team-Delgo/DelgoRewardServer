@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
@@ -20,6 +21,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findOneByUserId(Integer userId);
     Optional<User> findOneByPhoneNo(String phoneNo);
     Optional<User> findOneByAppleUniqueNo(String appleUniqueNo);
+    List<User> findListBypGeoCode(String pGeoCode);
 
     @Modifying
     @Query("UPDATE User u SET u.viewCount = u.viewCount + 1 WHERE u.userId = :userId")

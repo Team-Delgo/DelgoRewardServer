@@ -1,7 +1,7 @@
-package com.delgo.reward.notify.controller;
+package com.delgo.reward.push.controller;
 
 import com.delgo.reward.common.controller.CommController;
-import com.delgo.reward.notify.service.NotifyService;
+import com.delgo.reward.push.service.NotifyService;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +24,6 @@ public class NotifyController extends CommController {
      */
     @GetMapping("/all")
     public ResponseEntity<?> getAllNotifyByUserId(@RequestParam int userId){
-        return SuccessReturn(notifyService.getAllNotifyByUserId(userId));
+        return SuccessReturn(notifyService.getListByUserId(userId));
     }
 }
