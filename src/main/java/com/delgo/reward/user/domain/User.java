@@ -10,6 +10,7 @@ import com.delgo.reward.user.controller.request.UserCreate;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -51,6 +52,9 @@ public class User extends BaseTimeEntity {
     private String version; // 현재 User의 버전
 
     private String roles;  // 권한
+
+    @Setter
+    private LocalDateTime lastAccessDt; // 마지막 접속 시간
 
     @Column(name = "social")
     @Enumerated(EnumType.STRING)

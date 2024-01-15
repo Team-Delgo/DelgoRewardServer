@@ -28,6 +28,7 @@ public class Notify {
                 .userId(userId)
                 .notifyMsg(notifyMsg)
                 .notifyType(notifyType)
+                .createAt(LocalDateTime.now())
                 .build();
     }
 }

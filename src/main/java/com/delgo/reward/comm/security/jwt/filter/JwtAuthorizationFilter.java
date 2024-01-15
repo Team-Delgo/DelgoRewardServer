@@ -69,17 +69,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new NotFoundDataException("[User] userId : " + userId));
 
-            // 유저의 Web Version 체크 및 DB에 저장
-            String version = request.getHeader("version");
-
-            // DB Version과 일치하지 않을 때 DB의 버전 업데이트
-            if (StringUtils.hasText(version)) {
-                if(!user.getVersion().equals(version)) {
-                    user.setVersion(version);
-                    userRepository.save(user);
-                }
-            }
-
             // 인증은 토큰 검증시 끝. 인증을 하기 위해서가 아닌 스프링 시큐리티가 수행해주는 권한 처리를 위해
             // 아래와 같이 토큰을 만들어서 Authentication 객체를 강제로 만들고 그걸 세션에 저장!
             PrincipalDetails principalDetails = new PrincipalDetails(user);
