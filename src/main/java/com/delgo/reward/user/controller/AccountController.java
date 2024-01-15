@@ -52,7 +52,7 @@ public class AccountController extends CommController {
     @Operation(summary = "내 정보 조회 ", description = "My Page, 및 활동 페이지에서 필요한 모든 Data를 반환한다.")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))})
     @GetMapping
-    public ResponseEntity<?> getAccount(@RequestParam Integer userId){
+    public ResponseEntity<?> getAccount(@RequestParam(name = "userId") int userId){
         return SuccessReturn(UserResponse.fromAccount(
                 userQueryService.getOneByUserId(userId), // User
                 certQueryService.getCategoryCountMapByUserId(userId), // Activity Data

@@ -69,7 +69,7 @@ public class UserController extends CommController {
     @Operation(summary = "다른 User 정보 조회", description = "다른 User 정보 조회 API [Other 페이지 에서 사용]")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))})
     @GetMapping("/other")
-    public ResponseEntity<?> getOtherUser(@RequestParam int userId) {
+    public ResponseEntity<?> getOtherUser(@RequestParam(name = "userId") int userId) {
         return SuccessReturn(UserResponse.fromOther(
                 userQueryService.getOneByUserId(userId), // User
                 certQueryService.getCategoryCountMapByUserId(userId), // Activity Data
