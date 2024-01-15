@@ -63,9 +63,7 @@ public class UserQueryService {
     public boolean checkNotificationPermission(int userId) {
         User user = getOneByUserId(userId);
         boolean isNotify = user.getIsNotify();
-        System.out.println("isNotify = " + isNotify);
         boolean hasFcmToken = StringUtils.isNotEmpty(user.getFcmToken());
-        System.out.println("hasRefreshToken = " + hasFcmToken);
         return isNotify && hasFcmToken;
     }
 

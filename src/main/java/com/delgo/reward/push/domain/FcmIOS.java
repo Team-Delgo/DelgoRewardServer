@@ -21,6 +21,7 @@ public class FcmIOS {
                 private int badge;
                 private String sound;
                 private String category;
+                private int mutableContent;
             }
 
             @Getter
@@ -49,10 +50,12 @@ public class FcmIOS {
                                                 Payload.Alert.builder()
                                                         .title(title)
                                                         .body(body)
+                                                        .launchImage(url)
                                                         .build())
                                         .badge(1)
                                         .sound("default")
                                         .category(tag)
+                                        .mutableContent(1)
                                         .build())
                         .custom(
                                 Payload.Custom.builder()
