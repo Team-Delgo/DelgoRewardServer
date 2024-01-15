@@ -9,7 +9,6 @@ import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.ReactionCode;
 import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.cert.domain.Reaction;
-import com.delgo.reward.push.service.FcmService;
 import com.delgo.reward.user.domain.User;
 import com.delgo.reward.cert.response.CertResponse;
 import com.delgo.reward.cert.response.PageCertResponse;
@@ -48,7 +47,6 @@ import java.util.*;
 public class CertController extends CommController {
 
     private final UserQueryService userQueryService;
-    private final FcmService fcmService;
     private final MungpleService mungpleService;
     private final ReactionService reactionService;
     private final CertAsyncService certAsyncService;
@@ -64,7 +62,7 @@ public class CertController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCertResponse.class))})
     @GetMapping("/all")
     public ResponseEntity getAllCert(
-            @RequestParam Integer userId,
+            @RequestParam(name = "userId") int userId,
             @Parameter(description = "조회에서 제외할 인증 번호") @RequestParam(required = false) Integer certificationId,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Certification> page = certQueryService.getCorrectPagingList(userId, pageable);
@@ -80,7 +78,7 @@ public class CertController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCertResponse.class))})
     @GetMapping("/other")
     public ResponseEntity getOtherCerts(
-            @RequestParam Integer userId,
+            @RequestParam(name = "userId") int userId,
             @RequestParam CategoryCode categoryCode,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Certification> page = categoryCode.equals(CategoryCode.CA0000)
@@ -98,14 +96,14 @@ public class CertController extends CommController {
     /**
      * [Mungple] 인증 조회
      */
-    @Operation(summary = "[Mungple] 인증 조회 [Paging]", description ="mungpleId로 멍플 인증 조회 [권한 필요 없음]")
+    @Operation(summary = "[Mungple] 인증 조회 [Paging]", description = "mungpleId로 멍플 인증 조회 [권한 필요 없음]")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCertResponse.class))})
     @GetMapping("/mungple")
     public ResponseEntity getCertsByMungple(
-            @RequestParam Integer userId,
+            @RequestParam(name = "userId") int userId,
             @RequestParam Integer mungpleId,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<Certification> page =  certQueryService.getPagingListByMungpleId(userId, mungpleId, pageable);
+        Page<Certification> page = certQueryService.getPagingListByMungpleId(userId, mungpleId, pageable);
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
 
         return SuccessReturn(PageCertResponse.from(userId, page, reactionMap));
@@ -114,10 +112,10 @@ public class CertController extends CommController {
     /**
      * [certId] 인증 조회
      */
-    @Operation(summary = "[certId] 인증 조회", description ="고유 ID로 인증 데이터 조회  \n  단 건이지만 Front 요청으로 LIST로 반환")
+    @Operation(summary = "[certId] 인증 조회", description = "고유 ID로 인증 데이터 조회  \n  단 건이지만 Front 요청으로 LIST로 반환")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CertResponse.class)))})
     @GetMapping("/id")
-    public ResponseEntity getCertsByCertId(@RequestParam Integer userId, @RequestParam Integer certificationId) {
+    public ResponseEntity getCertsByCertId(@RequestParam(name = "userId") int userId, @RequestParam Integer certificationId) {
         Certification certification = certQueryService.getOneById(certificationId);
         List<Reaction> reactionList = reactionService.getListByCertId(certificationId);
 
@@ -129,7 +127,7 @@ public class CertController extends CommController {
     /**
      * 인증 생성
      */
-    @Operation(summary = "인증 생성", description ="인증 생성")
+    @Operation(summary = "인증 생성", description = "인증 생성")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = CertResponse.class))})
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> createCert(@Validated @RequestPart(value = "data") CertCreate certCreate, @RequestPart(required = false) List<MultipartFile> photos) {
@@ -149,10 +147,9 @@ public class CertController extends CommController {
      * [Date] 인증 조회 ex) 2023.07.10에 등록한 인증
      */
     @Operation(summary = "[Date] 인증 조회", description = "특정 날짜에 인증한 모든 인증글 조회 [캘린더] \n  ex) 2023.07.10에 등록한 인증")
-    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array =
-    @ArraySchema(schema = @Schema(implementation = CertResponse.class)))})
+    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CertResponse.class)))})
     @GetMapping("/date")
-    public ResponseEntity getCertsByDate(@RequestParam Integer userId, @RequestParam String date) {
+    public ResponseEntity getCertsByDate(@RequestParam(name = "userId") int userId, @RequestParam String date) {
         List<Certification> certificationList = certQueryService.getListByDate(userId, LocalDate.parse(date));
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(certificationList);
 
@@ -166,10 +163,10 @@ public class CertController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCertResponse.class))})
     @GetMapping("/my")
     public ResponseEntity getMyCerts(
-            @RequestParam Integer userId,
+            @RequestParam(name = "userId") int userId,
             @RequestParam CategoryCode categoryCode,
             @PageableDefault(sort = "registDt", direction = Sort.Direction.DESC) Pageable pageable) {
-        if(userId == 0) return SuccessReturn();
+        if (userId == 0) return SuccessReturn();
         Page<Certification> page = categoryCode.equals(CategoryCode.CA0000)
                 ? certQueryService.getPagingListByUserId(userId, pageable)
                 : certQueryService.getPagingListByUserIdAndCategoryCode(userId, categoryCode, pageable);
@@ -187,7 +184,7 @@ public class CertController extends CommController {
     @Operation(summary = "[My] 내가 작성한 인증 전체 조회", description = "내가 작성한 모든 인증글 조회 \n isCorrect = false 여도 조회.")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageCertResponse.class))})
     @GetMapping("/my/all")
-    public ResponseEntity getAllMyCerts(@RequestParam Integer userId) {
+    public ResponseEntity getAllMyCerts(@RequestParam(name = "userId") int userId) {
         Page<Certification> page = certQueryService.getPagingListByUserId(userId, Pageable.unpaged());
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
 
@@ -200,7 +197,7 @@ public class CertController extends CommController {
     @Operation(summary = "[Recent] 인증 조회", description = "param count 만큼 최근 인증 조회")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CertResponse.class)))})
     @GetMapping("/recent")
-    public ResponseEntity getRecentCerts(@RequestParam Integer userId, @RequestParam Integer count) {
+    public ResponseEntity getRecentCerts(@RequestParam(name = "userId") int userId, @RequestParam Integer count) {
         Page<Certification> page = certQueryService.getCorrectPagingList(userId, PageRequest.of(0, count));
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
 
@@ -251,7 +248,7 @@ public class CertController extends CommController {
     @Operation(summary = "인증 Reaction", description = "Reaction 등록 및 수정 - 인증에 대한 반응을 등록 및 수정")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Reaction.class))})
     @PostMapping(value = {"/reaction/{userId}/{certificationId}/{reactionCode}"})
-    public ResponseEntity reaction(@PathVariable Integer userId, @PathVariable Integer certificationId, @PathVariable ReactionCode reactionCode){
+    public ResponseEntity reaction(@PathVariable Integer userId, @PathVariable Integer certificationId, @PathVariable ReactionCode reactionCode) {
         return SuccessReturn(reactionService.hasReaction(userId, certificationId, reactionCode)
                 ? reactionService.update(userId, certificationId, reactionCode)
                 : reactionService.create(userId, certificationId, reactionCode));
@@ -260,11 +257,11 @@ public class CertController extends CommController {
     /**
      * Mungple <-> Certifiation Sync
      */
-    @Operation(summary = "인증 Sync", description ="새로 추가된 멍플과 기존 인증 Sync 맟주는 API\n 기존에 멍플이 없어서 mungpleId = 0 이던 Cert의 mungpleId를 update.")
+    @Operation(summary = "인증 Sync", description = "새로 추가된 멍플과 기존 인증 Sync 맟주는 API\n 기존에 멍플이 없어서 mungpleId = 0 이던 Cert의 mungpleId를 update.")
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json")})
     @GetMapping("/sync")
     public ResponseEntity sync() {
-        mungpleService.getAll().forEach(mungple ->{
+        mungpleService.getAll().forEach(mungple -> {
             List<Certification> certificationList = certQueryService.getListByPlaceName(mungple.getPlaceName());
             certificationList.forEach(certification -> {
                 certification.setMungpleId(mungple.getMungpleId());
