@@ -5,24 +5,23 @@ import com.delgo.reward.user.service.UserCommandService;
 import com.delgo.reward.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
 
 @Slf4j
 @Aspect
 @Component
 @RequiredArgsConstructor
-public class VersionAop {
+public class AccessTimeAop {
     private final UserQueryService userQueryService;
     private final UserCommandService userCommandService;
 
@@ -31,11 +30,7 @@ public class VersionAop {
     }
 
     @Before("onGetRequest()")
-    public void version(JoinPoint joinPoint) {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        String version = request.getHeader("version");
-        if (StringUtils.isEmpty(version)) return;
-
+    public void accessTime(JoinPoint joinPoint) {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
         Object[] args = joinPoint.getArgs();
@@ -49,7 +44,7 @@ public class VersionAop {
                         if (userId == 0) break;
 
                         User user = userQueryService.getOneByUserId(userId);
-                        user.setVersion(version);
+                        user.setLastAccessDt(LocalDateTime.now());
                         userCommandService.save(user);
                     }
                 }
