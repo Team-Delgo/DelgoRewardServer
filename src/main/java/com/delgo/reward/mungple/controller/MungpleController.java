@@ -41,6 +41,7 @@ public class MungpleController extends CommController {
         List<String> placeNames = googleSheetService.saveSheetsDataToDB();
         return SuccessReturn(placeNames);
     }
+
     /**
      * [Category] Mungple 조회
      */
@@ -48,7 +49,7 @@ public class MungpleController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MungpleResponse.class))})
     @GetMapping("/category")
     public ResponseEntity getMungplesByCategory(
-            @RequestParam int userId, // isBookmarked 체크 필요
+            @RequestParam(name = "userId") int userId, // isBookmarked 체크 필요
             @RequestParam CategoryCode categoryCode,
             @RequestParam MungpleSort sort,
             @RequestParam(required = false) String latitude,
@@ -71,7 +72,7 @@ public class MungpleController extends CommController {
     @ApiResponse(responseCode = "200", description = "", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MungpleResponse.class))})
     @GetMapping("/bookmark")
     public ResponseEntity getMungplesByBookmark(
-            @RequestParam int userId,
+            @RequestParam(name = "userId") int userId,
             @RequestParam MungpleSort sort,
             @RequestParam(required = false) String latitude,
             @RequestParam(required = false) String longitude) {
@@ -102,7 +103,7 @@ public class MungpleController extends CommController {
     @Operation(summary = "[MungpleId] Mungple Detail 조회", description = "멍플 상세 조회 [특정 사용자가 저장 했는지 여부 체크를 위해 UserId도 받는다]")
     @ApiResponse(responseCode = "200", description = "", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = MungpleDetailResponse.class))})
     @GetMapping("/detail")
-    public ResponseEntity getMungpleDetailByMungpleIdAndUserId(@RequestParam int mungpleId, @RequestParam int userId) {
+    public ResponseEntity getMungpleDetailByMungpleIdAndUserId(@RequestParam int mungpleId, @RequestParam(name = "userId") int userId) {
         return SuccessReturn(MungpleDetailResponse.from(
                 mungpleService.getOneByMungpleId(mungpleId), // mungple
                 certQueryService.getCountByMungpleId(mungpleId), // certCount
