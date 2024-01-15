@@ -66,7 +66,7 @@ public class CommentController extends CommController {
      * 답글 생성
      */
     @PostMapping("/reply")
-    public ResponseEntity createReply(@Validated @RequestBody ReplyCreate replyCreate) throws IOException{
+    public ResponseEntity createReply(@Validated @RequestBody ReplyCreate replyCreate) {
         Comment reply = commentService.createReply(replyCreate);
         return SuccessReturn(CommentResponse.from(reply));
     }
