@@ -10,7 +10,8 @@ public record CommentCreate(
         @NotNull Integer userId,
         @NotNull Integer certificationId,
         @NotNull String content
-) { }
+) {
+}
 
 
 

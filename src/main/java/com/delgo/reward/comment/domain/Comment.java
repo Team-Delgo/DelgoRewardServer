@@ -1,6 +1,7 @@
 package com.delgo.reward.comment.domain;
 
 import com.delgo.reward.comment.controller.request.CommentCreate;
+import com.delgo.reward.comment.controller.request.ReplyCreate;
 import com.delgo.reward.common.domain.BaseTimeEntity;
 import com.delgo.reward.user.domain.User;
 import lombok.*;
@@ -32,6 +33,16 @@ public class Comment extends BaseTimeEntity {
                 .content(commentCreate.content())
                 .isReply(false)
                 .parentCommentId(0)
+                .user(user)
+                .build();
+    }
+
+    public static Comment from(ReplyCreate replyCreate, User user) {
+        return Comment.builder()
+                .certificationId(replyCreate.certificationId())
+                .content(replyCreate.content())
+                .isReply(true)
+                .parentCommentId(replyCreate.parentCommentId())
                 .user(user)
                 .build();
     }

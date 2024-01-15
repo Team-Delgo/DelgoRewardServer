@@ -103,7 +103,7 @@ public class CommentService {
      */
     public Comment createReply(ReplyCreate replyCreate) {
         User user = userQueryService.getOneByUserId(replyCreate.userId()); // 답글 작성 유저 조회
-        Comment reply = commentRepository.save(replyCreate.toEntity(user));
+        Comment reply = commentRepository.save(Comment.from(replyCreate, user));
         Certification certification = certQueryService.getOneById(replyCreate.certificationId()); // 답글 저장한 인증글 조회
 
         // commentCount 계산
