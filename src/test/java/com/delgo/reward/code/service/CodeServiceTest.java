@@ -1,6 +1,5 @@
-package com.delgo.reward.service;
+package com.delgo.reward.code.service;
 
-import com.delgo.reward.code.service.CodeService;
 import com.delgo.reward.comm.code.CodeType;
 import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.code.domain.Code;
