@@ -18,9 +18,7 @@ public class FcmIOS {
             @Builder
             public static class Aps {
                 private Alert alert;
-                private int badge;
                 private String sound;
-                private String category;
                 private int mutableContent;
             }
 
@@ -29,7 +27,6 @@ public class FcmIOS {
             public static class Alert {
                 private String title;
                 private String body;
-                private String launchImage;
             }
 
             @Getter
@@ -38,7 +35,6 @@ public class FcmIOS {
                 private String url;
                 private String imageUrl;
             }
-
     }
 
     public static FcmIOS from(String title, String body, String image, String tag, String url) {
@@ -50,11 +46,8 @@ public class FcmIOS {
                                                 Payload.Alert.builder()
                                                         .title(title)
                                                         .body(body)
-                                                        .launchImage(url)
                                                         .build())
-                                        .badge(1)
                                         .sound("default")
-                                        .category(tag)
                                         .mutableContent(1)
                                         .build())
                         .custom(

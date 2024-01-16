@@ -1,6 +1,5 @@
-package com.delgo.reward.token.service;
+package com.delgo.reward.push.service;
 
-import com.delgo.reward.push.service.FcmService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +30,7 @@ class FcmServiceTest {
 
         // then
     }
+
     @Test
     void helper() {
         // given
