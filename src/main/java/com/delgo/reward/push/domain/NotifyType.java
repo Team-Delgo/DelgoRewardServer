@@ -1,6 +1,5 @@
 package com.delgo.reward.push.domain;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,10 +32,6 @@ public enum NotifyType {
     private final String title;
     private final String url;
     private final Function<List<String>, String> body;
-
-    public String getBody(List<String> args) {
-        return body.apply(args);
-    }
 
     public static String bodyByComment(List<String> list) {
         String senderName = list.get(0);
@@ -75,11 +70,5 @@ public enum NotifyType {
         String placeName = list.get(1);
         String firstFounderPetName = list.get(2);
         return "[" + firstFounderPetName + "]가 다녀 온 " + address + " '" + placeName + "'가 새 장소로 추가되었어요";
-    }
-
-    // @RequestParam ENUM Parsing
-    @JsonCreator
-    public static NotifyType from(String s) {
-        return NotifyType.valueOf(s);
     }
 }
