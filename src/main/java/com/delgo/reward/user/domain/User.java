@@ -86,6 +86,7 @@ public class User extends BaseTimeEntity {
                 .isNotify(true)
                 .version(version)
                 .roles("ROLE_USER")
+                .lastAccessDt(LocalDateTime.now())
                 .build();
     }
 
@@ -99,6 +100,7 @@ public class User extends BaseTimeEntity {
                 .pGeoCode(oAuthCreate.pGeoCode())
                 .isNotify(true)
                 .roles("ROLE_USER")
+                .lastAccessDt(LocalDateTime.now())
                 .version(version);
 
         // 각 사례별로 다른 속성 설정
