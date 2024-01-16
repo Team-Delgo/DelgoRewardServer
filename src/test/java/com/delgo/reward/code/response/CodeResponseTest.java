@@ -1,27 +1,25 @@
 package com.delgo.reward.code.response;
 
 import com.delgo.reward.code.domain.Code;
-import com.delgo.reward.code.service.CodeService;
+import com.delgo.reward.comm.code.CodeType;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@ExtendWith(SpringExtension.class)
 class CodeResponseTest {
-    @Autowired
-    CodeService codeService;
-    
+
     @Test
-    void from() {
+    void fromGeo() {
         // given
-        Code code = codeService.getOneByCode("101000");
+        Code code = Code.builder()
+                .code("101000")
+                .pCode("102000")
+                .codeDesc("test desc")
+                .codeName("test name")
+                .type(CodeType.geo)
+                .build();
 
         // when
         CodeResponse codeResponse = CodeResponse.from(code);
@@ -36,10 +34,43 @@ class CodeResponseTest {
     }
 
     @Test
+    void fromBreed() {
+        // given
+        Code code = Code.builder()
+                .code("101000")
+                .pCode("102000")
+                .codeDesc("test desc")
+                .codeName("test name")
+                .type(CodeType.breed)
+                .build();
+
+        // when
+        CodeResponse codeResponse = CodeResponse.from(code);
+
+        // then
+        assertThat(codeResponse.getCode()).isEqualTo(code.getCode());
+        assertThat(codeResponse.getPCode()).isEqualTo(code.getPCode());
+        assertThat(codeResponse.getCodeName()).isEqualTo(code.getCodeName());
+        assertThat(codeResponse.getCodeDesc()).isEqualTo(code.getCodeDesc());
+    }
+
+    @Test
     void fromList() {
         // given
-        Code code1 = codeService.getOneByCode("101000");
-        Code code2 = codeService.getOneByCode("102000");
+        Code code1 = Code.builder()
+                .code("101000")
+                .pCode("102000")
+                .codeDesc("test desc")
+                .codeName("test name")
+                .type(CodeType.geo)
+                .build();
+        Code code2 = Code.builder()
+                .code("101000")
+                .pCode("102000")
+                .codeDesc("test desc")
+                .codeName("test name")
+                .type(CodeType.breed)
+                .build();
         List<Code> codeList = List.of(code1, code2);
 
         // when
@@ -57,7 +88,5 @@ class CodeResponseTest {
         assertThat(codeResposneList.get(1).getPCode()).isEqualTo(codeList.get(1).getPCode());
         assertThat(codeResposneList.get(1).getCodeName()).isEqualTo(codeList.get(1).getCodeName());
         assertThat(codeResposneList.get(1).getCodeDesc()).isEqualTo(codeList.get(1).getCodeDesc());
-        assertThat(codeResposneList.get(1).getN_code()).isEqualTo(Integer.parseInt(codeList.get(1).getCode()));
-        assertThat(codeResposneList.get(1).getN_pCode()).isEqualTo(Integer.parseInt(codeList.get(1).getPCode()));
     }
 }
