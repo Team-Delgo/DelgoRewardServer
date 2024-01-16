@@ -21,14 +21,14 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
     @Query("DELETE FROM Certification c WHERE c.user.userId = :userId")
     void deleteByUserId(@Param("userId") Integer userId);
 
-    @EntityGraph(attributePaths = {"user", "user.pet"})
+    @EntityGraph(attributePaths = {"user", "user.pet", "user.token"})
     @Query("SELECT c FROM Certification c WHERE c.certificationId = :certId")
     Optional<Certification> findOneByCertificationId(@Param("certId") Integer certId);
 
     @Query(value = "select count(c) from Certification c where c.mungpleId = :mungpleId and c.isCorrect = true")
     Integer countOfCorrectCertByMungple(@Param("mungpleId") int mungpleId);
 
-    @EntityGraph(attributePaths = {"user", "user.pet"})
+    @EntityGraph(attributePaths = {"user", "user.pet", "user.token"})
     @Query(value = "select c from Certification c where c.user.userId = :userId and  c.registDt between :startDt and :endDt order by c.registDt desc")
     List<Certification> findListByDateAndUser(@Param("userId") int userId, @Param("startDt") LocalDateTime startDt, @Param("endDt") LocalDateTime endDate);
 
@@ -37,27 +37,27 @@ public interface CertRepository extends JpaRepository<Certification, Integer>, J
 
     // ---------------------------Paging---------------------------
 
-    @EntityGraph(attributePaths = {"user", "user.pet"})
+    @EntityGraph(attributePaths = {"user", "user.pet", "user.token"})
     @Query(value = "select c from Certification c where c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId) and c.isCorrect = true and c.isExpose = true")
     Page<Certification> findCorrectPage(@Param("userId") int userId, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"user", "user.pet"})
+    @EntityGraph(attributePaths = {"user", "user.pet", "user.token"})
     @Query(value = "select c from Certification c where c.mungpleId = :mungpleId and c.isCorrect = true and c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId)")
     Page<Certification> findCorrectPageByMungple(@Param("mungpleId") int mungpleId, @Param("userId") int userId, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"user", "user.pet"})
+    @EntityGraph(attributePaths = {"user", "user.pet", "user.token"})
     @Query(value = "select c from Certification c where c.user.userId = :userId")
     Page<Certification> findPageByUserId(@Param("userId") int userId, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"user", "user.pet"})
+    @EntityGraph(attributePaths = {"user", "user.pet", "user.token"})
     @Query(value = "select c from Certification c where c.user.userId = :userId and c.categoryCode = :categoryCode")
     Page<Certification> findPageByUserIdAndCategoryCode(@Param("userId")int userId, @Param("categoryCode") CategoryCode categoryCode, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"user", "user.pet"})
+    @EntityGraph(attributePaths = {"user", "user.pet", "user.token"})
     @Query(value = "select c from Certification c where c.user.userId = :userId and c.isCorrect = true and c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId)")
     Page<Certification> findCorrectPageByUserId(@Param("userId") int userId, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"user", "user.pet"})
+    @EntityGraph(attributePaths = {"user", "user.pet", "user.token"})
     @Query(value = "select c from Certification c where c.user.userId = :userId and c.categoryCode = :categoryCode and c.isCorrect = true and c.user.userId not in (select b.banUserId from BanList b where b.userId = :userId)")
     Page<Certification> findCorrectPageByUserIdAndCategoryCode(@Param("userId")int userId, @Param("categoryCode") CategoryCode categoryCode, Pageable pageable);
 
