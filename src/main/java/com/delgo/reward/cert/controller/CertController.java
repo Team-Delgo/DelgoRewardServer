@@ -68,7 +68,8 @@ public class CertController extends CommController {
         Page<Certification> page = certQueryService.getCorrectPagingList(userId, pageable);
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
 
-        return SuccessReturn(PageCertResponse.from(userId, page, reactionMap));
+        List<CertResponse> content = CertResponse.fromList(userId, page.getContent(), reactionMap);
+        return SuccessReturn(PageCertResponse.from(page, content));
     }
 
     /**
@@ -88,8 +89,8 @@ public class CertController extends CommController {
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
         User user = userQueryService.getOneByUserId(userId);
 
-        return SuccessReturn(PageCertResponse.from(userId, page, reactionMap)
-                .setViewCount(user.getViewCount()));
+        List<CertResponse> content = CertResponse.fromList(userId, page.getContent(), reactionMap);
+        return SuccessReturn(PageCertResponse.from(page, content, user.getViewCount()));
     }
 
 
@@ -106,7 +107,8 @@ public class CertController extends CommController {
         Page<Certification> page = certQueryService.getPagingListByMungpleId(userId, mungpleId, pageable);
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
 
-        return SuccessReturn(PageCertResponse.from(userId, page, reactionMap));
+        List<CertResponse> content = CertResponse.fromList(userId, page.getContent(), reactionMap);
+        return SuccessReturn(PageCertResponse.from(page, content));
     }
 
     /**
@@ -174,8 +176,8 @@ public class CertController extends CommController {
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
         User user = userQueryService.getOneByUserId(userId);
 
-        return SuccessReturn(PageCertResponse.from(userId, page, reactionMap)
-                .setViewCount(user.getViewCount()));
+        List<CertResponse> content = CertResponse.fromList(userId, page.getContent(), reactionMap);
+        return SuccessReturn(PageCertResponse.from(page, content, user.getViewCount()));
     }
 
     /**

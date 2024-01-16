@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -19,7 +18,6 @@ import java.util.Map;
 
 @Getter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 public class CertResponse {
     @Schema(description = "인증 고유 번호")
