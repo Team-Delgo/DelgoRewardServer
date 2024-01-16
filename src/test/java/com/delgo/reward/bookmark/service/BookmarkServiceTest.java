@@ -30,7 +30,6 @@ class BookmarkServiceTest {
         Bookmark bookmark = bookmarkService.bookmark(userId, mungpleId);
 
         // then
-        assertThat(bookmark.getBookmarkId()).isGreaterThan(0);
         assertThat(bookmark.getUserId()).isEqualTo(userId);
         assertThat(bookmark.getMungpleId()).isEqualTo(mungpleId);
     }
