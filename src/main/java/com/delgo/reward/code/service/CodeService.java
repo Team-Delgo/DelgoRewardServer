@@ -54,7 +54,7 @@ public class CodeService {
         return parentCode.getCodeName() + " " + childCode.getCodeName();
     }
 
-    private String extractSIDO(String address){
+    public String extractSIDO(String address){
         String[] addressParts = address.split(" ");
         return switch (addressParts[0]) {
             case "제주특별자치도" -> "제주도";
@@ -63,7 +63,7 @@ public class CodeService {
         };
     }
 
-    private String extractSIGUGUN(String address){
+    public String extractSIGUGUN(String address){
         String[] addressParts = address.split(" ");
         return addressParts[1];
     }

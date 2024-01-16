@@ -1,6 +1,5 @@
-package com.delgo.reward.service;
+package com.delgo.reward.code.service;
 
-import com.delgo.reward.code.service.CodeService;
 import com.delgo.reward.comm.code.CodeType;
 import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.code.domain.Code;
@@ -160,5 +159,53 @@ class CodeServiceTest {
         // then
         String expectedAddress = "세종특별시";
         assertThat(address).isEqualTo(expectedAddress);
+    }
+
+    @Test
+    void extractSIDO() {
+        // given
+        String address = "서울특별시 송파구 송파동 54-13";
+
+        // when
+        String SIDO = codeService.extractSIDO(address);
+
+        // then
+        assertThat(SIDO).isEqualTo("서울특별시");
+    }
+
+    @Test
+    void extractSIDO_제주() {
+        // given
+        String address = "제주특별자치도 송파구 송파동 54-13";
+
+        // when
+        String SIDO = codeService.extractSIDO(address);
+
+        // then
+        assertThat(SIDO).isEqualTo("제주도");
+    }
+
+    @Test
+    void extractSIDO_세종() {
+        // given
+        String address = "세종특별자치시 송파구 송파동 54-13";
+
+        // when
+        String SIDO = codeService.extractSIDO(address);
+
+        // then
+        assertThat(SIDO).isEqualTo("세종특별시");
+    }
+
+    @Test
+    void extractSIGUGUN() {
+        // given
+        String address = "서울특별시 송파구 송파동 54-13";
+
+        // when
+        String SIGUGUN = codeService.extractSIGUGUN(address);
+
+        // then
+        assertThat(SIGUGUN).isEqualTo("송파구");
     }
 }

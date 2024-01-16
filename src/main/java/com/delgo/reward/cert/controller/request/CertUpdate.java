@@ -2,10 +2,12 @@ package com.delgo.reward.cert.controller.request;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+@Builder
 public record CertUpdate(
         @Schema(description = "유저 고유 아이디")
         @NotNull Integer userId,

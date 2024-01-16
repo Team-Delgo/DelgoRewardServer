@@ -29,7 +29,7 @@ public class FcmMessage {
         return FcmMessage.from(
                 token, // token
                 notifyType.getTitle(), // title
-                notifyType.getBody(List.of(senderName)), // body
+                notifyType.getBody().apply(List.of(senderName)), // body
                 certification.getThumbnailUrl(), // image
                 String.valueOf(notifyType.ordinal()), // tag
                 notifyType.getUrl() + certification.getCertificationId()); // url
@@ -40,7 +40,7 @@ public class FcmMessage {
         return FcmMessage.from(
                 token, // token
                 notifyType.getTitle(), // title
-                notifyType.getBody(List.of(mungple.getAddressForPush(), mungple.getPlaceName(), petName)), // body
+                notifyType.getBody().apply(List.of(mungple.getAddressForPush(), mungple.getPlaceName(), petName)), // body
                 mungple.getThumbnailUrl(), // image
                 String.valueOf(notifyType.ordinal()), // tag
                 notifyType.getUrl() + mungple.getMungpleId()); // url

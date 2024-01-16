@@ -1,7 +1,6 @@
 package com.delgo.reward.cert.response;
 
 import com.delgo.reward.cert.domain.Certification;
-import com.delgo.reward.cert.domain.Reaction;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +8,6 @@ import lombok.Getter;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @Builder
@@ -28,10 +26,9 @@ public class PageCertResponse {
     @Schema(description = "데이터 리스트")
     private List<CertResponse> content;
 
-    public static PageCertResponse from(Integer userId, Page<Certification> page, Map<Integer, List<Reaction>> reactionMap) {
-        List<CertResponse> content = CertResponse.fromList(userId, page.getContent(), reactionMap);
-        return PageCertResponse.builder().
-                size(page.getSize())
+    public static PageCertResponse from(Page<Certification> page, List<CertResponse> content) {
+        return PageCertResponse.builder()
+                .size(page.getSize())
                 .number(page.getNumber())
                 .last(page.isLast())
                 .totalCount(page.getTotalElements())
@@ -39,9 +36,14 @@ public class PageCertResponse {
                 .build();
     }
 
-    public PageCertResponse setViewCount(Integer viewCount) {
-        this.viewCount = viewCount;
-
-        return this;
+    public static PageCertResponse from(Page<Certification> page, List<CertResponse> content, int viewCount) {
+        return PageCertResponse.builder()
+                .size(page.getSize())
+                .number(page.getNumber())
+                .last(page.isLast())
+                .totalCount(page.getTotalElements())
+                .content(content)
+                .viewCount(viewCount)
+                .build();
     }
 }

@@ -1,6 +1,8 @@
 package com.delgo.reward.cert.controller;
 
 
+import com.delgo.reward.comm.ncp.storage.BucketName;
+import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.common.controller.CommController;
 import com.delgo.reward.cert.service.async.CertAsyncService;
 import com.delgo.reward.cert.service.async.ClassificationAsyncService;
@@ -9,6 +11,7 @@ import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.ReactionCode;
 import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.cert.domain.Reaction;
+import com.delgo.reward.common.service.PhotoService;
 import com.delgo.reward.user.domain.User;
 import com.delgo.reward.cert.response.CertResponse;
 import com.delgo.reward.cert.response.PageCertResponse;
@@ -47,11 +50,13 @@ import java.util.*;
 public class CertController extends CommController {
 
     private final UserQueryService userQueryService;
+    private final PhotoService photoService;
     private final MungpleService mungpleService;
     private final ReactionService reactionService;
     private final CertAsyncService certAsyncService;
     private final CertQueryService certQueryService;
     private final CertCommandService certCommandService;
+    private final ObjectStorageService objectStorageService;
     private final ClassificationService classificationService;
     private final ClassificationAsyncService classificationAsyncService;
 
@@ -68,7 +73,8 @@ public class CertController extends CommController {
         Page<Certification> page = certQueryService.getCorrectPagingList(userId, pageable);
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
 
-        return SuccessReturn(PageCertResponse.from(userId, page, reactionMap));
+        List<CertResponse> content = CertResponse.fromList(userId, page.getContent(), reactionMap);
+        return SuccessReturn(PageCertResponse.from(page, content));
     }
 
     /**
@@ -88,8 +94,8 @@ public class CertController extends CommController {
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
         User user = userQueryService.getOneByUserId(userId);
 
-        return SuccessReturn(PageCertResponse.from(userId, page, reactionMap)
-                .setViewCount(user.getViewCount()));
+        List<CertResponse> content = CertResponse.fromList(userId, page.getContent(), reactionMap);
+        return SuccessReturn(PageCertResponse.from(page, content, user.getViewCount()));
     }
 
 
@@ -106,7 +112,8 @@ public class CertController extends CommController {
         Page<Certification> page = certQueryService.getPagingListByMungpleId(userId, mungpleId, pageable);
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
 
-        return SuccessReturn(PageCertResponse.from(userId, page, reactionMap));
+        List<CertResponse> content = CertResponse.fromList(userId, page.getContent(), reactionMap);
+        return SuccessReturn(PageCertResponse.from(page, content));
     }
 
     /**
@@ -133,8 +140,11 @@ public class CertController extends CommController {
     public ResponseEntity<?> createCert(@Validated @RequestPart(value = "data") CertCreate certCreate, @RequestPart(required = false) List<MultipartFile> photos) {
         if (photos.isEmpty()) ErrorReturn(APICode.PARAM_ERROR);
         Certification certification = (certCreate.mungpleId() == 0)
-                ? certCommandService.create(certCreate, photos)
-                : certCommandService.createByMungple(certCreate, photos);
+                ? certCommandService.create(certCreate)
+                : certCommandService.createByMungple(certCreate);
+
+        List<String> certPhotoList = photoService.createCertPhotoList(certification.getCertificationId(), photos);
+        certCommandService.setPhotos(certification.getCertificationId(), certPhotoList);
 
         // 비동기적 실행
         certAsyncService.convertAndUpload(certification.getCertificationId());
@@ -174,8 +184,8 @@ public class CertController extends CommController {
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
         User user = userQueryService.getOneByUserId(userId);
 
-        return SuccessReturn(PageCertResponse.from(userId, page, reactionMap)
-                .setViewCount(user.getViewCount()));
+        List<CertResponse> content = CertResponse.fromList(userId, page.getContent(), reactionMap);
+        return SuccessReturn(PageCertResponse.from(page, content, user.getViewCount()));
     }
 
     /**
@@ -239,6 +249,7 @@ public class CertController extends CommController {
 
         certCommandService.delete(certificationId);
         reactionService.deleteByCertId(certificationId);
+        objectStorageService.deleteObject(BucketName.CERTIFICATION, certificationId + "_cert.webp");
         return SuccessReturn();
     }
 
