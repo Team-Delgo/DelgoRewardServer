@@ -6,6 +6,7 @@ import com.delgo.reward.push.domain.NotifyType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -14,7 +15,7 @@ public class NotifyService {
     private final NotifyRepository notifyRepository;
 
     public Notify create(int userId, String notifyMsg, NotifyType notifyType){
-        return notifyRepository.save(Notify.from(userId, notifyMsg, notifyType));
+        return notifyRepository.save(Notify.from(userId, notifyMsg, notifyType, LocalDateTime.now()));
     }
 
     public List<Notify> getListByUserId(int userId){
