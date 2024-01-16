@@ -1,5 +1,6 @@
 package com.delgo.reward.cert.controller;
 
+import com.delgo.reward.cert.response.CertResponse;
 import com.delgo.reward.common.controller.CommController;
 import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.cert.domain.Reaction;
@@ -32,6 +33,7 @@ public class CalendarController extends CommController {
         Page<Certification> page = certQueryService.getPagingListByUserId(userId, Pageable.unpaged());
         Map<Integer, List<Reaction>> reactionMap = reactionService.getMapByCertList(page.getContent());
 
-        return SuccessReturn(CalendarResponse.from(userId, page, reactionMap));
+        List<CertResponse> CertResponseList = CertResponse.fromList(userId, page.getContent(), reactionMap);
+        return SuccessReturn(CalendarResponse.from(CertResponseList));
     }
 }
