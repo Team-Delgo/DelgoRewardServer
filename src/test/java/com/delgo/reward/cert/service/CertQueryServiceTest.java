@@ -1,6 +1,5 @@
-package com.delgo.reward.service.cert;
+package com.delgo.reward.cert.service;
 
-import com.delgo.reward.cert.service.CertQueryService;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.cert.repository.dto.UserVisitMungpleCountDTO;
@@ -171,7 +170,7 @@ public class CertQueryServiceTest {
         int count = certQueryService.getCountByMungpleId(mungpleId);
 
         // then
-        int expectedCount = 2;
+        int expectedCount = 3;
         assertThat(count).isEqualTo(expectedCount);
     }
 
@@ -184,7 +183,7 @@ public class CertQueryServiceTest {
         Map<Integer, Integer> countMap = certQueryService.getCountMapByMungple();
 
         // then
-        int expectedCount = 2;
+        int expectedCount = 3;
         assertThat(countMap.get(mungpleId)).isEqualTo(expectedCount);
     }
 
@@ -200,5 +199,25 @@ public class CertQueryServiceTest {
         int expectedMungpleId = 1;
         assertThat(dtoList.size()).isEqualTo(1);
         assertThat(dtoList).extracting(UserVisitMungpleCountDTO::getMungpleId).contains(expectedMungpleId);
+    }
+
+    @Test
+    void getCategoryCountMapByUserId() {
+        // given
+        int userId = 1;
+
+        // when
+        Map<CategoryCode, Integer> categoryCountMap = certQueryService.getCategoryCountMapByUserId(userId);
+
+        // then
+        assertThat(categoryCountMap.size()).isEqualTo(8);
+        assertThat(categoryCountMap.get(CategoryCode.CA0001)).isEqualTo(0);
+        assertThat(categoryCountMap.get(CategoryCode.CA0002)).isEqualTo(5);
+        assertThat(categoryCountMap.get(CategoryCode.CA0003)).isEqualTo(0);
+        assertThat(categoryCountMap.get(CategoryCode.CA0004)).isEqualTo(0);
+        assertThat(categoryCountMap.get(CategoryCode.CA0005)).isEqualTo(0);
+        assertThat(categoryCountMap.get(CategoryCode.CA0006)).isEqualTo(0);
+        assertThat(categoryCountMap.get(CategoryCode.CA0007)).isEqualTo(0);
+        assertThat(categoryCountMap.get(CategoryCode.CA9999)).isEqualTo(0);
     }
 }
