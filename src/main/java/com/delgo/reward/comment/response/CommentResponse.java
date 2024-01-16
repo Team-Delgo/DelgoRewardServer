@@ -24,8 +24,6 @@ public class CommentResponse {
     @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
     private final LocalDateTime registDt; // 기존 createDt
 
-
-
     public static CommentResponse from(Comment comment) {
         return CommentResponse.builder()
                 .commentId(comment.getCommentId())

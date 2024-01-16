@@ -12,6 +12,3 @@ public record CommentCreate(
         @NotNull String content
 ) {
 }
-
-
-

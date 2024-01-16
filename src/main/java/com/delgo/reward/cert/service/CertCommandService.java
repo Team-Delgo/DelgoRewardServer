@@ -86,6 +86,12 @@ public class CertCommandService {
         cert.setIsCorrect(isCorrect);
     }
 
+    public void increaseCommentCount(int certificationId){
+        Certification cert = certRepository.findOneByCertificationId(certificationId)
+                .orElseThrow(() -> new NotFoundDataException("[Certification] certificationId : " + certificationId));
+        cert.setCommentCount(cert.getCommentCount() + 1);
+    }
+
     public void delete(int certificationId) {
         certRepository.deleteById(certificationId);
         reactionService.deleteByCertId(certificationId);
