@@ -1,7 +1,6 @@
 package com.delgo.reward.mungple.response;
 
 import com.delgo.reward.comm.code.CategoryCode;
-import com.delgo.reward.bookmark.domain.Bookmark;
 import com.delgo.reward.mungple.domain.Mungple;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -39,49 +38,6 @@ public class MungpleResponse {
     @Schema(description = "유저가 저장했는지 여부")
     protected Boolean isBookmarked;
 
-    public static MungpleResponse from(Mungple mungple){
-        return MungpleResponse.builder()
-                .mungpleId(mungple.getMungpleId())
-                .categoryCode(mungple.getCategoryCode())
-                .placeName(mungple.getPlaceName())
-                .placeNameEn(mungple.getPlaceNameEn())
-                .address(mungple.getJibunAddress())
-                .latitude(mungple.getLatitude())
-                .longitude(mungple.getLongitude())
-                .photoUrl(mungple.getPhotoUrls().get(0))
-                .detailUrl(mungple.getDetailUrl())
-                .build();
-    }
-
-    public static List<MungpleResponse> fromList(List<Mungple> mungpleList) {
-        return mungpleList.stream().map(mungple -> MungpleResponse.from(mungple)).toList();
-    }
-
-    public static MungpleResponse from(Mungple mungple, int certCount, int bookmarkCount) {
-        return MungpleResponse.builder()
-                .mungpleId(mungple.getMungpleId())
-                .categoryCode(mungple.getCategoryCode())
-                .placeName(mungple.getPlaceName())
-                .placeNameEn(mungple.getPlaceNameEn())
-                .address(mungple.getJibunAddress())
-                .latitude(mungple.getLatitude())
-                .longitude(mungple.getLongitude())
-                .photoUrl(mungple.getPhotoUrls().get(0))
-                .detailUrl(mungple.getDetailUrl())
-                .certCount(certCount)
-                .bookmarkCount(bookmarkCount)
-                .build();
-    }
-
-    public static List<MungpleResponse> fromList(List<Mungple> mungpleList, Map<Integer, Integer> certCountMap, Map<Integer, Integer> bookmarkCountMap) {
-        return mungpleList.stream().map(mungple -> {
-            int certCount = certCountMap.getOrDefault(mungple.getMungpleId(),0);
-            int bookmarkCount = bookmarkCountMap.getOrDefault(mungple.getMungpleId(), 0);
-
-            return MungpleResponse.from(mungple, certCount, bookmarkCount);
-        }).toList();
-    }
-
     public static MungpleResponse from(Mungple mungple, int certCount, int bookmarkCount, boolean isBookmarked) {
         return MungpleResponse.builder()
                 .mungpleId(mungple.getMungpleId())
@@ -99,8 +55,7 @@ public class MungpleResponse {
                 .build();
     }
 
-    public static List<MungpleResponse> fromList(List<Mungple> mungpleList, Map<Integer, Integer> certCountMap, Map<Integer, Integer> bookmarkCountMap, List<Bookmark> bookmarkList) {
-        List<Integer> bookmarkedMungpleIdList = Bookmark.getMungpleIdList(bookmarkList);
+    public static List<MungpleResponse> fromList(List<Mungple> mungpleList, Map<Integer, Integer> certCountMap, Map<Integer, Integer> bookmarkCountMap, List<Integer> bookmarkedMungpleIdList) {
         return mungpleList.stream().map(mungple -> {
             int certCount = certCountMap.getOrDefault(mungple.getMungpleId(),0);
             int bookmarkCount = bookmarkCountMap.getOrDefault(mungple.getMungpleId(), 0);
