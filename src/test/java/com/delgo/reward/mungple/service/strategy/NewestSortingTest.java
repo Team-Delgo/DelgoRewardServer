@@ -1,8 +1,7 @@
-package com.delgo.reward.service.mungple.strategy;
+package com.delgo.reward.mungple.service.strategy;
 
 import com.delgo.reward.bookmark.domain.Bookmark;
 import com.delgo.reward.mungple.domain.Mungple;
-import com.delgo.reward.mungple.service.strategy.OldestSorting;
 import org.junit.Test;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,7 +9,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-public class OldestSortingTest {
+public class NewestSortingTest {
     @Test
     public void sort() {
         // given
@@ -26,10 +25,10 @@ public class OldestSortingTest {
         bookmark3.setRegistDt(LocalDateTime.of(2023,12,3,12,0,0));
 
         // when
-        OldestSorting oldestSorting = new OldestSorting(List.of(bookmark1, bookmark2, bookmark3));
-        List<Mungple> sortedList = oldestSorting.sort(List.of(mungple1, mungple2, mungple3));
+        NewestSorting newestSorting = new NewestSorting(List.of(bookmark1, bookmark2, bookmark3));
+        List<Mungple> sortedList = newestSorting.sort(List.of(mungple1, mungple2, mungple3));
 
         // then
-        assertThat(sortedList).isEqualTo(List.of(mungple1, mungple3, mungple2));
+        assertThat(sortedList).isEqualTo(List.of(mungple2, mungple3, mungple1));
     }
 }
