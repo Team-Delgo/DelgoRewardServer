@@ -39,7 +39,7 @@ public class FigmaService {
     public void uploadFigmaDataToNCP(String nodeId, Mungple mungple) {
         try {
             // Figma 연동 Data 조회
-            Map<String, String> imageIdMap = getImageIdFromFigma(nodeId, mungple.makeBaseNameForFigma());
+            Map<String, String> imageIdMap = getImageIdFromFigma(nodeId, mungple.getBaseNameForFigma());
             Map<String, String> imageUrlMap = getImageUrlFromFigma(imageIdMap);
 
             // typeListMap 초기화
@@ -55,7 +55,12 @@ public class FigmaService {
             uploadImages(imageUrlMap, typeListMap);
 
             // typeList를 각 Fileds에 매치 후 저장
-            mungple.setFigmaPhotoData(typeListMap);
+            mungple.setPhotoUrls(Mungple.sortPhotoList(typeListMap.get("")));
+            mungple.setRepresentMenuPhotoUrls(Mungple.sortPhotoList(typeListMap.get("menu")));
+            mungple.setRepresentMenuBoardPhotoUrls(Mungple.sortPhotoList(typeListMap.get("menu_board")));
+            mungple.setPriceTagPhotoUrls(Mungple.sortPhotoList(typeListMap.get("price")));
+            mungple.setResidentDogPhoto(typeListMap.get("dog").get(0));
+
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new FigmaException(e.getMessage());

@@ -1,8 +1,8 @@
 package com.delgo.reward.mungple.response;
 
+import com.delgo.reward.mungple.domain.EntryPolicy;
 import com.delgo.reward.comm.code.BusinessHourCode;
 import com.delgo.reward.comm.code.CategoryCode;
-import com.delgo.reward.comm.code.DetailCode;
 import com.delgo.reward.mungple.domain.Mungple;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -45,8 +45,8 @@ public class MungpleDetailResponse {
     private String phoneNo;
     @Schema(description = "강아지 동반 안내 매장 설명문")
     private String enterDesc;
-    @Schema(description = "허용 크기 설정 | key:[S, M, L] | value: DetailCode ", implementation = DetailCode.class)
-    private Map<String, DetailCode> acceptSize;
+    @Schema(description = "허용 크기 설정 | key:[S, M, L] | value: DetailCode ", implementation = EntryPolicy.class)
+    private Map<String, EntryPolicy> acceptSize;
     @Schema(description = "운영 시간 | key: BusinessHourCode | value: 입력 값", implementation = BusinessHourCode.class)
     private Map<BusinessHourCode, String> businessHour;
     @Schema(description = "Insta Id")
