@@ -85,13 +85,13 @@ class FcmMessageTest {
         // then
         // AOS
         assertThat(fcmMessage.getData().getTitle()).isEqualTo("Delgo " + notifyType.getTitle());
-        assertThat(fcmMessage.getData().getBody()).isEqualTo(notifyType.getBody().apply(List.of(mungple.getAddressForPush(), mungple.getPlaceName(), petName)));
+        assertThat(fcmMessage.getData().getBody()).isEqualTo(notifyType.getBody().apply(List.of(mungple.getLocalAreaName(), mungple.getPlaceName(), petName)));
         assertThat(fcmMessage.getData().getImage()).isEqualTo(mungple.getThumbnailUrl());
         assertThat(fcmMessage.getData().getTag()).isEqualTo(String.valueOf(notifyType.ordinal()));
         assertThat(fcmMessage.getData().getUrl()).isEqualTo(notifyType.getUrl() + mungple.getMungpleId());
         // IOS
         assertThat(fcmMessage.getApns().getPayload().getAps().getAlert().getTitle()).isEqualTo(notifyType.getTitle());
-        assertThat(fcmMessage.getApns().getPayload().getAps().getAlert().getBody()).isEqualTo(notifyType.getBody().apply(List.of(mungple.getAddressForPush(), mungple.getPlaceName(), petName)));
+        assertThat(fcmMessage.getApns().getPayload().getAps().getAlert().getBody()).isEqualTo(notifyType.getBody().apply(List.of(mungple.getLocalAreaName(), mungple.getPlaceName(), petName)));
         assertThat(fcmMessage.getApns().getPayload().getCustom().getImageUrl()).isEqualTo(mungple.getThumbnailUrl());
         assertThat(fcmMessage.getApns().getPayload().getCustom().getUrl()).isEqualTo(notifyType.getUrl() + mungple.getMungpleId());
     }
