@@ -3,7 +3,6 @@ package com.delgo.reward.user.domain;
 import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.comm.encoder.CustomPasswordEncoder;
 import com.delgo.reward.common.domain.BaseTimeEntity;
-import com.delgo.reward.bookmark.domain.Bookmark;
 import com.delgo.reward.token.domain.Token;
 import com.delgo.reward.user.controller.request.OAuthCreate;
 import com.delgo.reward.user.controller.request.UserCreate;
@@ -11,7 +10,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
+
 
 @Getter
 @Entity
@@ -69,16 +68,12 @@ public class User extends BaseTimeEntity {
     @JoinColumn(name = "userId")
     private Token token;
 
-    @ToString.Exclude
-    @OneToMany(mappedBy = "userId", fetch = FetchType.LAZY)
-    private List<Bookmark> bookmarkList;
-
-    public static User from(UserCreate userCreate, CustomPasswordEncoder passwordEncoder, String address, String version){
+        public static User from(UserCreate userCreate, String encodedPassword, String phoneNo, String address, String version) {
         return User.builder()
                 .name(userCreate.userName())
                 .email(userCreate.email())
-                .password(passwordEncoder.encode(userCreate.password()))
-                .phoneNo(userCreate.phoneNo().replaceAll("[^0-9]", ""))
+                .password(encodedPassword)
+                .phoneNo(phoneNo)
                 .userSocial(UserSocial.D)
                 .address(address)
                 .geoCode(userCreate.geoCode())
@@ -89,10 +84,10 @@ public class User extends BaseTimeEntity {
                 .build();
     }
 
-    public static User from(OAuthCreate oAuthCreate, String address, String version) {
+    public static User from(OAuthCreate oAuthCreate, String phoneNo, String address, String version) {
         User.UserBuilder userBuilder = User.builder()
                 .name(oAuthCreate.userName())
-                .phoneNo(oAuthCreate.phoneNo().replaceAll("[^0-9]", ""))
+                .phoneNo(phoneNo)
                 .userSocial(oAuthCreate.userSocial())
                 .address(address)
                 .geoCode(oAuthCreate.geoCode())
@@ -119,11 +114,15 @@ public class User extends BaseTimeEntity {
         return passwordEncoder.encode(password);
     }
 
+    public static String formattedPhoneNo(String phoneNo) {
+        return phoneNo.replaceAll("[^0-9]", "");
+    }
+
     public String getFcmToken() {
         return (token != null) ? token.getFcmToken() : "";
     }
 
     public String getPetName() {
-        return pet.getName();
+        return (pet != null) ? pet.getName() : "";
     }
 }
