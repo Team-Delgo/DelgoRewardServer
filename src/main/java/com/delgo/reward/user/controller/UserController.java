@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * 해당 Controller는 권한 체크 없이 호출이 가능하다.
@@ -88,8 +89,9 @@ public class UserController extends CommController {
         if (!StringUtils.hasText(searchWord))
             return ParamErrorReturn("searchWord");
 
-        Page<User> pagingList = userQueryService.getPagingListBySearchWord(searchWord, pageable);
-        return SuccessReturn(PageUserResponse.from(pagingList));
+        Page<User> userPage = userQueryService.getPagingListBySearchWord(searchWord, pageable);
+        List<UserResponse> userResponseList = UserResponse.fromSearchList(userPage.getContent());
+        return SuccessReturn(PageUserResponse.from(userPage, userResponseList));
     }
 
     /**
