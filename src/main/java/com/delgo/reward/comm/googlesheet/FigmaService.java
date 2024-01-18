@@ -59,7 +59,8 @@ public class FigmaService {
             mungple.setRepresentMenuPhotoUrls(Mungple.sortPhotoList(typeListMap.get("menu")));
             mungple.setRepresentMenuBoardPhotoUrls(Mungple.sortPhotoList(typeListMap.get("menu_board")));
             mungple.setPriceTagPhotoUrls(Mungple.sortPhotoList(typeListMap.get("price")));
-            mungple.setResidentDogPhoto(typeListMap.get("dog").get(0));
+            if(!typeListMap.get("dog").isEmpty())
+                mungple.setResidentDogPhoto(typeListMap.get("dog").get(0));
 
         } catch (Exception e) {
             log.error(e.getMessage());
