@@ -64,7 +64,7 @@ public class UserQueryService {
         User user = getOneByUserId(userId);
         boolean isNotify = user.getIsNotify();
         boolean hasFcmToken = StringUtils.isNotEmpty(user.getFcmToken());
-        return isNotify && hasFcmToken;
+        return !isNotify || !hasFcmToken;
     }
 
     public boolean isAppleUniqueNoExisting(String appleUniqueNo) {

@@ -34,7 +34,7 @@ public class FcmService {
     public void comment(int sendUserId,int receiveUserId, int certificationId) {
         try {
             if(sendUserId == receiveUserId) return;
-            if(!userQueryService.checkNotificationPermission(receiveUserId)) return;
+            if(userQueryService.checkNotificationPermission(receiveUserId)) return;
 
             User sender = userQueryService.getOneByUserId(sendUserId);
             User receiver = userQueryService.getOneByUserId(receiveUserId);
@@ -53,7 +53,7 @@ public class FcmService {
     public void helper(int sendUserId, int receiveUserId, int certificationId) {
         try {
             if(sendUserId == receiveUserId) return;
-            if(!userQueryService.checkNotificationPermission(receiveUserId)) return;
+            if(userQueryService.checkNotificationPermission(receiveUserId)) return;
 
             User sender = userQueryService.getOneByUserId(sendUserId);
             User receiver = userQueryService.getOneByUserId(receiveUserId);
@@ -72,7 +72,7 @@ public class FcmService {
     public void cute(int sendUserId, int receiveUserId, int certificationId) {
         try {
             if(sendUserId == receiveUserId) return;
-            if(!userQueryService.checkNotificationPermission(receiveUserId)) return;
+            if(userQueryService.checkNotificationPermission(receiveUserId)) return;
 
             User sender = userQueryService.getOneByUserId(sendUserId);
             User receiver = userQueryService.getOneByUserId(receiveUserId);
@@ -90,7 +90,7 @@ public class FcmService {
 
     public void mungple(int receiveUserId, int mungpleId) {
         try {
-            if(!userQueryService.checkNotificationPermission(receiveUserId)) return;
+            if(userQueryService.checkNotificationPermission(receiveUserId)) return;
 
             User receiver = userQueryService.getOneByUserId(receiveUserId);
             Mungple mungple = mungpleService.getOneByMungpleId(mungpleId);
@@ -107,7 +107,7 @@ public class FcmService {
 
     public void mungpleByMe(int receiveUserId, int mungpleId) {
         try {
-            if(!userQueryService.checkNotificationPermission(receiveUserId)) return;
+            if(userQueryService.checkNotificationPermission(receiveUserId)) return;
 
             User receiver = userQueryService.getOneByUserId(receiveUserId);
             Mungple mungple = mungpleService.getOneByMungpleId(mungpleId);
@@ -124,7 +124,7 @@ public class FcmService {
 
     public void mungpleByOther(int firstFounderId, int receiveUserId, int mungpleId) {
         try {
-            if(!userQueryService.checkNotificationPermission(receiveUserId)) return;
+            if(userQueryService.checkNotificationPermission(receiveUserId)) return;
 
             User firstFounder = userQueryService.getOneByUserId(firstFounderId);
             User receiver = userQueryService.getOneByUserId(receiveUserId);
