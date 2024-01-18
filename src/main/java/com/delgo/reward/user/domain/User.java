@@ -125,4 +125,8 @@ public class User extends BaseTimeEntity {
     public String getPetName() {
         return (pet != null) ? pet.getName() : "";
     }
+
+    public void increaseViewCount() {
+        viewCount = viewCount + 1;
+    }
 }
