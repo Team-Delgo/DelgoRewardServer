@@ -2,8 +2,8 @@ package com.delgo.reward.user.domain;
 
 import com.delgo.reward.common.domain.BaseTimeEntity;
 import com.delgo.reward.user.controller.request.OAuthCreate;
+import com.delgo.reward.user.controller.request.PetUpdate;
 import com.delgo.reward.user.controller.request.UserCreate;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -11,7 +11,6 @@ import java.time.LocalDate;
 
 @Getter
 @Entity
-@ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,46 +18,18 @@ public class Pet extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int petId;
+    @Setter
     private String name;
+    @Setter
     private String breed; // breedCode
+    @Setter
     private String breedName;
+    @Setter
     private LocalDate birthday;
 
-    @JsonIgnore
-    @ToString.Exclude
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
     private User user;
-
-    public Integer getUserId(){
-        return this.user.getUserId();
-    }
-
-    public Pet setName(String name) {
-        this.name = name;
-
-        return this;
-    }
-
-
-    public Pet setBreed(String breed) {
-        this.breed = breed;
-
-        return this;
-    }
-
-    public Pet setBreedName(String breedName) {
-        this.breedName = breedName;
-
-        return this;
-    }
-
-
-    public Pet setBirthday(LocalDate birthday) {
-        this.birthday = birthday;
-
-        return this;
-    }
 
     public static Pet from(UserCreate userCreate, User user){
         return Pet.builder()
@@ -74,6 +45,16 @@ public class Pet extends BaseTimeEntity {
                 .name(OAuthCreate.petName())
                 .breed(OAuthCreate.breed())
                 .birthday(OAuthCreate.birthday())
+                .user(user)
+                .build();
+    }
+
+    public Pet update(PetUpdate petUpdate, String breedName){
+        return Pet.builder()
+                .name(petUpdate.name())
+                .breed(petUpdate.breed())
+                .breedName(breedName)
+                .birthday(petUpdate.birthday())
                 .user(user)
                 .build();
     }

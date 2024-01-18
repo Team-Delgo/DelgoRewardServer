@@ -24,13 +24,13 @@ public class PageUserResponse {
     @Schema(description = "데이터 리스트")
     private List<UserResponse> content;
 
-    public static PageUserResponse from(Page<User> page) {
+    public static PageUserResponse from(Page<User> page, List<UserResponse> content) {
         return PageUserResponse.builder().
                 size(page.getSize())
                 .number(page.getNumber())
                 .last(page.isLast())
                 .totalCount(page.getTotalElements())
-                .content(UserResponse.fromSearchList(page.getContent()))
+                .content(content)
                 .build();
     }
 }

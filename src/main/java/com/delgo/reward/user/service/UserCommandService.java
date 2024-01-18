@@ -67,6 +67,9 @@ public class UserCommandService {
     }
 
     public void increaseViewCount(int userId) {
-        userRepository.increaseViewCount(userId);
+        User user = userQueryService.getOneByUserId(userId);
+        user.increaseViewCount();
+
+        save(user);
     }
 }
