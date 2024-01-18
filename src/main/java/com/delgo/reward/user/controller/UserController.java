@@ -124,6 +124,7 @@ public class UserController extends CommController {
             return ErrorReturn(APICode.PARAM_ERROR);
 
         User user = userCommandService.save(User.from(oAuthCreate,
+                User.formattedPhoneNo(oAuthCreate.phoneNo()),
                 codeService.getAddressByGeoCode(oAuthCreate.geoCode()), // Code -> 주소 변환
                 version));
 
@@ -155,7 +156,8 @@ public class UserController extends CommController {
             return ErrorReturn(APICode.EMAIL_DUPLICATE_ERROR);
 
         User user = userCommandService.save(User.from(userCreate,
-                customPasswordEncoder, // password encoder
+                customPasswordEncoder.encode(userCreate.password()),
+                User.formattedPhoneNo(userCreate.phoneNo()),
                 codeService.getAddressByGeoCode(userCreate.geoCode()), // Code -> 주소 변환
                 version));
 

@@ -42,6 +42,4 @@ public class Bookmark extends BaseTimeEntity {
     public static List<Integer> getMungpleIdList(List<Bookmark> bookmarkList){
         return bookmarkList.stream().map(Bookmark::getMungpleId).toList();
     }
-
-
 }

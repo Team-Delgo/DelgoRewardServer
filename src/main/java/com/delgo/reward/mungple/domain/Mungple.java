@@ -3,7 +3,6 @@ package com.delgo.reward.mungple.domain;
 
 import com.delgo.reward.comm.code.BusinessHourCode;
 import com.delgo.reward.comm.code.CategoryCode;
-import com.delgo.reward.comm.code.DetailCode;
 import com.delgo.reward.comm.exception.GoogleSheetException;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,6 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 
 @Slf4j
 @Getter
@@ -58,13 +56,13 @@ public class Mungple {
     @Field("location") private GeoJsonPoint location;
 
     // MungpleDetail
-    @Field("photo_urls")
+    @Setter @Field("photo_urls")
     private List<String> photoUrls; // 매장 사진 URL List
 
     @Field("enter_desc")
     private String enterDesc; // 강아지 동반 안내 매장 설명문
     @Field("accept_size")
-    private Map<String, DetailCode> acceptSize;  // 허용 크기 ( S, M , L )
+    private Map<String, EntryPolicy> acceptSize;  // 허용 크기 ( S, M , L )
     @Field("business_hour")
     private Map<BusinessHourCode, String> businessHour; // 운영 시간 ( 요일별로 표시 )
 
@@ -79,22 +77,25 @@ public class Mungple {
     // CA0002, CA0003
     @Field("resident_dog_name")
     private String residentDogName; // 상주견 이름
-    @Field("resident_dog_photo")
+    @Setter @Field("resident_dog_photo")
     private String residentDogPhoto; // 상주견 사진
 
-    @Setter
-    @Field("represent_menu_title")
+    @Setter @Field("represent_menu_title")
     private String representMenuTitle; // 대표 메뉴 제목
-    @Field("represent_menu_photo_urls")
-    private List<String> representMenuPhotoUrls = new ArrayList<>(); // 대표 메뉴 URL List // ※무조건 3개 이상이어야 함.
-    @Field("represent_menu_board_photo_urls")
-    private List<String> representMenuBoardPhotoUrls = new ArrayList<>(); // 대표 메뉴 URL List // ※무조건 3개 이상이어야 함.
+    @Setter @Field("represent_menu_photo_urls")
+    private List<String> representMenuPhotoUrls; // 대표 메뉴 URL List // ※무조건 3개 이상이어야 함.
+    @Setter @Field("represent_menu_board_photo_urls")
+    private List<String> representMenuBoardPhotoUrls; // 대표 메뉴 URL List // ※무조건 3개 이상이어야 함.
 
     // CA0001, CA0005, CA0006, CA0007
     @Field("is_price_tag")
     private Boolean isPriceTag; // 가격표 존재 여부
-    @Field("price_tag_photo_urls")
-    private List<String> priceTagPhotoUrls = new ArrayList<>(); // 가격표 사진
+    @Setter @Field("price_tag_photo_urls")
+    private List<String> priceTagPhotoUrls; // 가격표 사진
+
+    public String getThumbnailUrl() {
+        return photoUrls.get(0);
+    }
 
     public void setAcceptSize(String input) {
         acceptSize = new HashMap<>();
@@ -105,10 +106,8 @@ public class Mungple {
         while (matcher.find()) {
             try {
                 String key = matcher.group(1).trim().replaceAll(",$", "");
-                System.out.println("key = " + key);
                 String value = matcher.group(2).trim().replaceAll(",$", "");
-                System.out.println("value = " + value);
-                acceptSize.put(key,DetailCode.valueOf(value));
+                acceptSize.put(key, EntryPolicy.valueOf(value));
             } catch (Exception e){
                 log.error(e.getMessage());
                 throw new GoogleSheetException("[강아지 동반 안내] " + matcher.group(1) + " 확인해주세요");
@@ -138,25 +137,7 @@ public class Mungple {
                 .forEach(code -> businessHour.computeIfAbsent(code, BusinessHourCode::getDefaultValue));
     }
 
-    public void setFigmaPhotoData(Map<String, ArrayList<String>> listMap) {
-        this.photoUrls = sortAndRetrieveUrls(listMap, "");
-        this.representMenuPhotoUrls = sortAndRetrieveUrls(listMap, "menu");
-        this.representMenuBoardPhotoUrls = sortAndRetrieveUrls(listMap, "menu_board");
-        this.priceTagPhotoUrls = sortAndRetrieveUrls(listMap, "price");
-        this.residentDogPhoto = Optional.ofNullable(listMap.get("dog"))
-                .filter(list -> !list.isEmpty())
-                .map(list -> list.get(0))
-                .orElse(null);
-    }
-
-    private List<String> sortAndRetrieveUrls(Map<String, ArrayList<String>> map, String key) {
-        return Optional.ofNullable(map.get(key))
-                .filter(list -> !list.isEmpty())
-                .map(this::sortUrlList)
-                .orElse(Collections.emptyList());
-    }
-
-    private List<String> sortUrlList(List<String> list){
+    public static List<String> sortPhotoList(List<String> list) {
         Pattern pattern = Pattern.compile("_([0-9]+)\\.webp"); // Extracts the number before ".webp"
         return list.stream()
                 .sorted(Comparator.comparingInt(url -> {
@@ -166,49 +147,30 @@ public class Mungple {
                 .collect(Collectors.toList());
     }
 
-    public String makeBaseNameForFigma(){
-        String categoryName = this.categoryCode.getName();
-        String addressName = findAddressName(jibunAddress, isExistGu(jibunAddress) ? "구" : "시");
-
-        String baseName = addressName + "_" + categoryName + "_" + placeName.replaceAll("\\s+", "");
+    public String getBaseNameForFigma(){
+        String baseName = getLocalAreaName() + "_" + categoryCode.getName() + "_" + placeName.replaceAll("\\s+", "");
         System.out.println("baseName = " + baseName);
-
         return baseName;
     }
 
-    private boolean isExistGu(String text) {
-        Pattern pattern = Pattern.compile("\\b\\S*구\\b");
-        Matcher matcher = pattern.matcher(text);
-
-        while (matcher.find()) {
-            return true; // 찾은 경우 즉시 true 반환
-        }
-        return false; // 찾지 못한 경우 false 반환
-    }
-
-    private String findAddressName(String text, String type) {
-        Pattern pattern = Pattern.compile("\\b\\S*" + type + "\\b");
-        Matcher matcher = pattern.matcher(text);
-        if (matcher.find()) {
-            return matcher.group();
+    public String getLocalAreaName() {
+        String[] types = {"구", "시"};
+        for (String type : types) {
+            Pattern pattern = Pattern.compile("\\b\\S*" + type + "\\b");
+            Matcher matcher = pattern.matcher(jibunAddress);
+            if (matcher.find()) {
+                return matcher.group();
+            }
         }
         return "";
     }
 
-    public String formattedAddress(){
+    public String formattedAddress() {
         String[] arr = jibunAddress.split(" ");
         return arr[0] + " " + arr[1] + " " + arr[2];
     }
 
     public static Map<Integer, Mungple> listToMap(List<Mungple> mungpleList) {
         return mungpleList.stream().collect(Collectors.toMap(Mungple::getMungpleId, Function.identity()));
-    }
-
-    public String getAddressForPush() {
-        return findAddressName(jibunAddress, isExistGu(jibunAddress) ? "구" : "시");
-    }
-
-    public String getThumbnailUrl() {
-        return photoUrls.get(0);
     }
 }

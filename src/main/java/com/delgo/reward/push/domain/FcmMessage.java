@@ -40,7 +40,7 @@ public class FcmMessage {
         return FcmMessage.from(
                 token, // token
                 notifyType.getTitle(), // title
-                notifyType.getBody().apply(List.of(mungple.getAddressForPush(), mungple.getPlaceName(), petName)), // body
+                notifyType.getBody().apply(List.of(mungple.getLocalAreaName(), mungple.getPlaceName(), petName)), // body
                 mungple.getThumbnailUrl(), // image
                 String.valueOf(notifyType.ordinal()), // tag
                 notifyType.getUrl() + mungple.getMungpleId()); // url

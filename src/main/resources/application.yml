@@ -1,7 +1,9 @@
+server:
+  port: 8081
 # spring MariaDB Connect
 spring:
   profiles:
-      active: dev
+      active: local
   datasource:
     username: delgo
     password: Zlzl2022!
@@ -21,15 +23,6 @@ spring:
     multipart:
       maxFileSize: 50MB
       maxRequestSize: 55MB
-  kafka:
-    consumer:
-      bootstrap-servers: localhost:9092 # 컨슈머 서버 주소
-      group-id: tester
-    producer:
-      bootstrap-servers: localhost:9092 # 프로듀서 서버 주소
-
-server:
-  port: 8081
 
 # Swagger 설정
 springdoc:
@@ -47,7 +40,6 @@ springdoc:
     doc-expansion: none # tag, operation 펼치는 방식
   paths-to-match:
     - /**
-
 
 ---
 spring:

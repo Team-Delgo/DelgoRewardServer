@@ -34,8 +34,6 @@ public class TokenService {
     // token 없이도 로그아웃은 가능해야 한다.
     public void delete(int userId) {
         Token token = getOneByUserId(userId);
-        token.delete(userId);
-
-        tokenRepository.save(token);
+        tokenRepository.save(token.delete(userId));
     }
 }

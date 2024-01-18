@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 class BookmarkTest {
+
     @Test
     void from() {
         // given
@@ -54,5 +55,16 @@ class BookmarkTest {
         assertThat(mungpleIdList.get(0)).isEqualTo(bookmarkList.get(0).getMungpleId());
         assertThat(mungpleIdList.get(1)).isEqualTo(bookmarkList.get(1).getMungpleId());
         assertThat(mungpleIdList.get(2)).isEqualTo(bookmarkList.get(2).getMungpleId());
+    }
+
+    @Test
+    void NoArgsConstructor(){
+        // given
+
+        // when
+        Bookmark bookmark = new Bookmark();
+
+        // then
+        assertThat(bookmark).isNotNull();
     }
 }

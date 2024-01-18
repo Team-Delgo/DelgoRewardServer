@@ -1,4 +1,4 @@
-package com.delgo.reward.service.mungple;
+package com.delgo.reward.mungple.service;
 
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.MungpleSort;

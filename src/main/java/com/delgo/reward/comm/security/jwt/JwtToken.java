@@ -1,13 +1,9 @@
 package com.delgo.reward.comm.security.jwt;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
-@ToString
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
 public class JwtToken {
     private int userId;

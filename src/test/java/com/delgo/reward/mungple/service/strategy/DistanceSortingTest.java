@@ -1,7 +1,6 @@
-package com.delgo.reward.service.mungple.strategy;
+package com.delgo.reward.mungple.service.strategy;
 
 import com.delgo.reward.mungple.domain.Mungple;
-import com.delgo.reward.mungple.service.strategy.DistanceSorting;
 import org.junit.Test;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import java.util.List;
