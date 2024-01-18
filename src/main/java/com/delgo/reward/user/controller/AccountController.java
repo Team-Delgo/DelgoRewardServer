@@ -88,7 +88,7 @@ public class AccountController extends CommController {
     @Operation(summary = "펫 정보 수정", description = "성공 여부만 반환 한다.")
     @PutMapping("/pet")
     public ResponseEntity<?> changePetInfo(@Validated @RequestBody PetUpdate petUpdate) {
-        petService.changePetInfo(petUpdate, userQueryService.getOneByEmail(petUpdate.email()));
+        petService.update(petUpdate);
         return SuccessReturn();
     }
 
