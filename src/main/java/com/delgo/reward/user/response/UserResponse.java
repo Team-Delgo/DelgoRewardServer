@@ -5,23 +5,19 @@ import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.user.domain.User;
 import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.cert.repository.dto.UserVisitMungpleCountDTO;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
 import java.util.Map;
 
 @Getter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 public class UserResponse {
     @Schema(description = "유저 고유 아이디", required = true)
@@ -58,9 +54,6 @@ public class UserResponse {
     private int yearOfPetAge;
     @Schema(description = "펫 나이(월)")
     private int monthOfPetAge;
-    @Schema(description = "등록 일자")
-    @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
-    private LocalDateTime registDt;
 
     // Account
     @Schema(description = "활동 비율 표시 [Key: CategoryCode(ENUM)]")
@@ -87,7 +80,6 @@ public class UserResponse {
                 .breed(user.getPet().getBreed())
                 .breedName(user.getPet().getBreedName())
                 .birthday(user.getPet().getBirthday())
-                .registDt(user.getRegistDt())
                 .yearOfPetAge(period.getYears())
                 .monthOfPetAge(period.getMonths())
                 .build();
@@ -112,7 +104,6 @@ public class UserResponse {
                 .breed(user.getPet().getBreed())
                 .breedName(user.getPet().getBreedName())
                 .birthday(user.getPet().getBirthday())
-                .registDt(user.getRegistDt())
                 .yearOfPetAge(period.getYears())
                 .monthOfPetAge(period.getMonths())
 
@@ -133,6 +124,7 @@ public class UserResponse {
                 .petName(user.getPet().getName())
                 .breed(user.getPet().getBreed())
                 .breedName(user.getPet().getBreedName())
+                .birthday(user.getPet().getBirthday())
                 .yearOfPetAge(period.getYears())
                 .monthOfPetAge(period.getMonths())
 
@@ -142,6 +134,7 @@ public class UserResponse {
     }
 
     public static UserResponse fromSearch(User user) {
+        Period period = Period.between(user.getPet().getBirthday(), LocalDate.now());
         return UserResponse.builder()
                 .userId(user.getUserId())
                 .nickname(user.getName())
@@ -151,6 +144,9 @@ public class UserResponse {
                 .petName(user.getPet().getName())
                 .breed(user.getPet().getBreed())
                 .breedName(user.getPet().getBreedName())
+                .birthday(user.getPet().getBirthday())
+                .yearOfPetAge(period.getYears())
+                .monthOfPetAge(period.getMonths())
                 .build();
     }
 
