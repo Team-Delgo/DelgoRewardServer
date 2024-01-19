@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.delgo.reward'
-version = '1.1.8'
+version = '1.1.9-DEV'
 sourceCompatibility = '17'
 apply plugin: 'war'
 
@@ -112,5 +112,13 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+processResources.dependsOn('copySecret')
+tasks.register('copySecret', Copy) {
+    from './config' // 서브 모듈 디렉토리 경로
+    include "*.yml"  // 설정 파일 복사
+    include "*.json"  // 추가할 파일
+    include "firebase/*.json"  // 추가할 파일의 경로
+    into 'src/main/resources'  // 붙여넣을 위치
+}
 
 
