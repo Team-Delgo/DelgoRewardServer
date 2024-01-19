@@ -27,9 +27,7 @@ public class BirthdayPush extends QuartzJobBean {
         List<Pet> petList = petRepository.findAll();
         for(Pet pet: petList){
             if(pet.getBirthday().getMonth().equals(localDate.getMonth()) && pet.getBirthday().getDayOfMonth() == localDate.getDayOfMonth()){
-//              // TODO 서은님 축하사진 작업되어야 함.
-//                fcmService.pushByBirthday(pet.getUserId());
-                log.info("[BirthdayPush] User Id: " + pet.getUserId() + " Pet Name: " + pet.getName());
+                fcmService.birthday(pet.getUser().getUserId());
             }
         }
 
