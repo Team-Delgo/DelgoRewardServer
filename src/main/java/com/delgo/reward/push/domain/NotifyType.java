@@ -27,7 +27,7 @@ public enum NotifyType {
     Mungple("새로운 동반 장소\uD83D\uDCCD", "https://www.reward.delgo.pet/detail/", NotifyType::bodyByMungple),
     MungpleByMe("새로운 동반 장소\uD83D\uDCCD", "https://www.reward.delgo.pet/detail/", NotifyType::bodyByFoundMungpleByMe),
     MungpleByOther("새로운 동반 장소\uD83D\uDCCD", "https://www.reward.delgo.pet/detail/", NotifyType::bodyByFoundMungpleByOther),
-    Birthday("생일을 축하합니다\uD83C\uDF89", "", null);
+    Birthday("생일을 축하합니다\uD83C\uDF89", "https://www.reward.delgo.pet", NotifyType::bodyByBirthday);
 
     private final String title;
     private final String url;
@@ -70,5 +70,10 @@ public enum NotifyType {
         String placeName = list.get(1);
         String firstFounderPetName = list.get(2);
         return "[" + firstFounderPetName + "]가 다녀 온 " + address + " '" + placeName + "'가 새 장소로 추가되었어요";
+    }
+
+    public static String bodyByBirthday(List<String> list) {
+        String petName = list.get(0);
+        return "오늘은 [" + petName + "]의 생일이에요. [" + petName + "]와 함께 즐거운 하루 보내세요❤";
     }
 }

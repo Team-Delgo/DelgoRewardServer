@@ -140,6 +140,29 @@ public class FcmService {
         }
     }
 
+    public void birthday(int receiveUserId) {
+        try {
+            if(userQueryService.checkNotificationPermission(receiveUserId)) return;
+
+            User receiver = userQueryService.getOneByUserId(receiveUserId);
+
+            FcmMessage message = FcmMessage.from(
+                    receiver.getFcmToken(), // token
+                    "[" + receiver.getPetName() + "] 생일을 축하합니다🎉", // title
+                    NotifyType.Birthday.getBody().apply(List.of(receiver.getPetName())), // body
+                    "https://kr.object.ncloudstorage.com/reward-mungple/%EC%83%9D%EC%9D%BC%EC%B6%95%ED%95%98.jpg", // image
+                    String.valueOf(NotifyType.Birthday.ordinal()), //tag
+                    NotifyType.Birthday.getUrl()); //url
+
+            sendMessageTo(message);
+
+            notifyService.create(receiver.getUserId(), message.getData().getBody(), NotifyType.Comment);
+        } catch (Exception e) {
+            log.error("[FCM] ERROR : {}", e.getMessage());
+            throw new RuntimeException("PUSH ERROR");
+        }
+    }
+
     public void sendMessageTo(FcmMessage fcmMessage) {
         try {
             String API_URL = "https://fcm.googleapis.com/v1/projects/delgoreward/messages:send";
