@@ -77,4 +77,67 @@ class MungpleDetailResponseTest {
         assertThat(mungpleDetailResponse.getIsPriceTag()).isEqualTo(!mungple.getPriceTagPhotoUrls().isEmpty());
         assertThat(mungpleDetailResponse.getPriceTagPhotoUrls()).isEqualTo(mungple.getPriceTagPhotoUrls());
     }
+
+    @Test
+    void from_예외처리_사진_데이터_없는_경우() {
+        // given
+        int certCount = 3;
+        int bookmarkCount = 6;
+        boolean isBookmarked = true;
+        Mungple mungple = Mungple.builder()
+                .mungpleId(123)
+                .categoryCode(CategoryCode.CA0002)
+                .placeName("테스트 장소")
+                .placeNameEn("Test Place")
+                .jibunAddress("서울시 강남구 역삼동 123-45")
+                .latitude("37.12345")
+                .longitude("127.12345")
+                .detailUrl("http://example.com/detail")
+                .photoUrls(new ArrayList<>(Arrays.asList("http://example.com/photo1.jpg", "http://example.com/photo2.jpg")))
+                .acceptSize(Map.of("S", EntryPolicy.ALLOW, "M", EntryPolicy.ALLOW))
+                .businessHour(Map.of(BusinessHourCode.MON, "09:00-18:00"))
+                .instaId("insta123")
+                .isParking(true)
+                .parkingInfo("주차 가능")
+                .residentDogName("멍멍이")
+                .residentDogPhoto("http://example.com/dog.jpg")
+                .representMenuTitle("대표 메뉴")
+                .representMenuPhotoUrls(null)
+                .representMenuBoardPhotoUrls(null)
+                .isPriceTag(true)
+                .priceTagPhotoUrls(null)
+                .build();
+
+        // when
+        MungpleDetailResponse mungpleDetailResponse = MungpleDetailResponse.from(mungple, certCount, bookmarkCount, isBookmarked);
+
+        // then
+        assertThat(mungpleDetailResponse.getMungpleId()).isEqualTo(mungple.getMungpleId());
+        assertThat(mungpleDetailResponse.getCategoryCode()).isEqualTo(mungple.getCategoryCode());
+        assertThat(mungpleDetailResponse.getPlaceName()).isEqualTo(mungple.getPlaceName());
+        assertThat(mungpleDetailResponse.getPlaceNameEn()).isEqualTo(mungple.getPlaceNameEn());
+        assertThat(mungpleDetailResponse.getAddress()).isEqualTo(mungple.getJibunAddress());
+        assertThat(mungpleDetailResponse.getLatitude()).isEqualTo(mungple.getLatitude());
+        assertThat(mungpleDetailResponse.getLongitude()).isEqualTo(mungple.getLongitude());
+        assertThat(mungpleDetailResponse.getDetailUrl()).isEqualTo(mungple.getDetailUrl());
+        assertThat(mungpleDetailResponse.getPhotoUrl()).isEqualTo(mungple.getPhotoUrls().get(0));
+        assertThat(mungpleDetailResponse.getCertCount()).isEqualTo(certCount);
+        assertThat(mungpleDetailResponse.getBookmarkCount()).isEqualTo(bookmarkCount);
+        assertThat(mungpleDetailResponse.getIsBookmarked()).isEqualTo(isBookmarked);
+        assertThat(mungpleDetailResponse.getPhoneNo()).isEqualTo(mungple.getPhoneNo());
+        assertThat(mungpleDetailResponse.getEnterDesc()).isEqualTo(mungple.getEnterDesc());
+        assertThat(mungpleDetailResponse.getAcceptSize()).isEqualTo(mungple.getAcceptSize());
+        assertThat(mungpleDetailResponse.getBusinessHour()).isEqualTo(mungple.getBusinessHour());
+        assertThat(mungpleDetailResponse.getInstaId()).isEqualTo(mungple.getInstaId());
+        assertThat(mungpleDetailResponse.getPhotoUrls()).isEqualTo(mungple.getPhotoUrls());
+        assertThat(mungpleDetailResponse.getEditorNoteUrl()).isEqualTo(mungple.getDetailUrl());
+        assertThat(mungpleDetailResponse.getIsParking()).isEqualTo(mungple.getIsParking());
+        assertThat(mungpleDetailResponse.getParkingInfo()).isEqualTo(mungple.getParkingInfo());
+        assertThat(mungpleDetailResponse.getResidentDogName()).isEqualTo(mungple.getResidentDogName());
+        assertThat(mungpleDetailResponse.getResidentDogPhoto()).isEqualTo(mungple.getResidentDogPhoto());
+        assertThat(mungpleDetailResponse.getRepresentMenuTitle()).isEqualTo(mungple.getRepresentMenuTitle());
+        assertThat(mungpleDetailResponse.getRepresentMenuPhotoUrls()).isEqualTo(new ArrayList<>());
+        assertThat(mungpleDetailResponse.getIsPriceTag()).isEqualTo(false);
+        assertThat(mungpleDetailResponse.getPriceTagPhotoUrls()).isEqualTo(new ArrayList<>());
+    }
 }

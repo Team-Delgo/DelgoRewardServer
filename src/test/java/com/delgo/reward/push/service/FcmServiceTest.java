@@ -92,4 +92,14 @@ class FcmServiceTest {
         // then
     }
 
+    @Test
+    void birthday() {
+        // given
+        int receiveUserId = 364;
+
+        // when
+        fcmService.birthday(receiveUserId);
+
+        // then
+    }
 }

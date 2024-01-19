@@ -9,8 +9,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Getter
 @Builder
@@ -79,8 +81,11 @@ public class MungpleDetailResponse {
 
 
     public static MungpleDetailResponse from(Mungple mungple, int certCount, int bookmarkCount, boolean isBookmarked) {
-        List<String> representMenuBoardPhotoUrls = mungple.getRepresentMenuBoardPhotoUrls();
-        representMenuBoardPhotoUrls.addAll(mungple.getRepresentMenuPhotoUrls());
+        List<String> representMenuBoardPhotoUrls = Optional.ofNullable(mungple.getRepresentMenuBoardPhotoUrls()).orElseGet(ArrayList::new);
+        List<String> representMenuPhotoUrls = Optional.ofNullable(mungple.getRepresentMenuPhotoUrls()).orElseGet(ArrayList::new);
+        representMenuBoardPhotoUrls.addAll(representMenuPhotoUrls);
+
+        List<String> priceTagPhotoUrls = Optional.ofNullable(mungple.getPriceTagPhotoUrls()).orElseGet(ArrayList::new);
 
         return MungpleDetailResponse.builder()
                 .mungpleId(mungple.getMungpleId())
@@ -111,8 +116,8 @@ public class MungpleDetailResponse {
                 .representMenuTitle(mungple.getRepresentMenuTitle())
                 .representMenuPhotoUrls(representMenuBoardPhotoUrls)
 
-                .isPriceTag(!mungple.getPriceTagPhotoUrls().isEmpty())
-                .priceTagPhotoUrls(mungple.getPriceTagPhotoUrls())
+                .isPriceTag(!priceTagPhotoUrls.isEmpty())
+                .priceTagPhotoUrls(priceTagPhotoUrls)
                 .build();
     }
 }
