@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -60,6 +61,14 @@ public class UserCommandService {
 
         Optional.ofNullable(userUpdate.name()).ifPresent(user::setName);
         return save(user);
+    }
+
+    public void updateVersion(int userId, String version) {
+        User user = userQueryService.getOneByUserId(userId);
+        user.setVersion(version);
+        user.setLastAccessDt(LocalDateTime.now());
+
+        save(user);
     }
 
     public void deleteByUserId(int userId) {
