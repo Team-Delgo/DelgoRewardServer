@@ -101,8 +101,8 @@ public class UserController extends CommController {
     @PutMapping("/password")
     public ResponseEntity<?> resetPassword(@Validated @RequestBody PasswordUpdate passwordUpdate) {
         User user = userQueryService.getOneByEmail(passwordUpdate.email()); // 유저 조회
-        SmsAuth smsAuth = smsAuthService.getSmsAuthByPhoneNo(user.getPhoneNo()); // SMS DATA 조회
-        if (!smsAuthService.isAuth(smsAuth))
+        SmsAuth smsAuth = smsAuthService.getOneByPhoneNo(user.getPhoneNo());
+        if (!smsAuth.isAuthTimeValid())
             return ErrorReturn(APICode.SMS_ERROR);
 
         String encodedPassword =  User.encodePassword(customPasswordEncoder, passwordUpdate.newPassword());

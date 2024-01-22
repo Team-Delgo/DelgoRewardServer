@@ -1,9 +1,12 @@
 package com.delgo.reward.user.controller;
 
 
+import com.delgo.reward.comm.ncp.sms.SmsService;
 import com.delgo.reward.common.controller.CommController;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.user.controller.request.SmsAuthCreate;
+import com.delgo.reward.user.domain.SmsAuth;
+import com.delgo.reward.user.domain.User;
 import com.delgo.reward.user.service.SmsAuthService;
 import com.delgo.reward.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
-import java.util.Optional;
+
+import static com.delgo.reward.common.service.CommService.numberGen;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,6 +26,7 @@ import java.util.Optional;
 public class AuthController extends CommController {
     private final UserQueryService userQueryService;
     private final SmsAuthService smsAuthService;
+    private final SmsService smsService;
 
     // 이메일 존재 유무 확인
     @GetMapping("/email")
@@ -45,28 +50,35 @@ public class AuthController extends CommController {
         return userQueryService.isNameExisting(name)
                 ? ErrorReturn(APICode.NAME_DUPLICATE_ERROR)
                 : SuccessReturn();
+
     }
 
     // 인증번호 생성
     @PostMapping("/sms")
     public ResponseEntity<?> phoneNoAuth(@RequestBody @Validated SmsAuthCreate smsAuthCreate) {
-        smsAuthCreate.setPhoneNo(smsAuthCreate.getPhoneNo().replaceAll("[^0-9]", ""));
+        String phoneNo = User.formattedPhoneNo(smsAuthCreate.phoneNo());
 
-        if (smsAuthCreate.getIsJoin() && !userQueryService.isPhoneNoExisting(smsAuthCreate.getPhoneNo())) return ErrorReturn(APICode.PHONE_NO_NOT_EXIST);
-        if (!smsAuthCreate.getIsJoin() && userQueryService.isPhoneNoExisting(smsAuthCreate.getPhoneNo())) return ErrorReturn(APICode.PHONE_NO_DUPLICATE_ERROR);
+        if (smsAuthCreate.isJoin() && !userQueryService.isPhoneNoExisting(phoneNo)) return ErrorReturn(APICode.PHONE_NO_NOT_EXIST);
+        if (!smsAuthCreate.isJoin() && userQueryService.isPhoneNoExisting(phoneNo)) return ErrorReturn(APICode.PHONE_NO_DUPLICATE_ERROR);
 
-        return SuccessReturn(smsAuthService.makeAuth(smsAuthCreate.getPhoneNo()));
+        String randNum = numberGen(4, 1);
+        boolean sendResult = smsService.send(phoneNo, "[Delgo] 인증번호 " + randNum);
+        if (!sendResult) ErrorReturn(APICode.SMS_ERROR);
+
+        return SuccessReturn(smsAuthService.isExisting(phoneNo)
+                ? smsAuthService.update(phoneNo, randNum).getSmsId()
+                : smsAuthService.create(phoneNo, randNum).getSmsId());
     }
 
     // 인증번호 확인
     @GetMapping("/sms/check")
-        public ResponseEntity<?> randNumCheck(@RequestParam @NotNull Integer smsId, @RequestParam @NotBlank String enterNum) {
-            if(Objects.equals(enterNum, "9999")) // 9999로 무조건 되는 코드 추가
-                return SuccessReturn();
+    public ResponseEntity<?> randNumCheck(@RequestParam @NotNull Integer smsId, @RequestParam @NotBlank String enterNum) {
+        if (Objects.equals(enterNum, "9999")) // 9999로 무조건 되는 코드 추가
+            return SuccessReturn();
 
-        Optional<APICode> apiCode = smsAuthService.checkSMS(smsId, enterNum);
-        return  smsAuthService.checkSMS(smsId, enterNum).isPresent()
-                ? ErrorReturn(apiCode.get())
-                : SuccessReturn();
+        SmsAuth smsAuth = smsAuthService.getOneBySmsId(smsId);
+        return smsAuth.isRandNumEqual(enterNum) && smsAuth.isAuthTimeValid()
+                ? SuccessReturn()
+                : ErrorReturn(APICode.AUTH_DO_NOT_MATCHING);
     }
 }
