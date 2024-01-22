@@ -105,31 +105,31 @@
 
 <h2 id="6">📷 Result</h2>
 <p float="left">  
-<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/721a97e4-4308-4b52-ad48-085b3a443de1">
-<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/fe83274f-a45c-48b0-ba1c-a4a2ce7533ee">
-<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/76f72c7c-79d3-40b8-9fb7-42583c65d2e3">
+<img width="30%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/721a97e4-4308-4b52-ad48-085b3a443de1">
+<img width="30%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/fe83274f-a45c-48b0-ba1c-a4a2ce7533ee">
+<img width="30%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/76f72c7c-79d3-40b8-9fb7-42583c65d2e3">
 </p>
 
 <p float="left">
-<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/1fbc801f-d68a-46a7-aa97-88e4fdb0914b">
-<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/15ec1a0b-5283-4f21-a26c-3480ec66e602">
-<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/f28e078d-2c24-42c8-996d-852e091a5e1d">
+<img width="30%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/1fbc801f-d68a-46a7-aa97-88e4fdb0914b">
+<img width="30%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/15ec1a0b-5283-4f21-a26c-3480ec66e602">
+<img width="30%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/f28e078d-2c24-42c8-996d-852e091a5e1d">
 </p>
 
 <p float="left">
-<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/e5e2ec9c-a6d8-4fc6-b0ea-63c6ec2b9a0f">
-<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/e9d2cf39-46c0-43f8-8b40-55fa08ce5586">
-<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/dc05f339-72c9-49c1-b41d-05f48ec8638e">
+<img width="30%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/e5e2ec9c-a6d8-4fc6-b0ea-63c6ec2b9a0f">
+<img width="30%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/e9d2cf39-46c0-43f8-8b40-55fa08ce5586">
+<img width="30%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/dc05f339-72c9-49c1-b41d-05f48ec8638e">
 </p>
 
 <p float="left">
-<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/9a1e5903-5e08-44ca-9e64-0910f55d1dd5">
-<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/072b6f92-f613-48a9-98a3-e46dfd9caba1">
-<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/e46d301d-59ab-47f6-be2e-c46fb433567f">
+<img width="30%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/9a1e5903-5e08-44ca-9e64-0910f55d1dd5">
+<img width="30%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/072b6f92-f613-48a9-98a3-e46dfd9caba1">
+<img width="30%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/e46d301d-59ab-47f6-be2e-c46fb433567f">
 </p>
 
 <p float="left">
-<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/c5c1f963-9688-4c7d-94e3-0278e812b697">
-<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/02220291-3991-47cc-ae15-4a3938cb5fc3">
-<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/f7244507-19c9-4b9b-8970-634f4b82ddc9">
+<img width="30%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/c5c1f963-9688-4c7d-94e3-0278e812b697">
+<img width="30%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/02220291-3991-47cc-ae15-4a3938cb5fc3">
+<img width="30%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/f7244507-19c9-4b9b-8970-634f4b82ddc9">
 </p>
