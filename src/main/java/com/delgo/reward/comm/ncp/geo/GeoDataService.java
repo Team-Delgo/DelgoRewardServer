@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,10 +21,14 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class GeoDataService {
-    private static final String API_GEO_URL = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode";
-    private static final String API_REVERSE_GEO_URL = "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc";
-    private static final String CLIENT_ID = "a8lt0yd9uy";
-    private static final String CLIENT_SECRET = "P1WuQqH2d7rAnbWraxGwgDjPVvayuFwhV0RQAXtR";
+    @Value("${ncp.geo.url}")
+    String API_GEO_URL;
+    @Value("${ncp.geo.reverse-url}")
+    String API_REVERSE_GEO_URL;
+    @Value("${ncp.geo.client-id}")
+    String CLIENT_ID;
+    @Value("${ncp.geo.client-secret}")
+    String CLIENT_SECRET;
 
     public GeoData getGeoData(String address) {
         String requestURL = API_GEO_URL + "?query=" + address;

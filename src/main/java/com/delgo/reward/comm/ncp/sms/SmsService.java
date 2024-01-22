@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,10 +28,14 @@ import java.security.NoSuchAlgorithmException;
 @Getter
 @Component
 public class SmsService {
-    String API_URL = "https://sens.apigw.ntruss.com/sms/v2/services/ncp:sms:kr:271788577003:delgo-sms/messages";
-    String SIGNATURE_PATH = "/sms/v2/services/ncp:sms:kr:271788577003:delgo-sms/messages";
-    String ACCESS_KEY = "CU54eUVGT4dRhR7H1ocm"; // 개인 인증키
-    String SECRET_KEY = "oCzPFBWmPMFYCf6Z9FU6iMMBtXB1RR7UdGV2BZuS";
+    @Value("${ncp.sms.url}")
+    String API_URL;
+    @Value("${ncp.sms.signature-path}")
+    String SIGNATURE_PATH;
+    @Value("${ncp.sms.access-key}")
+    String ACCESS_KEY;
+    @Value("${ncp.sms.secret-key}")
+    String SECRET_KEY;
 
     public boolean send(String recipientPhoneNumber, String content) {
         try {

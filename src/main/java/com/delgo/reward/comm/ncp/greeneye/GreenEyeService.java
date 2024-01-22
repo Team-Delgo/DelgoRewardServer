@@ -4,6 +4,7 @@ package com.delgo.reward.comm.ncp.greeneye;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -18,8 +19,10 @@ import java.util.List;
 @Slf4j
 @Component
 public class GreenEyeService {
-    private static final String API_URL = "https://clovagreeneye.apigw.ntruss.com/custom/v1/85/ca9aa01abc04c55c6f50193b55d1e8f49c5e49a01d954e3ff25959c0b9404b72/predict";
-    private static final String SECRET_KEY = "RlpQTkxqbGtQeUNESkhjdW1Ma1VDUllmVllBUnVaa3o=";
+    @Value("${ncp.green-eye.url}")
+    String API_URL;
+    @Value("${ncp.green-eye.secret-key}")
+    String SECRET_KEY;
 
     public boolean isCorrect(String url) {
         HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();

@@ -29,10 +29,12 @@ import java.util.*;
 public class FigmaService {
     private final PhotoService photoService;
 
-    private final String API_URL = "https://api.figma.com/v1/";
-    private final String figmaToken = "figd_r19ArRmULsFDOcl1Mim1B7zpphHYgqYM-YT84yfI";
-    private final String figmaFileKey = "yzrVwMDiG6uU8LM57RUfN0";
-
+    @Value("${figma.url}")
+    String API_URL;
+    @Value("${figma.token}")
+    String FIGMA_TOKEN;
+    @Value("${figma.file-key}")
+    String FIGMA_FILE_KEY;
     @Value("${config.photo-dir}")
     String DIR;
 
@@ -70,7 +72,7 @@ public class FigmaService {
 
     private HttpHeaders createHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-FIGMA-TOKEN", figmaToken);
+        headers.set("X-FIGMA-TOKEN", FIGMA_TOKEN);
         return headers;
     }
 
@@ -83,7 +85,7 @@ public class FigmaService {
         RestTemplate restTemplate = createRestTemplate();
         HttpHeaders headers = createHeaders();
 
-        String requestURL = API_URL + "files/" + figmaFileKey + "/nodes?ids=" + nodeId;
+        String requestURL = API_URL + "files/" + FIGMA_FILE_KEY + "/nodes?ids=" + nodeId;
         ResponseEntity<String> responseEntity = restTemplate.exchange(requestURL, HttpMethod.GET, new HttpEntity<>(headers), String.class);
 
         Map<String, String> imageIdMap = new HashMap<>();
@@ -115,12 +117,13 @@ public class FigmaService {
         RestTemplate restTemplate = createRestTemplate();
         HttpHeaders headers = createHeaders();
 
-        String requestURL = API_URL + "images/" + figmaFileKey + "?format=png&scale=3&ids=" + String.join(",", imageIdMap.keySet());
+        String requestURL = API_URL + "images/" + FIGMA_FILE_KEY + "?format=png&scale=3&ids=" + String.join(",", imageIdMap.keySet());
         ResponseEntity<String> responseEntity = restTemplate.exchange(requestURL, HttpMethod.GET, new HttpEntity<>(headers), String.class);
 
         Map<String, String> imageUrlMap = new HashMap<>();
         try {
             JsonNode rootNode = new ObjectMapper().readTree(responseEntity.getBody());
+            System.out.println("rootNode = " + rootNode);
             JsonNode imageNodes = rootNode.get("images");
             Iterator<Map.Entry<String, JsonNode>> fields = imageNodes.fields();
             while (fields.hasNext()) { // Iterator<Map.Entry<String, JsonNode>>
