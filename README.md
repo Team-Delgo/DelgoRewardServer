@@ -106,63 +106,31 @@
 
 <h2 id="6">📷 Result</h2>
 <p float="left">  
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/203540079-a0da2912-369b-42a6-a3f1-a8eb6397d70b.png">
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/203540036-3f67de05-00dd-467f-a291-6736699532de.png">
+<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/721a97e4-4308-4b52-ad48-085b3a443de1">
+<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/fe83274f-a45c-48b0-ba1c-a4a2ce7533ee">
+<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/76f72c7c-79d3-40b8-9fb7-42583c65d2e3">
 </p>
 
-<p float="left">  
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/203540074-c9f4cffc-abc4-401f-84c1-45448d1a04cb.png">
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/203540027-772d0d92-f184-4168-bfab-ecf614f93a82.png">
+<p float="left">
+<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/1fbc801f-d68a-46a7-aa97-88e4fdb0914b">
+<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/15ec1a0b-5283-4f21-a26c-3480ec66e602">
+<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/f28e078d-2c24-42c8-996d-852e091a5e1d">
 </p>
 
-<p float="left">  
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/203540061-5ad23994-0938-448f-9c54-7418e39c282b.png">
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/203540054-cab5dc3d-96e9-429b-8306-95b16901fbdb.png">
+<p float="left">
+<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/e5e2ec9c-a6d8-4fc6-b0ea-63c6ec2b9a0f">
+<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/e9d2cf39-46c0-43f8-8b40-55fa08ce5586">
+<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/dc05f339-72c9-49c1-b41d-05f48ec8638e">
 </p>
 
-<p float="left">  
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/203540690-969ce54c-07c2-4ca7-ac69-04e80004b4f4.png">
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/203540699-f5e7e2be-cb9d-465c-966d-ae6caa97bf9d.png">
+<p float="left">
+<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/9a1e5903-5e08-44ca-9e64-0910f55d1dd5">
+<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/072b6f92-f613-48a9-98a3-e46dfd9caba1">
+<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/e46d301d-59ab-47f6-be2e-c46fb433567f">
 </p>
 
-<p float="left">  
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/203540884-7425ba8f-8e60-4f1e-8f22-0bfe8ed2bd41.png">
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/203540895-a3e27933-125b-4a0a-ba06-757232b80605.png">
+<p float="left">
+<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/c5c1f963-9688-4c7d-94e3-0278e812b697">
+<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/02220291-3991-47cc-ae15-4a3938cb5fc3">
+<img width="33%" height="680px" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/f7244507-19c9-4b9b-8970-634f4b82ddc9">
 </p>
-
-<p float="left">  
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/203541093-c7967f12-93e6-4462-82c2-cbcc94076126.png">
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/203541107-d3b96527-a925-4016-bb1b-ac602ea8d069.png">
-</p>
-
-<p float="left">  
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/203541465-1e6b5b24-72e7-4f80-b318-b3cd5761a6f0.png">
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/203541474-038f446c-14ca-4266-8649-a92240156d93.png">
-</p>
-
-<p float="left">  
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/209087451-d5dd90db-6d89-4419-a5f3-3a613c3bb207.png">
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/209087443-ac6620df-d93d-44c0-bfd2-dd4f77573a2a.png">
-</p>
-
-<p float="left">  
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/203541666-b56563c4-87c5-4979-b366-78bb12297868.png">
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/203541678-86e2894f-446a-4435-8a7d-1e4cd2b89d3a.png">
-</p>
-
-<p float="left">  
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/203541759-79295aca-7fb8-4eca-b09f-08a1c31d1246.png">
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/203541875-5fcb4675-7628-4643-8ea8-fa1c0f0ce7ac.png">
-</p>
-
-<p float="left">  
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/203541863-00366c79-b8be-4173-8ba2-687062fe4be0.png">
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/203541770-7b6fd766-1172-4858-9c3a-5bdf9e3f3a85.png">
-</p>
-
-
-<p float="left">  
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/209088830-6e2b7536-ffda-4bf9-bd39-c9805b56f1cc.png">
-<img width="35%" height="650px" src="https://user-images.githubusercontent.com/54196723/203541995-62839b6d-efb3-4aa4-b6ac-78d0ce043269.png">
-</p>
-
