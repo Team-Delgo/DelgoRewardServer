@@ -130,14 +130,15 @@ public class UserController extends CommController {
                 codeService.getAddressByGeoCode(oAuthCreate.geoCode()), // Code -> 주소 변환
                 version));
 
-        petService.create(Pet.from(oAuthCreate, user)); // Pet 생성
+        Pet pet = petService.create(Pet.from(oAuthCreate, user)); // Pet 생성
+        user.setPet(pet); // Transaction 이 다른 곳에서 발생 하기 때문에 명시적으로 Pet을 넣어줘야 Response 에서 접근 가능.
         String profileUrl = (profile.isEmpty()) ? DEFAULT_PROFILE : photoService.createProfile(user.getUserId(), profile); // Profile 생성
-        userCommandService.updateProfile(user.getUserId(), profileUrl);  // Profile URL 적용
+        User updatedUser = userCommandService.updateProfile(user.getUserId(), profileUrl);  // Profile URL 적용
 
         JwtToken jwt = jwtService.createToken(user.getUserId());
         jwtService.publishToken(response, jwt);
 
-        return SuccessReturn(UserResponse.from(user));
+        return SuccessReturn(UserResponse.from(updatedUser));
     }
 
     /**
@@ -163,7 +164,8 @@ public class UserController extends CommController {
                 codeService.getAddressByGeoCode(userCreate.geoCode()), // Code -> 주소 변환
                 version));
 
-        petService.create(Pet.from(userCreate, user)); // Pet 생성
+        Pet pet = petService.create(Pet.from(userCreate, user)); // Pet 생성
+        user.setPet(pet); // Transaction 이 다른 곳에서 발생 하기 때문에 명시적으로 Pet을 넣어줘야 Response 에서 접근 가능.
         String profileUrl = (profile.isEmpty()) ? DEFAULT_PROFILE : photoService.createProfile(user.getUserId(), profile); // Profile 생성
         userCommandService.updateProfile(user.getUserId(), profileUrl);  // Profile URL 적용
 
