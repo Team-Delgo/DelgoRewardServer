@@ -5,6 +5,7 @@ import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.user.domain.User;
 import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.cert.repository.dto.UserVisitMungpleCountDTO;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +56,9 @@ public class UserResponse {
     private int yearOfPetAge;
     @Schema(description = "펫 나이(월)")
     private int monthOfPetAge;
+    @Schema(description = "등록 일자")
+    @JsonFormat(pattern="yyyy.MM.dd/HH:mm/E")
+    private LocalDateTime registDt;
 
     // Account
     @Schema(description = "활동 비율 표시 [Key: CategoryCode(ENUM)]")
@@ -74,6 +79,7 @@ public class UserResponse {
                 .userSocial(user.getUserSocial())
                 .isNotify(user.getIsNotify())
                 .viewCount(user.getViewCount())
+                .registDt(user.getRegistDt())
                  // Pet
                 .petId(user.getPet().getPetId())
                 .petName(user.getPet().getName())
@@ -98,6 +104,7 @@ public class UserResponse {
                 .userSocial(user.getUserSocial())
                 .isNotify(user.getIsNotify())
                 .viewCount(user.getViewCount())
+                .registDt(user.getRegistDt())
                 // Pet
                 .petId(user.getPet().getPetId())
                 .petName(user.getPet().getName())

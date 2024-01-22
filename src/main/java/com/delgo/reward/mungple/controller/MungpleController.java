@@ -11,6 +11,7 @@ import com.delgo.reward.mungple.domain.Mungple;
 import com.delgo.reward.mungple.service.MungpleService;
 import com.delgo.reward.bookmark.service.BookmarkService;
 import com.delgo.reward.cert.service.CertQueryService;
+import com.delgo.reward.user.service.UserCommandService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,6 +30,7 @@ public class MungpleController extends CommController {
     private final MungpleService mungpleService;
     private final BookmarkService bookmarkService;
     private final CertQueryService certQueryService;
+    private final UserCommandService userCommandService;
     private final GoogleSheetService googleSheetService;
 
 
@@ -53,11 +55,14 @@ public class MungpleController extends CommController {
             @RequestParam CategoryCode categoryCode,
             @RequestParam MungpleSort sort,
             @RequestParam(required = false) String latitude,
-            @RequestParam(required = false) String longitude) {
+            @RequestParam(required = false) String longitude,
+            @RequestHeader("version") String version) {
         List<Mungple> mungpleList = !categoryCode.equals(CategoryCode.CA0000)
                 ? mungpleService.getListByCategoryCode(categoryCode)
                 : mungpleService.getAll();
 
+        // 마지막 접속 이력, Version update
+        if(userId != 0) userCommandService.updateVersion(userId, version);
         return SuccessReturn(MungpleResponse.fromList(
                 mungpleService.getSortingStrategy(sort, latitude, longitude, userId).sort(mungpleList), // sort
                 certQueryService.getCountMapByMungple(), // cert count

@@ -93,6 +93,9 @@ public class GoogleSheetService {
     private void processResponseValues(CategoryCode categoryCode, List<List<Object>> ResponseValues, List<String> resultMessageList) {
         for (int rowNum = 1; rowNum < ResponseValues.size(); rowNum++) {
             List<Object> row = ResponseValues.get(rowNum);
+            if(row.isEmpty())
+                continue;
+
             String activeType = (String) row.get(0); // 동작 상태 지정 (TRUE, FALSE, UPDATE, DEL)
             activeType = activeType.trim();
 
