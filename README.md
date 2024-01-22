@@ -1,6 +1,5 @@
-# <b>🐕 Delgo Server Repository 🐕</b>
-<img width="40%" src="https://user-images.githubusercontent.com/54196723/203544712-8ad87cf3-23ef-408b-97d2-e1ccc21d9485.svg">
-
+# <b>Delgo Server Repository 😊 </b>
+<img width="90%" src="https://github.com/Team-Delgo/DelgoRewardServer/assets/67952604/0eba2d59-07f5-4e3f-9f71-90b49a0a68d7">
 <br/>
 
 
