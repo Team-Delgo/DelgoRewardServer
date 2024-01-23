@@ -1,4 +1,4 @@
-package com.delgo.reward.common.controller.request;
+package com.delgo.reward.comm.security.controller.request;
 
 import javax.validation.constraints.NotNull;
 

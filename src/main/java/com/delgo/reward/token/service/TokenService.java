@@ -1,7 +1,7 @@
 package com.delgo.reward.token.service;
 
 import com.delgo.reward.comm.exception.NotFoundDataException;
-import com.delgo.reward.comm.security.jwt.JwtToken;
+import com.delgo.reward.comm.security.domain.JWT;
 import com.delgo.reward.token.domain.Token;
 import com.delgo.reward.push.controller.request.FcmTokenCreate;
 import com.delgo.reward.token.repository.TokenRepository;
@@ -20,10 +20,10 @@ public class TokenService {
                 .orElseGet(() -> tokenRepository.save(Token.from(fcmTokenCreate))); // 없다면 생성
     }
 
-    public Token create(JwtToken jwtToken) {
-        return tokenRepository.findById(jwtToken.getUserId())
-                .map(token -> tokenRepository.save(token.update(jwtToken))) // 값이 있다면 Update
-                .orElseGet(() -> tokenRepository.save(Token.from(jwtToken))); // 없다면 생성
+    public Token create(JWT jwt) {
+        return tokenRepository.findById(jwt.userId())
+                .map(token -> tokenRepository.save(token.update(jwt))) // 값이 있다면 Update
+                .orElseGet(() -> tokenRepository.save(Token.from(jwt))); // 없다면 생성
     }
 
     public Token getOneByUserId(int userId){

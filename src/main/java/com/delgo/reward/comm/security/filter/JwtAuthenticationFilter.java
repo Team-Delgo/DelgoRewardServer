@@ -1,10 +1,9 @@
-package com.delgo.reward.comm.security.jwt.filter;
+package com.delgo.reward.comm.security.filter;
 
 
-import com.delgo.reward.comm.security.services.PrincipalDetails;
-import com.delgo.reward.common.controller.request.LoginRecord;
+import com.delgo.reward.comm.security.domain.PrincipalDetails;
+import com.delgo.reward.comm.security.controller.request.LoginRecord;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,23 +19,23 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
-@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-
     private final AuthenticationManager authenticationManager;
+
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
+        super.setFilterProcessesUrl("/api/login"); // 로그인 경로 설정
+        this.authenticationManager = authenticationManager;
+    }
 
     // Authentication 객체 만들어서 리턴 => 의존 : AuthenticationManager
     // 인증 요청시에 실행되는 함수 => /login
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
-
-        ObjectMapper om = new ObjectMapper();
-        LoginRecord loginRecord = null;
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        LoginRecord loginRecord;
         try {
-            loginRecord = om.readValue(request.getInputStream(), LoginRecord.class);
-        } catch (Exception e) {
-            e.printStackTrace();
+            loginRecord = new ObjectMapper().readValue(request.getInputStream(), LoginRecord.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
         // 유저네임패스워드 토큰 생성
@@ -63,7 +62,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         PrincipalDetails principalDetailis = (PrincipalDetails) authResult.getPrincipal();
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("/login/success");
-        request.setAttribute("userId", principalDetailis.getUser().getUserId());
+        request.setAttribute("userId", principalDetailis.user().getUserId());
 
         dispatcher.forward(request, response);
     }

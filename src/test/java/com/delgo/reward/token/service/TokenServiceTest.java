@@ -1,7 +1,7 @@
 package com.delgo.reward.token.service;
 
 import com.delgo.reward.comm.exception.NotFoundDataException;
-import com.delgo.reward.comm.security.jwt.JwtToken;
+import com.delgo.reward.comm.security.domain.JWT;
 import com.delgo.reward.push.controller.request.FcmTokenCreate;
 import com.delgo.reward.token.domain.Token;
 import org.junit.jupiter.api.Test;
@@ -42,17 +42,17 @@ class TokenServiceTest {
     @Transactional
     void createByJwt() {
         // given
-        JwtToken jwtToken = JwtToken.builder()
+        JWT jwt = JWT.builder()
                 .userId(1)
                 .refreshToken("test token")
                 .build();
 
         // when
-        Token token = tokenService.create(jwtToken);
+        Token token = tokenService.create(jwt);
 
         // then
-        assertThat(token.getUserId()).isEqualTo(jwtToken.getUserId());
-        assertThat(token.getRefreshToken()).isEqualTo(jwtToken.getRefreshToken());
+        assertThat(token.getUserId()).isEqualTo(jwt.userId());
+        assertThat(token.getRefreshToken()).isEqualTo(jwt.refreshToken());
     }
 
     @Test

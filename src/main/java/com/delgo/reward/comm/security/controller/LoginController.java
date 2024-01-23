@@ -1,10 +1,9 @@
-package com.delgo.reward.common.controller;
+package com.delgo.reward.comm.security.controller;
 
-import com.delgo.reward.common.controller.CommController;
 import com.delgo.reward.comm.code.APICode;
-import com.delgo.reward.comm.security.jwt.JwtService;
-import com.delgo.reward.comm.security.jwt.JwtToken;
-import com.delgo.reward.comm.security.jwt.config.RefreshTokenProperties;
+import com.delgo.reward.comm.security.service.JwtService;
+import com.delgo.reward.common.controller.CommController;
+import com.delgo.reward.comm.security.config.RefreshTokenProperties;
 import com.delgo.reward.user.response.UserResponse;
 import com.delgo.reward.user.service.UserQueryService;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -17,58 +16,45 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
-@Hidden
 @Slf4j
+@Hidden
 @RestController
 @RequiredArgsConstructor
 public class LoginController extends CommController {
-
     private final JwtService jwtService;
     private final UserQueryService userQueryService;
 
-    /*
+    /***
      * Login 성공
-     * Header [ Access_Token, Refresh_Token ]
-     * Body [ User , Pet ]
-     * 담아서 반환한다.
      */
     @PostMapping("/login/success")
     public ResponseEntity<?> loginSuccess(HttpServletRequest request, HttpServletResponse response) {
         int userId = Integer.parseInt(request.getAttribute("userId").toString());
-        JwtToken jwt = jwtService.createToken(userId);
-        jwtService.publishToken(response, jwt);
-
+        jwtService.publish(response, userId);
         return SuccessReturn(UserResponse.from(userQueryService.getOneByUserId(userId)));
     }
 
-    /*
+    /***
      * Login 실패
-     * ErrorCode 반환.
      */
-
     @PostMapping("/login/fail")
     public ResponseEntity<?> loginFail() {
         return ErrorReturn(APICode.LOGIN_ERROR);
     }
 
-    /*
-     * Access_Token 재발급 API
-     * Refresh_Token 인증 진행
-     * 성공 : 재발급, 실패 : 오류 코드 반환
+    /***
+     * Access_Token 재발급
      */
     @GetMapping("/api/token/reissue")
     public ResponseEntity<?> tokenReissue(@CookieValue(name = RefreshTokenProperties.HEADER_STRING, required = false) String refreshToken, HttpServletResponse response) {
         log.error("Repuest refreshToken : {}", refreshToken);
         int userId = jwtService.getUserIdByRefreshToken(refreshToken);
-        JwtToken jwt = jwtService.createToken(userId);
-        log.error("Response refreshToken  {}", jwt.getRefreshToken());
-        jwtService.publishToken(response, jwt);
+        jwtService.publish(response, userId);
         return SuccessReturn();
     }
 
-    /*
+    /***
      * TOKEN 인증 프로세스중 에러 발생
-     * ErrorCode 반환.
      */
     @RequestMapping("/token/error")
     public ResponseEntity<?> tokenError() {

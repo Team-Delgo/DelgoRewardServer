@@ -1,7 +1,6 @@
 package com.delgo.reward.token.domain;
 
-import com.delgo.reward.cert.domain.Certification;
-import com.delgo.reward.comm.security.jwt.JwtToken;
+import com.delgo.reward.comm.security.domain.JWT;
 import com.delgo.reward.push.controller.request.FcmTokenCreate;
 import org.junit.jupiter.api.Test;
 
@@ -47,17 +46,17 @@ class TokenTest {
     @Test
     void fromByJwt() {
         // given
-        JwtToken jwtToken = JwtToken.builder()
+        JWT jwt = JWT.builder()
                 .userId(1)
                 .refreshToken("test token")
                 .build();
 
         // when
-        Token token = Token.from(jwtToken);
+        Token token = Token.from(jwt);
 
         // then
-        assertThat(token.getUserId()).isEqualTo(jwtToken.getUserId());
-        assertThat(token.getRefreshToken()).isEqualTo(jwtToken.getRefreshToken());
+        assertThat(token.getUserId()).isEqualTo(jwt.userId());
+        assertThat(token.getRefreshToken()).isEqualTo(jwt.refreshToken());
     }
 
     @Test
@@ -66,15 +65,15 @@ class TokenTest {
         Token token = Token.builder()
                 .refreshToken("test token")
                 .build();
-        JwtToken jwtToken = JwtToken.builder()
+        JWT jwt = JWT.builder()
                 .refreshToken("update token")
                 .build();
 
         // when
-        Token updatedToken = token.update(jwtToken);
+        Token updatedToken = token.update(jwt);
 
         // then
-        assertThat(updatedToken.getRefreshToken()).isEqualTo(jwtToken.getRefreshToken());
+        assertThat(updatedToken.getRefreshToken()).isEqualTo(jwt.refreshToken());
     }
 
     @Test

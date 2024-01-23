@@ -1,4 +1,4 @@
-package com.delgo.reward.comm.security.services;
+package com.delgo.reward.comm.security.domain;
 
 
 import com.delgo.reward.user.domain.User;
@@ -7,17 +7,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-public class PrincipalDetails implements UserDetails{
 
-	private final User user;
-
-    public PrincipalDetails(User user){
-        this.user = user;
-    }
-
-    public User getUser() {
-		return user;
-	}
+public record PrincipalDetails(User user) implements UserDetails {
 
     @Override
     public String getPassword() {

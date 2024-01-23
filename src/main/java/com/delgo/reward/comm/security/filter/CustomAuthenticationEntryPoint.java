@@ -1,4 +1,4 @@
-package com.delgo.reward.comm.security.jwt.filter;
+package com.delgo.reward.comm.security.filter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;

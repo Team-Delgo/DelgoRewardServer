@@ -1,12 +1,11 @@
-package com.delgo.reward.comm.security;
+package com.delgo.reward.comm.security.config;
 
 
-import com.delgo.reward.comm.security.jwt.filter.CustomAuthenticationEntryPoint;
-import com.delgo.reward.comm.security.jwt.filter.JwtAuthenticationFilter;
-import com.delgo.reward.comm.security.jwt.filter.JwtAuthorizationFilter;
-import com.delgo.reward.user.repository.UserRepository;
+import com.delgo.reward.comm.security.filter.JwtAuthenticationFilter;
+import com.delgo.reward.comm.security.filter.JwtAuthorizationFilter;
+import com.delgo.reward.comm.security.filter.CustomAuthenticationEntryPoint;
+import com.delgo.reward.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,12 +22,10 @@ import java.util.Arrays;
 import java.util.List;
 
 @Configuration
-@Slf4j
 @EnableWebSecurity // 시큐리티 활성화 -> 기본 스프링 필터체인에 등록
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
-
-	private final UserRepository userRepository;
+	private final UserQueryService userQueryService;
 
 	@Value("${config.cors-allow-url}")
 	String CORS_ALLOW_URL;
@@ -69,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
 				.and()
 				.addFilter(new JwtAuthenticationFilter(authenticationManager()))
-				.addFilter(new JwtAuthorizationFilter(authenticationManager(),userRepository))
+				.addFilter(new JwtAuthorizationFilter(authenticationManager(), userQueryService))
 				.authorizeRequests()
 				.antMatchers("/api/oauth/**").permitAll()
 				.antMatchers("/api/auth/**").permitAll()

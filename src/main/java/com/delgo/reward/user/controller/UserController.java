@@ -4,8 +4,7 @@ package com.delgo.reward.user.controller;
 import com.delgo.reward.common.controller.CommController;
 import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.comm.encoder.CustomPasswordEncoder;
-import com.delgo.reward.comm.security.jwt.JwtService;
-import com.delgo.reward.comm.security.jwt.JwtToken;
+import com.delgo.reward.comm.security.service.JwtService;
 import com.delgo.reward.user.domain.SmsAuth;
 import com.delgo.reward.user.domain.Pet;
 import com.delgo.reward.user.domain.User;
@@ -135,9 +134,7 @@ public class UserController extends CommController {
         String profileUrl = (profile.isEmpty()) ? DEFAULT_PROFILE : photoService.createProfile(user.getUserId(), profile); // Profile 생성
         User updatedUser = userCommandService.updateProfile(user.getUserId(), profileUrl);  // Profile URL 적용
 
-        JwtToken jwt = jwtService.createToken(user.getUserId());
-        jwtService.publishToken(response, jwt);
-
+        jwtService.publish(response, user.getUserId());
         return SuccessReturn(UserResponse.from(updatedUser));
     }
 
@@ -169,9 +166,7 @@ public class UserController extends CommController {
         String profileUrl = (profile.isEmpty()) ? DEFAULT_PROFILE : photoService.createProfile(user.getUserId(), profile); // Profile 생성
         userCommandService.updateProfile(user.getUserId(), profileUrl);  // Profile URL 적용
 
-        JwtToken jwt = jwtService.createToken(user.getUserId());
-        jwtService.publishToken(response, jwt);
-
+        jwtService.publish(response, user.getUserId());
         return SuccessReturn(UserResponse.from(user));
     }
 
