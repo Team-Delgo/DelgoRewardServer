@@ -106,6 +106,9 @@ dependencies {
 
     // RDB JSON
     implementation 'io.hypersistence:hypersistence-utils-hibernate-55:3.6.1'
+
+    // Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 tasks.named('test') {

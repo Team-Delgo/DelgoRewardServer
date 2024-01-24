@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.transaction.Transactional;
@@ -16,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 class TokenServiceTest {
     @Autowired
@@ -44,15 +46,14 @@ class TokenServiceTest {
         // given
         JWT jwt = JWT.builder()
                 .userId(1)
-                .refreshToken("test token")
+                .refreshToken("update test22")
                 .build();
 
         // when
-        Token token = tokenService.create(jwt);
+        String refreshToken = tokenService.create(jwt);
 
         // then
-        assertThat(token.getUserId()).isEqualTo(jwt.userId());
-        assertThat(token.getRefreshToken()).isEqualTo(jwt.refreshToken());
+        assertThat(refreshToken).isEqualTo(jwt.refreshToken());
     }
 
     @Test
@@ -78,6 +79,19 @@ class TokenServiceTest {
         assertThatThrownBy(() -> {
             tokenService.getOneByUserId(userId);
         }).isInstanceOf(NotFoundDataException.class);
+    }
+
+    @Test
+    void getRefreshTokenByUserId() {
+        // given
+        int userId = 1;
+
+        // when
+        String token = tokenService.getRefreshTokenByUserId(userId);
+
+        // then
+        String expectedToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0NDIiLCJleHAiOjE5MjQzMDY4MjIsInVzZXJJZCI6NDQyfQ.p2Scwm8JqlcQNup3YviQ4sqy9ZUmU2Sgh9bOL3tsLm6tqvL25GEcq7YuLN3zvIcCW2vuleFB8RkyEEcfAW3M_g22";
+        assertThat(token).isEqualTo(expectedToken);
     }
 
     @Test

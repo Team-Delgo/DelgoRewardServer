@@ -6,6 +6,8 @@ import com.delgo.reward.token.domain.Token;
 import com.delgo.reward.push.controller.request.FcmTokenCreate;
 import com.delgo.reward.token.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 
@@ -20,13 +22,20 @@ public class TokenService {
                 .orElseGet(() -> tokenRepository.save(Token.from(fcmTokenCreate))); // 없다면 생성
     }
 
-    public Token create(JWT jwt) {
+    @CachePut(value = "refreshToken", key = "#jwt.userId()")
+    public String create(JWT jwt) {
         return tokenRepository.findById(jwt.userId())
                 .map(token -> tokenRepository.save(token.update(jwt))) // 값이 있다면 Update
-                .orElseGet(() -> tokenRepository.save(Token.from(jwt))); // 없다면 생성
+                .orElseGet(() -> tokenRepository.save(Token.from(jwt)))// 없다면 생성
+                .getRefreshToken(); // RefreshToken 반환 (캐시 업데이트를 위해)
     }
 
-    public Token getOneByUserId(int userId){
+    @Cacheable(value = "refreshToken", key = "#userId")
+    public String getRefreshTokenByUserId(int userId) {
+        return getOneByUserId(userId).getRefreshToken();
+    }
+
+    public Token getOneByUserId(int userId) {
         return tokenRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundDataException("[Token] userId : " + userId));
     }

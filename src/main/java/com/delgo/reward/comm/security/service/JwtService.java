@@ -8,7 +8,6 @@ import com.delgo.reward.comm.exception.TokenException;
 import com.delgo.reward.comm.security.domain.JWT;
 import com.delgo.reward.comm.security.config.AccessTokenProperties;
 import com.delgo.reward.comm.security.config.RefreshTokenProperties;
-import com.delgo.reward.token.domain.Token;
 import com.delgo.reward.token.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,8 +42,8 @@ public class JwtService {
                 .httpOnly(true)
                 .path("/")
                 .sameSite("None")
-                .domain(".delgo.pet")
-//                .domain("localhost")
+//                .domain(".delgo.pet")
+                .domain("localhost")
                 .maxAge(RefreshTokenProperties.EXPIRATION_TIME)
                 .build();
 
@@ -65,8 +64,8 @@ public class JwtService {
                     .getClaim("userId")
                     .asInt();
 
-            Token tokenByDatabase = tokenService.getOneByUserId(userId);
-            if (!StringUtils.hasText(tokenByDatabase.getRefreshToken()) || !refreshToken.equals(tokenByDatabase.getRefreshToken()))
+            String refreshTokenFromDB = tokenService.getRefreshTokenByUserId(userId);
+            if (!StringUtils.hasText(refreshTokenFromDB) || !refreshToken.equals(refreshTokenFromDB))
                 throw new TokenException("TOKEN DB ERROR");
 
             return userId;
