@@ -20,14 +20,14 @@ import java.util.function.Function;
         * `MungpleByOther` - 다른 사람이 등록한 멍플
         * `Birthday` - 생일
         """)
-public enum NotifyType {
-    Comment("댓글을 받았어요", "https://www.reward.delgo.pet/cert/", NotifyType::bodyByComment),
-    Helper("도움돼요😃를 받았어요", "https://www.reward.delgo.pet/cert/", NotifyType::bodyByHelper),
-    Cute("귀여워요😍를 받았어요", "https://www.reward.delgo.pet/cert/", NotifyType::bodyByCute),
-    Mungple("새로운 동반 장소\uD83D\uDCCD", "https://www.reward.delgo.pet/detail/", NotifyType::bodyByMungple),
-    MungpleByMe("새로운 동반 장소\uD83D\uDCCD", "https://www.reward.delgo.pet/detail/", NotifyType::bodyByFoundMungpleByMe),
-    MungpleByOther("새로운 동반 장소\uD83D\uDCCD", "https://www.reward.delgo.pet/detail/", NotifyType::bodyByFoundMungpleByOther),
-    Birthday("생일을 축하합니다\uD83C\uDF89", "https://www.reward.delgo.pet", NotifyType::bodyByBirthday);
+public enum NotificationType {
+    Comment("댓글을 받았어요", "https://www.reward.delgo.pet/cert/", NotificationType::bodyByComment),
+    Helper("도움돼요😃를 받았어요", "https://www.reward.delgo.pet/cert/", NotificationType::bodyByHelper),
+    Cute("귀여워요😍를 받았어요", "https://www.reward.delgo.pet/cert/", NotificationType::bodyByCute),
+    Mungple("새로운 동반 장소\uD83D\uDCCD", "https://www.reward.delgo.pet/detail/", NotificationType::bodyByMungple),
+    MungpleByMe("새로운 동반 장소\uD83D\uDCCD", "https://www.reward.delgo.pet/detail/", NotificationType::bodyByFoundMungpleByMe),
+    MungpleByOther("새로운 동반 장소\uD83D\uDCCD", "https://www.reward.delgo.pet/detail/", NotificationType::bodyByFoundMungpleByOther),
+    Birthday("생일을 축하합니다\uD83C\uDF89", "https://www.reward.delgo.pet", NotificationType::bodyByBirthday);
 
     private final String title;
     private final String url;

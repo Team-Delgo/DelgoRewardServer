@@ -25,24 +25,24 @@ public class FcmMessage {
     }
 
     // 인증 관련 Push (Comment, Helper, Cute)
-    public static FcmMessage cert(NotifyType notifyType, String token, String senderName, Certification certification) {
+    public static FcmMessage cert(NotificationType notificationType, String token, String senderName, Certification certification) {
         return FcmMessage.from(
                 token, // token
-                notifyType.getTitle(), // title
-                notifyType.getBody().apply(List.of(senderName)), // body
+                notificationType.getTitle(), // title
+                notificationType.getBody().apply(List.of(senderName)), // body
                 certification.getThumbnailUrl(), // image
-                String.valueOf(notifyType.ordinal()), // tag
-                notifyType.getUrl() + certification.getCertificationId()); // url
+                String.valueOf(notificationType.ordinal()), // tag
+                notificationType.getUrl() + certification.getCertificationId()); // url
     }
 
     // 인증 관련 Push ( Mungple, MungpleByMe, MungpleByOther )
-    public static FcmMessage mungple(NotifyType notifyType, String token, String petName, Mungple mungple) {
+    public static FcmMessage mungple(NotificationType notificationType, String token, String petName, Mungple mungple) {
         return FcmMessage.from(
                 token, // token
-                notifyType.getTitle(), // title
-                notifyType.getBody().apply(List.of(mungple.getLocalAreaName(), mungple.getPlaceName(), petName)), // body
+                notificationType.getTitle(), // title
+                notificationType.getBody().apply(List.of(mungple.getLocalAreaName(), mungple.getPlaceName(), petName)), // body
                 mungple.getThumbnailUrl(), // image
-                String.valueOf(notifyType.ordinal()), // tag
-                notifyType.getUrl() + mungple.getMungpleId()); // url
+                String.valueOf(notificationType.ordinal()), // tag
+                notificationType.getUrl() + mungple.getMungpleId()); // url
     }
 }
