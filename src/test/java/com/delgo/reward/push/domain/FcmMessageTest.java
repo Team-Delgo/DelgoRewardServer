@@ -41,7 +41,7 @@ class FcmMessageTest {
     @Test
     void cert() {
         // given
-        NotifyType notifyType = NotifyType.Comment;
+        NotificationType notificationType = NotificationType.Comment;
         String token = "test token";
         String senderName = "test sender name";
         Certification certification = Certification.builder()
@@ -50,26 +50,26 @@ class FcmMessageTest {
                 .build();
 
         // when
-        FcmMessage fcmMessage = FcmMessage.cert(notifyType, token, senderName, certification);
+        FcmMessage fcmMessage = FcmMessage.cert(notificationType, token, senderName, certification);
 
         // then
         // AOS
-        assertThat(fcmMessage.getData().getTitle()).isEqualTo("Delgo " + notifyType.getTitle());
-        assertThat(fcmMessage.getData().getBody()).isEqualTo(notifyType.getBody().apply(List.of(senderName)));
+        assertThat(fcmMessage.getData().getTitle()).isEqualTo("Delgo " + notificationType.getTitle());
+        assertThat(fcmMessage.getData().getBody()).isEqualTo(notificationType.getBody().apply(List.of(senderName)));
         assertThat(fcmMessage.getData().getImage()).isEqualTo(certification.getThumbnailUrl());
         assertThat(fcmMessage.getData().getTag()).isEqualTo(String.valueOf(0));
-        assertThat(fcmMessage.getData().getUrl()).isEqualTo(notifyType.getUrl() + certification.getCertificationId());
+        assertThat(fcmMessage.getData().getUrl()).isEqualTo(notificationType.getUrl() + certification.getCertificationId());
         // IOS
-        assertThat(fcmMessage.getApns().getPayload().getAps().getAlert().getTitle()).isEqualTo(notifyType.getTitle());
-        assertThat(fcmMessage.getApns().getPayload().getAps().getAlert().getBody()).isEqualTo(notifyType.getBody().apply(List.of(senderName)));
+        assertThat(fcmMessage.getApns().getPayload().getAps().getAlert().getTitle()).isEqualTo(notificationType.getTitle());
+        assertThat(fcmMessage.getApns().getPayload().getAps().getAlert().getBody()).isEqualTo(notificationType.getBody().apply(List.of(senderName)));
         assertThat(fcmMessage.getApns().getPayload().getCustom().getImageUrl()).isEqualTo(certification.getThumbnailUrl());
-        assertThat(fcmMessage.getApns().getPayload().getCustom().getUrl()).isEqualTo(notifyType.getUrl() + certification.getCertificationId());
+        assertThat(fcmMessage.getApns().getPayload().getCustom().getUrl()).isEqualTo(notificationType.getUrl() + certification.getCertificationId());
     }
 
     @Test
     void mungple() {
         // given
-        NotifyType notifyType = NotifyType.Mungple;
+        NotificationType notificationType = NotificationType.Mungple;
         String token = "test token";
         String petName = "test pet name";
         Mungple mungple = Mungple.builder()
@@ -80,19 +80,19 @@ class FcmMessageTest {
                 .build();
 
         // when
-        FcmMessage fcmMessage = FcmMessage.mungple(notifyType, token, petName, mungple);
+        FcmMessage fcmMessage = FcmMessage.mungple(notificationType, token, petName, mungple);
 
         // then
         // AOS
-        assertThat(fcmMessage.getData().getTitle()).isEqualTo("Delgo " + notifyType.getTitle());
-        assertThat(fcmMessage.getData().getBody()).isEqualTo(notifyType.getBody().apply(List.of(mungple.getLocalAreaName(), mungple.getPlaceName(), petName)));
+        assertThat(fcmMessage.getData().getTitle()).isEqualTo("Delgo " + notificationType.getTitle());
+        assertThat(fcmMessage.getData().getBody()).isEqualTo(notificationType.getBody().apply(List.of(mungple.getLocalAreaName(), mungple.getPlaceName(), petName)));
         assertThat(fcmMessage.getData().getImage()).isEqualTo(mungple.getThumbnailUrl());
-        assertThat(fcmMessage.getData().getTag()).isEqualTo(String.valueOf(notifyType.ordinal()));
-        assertThat(fcmMessage.getData().getUrl()).isEqualTo(notifyType.getUrl() + mungple.getMungpleId());
+        assertThat(fcmMessage.getData().getTag()).isEqualTo(String.valueOf(notificationType.ordinal()));
+        assertThat(fcmMessage.getData().getUrl()).isEqualTo(notificationType.getUrl() + mungple.getMungpleId());
         // IOS
-        assertThat(fcmMessage.getApns().getPayload().getAps().getAlert().getTitle()).isEqualTo(notifyType.getTitle());
-        assertThat(fcmMessage.getApns().getPayload().getAps().getAlert().getBody()).isEqualTo(notifyType.getBody().apply(List.of(mungple.getLocalAreaName(), mungple.getPlaceName(), petName)));
+        assertThat(fcmMessage.getApns().getPayload().getAps().getAlert().getTitle()).isEqualTo(notificationType.getTitle());
+        assertThat(fcmMessage.getApns().getPayload().getAps().getAlert().getBody()).isEqualTo(notificationType.getBody().apply(List.of(mungple.getLocalAreaName(), mungple.getPlaceName(), petName)));
         assertThat(fcmMessage.getApns().getPayload().getCustom().getImageUrl()).isEqualTo(mungple.getThumbnailUrl());
-        assertThat(fcmMessage.getApns().getPayload().getCustom().getUrl()).isEqualTo(notifyType.getUrl() + mungple.getMungpleId());
+        assertThat(fcmMessage.getApns().getPayload().getCustom().getUrl()).isEqualTo(notificationType.getUrl() + mungple.getMungpleId());
     }
 }

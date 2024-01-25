@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -29,7 +30,7 @@ public class NotificationController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = NotificationResponse.class))})
     @GetMapping
     public ResponseEntity<?> getListByUserId(@RequestParam(name = "userId") int userId) {
-        List<Notification> notificationList = notificationService.getListByUserId(userId);
+        List<Notification> notificationList = notificationService.getListByUserIdAndDate(userId, LocalDateTime.now().minusDays(15), LocalDateTime.now());
         notificationService.read(notificationList);
 
         return SuccessReturn(NotificationResponse.fromList(notificationList));
