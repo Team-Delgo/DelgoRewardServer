@@ -5,8 +5,7 @@ import com.delgo.reward.comm.code.APICode;
 import com.delgo.reward.user.service.oauth.AppleService;
 import com.delgo.reward.user.service.oauth.KakaoService;
 import com.delgo.reward.user.service.oauth.NaverService;
-import com.delgo.reward.comm.security.jwt.JwtService;
-import com.delgo.reward.comm.security.jwt.JwtToken;
+import com.delgo.reward.comm.security.service.JwtService;
 import com.delgo.reward.user.domain.User;
 import com.delgo.reward.comm.code.UserSocial;
 import com.delgo.reward.user.service.oauth.OAuthDTO;
@@ -52,9 +51,7 @@ public class OAuthController extends CommController {
         User user = userQueryService.getOneByAppleUniqueNo(appleUniqueNo);
 
         // TOKEN 발행
-        JwtToken jwt = jwtService.createToken(user.getUserId());
-        jwtService.publishToken(response, jwt);
-
+        jwtService.publish(response, user.getUserId());
         return SuccessReturn(UserResponse.from(user));
     }
 
@@ -90,9 +87,7 @@ public class OAuthController extends CommController {
             return ErrorReturn(APICode.ANOTHER_OAUTH_CONNECT, oAuthDTO);
 
         // TOKEN 발행
-        JwtToken jwt = jwtService.createToken(user.getUserId());
-        jwtService.publishToken(response, jwt);
-
+        jwtService.publish(response, user.getUserId());
         return SuccessReturn(UserResponse.from(user));
     }
 
@@ -127,9 +122,7 @@ public class OAuthController extends CommController {
             return ErrorReturn(APICode.ANOTHER_OAUTH_CONNECT, oAuthDTO);
 
         // TOKEN 발행
-        JwtToken jwt = jwtService.createToken(user.getUserId());
-        jwtService.publishToken(response, jwt);
-
+        jwtService.publish(response, user.getUserId());
         return SuccessReturn(UserResponse.from(user));
     }
 }

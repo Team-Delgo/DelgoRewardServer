@@ -4,7 +4,7 @@ import com.delgo.reward.comm.code.ReactionCode;
 import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.cert.domain.Reaction;
 import com.delgo.reward.cert.repository.ReactionRepository;
-import com.delgo.reward.push.service.FcmService;
+import com.delgo.reward.comm.push.service.FcmService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,6 @@
 package com.delgo.reward.comm.quartz.job;
 
-import com.delgo.reward.push.service.FcmService;
+import com.delgo.reward.comm.push.service.FcmService;
 import com.delgo.reward.user.domain.Pet;
 import com.delgo.reward.user.repository.PetRepository;
 import lombok.RequiredArgsConstructor;
