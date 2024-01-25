@@ -10,7 +10,7 @@ import com.delgo.reward.comment.controller.request.ReplyCreate;
 import com.delgo.reward.comment.domain.Comment;
 import com.delgo.reward.comment.response.CommentResponse;
 import com.delgo.reward.comment.service.CommentService;
-import com.delgo.reward.push.service.FcmService;
+import com.delgo.reward.comm.push.service.FcmService;
 import com.delgo.reward.user.domain.User;
 import com.delgo.reward.user.service.UserQueryService;
 import io.swagger.v3.oas.annotations.Hidden;

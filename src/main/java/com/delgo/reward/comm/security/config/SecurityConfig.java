@@ -4,11 +4,13 @@ package com.delgo.reward.comm.security.config;
 import com.delgo.reward.comm.security.filter.JwtAuthenticationFilter;
 import com.delgo.reward.comm.security.filter.JwtAuthorizationFilter;
 import com.delgo.reward.comm.security.filter.CustomAuthenticationEntryPoint;
+import com.delgo.reward.comm.security.service.JwtService;
 import com.delgo.reward.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -26,6 +28,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	private final UserQueryService userQueryService;
+	private final JwtService jwtService;
+
 
 	@Value("${config.cors-allow-url}")
 	String CORS_ALLOW_URL;
@@ -51,7 +55,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		return source;
 	}
 
-
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
@@ -66,7 +69,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
 				.and()
 				.addFilter(new JwtAuthenticationFilter(authenticationManager()))
-				.addFilter(new JwtAuthorizationFilter(authenticationManager(), userQueryService))
+				.addFilter(new JwtAuthorizationFilter(authenticationManager(), userQueryService, jwtService))
 				.authorizeRequests()
 				.antMatchers("/api/oauth/**").permitAll()
 				.antMatchers("/api/auth/**").permitAll()

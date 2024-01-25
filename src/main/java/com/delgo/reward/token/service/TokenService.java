@@ -3,7 +3,7 @@ package com.delgo.reward.token.service;
 import com.delgo.reward.comm.exception.NotFoundDataException;
 import com.delgo.reward.comm.security.domain.JWT;
 import com.delgo.reward.token.domain.Token;
-import com.delgo.reward.push.controller.request.FcmTokenCreate;
+import com.delgo.reward.comm.push.controller.requset.FcmTokenCreate;
 import com.delgo.reward.token.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CachePut;

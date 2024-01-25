@@ -1,7 +1,7 @@
 package com.delgo.reward.token.domain;
 
 import com.delgo.reward.comm.security.domain.JWT;
-import com.delgo.reward.push.controller.request.FcmTokenCreate;
+import com.delgo.reward.comm.push.controller.requset.FcmTokenCreate;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
