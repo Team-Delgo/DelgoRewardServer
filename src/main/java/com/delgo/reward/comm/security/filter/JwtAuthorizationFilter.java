@@ -1,13 +1,11 @@
 package com.delgo.reward.comm.security.filter;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.delgo.reward.comm.security.config.AccessTokenProperties;
 import com.delgo.reward.comm.security.domain.PrincipalDetails;
+import com.delgo.reward.comm.security.service.JwtService;
 import com.delgo.reward.user.domain.User;
 import com.delgo.reward.user.service.UserQueryService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,13 +23,12 @@ import java.io.IOException;
 @Slf4j
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     private final UserQueryService userQueryService;
+    private final JwtService jwtService;
 
-    @Value("${jwt.secret.access}")
-    String ACCESS_SECRET;
-
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserQueryService userQueryService) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserQueryService userQueryService, JwtService jwtService) {
         super(authenticationManager);
         this.userQueryService = userQueryService;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -47,12 +44,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         // 토큰 검증 (이게 인증이기 때문에 AuthenticationManager도 필요 없음)
         // SecurityContext에 접근해서 세션을 만들때 자동으로 UserDetailsService에 있는 loadByUsername이 호출됨.
         try {
-            Integer userId = JWT.require(Algorithm.HMAC512(ACCESS_SECRET))
-                    .build()
-                    .verify(token)
-                    .getClaim("userId")
-                    .asInt();
-
+            Integer userId = jwtService.getUserIdByAccessToken(token);
             User user = userQueryService.getOneByUserId(userId);
 
             // 인증은 토큰 검증시 끝. 인증을 하기 위해서가 아닌 스프링 시큐리티가 수행해주는 권한 처리를 위해

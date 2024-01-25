@@ -75,4 +75,21 @@ public class JwtService {
             throw new TokenException("TOKEN VERIFY ERROR");
         }
     }
+
+    public Integer getUserIdByAccessToken(String accessToken) {
+        try {
+            if (!StringUtils.hasText(accessToken))
+                throw new TokenException("TOKEN IS NULL OR BLANK");
+
+            return com.auth0.jwt.JWT.require(Algorithm.HMAC512(ACCESS_SECRET))
+                    .build()
+                    .verify(accessToken)
+                    .getClaim("userId")
+                    .asInt();
+        } catch (TokenExpiredException e) {
+            throw new TokenException("TOKEN EXPIRED");
+        } catch (JWTVerificationException e) {
+            throw new TokenException("TOKEN VERIFY ERROR");
+        }
+    }
 }
