@@ -1,5 +1,6 @@
 package com.delgo.reward.notification.service;
 
+import com.delgo.reward.mungple.domain.Mungple;
 import com.delgo.reward.notification.domain.Notification;
 import com.delgo.reward.notification.repository.NotificationRepository;
 import com.delgo.reward.notification.domain.NotificationType;
@@ -16,8 +17,13 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
 
     @Transactional
-    public Notification create(int userId, String notifyMsg, int objectId, NotificationType notificationType) {
-        return notificationRepository.save(Notification.from(userId, notifyMsg, notificationType, objectId, LocalDateTime.now()));
+    public Notification create(int userId, String image, String notifyMsg, int objectId, NotificationType notificationType) {
+        return notificationRepository.save(Notification.from(userId, image, notifyMsg, notificationType, objectId, LocalDateTime.now()));
+    }
+
+    @Transactional
+    public Notification createByMungple(Mungple mungple, int userId, String notifyMsg, NotificationType notificationType) {
+        return notificationRepository.save(Notification.fromMungple(mungple, userId, notifyMsg, notificationType, LocalDateTime.now()));
     }
 
     @Transactional

@@ -1,5 +1,6 @@
 package com.delgo.reward.notification.service;
 
+import com.delgo.reward.mungple.domain.Mungple;
 import com.delgo.reward.notification.domain.Notification;
 import com.delgo.reward.notification.domain.NotificationType;
 import org.junit.jupiter.api.Test;
@@ -29,15 +30,41 @@ class NotificationServiceTest {
         // given
         int userId = 1;
         int certificationId = 12;
+        String image = "test image";
         String notifyMsg = "test msg";
         NotificationType notificationType = NotificationType.Comment;
 
         // when
-        Notification notification = notificationService.create(userId, notifyMsg, certificationId, notificationType);
+        Notification notification = notificationService.create(userId, image, notifyMsg, certificationId, notificationType);
 
         // then
         assertThat(notification.getUserId()).isEqualTo(userId);
+        assertThat(notification.getImage()).isEqualTo(image);
         assertThat(notification.getMessage()).isEqualTo(notifyMsg);
+        assertThat(notification.getNotificationType()).isEqualTo(notificationType);
+    }
+
+    @Test
+    @Transactional
+    void createByMungple() {
+        // given
+        int userId = 1;
+        String image = "test image";
+        String notifyMsg = "test msg";
+        NotificationType notificationType = NotificationType.Comment;
+        Mungple mungple = Mungple.builder()
+                .mungpleId(1)
+                .photoUrls(List.of(image))
+                .build();
+
+        // when
+        Notification notification = notificationService.createByMungple(mungple, userId, notifyMsg, notificationType);
+
+        // then
+        assertThat(notification.getUserId()).isEqualTo(userId);
+        assertThat(notification.getImage()).isEqualTo(image);
+        assertThat(notification.getMessage()).isEqualTo(notifyMsg);
+        assertThat(notification.getObjectId()).isEqualTo(mungple.getMungpleId());
         assertThat(notification.getNotificationType()).isEqualTo(notificationType);
     }
 
