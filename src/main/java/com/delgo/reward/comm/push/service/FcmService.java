@@ -2,9 +2,9 @@ package com.delgo.reward.comm.push.service;
 
 import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.cert.service.CertQueryService;
+import com.delgo.reward.comm.push.domain.FcmMessage;
 import com.delgo.reward.mungple.domain.Mungple;
 import com.delgo.reward.mungple.service.MungpleService;
-import com.delgo.reward.comm.push.domain.FcmMessage;
 import com.delgo.reward.notification.domain.NotificationType;
 import com.delgo.reward.notification.service.NotificationService;
 import com.delgo.reward.user.domain.User;
@@ -44,7 +44,7 @@ public class FcmService {
             FcmMessage message = FcmMessage.cert(NotificationType.Comment, receiver.getFcmToken(), sender.getName(), certification);
             sendMessageTo(message);
 
-            notificationService.create(receiver.getUserId(), message.getData().getBody(), certificationId, NotificationType.Comment);
+            notificationService.create(receiver.getUserId(), certification.getThumbnailUrl(), message.getData().getBody(), certificationId, NotificationType.Comment);
         } catch (Exception e) {
             log.error("[FCM] ERROR : {}", e.getMessage());
             throw new RuntimeException("PUSH ERROR");
@@ -63,7 +63,7 @@ public class FcmService {
             FcmMessage message = FcmMessage.cert(NotificationType.Helper, receiver.getFcmToken(), sender.getName(), certification);
             sendMessageTo(message);
 
-            notificationService.create(receiver.getUserId(), message.getData().getBody(), certificationId, NotificationType.Helper);
+            notificationService.create(receiver.getUserId(), certification.getThumbnailUrl(), message.getData().getBody(), certificationId, NotificationType.Helper);
         } catch (Exception e) {
             log.error("[FCM] ERROR : {}", e.getMessage());
             throw new RuntimeException("PUSH ERROR");
@@ -82,7 +82,7 @@ public class FcmService {
             FcmMessage message = FcmMessage.cert(NotificationType.Cute, receiver.getFcmToken(), sender.getName(), certification);
             sendMessageTo(message);
 
-            notificationService.create(receiver.getUserId(), message.getData().getBody(), certificationId, NotificationType.Cute);
+            notificationService.create(receiver.getUserId(), certification.getThumbnailUrl(), message.getData().getBody(), certificationId, NotificationType.Cute);
         } catch (Exception e) {
             log.error("[FCM] ERROR : {}", e.getMessage());
             throw new RuntimeException("PUSH ERROR");
@@ -99,7 +99,7 @@ public class FcmService {
             FcmMessage message = FcmMessage.mungple(NotificationType.Mungple, receiver.getFcmToken(), receiver.getPetName(), mungple);
             sendMessageTo(message);
 
-            notificationService.create(receiver.getUserId(), message.getData().getBody(), mungpleId, NotificationType.Mungple);
+            notificationService.createByMungple(mungple, receiver.getUserId(), message.getData().getBody(), NotificationType.Mungple);
         } catch (Exception e) {
             log.error("[FCM] ERROR : {}", e.getMessage());
             throw new RuntimeException("PUSH ERROR");
@@ -116,7 +116,7 @@ public class FcmService {
             FcmMessage message = FcmMessage.mungple(NotificationType.MungpleByMe, receiver.getFcmToken(), receiver.getPetName(), mungple);
             sendMessageTo(message);
 
-            notificationService.create(receiver.getUserId(), message.getData().getBody(), mungpleId, NotificationType.Mungple);
+            notificationService.createByMungple(mungple, receiver.getUserId(), message.getData().getBody(), NotificationType.Mungple);
         } catch (Exception e) {
             log.error("[FCM] ERROR : {}", e.getMessage());
             throw new RuntimeException("PUSH ERROR");
@@ -134,7 +134,7 @@ public class FcmService {
             FcmMessage message = FcmMessage.mungple(NotificationType.MungpleByOther, receiver.getFcmToken(), firstFounder.getPetName(), mungple);
             sendMessageTo(message);
 
-            notificationService.create(receiver.getUserId(), message.getData().getBody(), mungpleId, NotificationType.Mungple);
+            notificationService.createByMungple(mungple, receiver.getUserId(), message.getData().getBody(), NotificationType.Mungple);
         } catch (Exception e) {
             log.error("[FCM] ERROR : {}", e.getMessage());
             throw new RuntimeException("PUSH ERROR");
@@ -146,18 +146,19 @@ public class FcmService {
             if(userQueryService.checkNotificationPermission(receiveUserId)) return;
 
             User receiver = userQueryService.getOneByUserId(receiveUserId);
+            String image = "https://kr.object.ncloudstorage.com/reward-mungple/%EC%83%9D%EC%9D%BC%EC%B6%95%ED%95%98.jpg";
 
             FcmMessage message = FcmMessage.from(
                     receiver.getFcmToken(), // token
                     "[" + receiver.getPetName() + "] 생일을 축하합니다🎉", // title
                     NotificationType.Birthday.getBody().apply(List.of(receiver.getPetName())), // body
-                    "https://kr.object.ncloudstorage.com/reward-mungple/%EC%83%9D%EC%9D%BC%EC%B6%95%ED%95%98.jpg", // image
+                    image, // image
                     String.valueOf(NotificationType.Birthday.ordinal()), //tag
                     NotificationType.Birthday.getUrl()); //url
 
             sendMessageTo(message);
 
-            notificationService.create(receiver.getUserId(), message.getData().getBody(), 0, NotificationType.Comment);
+            notificationService.create(receiver.getUserId(), image, message.getData().getBody(), 0, NotificationType.Birthday);
         } catch (Exception e) {
             log.error("[FCM] ERROR : {}", e.getMessage());
             throw new RuntimeException("PUSH ERROR");

@@ -13,15 +13,17 @@ class NotificationTest {
         // given
         int userId = 1;
         String message = "test msg";
+        String image = "test image";
         int certificationId = 12;
         NotificationType notificationType = NotificationType.Comment;
         LocalDateTime createAt = LocalDateTime.now();
 
         // when
-        Notification notification = Notification.from(userId, message, notificationType, certificationId, createAt);
+        Notification notification = Notification.from(userId, image, message, notificationType, certificationId, createAt);
 
         // then
         assertThat(notification.getUserId()).isEqualTo(userId);
+        assertThat(notification.getImage()).isEqualTo(image);
         assertThat(notification.getMessage()).isEqualTo(message);
         assertThat(notification.getNotificationType()).isEqualTo(notificationType);
         assertThat(notification.getObjectId()).isEqualTo(certificationId);
