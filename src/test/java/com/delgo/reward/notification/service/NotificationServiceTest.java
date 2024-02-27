@@ -31,15 +31,17 @@ class NotificationServiceTest {
         int userId = 1;
         int certificationId = 12;
         String image = "test image";
+        String profile = "test profile";
         String notifyMsg = "test msg";
         NotificationType notificationType = NotificationType.Comment;
 
         // when
-        Notification notification = notificationService.create(userId, image, notifyMsg, certificationId, notificationType);
+        Notification notification = notificationService.create(userId, image, profile, notifyMsg, certificationId, notificationType);
 
         // then
         assertThat(notification.getUserId()).isEqualTo(userId);
         assertThat(notification.getImage()).isEqualTo(image);
+        assertThat(notification.getProfile()).isEqualTo(profile);
         assertThat(notification.getMessage()).isEqualTo(notifyMsg);
         assertThat(notification.getNotificationType()).isEqualTo(notificationType);
     }

@@ -18,6 +18,7 @@ public class Notification {
     private int notificationId;
     private int userId;
     private String image;
+    private String profile;
     private String message;
     @Enumerated(EnumType.STRING)
     private NotificationType notificationType;
@@ -28,10 +29,11 @@ public class Notification {
 
     private LocalDateTime createAt;
 
-    public static Notification from(int userId, String image, String notifyMsg, NotificationType notificationType, int objectId, LocalDateTime createAt) {
+    public static Notification from(int userId, String image, String profile, String notifyMsg, NotificationType notificationType, int objectId, LocalDateTime createAt) {
         return Notification.builder()
                 .userId(userId)
                 .image(image)
+                .profile(profile)
                 .message(notifyMsg)
                 .notificationType(notificationType)
                 .objectId(objectId)
