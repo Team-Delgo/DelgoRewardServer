@@ -17,8 +17,8 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
 
     @Transactional
-    public Notification create(int userId, String image, String notifyMsg, int objectId, NotificationType notificationType) {
-        return notificationRepository.save(Notification.from(userId, image, notifyMsg, notificationType, objectId, LocalDateTime.now()));
+    public Notification create(int userId, String image, String profile, String notifyMsg, int objectId, NotificationType notificationType) {
+        return notificationRepository.save(Notification.from(userId, image, profile, notifyMsg, notificationType, objectId, LocalDateTime.now()));
     }
 
     @Transactional
