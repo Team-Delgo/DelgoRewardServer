@@ -1,7 +1,7 @@
 package com.delgo.reward.user.controller;
 
 import com.delgo.reward.common.controller.CommController;
-import com.delgo.reward.comm.code.APICode;
+import com.delgo.reward.comm.code.ResponseCode;
 import com.delgo.reward.user.service.oauth.AppleService;
 import com.delgo.reward.user.service.oauth.KakaoService;
 import com.delgo.reward.user.service.oauth.NaverService;
@@ -45,7 +45,7 @@ public class OAuthController extends CommController {
 
         // DB에 appleUniqueNo 존재 X
         if (!userQueryService.isAppleUniqueNoExisting(appleUniqueNo))
-            return ErrorReturn(APICode.APPLE_UNIQUE_NO_NOT_FOUND, appleUniqueNo);
+            return ErrorReturn(ResponseCode.APPLE_UNIQUE_NO_NOT_FOUND, appleUniqueNo);
 
         // DB에 appleUniqueNo 존재 O -> 해당 User 반환
         User user = userQueryService.getOneByAppleUniqueNo(appleUniqueNo);
@@ -64,11 +64,11 @@ public class OAuthController extends CommController {
 
         // 카카오 에러 : 1000
         if(kakaoPhoneNo.equals(""))
-            return ErrorReturn(APICode.OAUTH_SERVER_ERROR);
+            return ErrorReturn(ResponseCode.OAUTH_SERVER_ERROR);
 
         // 카카오 전화번호 X
         if(kakaoPhoneNo.equals("PhoneNoNotExist"))
-            return ErrorReturn(APICode.OAUTH_PHONE_NO_NOT_EXIST);
+            return ErrorReturn(ResponseCode.OAUTH_PHONE_NO_NOT_EXIST);
 
         kakaoPhoneNo = kakaoPhoneNo.replaceAll("[^0-9]", "");
         kakaoPhoneNo = "010" + kakaoPhoneNo.substring(kakaoPhoneNo.length()-8);
@@ -76,7 +76,7 @@ public class OAuthController extends CommController {
 
         // 카카오 전화번호 0 , DB 전화번호 X -> PhoneNo 반환
         if(!userQueryService.isPhoneNoExisting(kakaoPhoneNo))
-            return ErrorReturn(APICode.PHONE_NO_NOT_EXIST, oAuthDTO);
+            return ErrorReturn(ResponseCode.PHONE_NO_NOT_EXIST, oAuthDTO);
 
         User user = userQueryService.getOneByPhoneNo(kakaoPhoneNo);
         oAuthDTO.setUserSocial(user.getUserSocial());
@@ -84,7 +84,7 @@ public class OAuthController extends CommController {
         // 카카오 전화번호 0 , DB 전화번호 0, 카카오 연동 X -> 현재 연동된 OAuth 코드 반환
         oAuthDTO.setEmail(user.getEmail());
         if(user.getUserSocial() != UserSocial.K)
-            return ErrorReturn(APICode.ANOTHER_OAUTH_CONNECT, oAuthDTO);
+            return ErrorReturn(ResponseCode.ANOTHER_OAUTH_CONNECT, oAuthDTO);
 
         // TOKEN 발행
         jwtService.publish(response, user.getUserId());
@@ -100,18 +100,18 @@ public class OAuthController extends CommController {
 
         // 네이버 에러 : 1000
         if(naverPhoneNo.equals(""))
-            return ErrorReturn(APICode.OAUTH_SERVER_ERROR);
+            return ErrorReturn(ResponseCode.OAUTH_SERVER_ERROR);
 
         // 네이버 전화번호 X
         if(naverPhoneNo.equals("PhoneNoNotExist"))
-            return ErrorReturn(APICode.OAUTH_PHONE_NO_NOT_EXIST);
+            return ErrorReturn(ResponseCode.OAUTH_PHONE_NO_NOT_EXIST);
 
         naverPhoneNo = naverPhoneNo.replaceAll("[^0-9]", "");
         oAuthDTO.setPhoneNo(naverPhoneNo);
 
         // 네이버 전화번호 0 , DB 전화번호 X -> PhoneNo 반환
         if(!userQueryService.isPhoneNoExisting(naverPhoneNo))
-            return ErrorReturn(APICode.PHONE_NO_NOT_EXIST, oAuthDTO);
+            return ErrorReturn(ResponseCode.PHONE_NO_NOT_EXIST, oAuthDTO);
 
         User user = userQueryService.getOneByPhoneNo(naverPhoneNo);
         oAuthDTO.setUserSocial(user.getUserSocial());
@@ -119,7 +119,7 @@ public class OAuthController extends CommController {
         // 네이버 전화번호 0 , DB 전화번호 0, 네이버 연동 X -> 현재 연동된 OAuth 코드 반환
         oAuthDTO.setEmail(user.getEmail());
         if(user.getUserSocial() != UserSocial.N)
-            return ErrorReturn(APICode.ANOTHER_OAUTH_CONNECT, oAuthDTO);
+            return ErrorReturn(ResponseCode.ANOTHER_OAUTH_CONNECT, oAuthDTO);
 
         // TOKEN 발행
         jwtService.publish(response, user.getUserId());

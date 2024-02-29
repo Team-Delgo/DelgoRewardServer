@@ -3,7 +3,7 @@ package com.delgo.reward.comment.controller;
 import com.delgo.reward.cert.domain.Certification;
 import com.delgo.reward.cert.service.CertQueryService;
 import com.delgo.reward.common.controller.CommController;
-import com.delgo.reward.comm.code.APICode;
+import com.delgo.reward.comm.code.ResponseCode;
 import com.delgo.reward.comment.controller.request.CommentCreate;
 import com.delgo.reward.comment.controller.request.CommentUpdate;
 import com.delgo.reward.comment.controller.request.ReplyCreate;
@@ -62,7 +62,7 @@ public class CommentController extends CommController {
         User user = userQueryService.getOneByUserId(commentUpdate.userId());
 
         return (comment.getUser().getUserId() != user.getUserId()) // INVALID USER CHECK
-                ? ErrorReturn(APICode.INVALID_USER_ERROR)
+                ? ErrorReturn(ResponseCode.INVALID_USER_ERROR)
                 : SuccessReturn(commentService.update(commentUpdate));
     }
 
@@ -74,7 +74,7 @@ public class CommentController extends CommController {
         Comment comment = commentService.getOneById(commentId);
         Certification certification = certQueryService.getOneById(certificationId);
         if (comment.getUser().getUserId() != userId && certification.getUser().getUserId() != userId)  // 유저 체크
-            return ErrorReturn(APICode.INVALID_USER_ERROR);
+            return ErrorReturn(ResponseCode.INVALID_USER_ERROR);
 
         commentService.delete(commentId);
         return SuccessReturn();

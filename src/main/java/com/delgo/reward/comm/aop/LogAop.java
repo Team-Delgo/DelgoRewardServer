@@ -1,6 +1,6 @@
 package com.delgo.reward.comm.aop;
 
-import com.delgo.reward.common.response.ResponseRecord;
+import com.delgo.reward.common.response.CommResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -43,7 +43,7 @@ public class LogAop {
 
     @AfterReturning(pointcut = "onGetRequest()", returning = "responseEntity")
     public void afterReturningAdviceByGet(JoinPoint joinPoint, ResponseEntity<?> responseEntity) {
-        ResponseRecord record = (ResponseRecord) responseEntity.getBody();
+        CommResponse record = (CommResponse) responseEntity.getBody();
         log.info("\n[LogAop]" +
                 "\n\t" + getRequestUrl(joinPoint) +
                 "\n\tparameter: " + params(joinPoint) +
@@ -64,7 +64,7 @@ public class LogAop {
 
     @AfterReturning(pointcut = "onRequest()", returning = "responseEntity")
     public void afterReturningAdvice(JoinPoint joinPoint, ResponseEntity<?> responseEntity) throws JsonProcessingException {
-        ResponseRecord record = (ResponseRecord) responseEntity.getBody();
+        CommResponse record = (CommResponse) responseEntity.getBody();
         log.info("\n[LogAop]" +
                 "\n\t" + getRequestUrl(joinPoint) +
                 "\n\trequest body: \n " + prettyPrinter(params(joinPoint)) +

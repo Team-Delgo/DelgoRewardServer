@@ -6,7 +6,7 @@ import com.delgo.reward.comm.ncp.storage.ObjectStorageService;
 import com.delgo.reward.common.controller.CommController;
 import com.delgo.reward.cert.service.async.CertAsyncService;
 import com.delgo.reward.cert.service.async.ClassificationAsyncService;
-import com.delgo.reward.comm.code.APICode;
+import com.delgo.reward.comm.code.ResponseCode;
 import com.delgo.reward.comm.code.CategoryCode;
 import com.delgo.reward.comm.code.ReactionCode;
 import com.delgo.reward.cert.domain.Certification;
@@ -138,7 +138,7 @@ public class CertController extends CommController {
     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = CertResponse.class))})
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> createCert(@Validated @RequestPart(value = "data") CertCreate certCreate, @RequestPart(required = false) List<MultipartFile> photos) {
-        if (photos.isEmpty()) ErrorReturn(APICode.PARAM_ERROR);
+        if (photos.isEmpty()) ErrorReturn(ResponseCode.PARAM_ERROR);
         Certification certification = (certCreate.mungpleId() == 0)
                 ? certCommandService.create(certCreate)
                 : certCommandService.createByMungple(certCreate);
@@ -223,7 +223,7 @@ public class CertController extends CommController {
     public ResponseEntity modifyCert(@Validated @RequestBody CertUpdate certUpdate) {
         Certification certification = certQueryService.getOneById(certUpdate.certificationId());
         if (certUpdate.userId() != certification.getUser().getUserId())
-            return ErrorReturn(APICode.INVALID_USER_ERROR);
+            return ErrorReturn(ResponseCode.INVALID_USER_ERROR);
 
         // 인증 분류 삭제
         classificationService.delete(certification);
@@ -242,7 +242,7 @@ public class CertController extends CommController {
     @DeleteMapping(value = {"/{userId}/{certificationId}"})
     public ResponseEntity deleteCert(@PathVariable Integer userId, @PathVariable Integer certificationId) {
         if (!Objects.equals(userId, certQueryService.getOneById(certificationId).getUser().getUserId()))
-            return ErrorReturn(APICode.INVALID_USER_ERROR);
+            return ErrorReturn(ResponseCode.INVALID_USER_ERROR);
 
         // 인증 분류 삭제
         classificationService.delete(certQueryService.getOneById(certificationId));
