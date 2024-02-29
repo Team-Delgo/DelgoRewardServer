@@ -2,7 +2,7 @@ package com.delgo.reward.user.controller;
 
 
 import com.delgo.reward.common.controller.CommController;
-import com.delgo.reward.comm.code.APICode;
+import com.delgo.reward.comm.code.ResponseCode;
 import com.delgo.reward.comm.encoder.CustomPasswordEncoder;
 import com.delgo.reward.comm.security.service.JwtService;
 import com.delgo.reward.user.domain.SmsAuth;
@@ -102,7 +102,7 @@ public class UserController extends CommController {
         User user = userQueryService.getOneByEmail(passwordUpdate.email()); // 유저 조회
         SmsAuth smsAuth = smsAuthService.getOneByPhoneNo(user.getPhoneNo());
         if (!smsAuth.isAuthTimeValid())
-            return ErrorReturn(APICode.SMS_ERROR);
+            return ErrorReturn(ResponseCode.SMS_ERROR);
 
         String encodedPassword =  User.encodePassword(customPasswordEncoder, passwordUpdate.newPassword());
         User updatedUser = userCommandService.updatePassword(passwordUpdate.email(), encodedPassword);
@@ -122,7 +122,7 @@ public class UserController extends CommController {
             HttpServletResponse response) {
         // Apple 회원가입 시 appleUniqueNo 넣어주어야 함.
         if (!StringUtils.hasText(oAuthCreate.appleUniqueNo()) && oAuthCreate.userSocial() == UserSocial.A)
-            return ErrorReturn(APICode.PARAM_ERROR);
+            return ErrorReturn(ResponseCode.PARAM_ERROR);
 
         User user = userCommandService.save(User.from(oAuthCreate,
                 User.formattedPhoneNo(oAuthCreate.phoneNo()),
@@ -153,7 +153,7 @@ public class UserController extends CommController {
             HttpServletResponse response) {
 
         if (userQueryService.isEmailExisting(userCreate.email())) // Email 중복확인
-            return ErrorReturn(APICode.EMAIL_DUPLICATE_ERROR);
+            return ErrorReturn(ResponseCode.EMAIL_DUPLICATE_ERROR);
 
         User user = userCommandService.save(User.from(userCreate,
                 customPasswordEncoder.encode(userCreate.password()),

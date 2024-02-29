@@ -1,7 +1,7 @@
 package com.delgo.reward.comm.code;
 
 
-public enum APICode {
+public enum ResponseCode {
     // -------------------------COMMON-------------------------
     SUCCESS("200", "SUCCESS"),
     PARAM_ERROR("301", "PARAM_ERROR"),
@@ -45,7 +45,7 @@ public enum APICode {
     private String code;
     private String msg;
 
-    APICode(String code, String msg) {
+    ResponseCode(String code, String msg) {
         this.code = code;
         this.msg = msg;
     }

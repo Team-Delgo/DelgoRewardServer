@@ -1,6 +1,6 @@
 package com.delgo.reward.comm.security.controller;
 
-import com.delgo.reward.comm.code.APICode;
+import com.delgo.reward.comm.code.ResponseCode;
 import com.delgo.reward.comm.security.service.JwtService;
 import com.delgo.reward.common.controller.CommController;
 import com.delgo.reward.comm.security.config.RefreshTokenProperties;
@@ -39,7 +39,7 @@ public class LoginController extends CommController {
      */
     @PostMapping("/login/fail")
     public ResponseEntity<?> loginFail() {
-        return ErrorReturn(APICode.LOGIN_ERROR);
+        return ErrorReturn(ResponseCode.LOGIN_ERROR);
     }
 
     /***
@@ -58,6 +58,6 @@ public class LoginController extends CommController {
      */
     @RequestMapping("/token/error")
     public ResponseEntity<?> tokenError() {
-        return TokenErrorReturn(APICode.TOKEN_ERROR.getMsg());
+        return TokenErrorReturn(ResponseCode.TOKEN_ERROR.getMsg());
     }
 }

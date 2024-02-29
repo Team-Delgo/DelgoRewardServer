@@ -3,7 +3,7 @@ package com.delgo.reward.user.controller;
 
 import com.delgo.reward.comm.ncp.sms.SmsService;
 import com.delgo.reward.common.controller.CommController;
-import com.delgo.reward.comm.code.APICode;
+import com.delgo.reward.comm.code.ResponseCode;
 import com.delgo.reward.user.controller.request.SmsAuthCreate;
 import com.delgo.reward.user.domain.SmsAuth;
 import com.delgo.reward.user.domain.User;
@@ -33,14 +33,14 @@ public class AuthController extends CommController {
     public ResponseEntity<?> emailAuth(@RequestParam @NotBlank String email) {
         return userQueryService.isEmailExisting(email)
                 ? SuccessReturn(userQueryService.getOneByEmail(email).getPhoneNo())
-                : ErrorReturn(APICode.NOT_FOUND_DATA);
+                : ErrorReturn(ResponseCode.NOT_FOUND_DATA);
     }
 
     // 이메일 중복 확인
     @GetMapping("/email/check")
     public ResponseEntity<?> emailCheck(@RequestParam @NotBlank String email) {
         return userQueryService.isEmailExisting(email)
-                ? ErrorReturn(APICode.EMAIL_DUPLICATE_ERROR)
+                ? ErrorReturn(ResponseCode.EMAIL_DUPLICATE_ERROR)
                 : SuccessReturn();
     }
 
@@ -48,7 +48,7 @@ public class AuthController extends CommController {
     @GetMapping("/name/check")
     public ResponseEntity<?> nameCheck(@RequestParam @NotBlank String name) {
         return userQueryService.isNameExisting(name)
-                ? ErrorReturn(APICode.NAME_DUPLICATE_ERROR)
+                ? ErrorReturn(ResponseCode.NAME_DUPLICATE_ERROR)
                 : SuccessReturn();
 
     }
@@ -58,12 +58,12 @@ public class AuthController extends CommController {
     public ResponseEntity<?> phoneNoAuth(@RequestBody @Validated SmsAuthCreate smsAuthCreate) {
         String phoneNo = User.formattedPhoneNo(smsAuthCreate.phoneNo());
 
-        if (smsAuthCreate.isJoin() && !userQueryService.isPhoneNoExisting(phoneNo)) return ErrorReturn(APICode.PHONE_NO_NOT_EXIST);
-        if (!smsAuthCreate.isJoin() && userQueryService.isPhoneNoExisting(phoneNo)) return ErrorReturn(APICode.PHONE_NO_DUPLICATE_ERROR);
+        if (smsAuthCreate.isJoin() && !userQueryService.isPhoneNoExisting(phoneNo)) return ErrorReturn(ResponseCode.PHONE_NO_NOT_EXIST);
+        if (!smsAuthCreate.isJoin() && userQueryService.isPhoneNoExisting(phoneNo)) return ErrorReturn(ResponseCode.PHONE_NO_DUPLICATE_ERROR);
 
         String randNum = numberGen(4, 1);
         boolean sendResult = smsService.send(phoneNo, "[Delgo] 인증번호 " + randNum);
-        if (!sendResult) ErrorReturn(APICode.SMS_ERROR);
+        if (!sendResult) ErrorReturn(ResponseCode.SMS_ERROR);
 
         return SuccessReturn(smsAuthService.isExisting(phoneNo)
                 ? smsAuthService.update(phoneNo, randNum).getSmsId()
@@ -79,6 +79,6 @@ public class AuthController extends CommController {
         SmsAuth smsAuth = smsAuthService.getOneBySmsId(smsId);
         return smsAuth.isRandNumEqual(enterNum) && smsAuth.isAuthTimeValid()
                 ? SuccessReturn()
-                : ErrorReturn(APICode.AUTH_DO_NOT_MATCHING);
+                : ErrorReturn(ResponseCode.AUTH_DO_NOT_MATCHING);
     }
 }
